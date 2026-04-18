@@ -97,7 +97,16 @@
   }
 </style>
 </head>
-<body>
+<body><script>
+(function(){
+  var pw = sessionStorage.getItem('ramp_auth');
+  if(pw !== 'ok'){
+    var entered = prompt('Enter access code:');
+    if(entered !== '12345'){ document.documentElement.innerHTML = '<h2 style="font-family:sans-serif;padding:40px;color:#555">Access denied.</h2>'; }
+    else { sessionStorage.setItem('ramp_auth','ok'); }
+  }
+})();
+</script>
 
 <header class="border-b border-[var(--line)] bg-[var(--paper)]/85 backdrop-blur sticky top-0 z-40">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
