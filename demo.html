@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>30 Day Ramp — AI agents in your business in 30 days</title>
+<title>30 Day Ramp — See It In Action | AI agents in your business in 30 days</title>
 <meta name="description" content="Ramped is an AI implementation firm that deploys live agents into your operating business in 30 days. Built by operators who've already done it." />
 
 <!-- OG / Social -->
@@ -97,16 +97,22 @@
   }
 </style>
 </head>
-<body><script>
-(function(){
-  var pw = sessionStorage.getItem('ramp_auth');
-  if(pw !== 'ok'){
-    var entered = prompt('Enter access code:');
-    if(entered !== '12345'){ document.documentElement.innerHTML = '<h2 style="font-family:sans-serif;padding:40px;color:#555">Access denied.</h2>'; }
-    else { sessionStorage.setItem('ramp_auth','ok'); }
-  }
-})();
-</script>
+<body>
+<div style="background:var(--ink);color:#fff;padding:12px 24px;display:flex;align-items:center;justify-content:between;gap:16px;font-family:'Inter',sans-serif;font-size:13px;">
+  <div style="display:flex;align-items:center;gap:12px;flex:1;">
+    <div style="display:flex;align-items:flex-end;gap:2px" aria-hidden="true">
+      <div style="width:3px;height:5px;background:#FAFAF7;border-radius:1px"></div>
+      <div style="width:3px;height:8px;background:#FAFAF7;border-radius:1px"></div>
+      <div style="width:3px;height:11px;background:#FAFAF7;border-radius:1px"></div>
+      <div style="width:3px;height:14px;background:#1F4FFF;border-radius:1px"></div>
+    </div>
+    <span style="font-weight:700;font-size:14px;">30 Day Ramp</span>
+    <span style="color:rgba(255,255,255,0.5);">·</span>
+    <span style="color:rgba(255,255,255,0.7);">Live AI agent demo — see exactly what gets deployed into your business</span>
+  </div>
+  <a href="/" style="background:#1F4FFF;color:#fff;padding:8px 16px;border-radius:8px;font-weight:600;font-size:13px;text-decoration:none;white-space:nowrap;flex-shrink:0;">Get started →</a>
+</div>
+
 
 <header class="border-b border-[var(--line)] bg-[var(--paper)]/85 backdrop-blur sticky top-0 z-40">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
