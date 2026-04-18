@@ -3,18 +3,19 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>30 Day Ramp — AI agents in your business in 30 days</title>
-<meta name="description" content="Ramped is an AI implementation firm that deploys live agents into your operating business in 30 days. Built by operators who've already done it." />
+<title>30 Day Ramp — Your AI department, live in 30 days</title>
+<meta name="description" content="We deploy AI agents into your operating business — answering calls, routing leads, and automating your highest-friction workflows. Flat monthly fee. Go-live guarantee." />
 
 <!-- OG / Social -->
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://www.30dayramp.com/" />
-<meta property="og:title" content="30 Day Ramp — AI agents in your business in 30 days" />
-<meta property="og:description" content="We deploy live AI agents into your operating business in 30 days. Built by operators who've already done it." />
+<meta property="og:title" content="30 Day Ramp — Your AI department, live in 30 days" />
+<meta property="og:description" content="We deploy AI agents into your operating business — answering calls, routing leads, and automating your highest-friction workflows. Flat monthly fee. Go-live guarantee." />
 <meta property="og:image" content="https://www.30dayramp.com/og-image.png" />
+<meta property="og:site_name" content="30 Day Ramp" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="30 Day Ramp — AI agents in your business in 30 days" />
-<meta name="twitter:description" content="We deploy live AI agents into your operating business in 30 days. Built by operators who've already done it." />
+<meta name="twitter:title" content="30 Day Ramp — Your AI department, live in 30 days" />
+<meta name="twitter:description" content="We deploy AI agents into your operating business — answering calls, routing leads, and automating your highest-friction workflows. Flat monthly fee. Go-live guarantee." />
 <meta name="twitter:image" content="https://www.30dayramp.com/og-image.png" />
 
 <!-- Favicon -->
@@ -31,6 +32,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
 <style>
   :root{
     --ink:#0B1220;
@@ -46,9 +48,7 @@
   html,body{background:var(--paper);color:var(--ink);font-family:'Inter',ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
   html,body{max-width:100%;overflow-x:hidden;}
   img,svg,video,iframe{max-width:100%;height:auto;}
-  /* Let grid/flex children shrink so inner overflow-x-auto actually scrolls */
   .grid > *, .flex > *{min-width:0;}
-  /* Break long tokens so prose wraps cleanly on narrow screens */
   p, li, blockquote, h1, h2, h3, td, th{overflow-wrap:anywhere;word-break:break-word;}
   .mono{font-family:'JetBrains Mono',ui-monospace,monospace;}
   .grid-bg{
@@ -58,1125 +58,432 @@
     background-size: 32px 32px;
   }
   .ink-shadow{box-shadow:0 1px 0 rgba(11,18,32,0.06), 0 8px 24px -12px rgba(11,18,32,0.18);}
-  .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:12px;color:var(--muted);}
-  .dot{width:6px;height:6px;border-radius:999px;background:var(--good);box-shadow:0 0 0 4px rgba(15,122,75,0.12);}
-  .btn-primary{background:var(--ink);color:#fff;padding:12px 20px;border-radius:10px;font-weight:600;display:inline-flex;align-items:center;gap:8px;transition:transform .12s ease,opacity .12s ease;}
-  .btn-primary:hover{opacity:.92;transform:translateY(-1px);}
-  .btn-ghost{padding:12px 16px;border-radius:10px;font-weight:600;color:var(--ink);border:1px solid var(--line);background:#fff;}
+  .btn-primary{background:var(--ink);color:#fff;padding:13px 22px;border-radius:10px;font-weight:600;font-size:15px;display:inline-flex;align-items:center;gap:8px;transition:transform .12s ease,opacity .12s ease;cursor:pointer;border:none;}
+  .btn-primary:hover{opacity:.88;transform:translateY(-1px);}
+  .btn-ghost{padding:13px 18px;border-radius:10px;font-weight:600;font-size:15px;color:var(--ink);border:1px solid var(--line);background:#fff;cursor:pointer;transition:background .12s ease;}
   .btn-ghost:hover{background:#F2F0E8;}
   .card{background:#fff;border:1px solid var(--line);border-radius:14px;}
-  .chip{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:6px;background:#F2F0E8;color:var(--ink);font-size:11px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;}
-  .placeholder{background:#FFF7E6;border:1px dashed #D9A441;color:#7A4F00;padding:1px 6px;border-radius:4px;font-size:12px;}
   .sectionnum{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;}
-  .step-line{position:relative;}
-  .step-line::before{content:"";position:absolute;left:11px;top:24px;bottom:-12px;width:2px;background:var(--line);}
-  .step-line:last-child::before{display:none;}
-  .reasoning-row{opacity:0;transform:translateY(4px);transition:opacity .35s ease,transform .35s ease;}
-  .reasoning-row.show{opacity:1;transform:translateY(0);}
-  .typing-dot{display:inline-block;width:6px;height:6px;border-radius:999px;background:var(--ink);margin-right:4px;animation:bounce 1.2s infinite;}
-  .typing-dot:nth-child(2){animation-delay:.15s}
-  .typing-dot:nth-child(3){animation-delay:.3s}
-  @keyframes bounce{0%,80%,100%{transform:translateY(0);opacity:.4}40%{transform:translateY(-4px);opacity:1}}
-  details > summary{list-style:none;cursor:pointer;}
-  details > summary::-webkit-details-marker{display:none;}
+  .step-num{width:26px;height:26px;border-radius:999px;background:var(--ink);color:#fff;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
   .hover-lift{transition:transform .15s ease, box-shadow .15s ease;}
-  .hover-lift:hover{transform:translateY(-2px);box-shadow:0 12px 32px -16px rgba(11,18,32,.25);}
-  .nav-link{color:var(--muted);font-weight:500;font-size:14px;}
-  .nav-link:hover{color:var(--ink);}
-  .scenario-btn[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink);}
-  .scenario-btn{transition:all .15s ease;}
-  .timeline-week{position:relative;}
-  .timeline-week::before{content:"";position:absolute;left:0;top:14px;width:100%;height:2px;background:var(--line);z-index:0;}
-  .timeline-dot{position:relative;z-index:1;width:28px;height:28px;border-radius:999px;background:#fff;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;}
-  /* Cost-lever comparison table: readable on desktop, scrolls-in-place on mobile */
-  .cost-table-scroll{-webkit-overflow-scrolling:touch;}
-  .cost-table{width:100%;min-width:460px;}
-  @media (max-width: 640px){
-    .cost-table{font-size:12px;min-width:420px;}
-    .cost-table th, .cost-table td{padding:8px 10px !important;}
-  }
+  .hover-lift:hover{transform:translateY(-2px);box-shadow:0 12px 32px -16px rgba(11,18,32,.2);}
+  .form-input{width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:8px;background:#fff;font-family:'Inter',sans-serif;font-size:15px;color:var(--ink);outline:none;transition:border-color .12s ease;}
+  .form-input:focus{border-color:var(--accent);}
+  .form-input::placeholder{color:var(--muted);}
+  .escrow-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;border:1px solid #D1FAE5;background:#ECFDF5;font-size:12px;color:var(--good);font-weight:500;}
+  .pain-icon{width:40px;height:40px;border-radius:10px;background:#F2F0E8;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  nav a{color:var(--muted);font-weight:500;font-size:14px;transition:color .12s ease;}
+  nav a:hover{color:var(--ink);}
+  .bracket{color:#D97706;font-family:'JetBrains Mono',monospace;font-size:13px;}
+  .success-state{display:none;}
+  .success-state.visible{display:flex;}
 </style>
 </head>
 <body>
 
-<header class="border-b border-[var(--line)] bg-[var(--paper)]/85 backdrop-blur sticky top-0 z-40">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
-    <div class="flex items-center gap-2 shrink-0">
-      <div class="flex items-end gap-[3px]">
-        <div class="flex items-end gap-[3px]" aria-hidden="true">
-          <div class="w-[5px] h-[8px] bg-[var(--ink)]"></div>
-          <div class="w-[5px] h-[12px] bg-[var(--ink)]"></div>
-          <div class="w-[5px] h-[16px] bg-[var(--ink)]"></div>
-          <div class="w-[5px] h-[20px] bg-[var(--accent)]"></div>
-        </div>
-        <span class="font-bold text-lg tracking-tight ml-2">Ramped</span>
-      </div>
-    </div>
-    <nav class="hidden md:flex items-center gap-7">
-      <a href="#demo" class="nav-link">Demo</a>
-      <a href="#how" class="nav-link">How it works</a>
-      <a href="#case" class="nav-link">Case study</a>
-      <a href="#pricing" class="nav-link">Pricing</a>
+<!-- ─── NAV ─────────────────────────────────────────────────────────────── -->
+<header class="sticky top-0 z-50 bg-[#FAFAF7] border-b border-[var(--line)]" style="backdrop-filter:blur(8px);">
+  <div class="max-w-5xl mx-auto px-5 h-14 flex items-center justify-between">
+    <!-- Logo -->
+    <a href="/" class="flex items-center gap-2.5 no-underline" aria-label="30 Day Ramp home">
+      <svg width="26" height="22" viewBox="0 0 26 22" fill="none" aria-hidden="true">
+        <rect x="0" y="14" width="5" height="8" rx="1.5" fill="var(--accent)"/>
+        <rect x="7" y="9" width="5" height="13" rx="1.5" fill="var(--accent)" opacity=".75"/>
+        <rect x="14" y="4" width="5" height="18" rx="1.5" fill="var(--accent)" opacity=".55"/>
+        <rect x="21" y="0" width="5" height="22" rx="1.5" fill="var(--accent)" opacity=".35"/>
+      </svg>
+      <span style="font-weight:700;font-size:15px;color:var(--ink);letter-spacing:-.01em;">30 Day Ramp</span>
+    </a>
+    <!-- Nav links -->
+    <nav class="hidden sm:flex items-center gap-6">
+      <a href="#how-it-works">How it works</a>
+      <a href="#proof">Results</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#get-started" class="btn-primary" style="padding:8px 16px;font-size:13px;">Get started →</a>
     </nav>
-    <a href="#book" class="btn-primary text-sm whitespace-nowrap"><span class="hidden sm:inline">Book a discovery call</span><span class="sm:hidden">Book a call</span> →</a>
+    <!-- Mobile CTA -->
+    <a href="#get-started" class="sm:hidden btn-primary" style="padding:8px 14px;font-size:13px;">Get started →</a>
   </div>
 </header>
 
-<section class="relative overflow-hidden">
-  <div class="absolute inset-0 grid-bg opacity-60 pointer-events-none"></div>
-  <div class="max-w-6xl mx-auto px-6 pt-16 pb-10 relative">
-    <div class="pill mb-6">
-      <span class="dot"></span>
-      <span>Now booking design partners — Q2 2026 · SMB & lower-mid-market operators</span>
-    </div>
-    <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-[1.05] max-w-4xl">
-      Your outsourced<br/>
-      <span class="text-[var(--accent)]">AI department</span>,<br/>
-      built by operators.
-    </h1>
-    <p class="mt-6 text-lg text-[var(--muted)] max-w-2xl">
-      Ramped designs, builds, hosts, and operates AI agents inside your business — the same operational model you'd expect from an outsourced IT or marketing firm. One monthly fee. One team. One accountable partner. Live in 30 days, compounding ever after. No $350K consulting engagement. No 6-month strategy deck.
-    </p>
-    <div class="mt-8 flex flex-wrap items-center gap-3">
-      <a href="#demo" class="btn-primary">Try the agent demo ↓</a>
-      <a href="#book" class="btn-ghost">Book a free 30-min discovery call</a>
-    </div>
-    <div class="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 text-sm text-[var(--muted)]">
-      <div class="flex items-center gap-2"><span class="mono text-[var(--ink)]">01</span> Built it ourselves first, inside a real operating P&amp;L.</div>
-      <div class="flex items-center gap-2"><span class="mono text-[var(--ink)]">02</span> Pro: $5K setup + $1,500/mo starting month 2, half the setup held until we&rsquo;re live. Max: custom. Discovery call is free.</div>
-      <div class="flex items-center gap-2"><span class="mono text-[var(--ink)]">03</span> For $5M–$100M operators. Not enterprise.</div>
+<!-- ─── HERO ──────────────────────────────────────────────────────────────── -->
+<section class="grid-bg relative pt-16 pb-20 px-5" id="hero">
+  <div class="max-w-5xl mx-auto">
+    <div class="max-w-2xl">
+      <div class="mb-5">
+        <span class="sectionnum">AI Implementation · 30-Day Guarantee</span>
+      </div>
+      <h1 style="font-size:clamp(2.25rem,5vw,3.5rem);font-weight:800;line-height:1.1;letter-spacing:-.03em;color:var(--ink);" class="mb-5">
+        Your AI department,<br>live in 30 days.
+      </h1>
+      <p style="font-size:clamp(1rem,2vw,1.2rem);color:var(--muted);line-height:1.65;max-width:560px;" class="mb-10">
+        We deploy AI agents into your operating business — answering calls, routing leads, and automating your highest-friction workflows. Flat monthly fee. Go-live guarantee.
+      </p>
+
+      <!-- Hero form -->
+      <div class="card ink-shadow p-6 max-w-md" id="hero-form-wrap">
+        <!-- Form -->
+        <div id="hero-form-inner">
+          <p style="font-weight:600;font-size:16px;margin-bottom:16px;color:var(--ink);">Tell us about your business</p>
+          <form id="hero-form" action="/api/contact" method="POST" class="flex flex-col gap-3">
+            <input class="form-input" type="text" name="name" placeholder="Your name" required autocomplete="name" />
+            <input class="form-input" type="email" name="email" placeholder="Work email" required autocomplete="email" />
+            <input class="form-input" type="text" name="company" placeholder="Company name" required autocomplete="organization" />
+            <button type="submit" class="btn-primary w-full justify-center mt-1">Get started →</button>
+          </form>
+          <p style="font-size:12px;color:var(--muted);margin-top:12px;text-align:center;">
+            Or <a href="https://calendly.com/jon-30dayramp" target="_blank" rel="noopener" style="color:var(--accent);font-weight:500;">book a free 30-min call</a> first — no commitment.
+          </p>
+        </div>
+        <!-- Success state -->
+        <div id="hero-form-success" class="success-state flex-col items-center text-center py-4">
+          <div style="width:48px;height:48px;border-radius:999px;background:#ECFDF5;border:2px solid #D1FAE5;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 11.5l5 5 9-10" stroke="var(--good)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <p style="font-weight:700;font-size:17px;color:var(--ink);margin-bottom:6px;">You're on the list.</p>
+          <p style="font-size:14px;color:var(--muted);line-height:1.5;">We'll be in touch within one business day. In the meantime, feel free to <a href="https://calendly.com/jon-30dayramp" target="_blank" rel="noopener" style="color:var(--accent);font-weight:500;">book a discovery call</a>.</p>
+        </div>
+      </div>
+
+      <!-- Trust signals -->
+      <div class="flex flex-wrap items-center gap-4 mt-6">
+        <span class="escrow-badge">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1L2 3.5v4C2 10.1 4.2 12.6 7 13.5c2.8-.9 5-3.4 5-6V3.5L7 1z" fill="var(--good)" opacity=".2" stroke="var(--good)" stroke-width="1.2"/></svg>
+          Half fee held in escrow until go-live
+        </span>
+        <span class="sectionnum">No lock-in · Cancel anytime</span>
+      </div>
     </div>
   </div>
 </section>
 
-<section id="demo" class="border-t border-[var(--line)] bg-white">
-  <div class="max-w-6xl mx-auto px-6 py-16">
-    <div class="flex items-end justify-between flex-wrap gap-4 mb-8">
-      <div>
-        <div class="sectionnum mb-2">01 — Live demo</div>
-        <h2 class="text-3xl md:text-4xl font-bold tracking-tight">Watch a Ramped agent work an inbound message — or a live call.</h2>
-        <p class="text-[var(--muted)] mt-2 max-w-2xl">Pick a scenario and see what the agent does — classification, retrieval, action, draft. Try the <strong class="text-[var(--ink)]">Live call</strong> scenario to see the agent answer the phone, qualify a prospect in conversation, and fan out five downstream actions the moment the call ends.</p>
-      </div>
-      <span class="chip">Mock — for demonstration</span>
+<!-- ─── PROBLEM ───────────────────────────────────────────────────────────── -->
+<section class="py-20 px-5 border-t border-[var(--line)]" id="problem">
+  <div class="max-w-5xl mx-auto">
+    <div class="mb-12">
+      <p class="sectionnum mb-3">The problem</p>
+      <h2 style="font-size:clamp(1.75rem,4vw,2.5rem);font-weight:800;letter-spacing:-.02em;color:var(--ink);">
+        Still running on spreadsheets<br class="hidden sm:block"> and gut feel?
+      </h2>
     </div>
 
-    <div class="flex flex-wrap gap-2 mb-6" role="tablist" aria-label="Demo scenario">
-      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="healthcare" aria-pressed="true">🏥 Healthcare — Referral intake</button>
-      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="cannabis" aria-pressed="false">🌿 Cannabis — Quote request</button>
-      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="livecall" aria-pressed="false">📞 Live call — Qualify + book + fan-out <span class="chip ml-1" style="background:#FFEDD5;color:#7A4F00;font-size:10px;padding:1px 6px;">NEW</span></button>
-      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="field" aria-pressed="false">🔧 Field services — After-hours voicemail</button>
-    </div>
-
-    <div class="grid md:grid-cols-2 gap-6">
-      <div class="card ink-shadow overflow-hidden">
-        <div class="px-5 py-3 border-b border-[var(--line)] flex items-center justify-between bg-[var(--paper)]">
-          <div class="flex items-center gap-2">
-            <span class="chip" id="inbound-channel">Inbox</span>
-            <span class="text-sm text-[var(--muted)]" id="inbound-channel-detail">admissions@yourfacility.org</span>
-          </div>
-          <span class="mono text-xs text-[var(--muted)]">INBOUND</span>
-        </div>
-        <div class="p-5">
-          <div class="text-xs text-[var(--muted)] mb-1">From</div>
-          <div class="font-semibold text-sm" id="inbound-from">—</div>
-          <div class="text-xs text-[var(--muted)] mt-3 mb-1">Subject</div>
-          <div class="font-semibold" id="inbound-subject">—</div>
-          <div class="text-xs text-[var(--muted)] mt-3 mb-1">Body</div>
-          <div class="text-sm leading-relaxed whitespace-pre-line" id="inbound-body">—</div>
-          <div class="mt-5 flex items-center gap-2">
-            <button id="run-btn" class="btn-primary text-sm">▶ Run Ramped agent</button>
-            <button id="reset-btn" class="btn-ghost text-sm">Reset</button>
-          </div>
-          <div class="text-[11px] text-[var(--muted)] mt-3">Tip: try editing the body before you run. The agent is making decisions based on what's in the message + the indexed knowledge base for this facility.</div>
-        </div>
-      </div>
-
-      <div class="card ink-shadow overflow-hidden">
-        <div class="px-5 py-3 border-b border-[var(--line)] flex items-center justify-between bg-[var(--ink)] text-white">
-          <div class="flex items-center gap-2">
-            <span class="dot" style="background:#7CFFB7;box-shadow:0 0 0 4px rgba(124,255,183,.15)"></span>
-            <span class="font-semibold text-sm">Ramped Agent · v1</span>
-          </div>
-          <span class="mono text-xs opacity-70" id="status-pill">IDLE</span>
-        </div>
-        <div class="p-5 min-h-[420px]" id="agent-pane">
-          <div id="reasoning-list" class="space-y-3"></div>
-          <div id="output-block" class="hidden mt-6 pt-6 border-t border-dashed border-[var(--line)]">
-            <div class="chip mb-3" id="action-chip" style="background:#E8F5EE;color:var(--good);">✓ Action taken</div>
-            <div class="text-sm font-semibold mb-1" id="action-line">—</div>
-            <div class="text-xs text-[var(--muted)] mb-4" id="action-meta">—</div>
-            <div class="text-xs text-[var(--muted)] uppercase tracking-wide mb-2" id="draft-label">Drafted reply (queued for human review)</div>
-            <div class="card p-4 bg-[var(--paper)] text-sm leading-relaxed whitespace-pre-line" id="draft-text"></div>
-            <div class="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3" id="metrics-row"></div>
-            <div class="mt-5 text-[11px] text-[var(--muted)] flex items-center gap-2">
-              <span>Approval gate:</span><span class="chip">Human review</span><span>·</span>
-              <span>Escalation path:</span><span class="chip" id="escalation-chip">Admissions lead</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <p class="text-xs text-[var(--muted)] mt-4 max-w-3xl">
-      What you're seeing is the same shape as the Week-1 agent we deploy in every Ramp Sprint — classifier, RAG over your knowledge base, action against your system of record (CRM / EHR / ServiceTitan / NetSuite / etc.), drafted output with a configurable approval gate. In a real Sprint this is wired to your live inbox <em>or phone line</em> by Friday of week one. For voice, the agent picks up, converses with the caller in natural language, and the moment the call ends it fans out to every downstream system that needs to know — CRM, calendar, email, Slack, quoting tool — so your rep picks up the thread already briefed.
-    </p>
-  </div>
-</section>
-
-<section id="scheduler" class="border-t border-[var(--line)]">
-  <div class="max-w-6xl mx-auto px-6 py-16">
-    <div class="flex items-end justify-between flex-wrap gap-4 mb-8">
-      <div>
-        <div class="sectionnum mb-2">01b — Agent operating a real system</div>
-        <h2 class="text-3xl md:text-4xl font-bold tracking-tight">Talk to the agent. Watch the schedule change.</h2>
-        <p class="text-[var(--muted)] mt-2 max-w-2xl">This is what your dispatcher sees. Plain-English requests become real writes against the scheduling system — book, move, cancel, query. Every tool call is logged in-line so your team can audit every change the agent made. Same pattern, swapped to your CRM, ERP, EHR, or ticketing system.</p>
-      </div>
-      <span class="chip">Mock — fully interactive</span>
-    </div>
-
-    <div class="mb-4">
-      <div class="text-[11px] uppercase tracking-wide text-[var(--muted)] mono mb-2">Try one of these — or type your own</div>
-      <div class="flex flex-wrap gap-2" id="prompt-chips">
-        <button class="prompt-chip px-3 py-1.5 rounded-md border border-[var(--line)] bg-white text-xs hover:bg-[var(--paper)] transition-colors">Book Carlos Mendez for Thursday 2pm with Mike</button>
-        <button class="prompt-chip px-3 py-1.5 rounded-md border border-[var(--line)] bg-white text-xs hover:bg-[var(--paper)] transition-colors">Move the Harper appointment to Wednesday morning</button>
-        <button class="prompt-chip px-3 py-1.5 rounded-md border border-[var(--line)] bg-white text-xs hover:bg-[var(--paper)] transition-colors">What's open Friday afternoon?</button>
-        <button class="prompt-chip px-3 py-1.5 rounded-md border border-[var(--line)] bg-white text-xs hover:bg-[var(--paper)] transition-colors">Cancel the Ramirez appointment</button>
-        <button class="prompt-chip px-3 py-1.5 rounded-md border border-[var(--line)] bg-white text-xs hover:bg-[var(--paper)] transition-colors">Book a water-heater swap Tuesday at 10 with Elena</button>
-      </div>
-    </div>
-
-    <div class="grid md:grid-cols-2 gap-6">
-
-      <div class="card ink-shadow overflow-hidden flex flex-col">
-        <div class="px-5 py-3 border-b border-[var(--line)] flex items-center justify-between bg-[var(--ink)] text-white">
-          <div class="flex items-center gap-2">
-            <span class="dot" style="background:#7CFFB7;box-shadow:0 0 0 4px rgba(124,255,183,.15)"></span>
-            <span class="font-semibold text-sm">Dispatcher Agent · Ridgeline Plumbing</span>
-          </div>
-          <span class="mono text-xs opacity-70">CONNECTED · ServiceTitan</span>
-        </div>
-        <div id="chat-log" class="p-5 space-y-3 overflow-y-auto" style="min-height:420px;max-height:520px;"></div>
-        <div class="p-3 border-t border-[var(--line)] bg-[var(--paper)] flex gap-2">
-          <input id="chat-input" type="text" placeholder="Tell the agent what to do..." autocomplete="off"
-                 class="flex-1 px-3 py-2 rounded-md border border-[var(--line)] bg-white text-sm outline-none focus:border-[var(--accent)]"/>
-          <button id="chat-send" class="btn-primary text-sm" style="padding:8px 14px;">Send</button>
-          <button id="chat-reset" class="btn-ghost text-sm" style="padding:8px 14px;">Reset</button>
-        </div>
-      </div>
-
-      <div class="card ink-shadow overflow-hidden">
-        <div class="px-5 py-3 border-b border-[var(--line)] flex items-center justify-between bg-[var(--paper)]">
-          <div class="flex items-center gap-2">
-            <span class="chip">Week of Apr 20, 2026</span>
-            <span class="text-xs text-[var(--muted)]">3 techs · 8am–6pm</span>
-          </div>
-          <span class="mono text-xs text-[var(--muted)]" id="appt-count">— appts</span>
-        </div>
-        <div class="p-4 overflow-x-auto">
-          <div id="calendar-grid" style="min-width:520px;"></div>
-        </div>
-      </div>
-    </div>
-
-    <p class="text-xs text-[var(--muted)] mt-4 max-w-3xl">
-      The agent translates plain English into tool calls against the scheduling API — <span class="mono text-[var(--ink)]">add_appointment</span>, <span class="mono text-[var(--ink)]">move_appointment</span>, <span class="mono text-[var(--ink)]">cancel_appointment</span>, <span class="mono text-[var(--ink)]">list_slots</span>. Every call is shown in the chat as an audit trail. In production this is the same pattern wired to your system of record with permissioning, approval gates, and write-back to your CRM.
-    </p>
-  </div>
-</section>
-
-<section id="how" class="border-t border-[var(--line)]">
-  <div class="max-w-6xl mx-auto px-6 py-16">
-    <div class="sectionnum mb-2">02 — Why Ramped</div>
-    <h2 class="text-3xl md:text-4xl font-bold tracking-tight max-w-3xl">There are 200 firms who'll deck you. Three things make us different.</h2>
-    <div class="grid md:grid-cols-3 gap-5 mt-10">
+    <div class="grid sm:grid-cols-3 gap-5">
+      <!-- Pain 1 -->
       <div class="card p-6 hover-lift">
-        <div class="mono text-xs text-[var(--muted)] mb-3">01</div>
-        <h3 class="text-xl font-bold mb-2">We built it inside our own business first.</h3>
-        <p class="text-sm text-[var(--muted)] leading-relaxed">Our CEO runs Xtractor Depot — a real cannabis-extraction equipment company doing real revenue. Before we sold this service to anyone, he deployed agents inside XD's email, quoting, and operations stack. The Ramp Sprint is that exact path, stripped of the trial-and-error, productized for you.</p>
-        <div class="mt-4 text-xs"><span class="chip">Operator-led</span></div>
+        <div class="pain-icon mb-4">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <circle cx="10" cy="10" r="8" stroke="var(--muted)" stroke-width="1.5"/>
+            <path d="M10 6v4l2.5 2.5" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3 style="font-weight:700;font-size:16px;color:var(--ink);margin-bottom:8px;">You know AI could help — but don't know where to start</h3>
+        <p style="font-size:14px;color:var(--muted);line-height:1.6;">Every week you read about AI transforming businesses like yours. Your team is busy. The tools are confusing. And another quarter goes by.</p>
       </div>
+      <!-- Pain 2 -->
       <div class="card p-6 hover-lift">
-        <div class="mono text-xs text-[var(--muted)] mb-3">02</div>
-        <h3 class="text-xl font-bold mb-2">30 days. Or we don't get paid.</h3>
-        <p class="text-sm text-[var(--muted)] leading-relaxed">The name is the promise. By day 30 you have agents in production, your team trained, and a metrics readout proving impact. If we miss, we extend at our cost until you're Fully Ramped. That's the refund clause operationalized.</p>
-        <div class="mt-4 text-xs"><span class="chip">30-day Sprint</span></div>
+        <div class="pain-icon mb-4">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <rect x="3" y="4" width="14" height="10" rx="2" stroke="var(--muted)" stroke-width="1.5"/>
+            <path d="M7 16h6" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M10 14v2" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3 style="font-weight:700;font-size:16px;color:var(--ink);margin-bottom:8px;">Consultants give you decks, not working software</h3>
+        <p style="font-size:14px;color:var(--muted);line-height:1.6;">You've sat through the strategy sessions. You have the roadmap PDF. But nothing in your business actually changed. Deliverables aren't outcomes.</p>
       </div>
-      <div class="card p-6 hover-lift" style="border-color:var(--accent);">
-        <div class="mono text-xs text-[var(--accent)] mb-3">03</div>
-        <h3 class="text-xl font-bold mb-2">Built for the businesses Big Consulting won&rsquo;t serve.</h3>
-        <p class="text-sm text-[var(--muted)] leading-relaxed">Accenture wants $350K to start and six months of strategy phases. Deloitte&rsquo;s minimum is $500K. Neither is rational for a $30M cannabis processor or a regional SNF group. <strong class="text-[var(--ink)]">Ramped is built explicitly for SMB and lower-mid-market operators</strong> — Pro starts at $5K setup + $1,500/mo (half the setup doesn&rsquo;t bill until we&rsquo;re live), Max is custom, live in 2–3 weeks. Less than 1/10th of an enterprise consulting engagement. Same outcomes. Actually shipped.</p>
-        <div class="mt-4 text-xs"><span class="chip" style="background:#E6EEFF;color:var(--accent-2);">SMB-priced · operator-built</span></div>
+      <!-- Pain 3 -->
+      <div class="card p-6 hover-lift">
+        <div class="pain-icon mb-4">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M4 6h12M4 10h8M4 14h5" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3 style="font-weight:700;font-size:16px;color:var(--ink);margin-bottom:8px;">Your team is stuck doing work that should be automated</h3>
+        <p style="font-size:14px;color:var(--muted);line-height:1.6;">Manual intake. Follow-up emails. Data entry. Routing. Your best people spend hours on tasks a well-configured AI agent could handle in seconds.</p>
       </div>
     </div>
   </div>
 </section>
 
-<section id="case" class="border-t border-[var(--line)] bg-[var(--ink)] text-white">
-  <div class="max-w-6xl mx-auto px-6 py-16">
-    <div class="sectionnum mb-2" style="color:#9AA3B5">03 — The case study</div>
-    <h2 class="text-3xl md:text-4xl font-bold tracking-tight max-w-3xl">Xtractor Depot, in his own words.</h2>
-    <p class="text-white/70 mt-3 max-w-2xl">Cannabis-extraction equipment company. The CEO ran the playbook on his own P&amp;L before any of this was a service.</p>
-    <div class="grid md:grid-cols-3 gap-5 mt-10">
-      <div class="rounded-2xl bg-[var(--ink-2)] p-6 border border-white/10">
-        <div class="text-xs uppercase tracking-wide text-white/50 mb-2">Time saved</div>
-        <div class="text-4xl font-extrabold leading-tight">15+ hrs<span class="text-white/40"> / </span>wk</div>
-        <div class="text-sm text-white/70 mt-2">Rep and ops hours reclaimed every week — the equivalent of a coordinator they didn't need to hire.</div>
-      </div>
-      <div class="rounded-2xl bg-[var(--ink-2)] p-6 border border-white/10">
-        <div class="text-xs uppercase tracking-wide text-white/50 mb-2">Quote turnaround</div>
-        <div class="text-4xl font-extrabold leading-tight">2 days <span class="text-white/40">→</span> &lt;2 min</div>
-        <div class="text-sm text-white/70 mt-2">Custom equipment quotes. Rep notes + spec sheet + catalog → drafted PDF waiting in the rep's queue.</div>
-      </div>
-      <div class="rounded-2xl bg-[var(--ink-2)] p-6 border border-white/10">
-        <div class="text-xs uppercase tracking-wide text-white/50 mb-2">Inbound lead capture</div>
-        <div class="text-4xl font-extrabold leading-tight">+38% <span class="text-white/40">booked</span></div>
-        <div class="text-sm text-white/70 mt-2">More inbounds converted to qualified, booked calls — nothing falls into a voicemail or email void anymore.</div>
-      </div>
-      <div class="md:col-span-3 rounded-2xl bg-[var(--ink-2)] p-8 border border-white/10">
-        <div class="text-xs uppercase tracking-wide text-white/50 mb-3">In his words</div>
-        <blockquote class="text-2xl md:text-3xl font-semibold leading-snug">"It's been a <span class="text-[#7CFFB7]">huge game-changer</span> for my company. I'd pay 4× what we pay now before I'd give it up — losing it would feel like losing the internet. Honestly — life-changing."</blockquote>
-        <div class="text-sm text-white/60 mt-4">— CEO, Xtractor Depot · on-record, April 2026</div>
-      </div>
-      <div class="md:col-span-3 grid md:grid-cols-4 gap-3">
-        <div class="rounded-xl bg-white/5 p-4 border border-white/10">
-          <div class="text-xs text-white/50 mb-1">Email volume handled / wk</div>
-          <div class="font-bold">~180 inbounds</div>
-        </div>
-        <div class="rounded-xl bg-white/5 p-4 border border-white/10">
-          <div class="text-xs text-white/50 mb-1">% drafted &amp; sent autonomously</div>
-          <div class="font-bold">68%</div>
-        </div>
-        <div class="rounded-xl bg-white/5 p-4 border border-white/10">
-          <div class="text-xs text-white/50 mb-1">Monthly all-in AI run cost</div>
-          <div class="font-bold">~$420/mo</div>
-        </div>
-        <div class="rounded-xl bg-white/5 p-4 border border-white/10">
-          <div class="text-xs text-white/50 mb-1">Time to first agent live</div>
-          <div class="font-bold">9 days</div>
-        </div>
-      </div>
+<!-- ─── HOW IT WORKS ──────────────────────────────────────────────────────── -->
+<section class="py-20 px-5 border-t border-[var(--line)]" id="how-it-works" style="background:#fff;">
+  <div class="max-w-5xl mx-auto">
+    <div class="mb-12">
+      <p class="sectionnum mb-3">How it works</p>
+      <h2 style="font-size:clamp(1.75rem,4vw,2.5rem);font-weight:800;letter-spacing:-.02em;color:var(--ink);">
+        Three steps. Thirty days.
+      </h2>
     </div>
-    <p class="text-xs text-white/50 mt-6 max-w-3xl">Directional figures from Xtractor Depot's first three months with the agent in production. Final attested numbers will be locked in the formal XD case-study write-up (per Section 11 of the strategy package).</p>
-  </div>
-</section>
 
-<section class="border-t border-[var(--line)]">
-  <div class="max-w-6xl mx-auto px-6 py-16">
-    <div class="sectionnum mb-2">04 — The Ramp Sprint</div>
-    <h2 class="text-3xl md:text-4xl font-bold tracking-tight max-w-3xl">What 30 days actually looks like.</h2>
-    <p class="text-[var(--muted)] mt-3 max-w-2xl">Same playbook, every Sprint. Reverse-engineered from what worked at Xtractor Depot, then stripped of the trial-and-error.</p>
-    <div class="mt-12 hidden md:grid grid-cols-7 gap-3 timeline-week">
-      <div class="flex flex-col items-start"><div class="timeline-dot">D0</div></div>
-      <div class="flex flex-col items-start"><div class="timeline-dot">W1</div></div>
-      <div class="flex flex-col items-start"><div class="timeline-dot">W2</div></div>
-      <div class="flex flex-col items-start"><div class="timeline-dot">W3</div></div>
-      <div class="flex flex-col items-start"><div class="timeline-dot">W4</div></div>
-      <div class="flex flex-col items-start"><div class="timeline-dot" style="background:var(--ink);color:#fff;border-color:var(--ink);">D30</div></div>
-      <div class="flex flex-col items-start"><div class="timeline-dot" style="background:#fff;color:var(--accent);border-color:var(--accent);border-style:dashed;">31+</div></div>
-    </div>
-    <div class="mt-6 grid sm:grid-cols-2 md:grid-cols-7 gap-3">
-      <div class="card p-5"><div class="text-xs uppercase mono text-[var(--muted)] mb-2">Day 0</div><div class="font-bold mb-1">Kickoff</div><p class="text-xs text-[var(--muted)] leading-relaxed">Half-day working session. Lock the two workflows. Capture baseline metrics on a whiteboard. Photograph it — those are the numbers we beat on day 30.</p></div>
-      <div class="card p-5"><div class="text-xs uppercase mono text-[var(--muted)] mb-2">Week 1</div><div class="font-bold mb-1">Quick Win live</div><p class="text-xs text-[var(--muted)] leading-relaxed">First agent (typically email) handles real traffic by Friday. High-touch human review on every draft. End-of-week ceremony.</p></div>
-      <div class="card p-5"><div class="text-xs uppercase mono text-[var(--muted)] mb-2">Week 2</div><div class="font-bold mb-1">Second agent</div><p class="text-xs text-[var(--muted)] leading-relaxed">Build the harder workflow — quoting, intake, dispatch. Week-1 agent graduates to selective review. Day-15 checkpoint with your CEO.</p></div>
-      <div class="card p-5"><div class="text-xs uppercase mono text-[var(--muted)] mb-2">Week 3</div><div class="font-bold mb-1">Shadow mode</div><p class="text-xs text-[var(--muted)] leading-relaxed">Both agents on live traffic, light review. Training session 1 — "how your agent thinks." Runbooks drafted.</p></div>
-      <div class="card p-5"><div class="text-xs uppercase mono text-[var(--muted)] mb-2">Week 4</div><div class="font-bold mb-1">Production + train</div><p class="text-xs text-[var(--muted)] leading-relaxed">Exception-only review. Training sessions 2 &amp; 3. Metrics dashboard + SOPs + escalation paths handed over.</p></div>
-      <div class="card p-5 bg-[var(--ink)] text-white"><div class="text-xs uppercase mono text-white/60 mb-2">Day 30</div><div class="font-bold mb-1">Fully Ramped</div><p class="text-xs text-white/70 leading-relaxed">60-min readout. Baseline vs. day-30 numbers. Certificate. Ops cadence is already live — this is a celebration, not a renewal pitch.</p></div>
-      <div class="card p-5" style="border-color:var(--accent);border-style:dashed;background:#F4F7FF;"><div class="text-xs uppercase mono mb-2" style="color:var(--accent);">Day 31+</div><div class="font-bold mb-1">Ramp Ops</div><p class="text-xs text-[var(--muted)] leading-relaxed">Ongoing monitoring, quarterly tune-ups, one new agent per year, Slack channel with SLA. Your team owns the agents; we keep them sharp as volume grows.</p></div>
-    </div>
-    <div class="mt-8 card p-5 flex items-start gap-4 bg-[var(--paper)]">
-      <div class="text-xl">⚡</div>
-      <div class="text-sm text-[var(--muted)]"><strong class="text-[var(--ink)]">Week 1 is the hinge.</strong> If your business doesn't have a working agent processing real traffic by end of week one, the Sprint is off-track and our COO escalates that day. The brand promise demands it.</div>
+    <div class="grid sm:grid-cols-3 gap-8">
+      <!-- Step 1 -->
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center gap-3 mb-1">
+          <div class="step-num">1</div>
+          <span class="mono" style="font-size:11px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;">Week 1</span>
+        </div>
+        <h3 style="font-size:20px;font-weight:700;color:var(--ink);">Diagnose</h3>
+        <p style="font-size:15px;color:var(--muted);line-height:1.65;">We spend week one inside your business — mapping your workflows, talking to your team, and identifying where an AI agent will deliver the fastest, highest-leverage return.</p>
+        <div style="font-size:13px;color:var(--muted);padding:10px 14px;background:var(--paper);border-radius:8px;border:1px solid var(--line);">
+          Output: Workflow audit + agent deployment plan, agreed before build begins.
+        </div>
+      </div>
+      <!-- Step 2 -->
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center gap-3 mb-1">
+          <div class="step-num">2</div>
+          <span class="mono" style="font-size:11px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;">Days 2–30</span>
+        </div>
+        <h3 style="font-size:20px;font-weight:700;color:var(--ink);">Build</h3>
+        <p style="font-size:15px;color:var(--muted);line-height:1.65;">We deploy live AI agents — not a prototype, not a demo — into your actual systems in 30 days. You get working software, not a roadmap. Half your fee stays in escrow until we go live.</p>
+        <div style="font-size:13px;color:var(--muted);padding:10px 14px;background:var(--paper);border-radius:8px;border:1px solid var(--line);">
+          Output: A live, production AI agent running in your business.
+        </div>
+      </div>
+      <!-- Step 3 -->
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center gap-3 mb-1">
+          <div class="step-num">3</div>
+          <span class="mono" style="font-size:11px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;">Month 2+</span>
+        </div>
+        <h3 style="font-size:20px;font-weight:700;color:var(--ink);">Run</h3>
+        <p style="font-size:15px;color:var(--muted);line-height:1.65;">Flat monthly retainer. We own uptime, maintenance, and iteration. As your business grows, we expand the system — new agents, new workflows, more automation — without a new engagement.</p>
+        <div style="font-size:13px;color:var(--muted);padding:10px 14px;background:var(--paper);border-radius:8px;border:1px solid var(--line);">
+          Output: An AI system that gets smarter and more capable over time.
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-<section id="pricing" class="border-t border-[var(--line)] bg-[var(--paper)]">
-  <div class="max-w-6xl mx-auto px-6 py-16">
-    <div class="sectionnum mb-2">05 — Pricing</div>
-    <h2 class="text-3xl md:text-4xl font-bold tracking-tight max-w-3xl">One monthly fee. One accountable partner. Priced for operators, not enterprise.</h2>
-    <p class="text-[var(--muted)] mt-3 max-w-2xl">The Thailand consultant charges $6,000/day. Deloitte won&rsquo;t take the call under $200K. We start at $5K up front and $1,500/month — flat fees, recurring relationship, and half the setup ($2,500) is held back until we&rsquo;re live and producing work. Two tiers below. <strong class="text-[var(--ink)]">Discovery call is free.</strong></p>
-
-    <!-- Two tiers — Pro / Max -->
-    <div class="grid md:grid-cols-2 gap-5 mt-10">
-      <!-- Pro — default SKU with concrete pricing -->
-      <div class="card p-6 relative ink-shadow" style="border-color:var(--ink);box-shadow:0 18px 48px -22px rgba(11,18,32,0.4);">
-        <div class="absolute -top-3 left-6 chip" style="background:var(--ink);color:#fff;">Pro — most common plan</div>
-        <div class="flex items-center justify-between mb-3 mt-2"><span class="chip">Pro</span><span class="text-xs text-[var(--muted)]">SMB operators</span></div>
-        <h3 class="text-xl font-bold">Your outsourced AI team, live in 30 days.</h3>
-        <div class="mt-4 pb-4 border-b border-[var(--line)]">
-          <div class="flex items-baseline gap-2"><span class="text-3xl font-extrabold">$5K</span><span class="text-sm text-[var(--muted)]">Setup · 50/50</span></div>
-          <div class="flex items-baseline gap-2 mt-1"><span class="text-2xl font-bold text-[var(--accent)]">+ $1,500<span class="text-sm font-normal">/mo</span></span><span class="text-xs text-[var(--muted)]">starts month 2</span></div>
-          <div class="text-xs text-[var(--muted)] mt-2">Year 1: ~$21,500 all-in · $2,500 at kickoff, $2,500 only when we&rsquo;re live, monthly fee begins day 1 of month 2</div>
-        </div>
-        <ul class="text-sm text-[var(--muted)] mt-4 space-y-2">
-          <li>• 2–3 integrations (ERP / CRM / e-comm / Workspace)</li>
-          <li>• Up to 5 operator seats</li>
-          <li>• Slack + email + web interfaces</li>
-          <li>• ~3,000 automated tasks/month included (one email handled, one quote sent, one ticket triaged = one task)</li>
-          <li>• Standard SLA, quarterly tune-ups, Slack support channel</li>
-          <li>• <strong class="text-[var(--ink)]">Half the setup is held back</strong> until four gates are green: integrations live, operators trained, production tasks running, dashboard up</li>
-        </ul>
-      </div>
-      <!-- Max — custom/vague pricing -->
-      <div class="card p-6 hover-lift" style="background:var(--paper);">
-        <div class="flex items-center justify-between mb-3"><span class="chip" style="background:#FFEDD5;color:#7A4F00;">Max</span><span class="text-xs text-[var(--muted)]">Regulated / high-volume</span></div>
-        <h3 class="text-xl font-bold">Full-stack, compliance-ready, every interface.</h3>
-        <div class="mt-4 pb-4 border-b border-[var(--line)]">
-          <div class="flex items-baseline gap-2"><span class="text-3xl font-extrabold">Custom</span></div>
-          <div class="flex items-baseline gap-2 mt-1"><span class="text-base text-[var(--muted)]">Scoped per engagement</span></div>
-          <div class="text-xs text-[var(--muted)] mt-2"><a href="#book" class="underline hover:text-[var(--accent)]">Talk to us →</a> · typical Max clients run ~20× the volume of Pro</div>
-        </div>
-        <ul class="text-sm text-[var(--muted)] mt-4 space-y-2">
-          <li>• 5+ integrations incl. specialty (ServiceTitan, Epic, QuickBooks, HubSpot)</li>
-          <li>• Unlimited operator seats</li>
-          <li>• Voice + SMS + WhatsApp + Slack + web interfaces</li>
-          <li>• ~60,000 automated tasks/month · transparent overage past that</li>
-          <li>• BAA-ready, SOC2-path, Mac mini on-prem option</li>
-          <li>• Dedicated ops lead, monthly tune-ups, same-day SLA</li>
-        </ul>
-      </div>
+<!-- ─── PROOF ─────────────────────────────────────────────────────────────── -->
+<section class="py-20 px-5 border-t border-[var(--line)]" id="proof">
+  <div class="max-w-5xl mx-auto">
+    <div class="mb-12">
+      <p class="sectionnum mb-3">Client results</p>
+      <h2 style="font-size:clamp(1.75rem,4vw,2.5rem);font-weight:800;letter-spacing:-.02em;color:var(--ink);">
+        Real businesses. Real results.
+      </h2>
     </div>
 
-    <p class="text-xs text-[var(--muted)] mt-4 leading-relaxed">Setup is 50% at kickoff, 50% at Fully Ramped (four gates: integrations live, operators trained, production tasks running, dashboard up). Monthly fee begins day 1 of month 2 — your first 30 days cover setup only. 12-month initial term runs from the monthly-fee start, month-to-month after. Mac mini on-prem appliance (for teams that need the AI running inside their own four walls): +$5K setup, +$500/mo. If you go over Max&rsquo;s monthly task count, we bill extra usage at a flat per-task rate — we&rsquo;ll show you the math before it bills.</p>
-
-    <!-- Two commercial paths — Managed vs Direct -->
-    <div class="mt-10 card overflow-hidden" style="border-color:var(--line);">
-      <div class="px-6 py-4 bg-[var(--paper)] border-b border-[var(--line)] flex items-center gap-3 flex-wrap">
-        <span class="chip" style="background:#E6EEFF;color:var(--accent-2);">Two ways to buy</span>
-        <div class="font-bold text-[var(--ink)]">Ramped Managed or Ramped Direct. Same agents, different invoice.</div>
-      </div>
-      <div class="p-6 grid md:grid-cols-2 gap-6">
-        <!-- Managed -->
-        <div class="card p-5" style="border-color:var(--accent);">
-          <div class="flex items-center justify-between mb-3"><span class="chip" style="background:var(--accent);color:#fff;">Ramped Managed</span><span class="text-xs text-[var(--muted)]">Default for SMB</span></div>
-          <h4 class="text-lg font-bold">One bundled invoice from Ramped.</h4>
-          <p class="text-sm text-[var(--muted)] mt-3 leading-relaxed">We hold the Anthropic enterprise contract. Tokens are bundled into your monthly fee with usage bands and transparent overage pricing. You get one invoice, one vendor, one accountable partner.</p>
-          <ul class="text-sm text-[var(--muted)] mt-4 space-y-1.5">
-            <li>✓ One invoice, one vendor relationship</li>
-            <li>✓ Tokens bundled with usage bands</li>
-            <li>✓ Ramped hosts the infrastructure</li>
-            <li>✓ Simpler procurement, faster kickoff</li>
-          </ul>
-        </div>
-        <!-- Direct -->
-        <div class="card p-5">
-          <div class="flex items-center justify-between mb-3"><span class="chip">Ramped Direct</span><span class="text-xs text-[var(--muted)]">Regulated / enterprise</span></div>
-          <h4 class="text-lg font-bold">You hold the Anthropic contract.</h4>
-          <p class="text-sm text-[var(--muted)] mt-3 leading-relaxed">You sign Anthropic directly — native, AWS Bedrock, or Google Vertex — and give Ramped API keys. We still host and operate. Better fit for banks, health systems, and anyone needing a direct BAA with the model vendor.</p>
-          <ul class="text-sm text-[var(--muted)] mt-4 space-y-1.5">
-            <li>✓ You're Anthropic&rsquo;s customer of record</li>
-            <li>✓ Your BAA, your enterprise terms</li>
-            <li>✓ Ramped still hosts and operates</li>
-            <li>✓ Ramped monthly fee unchanged; tokens billed to you</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <!-- How it works — two paths delivery story -->
-    <div class="mt-6 card p-6 bg-white" style="border-left:3px solid var(--accent);">
-      <div class="text-xs uppercase tracking-wide text-[var(--accent)] mono mb-2">How the delivery works</div>
-      <p class="text-sm text-[var(--muted)] leading-relaxed"><strong class="text-[var(--ink)]">Ramped hosts the infrastructure, either way.</strong> In <strong class="text-[var(--ink)]">Managed</strong> (the default), Ramped holds the Anthropic contract and bills tokens as part of your monthly fee with usage bands — one invoice, one vendor. In <strong class="text-[var(--ink)]">Direct</strong>, you sign your own Anthropic contract (direct, Bedrock, or Vertex) and we operate against your keys — your BAA, your terms. Same agents, same engineers, same operating platform — the commercial wrapper is your choice.</p>
-    </div>
-
-    <!-- Discovery + Standalone Sprint -->
-    <div class="grid md:grid-cols-2 gap-5 mt-6">
-      <div class="card p-6 hover-lift" style="border-color:var(--accent);">
-        <div class="flex items-center justify-between mb-3"><span class="chip" style="background:var(--accent);color:#fff;">On-ramp</span><span class="text-xs text-[var(--muted)]">30 min</span></div>
-        <h3 class="text-xl font-bold">Discovery call</h3>
-        <div class="mt-3"><div class="text-2xl font-extrabold">Free</div><div class="text-xs text-[var(--muted)] mt-1">No deck. No qualification gauntlet.</div></div>
-        <p class="text-sm text-[var(--muted)] leading-relaxed mt-4">30 minutes with Jon. We walk your team through how Ramped would work for your specific operation, what the first agents look like, what it would cost, and whether a Sprint would move a number for you. A big part of the call is a quick tech-stack and API-access review — what systems you already run (ERP, CRM, accounting, e-comm, phones, inbox, EHR) and which of them have usable API access. That&rsquo;s the question that decides whether you&rsquo;re a Pro in two weeks or a Max in four, so we get it out of the way on day one. If Ramped isn&rsquo;t a fit, we&rsquo;ll say so — the Xtractor Depot playbook doesn&rsquo;t map cleanly to every business and we&rsquo;re better off knowing that now than at week three.</p>
-      </div>
-      <div class="card p-6 hover-lift" style="background:var(--paper);">
-        <div class="flex items-center justify-between mb-3"><span class="chip" style="background:#FFEDD5;color:#7A4F00;">Standalone Sprint</span><span class="text-xs text-[var(--muted)]">No Ops commitment</span></div>
-        <h3 class="text-xl font-bold">Sprint without the Partnership</h3>
-        <div class="mt-3"><div class="text-2xl font-extrabold">$15,000</div><div class="text-xs text-[var(--muted)] mt-1">Flat · 3× the Pro setup.</div></div>
-        <p class="text-sm text-[var(--muted)] leading-relaxed mt-4">Available if you genuinely can&rsquo;t commit to a 12-month partnership. Priced at its true cost-to-deliver without the recurring relationship to amortize against. We&rsquo;ll ask why — and we&rsquo;ll generally steer you back to the Partnership at $5K + $1,500/mo.</p>
-      </div>
-    </div>
-
-    <!-- Portfolio -->
-    <div class="mt-6 card p-5 text-sm text-[var(--muted)] flex items-start gap-3">
-      <div class="text-lg">🏗</div>
-      <div><strong class="text-[var(--ink)]">Ramp Portfolio:</strong> for lower-mid-market PE funds running 3–5 SMB portcos, we scope the engagement as a Max-tier deal — one SOW, standardized integrations, an agent library that ports cleanly between acquisitions, and a single ops relationship across the portfolio. Custom pricing based on portco count and integration surface area. Mega-funds with in-house portfolio ops teams are out of scope — talk to us if you&rsquo;re in between.</div>
-    </div>
-
-    <!-- How we cut the token bill — CFO trust signal -->
-    <div class="mt-10 card overflow-hidden" style="border-color:var(--line);">
-      <div class="px-6 py-4 bg-[var(--paper)] border-b border-[var(--line)] flex items-center justify-between gap-3 flex-wrap">
-        <div class="flex items-center gap-3 flex-wrap">
-          <span class="chip" style="background:#E6EEFF;color:var(--accent-2);">For the CFO</span>
-          <div class="font-bold text-[var(--ink)]">How we keep your Anthropic bill down 30–50% vs. a naïve build.</div>
-        </div>
-      </div>
-      <div class="p-6 grid md:grid-cols-2 gap-6">
-        <div>
-          <p class="text-sm text-[var(--muted)] leading-relaxed">Whether you&rsquo;re on <strong class="text-[var(--ink)]">Managed</strong> (we bundle AI usage into your monthly fee) or <strong class="text-[var(--ink)]">Direct</strong> (you see the Anthropic bill yourself), the math is the same — and it&rsquo;s our job to keep it small. Where we move the number is <strong class="text-[var(--ink)]">in how the agents are built</strong>: use a cheaper AI model for simple tasks, reserve the expensive one for hard tasks, cache repeat content, send the AI only the relevant paragraphs instead of the whole document, batch work where we can. That mix typically cuts AI spend <strong class="text-[var(--ink)]">30–50%</strong> vs. a first-pass build someone&rsquo;s nephew does over a weekend.</p>
-          <p class="text-sm text-[var(--muted)] leading-relaxed mt-3">There&rsquo;s also <strong class="text-[var(--ink)]">no new hardware line item</strong>. Our platform runs on a small private cloud we manage, or on a Mac mini appliance we ship you if you need the AI running inside your own building. No GPUs to buy. No &ldquo;AI infrastructure&rdquo; CapEx conversation.</p>
+    <div class="card p-8 sm:p-10 max-w-3xl" style="border-left:4px solid var(--accent);">
+      <div class="flex items-start gap-4 mb-6">
+        <div style="flex-shrink:0;width:44px;height:44px;border-radius:10px;background:var(--paper);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+            <rect x="3" y="5" width="16" height="12" rx="2" stroke="var(--ink)" stroke-width="1.5"/>
+            <path d="M7 9h8M7 13h5" stroke="var(--ink)" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
         </div>
         <div>
-          <div class="card overflow-x-auto cost-table-scroll" style="max-width:100%;">
-            <table class="w-full text-sm cost-table">
-              <thead class="bg-[var(--paper)]"><tr>
-                <th class="text-left font-semibold text-[var(--ink)] px-4 py-3">Cost lever</th>
-                <th class="text-left font-semibold text-[var(--muted)] px-4 py-3">Naïve API build</th>
-                <th class="text-left font-semibold px-4 py-3" style="color:var(--accent);">Ramped build</th>
-              </tr></thead>
-              <tbody class="divide-y divide-[var(--line)]">
-                <tr><td class="px-4 py-3 align-top">Which AI model runs each task</td><td class="px-4 py-3 align-top text-[var(--muted)]">Uses the expensive model for everything</td><td class="px-4 py-3 align-top font-semibold text-[var(--accent)]">Cheap model first, expensive model only when it earns it</td></tr>
-                <tr><td class="px-4 py-3 align-top">Repeated content</td><td class="px-4 py-3 align-top text-[var(--muted)]">Re-sent to the AI every time</td><td class="px-4 py-3 align-top font-semibold text-[var(--accent)]">Cached once, billed at a fraction</td></tr>
-                <tr><td class="px-4 py-3 align-top">How much context we send</td><td class="px-4 py-3 align-top text-[var(--muted)]">Whole document, every request</td><td class="px-4 py-3 align-top font-semibold text-[var(--accent)]">Only the paragraphs that matter</td></tr>
-                <tr><td class="px-4 py-3 align-top">Hardware / where it runs</td><td class="px-4 py-3 align-top text-[var(--muted)]">Often a new server or cloud line item</td><td class="px-4 py-3 align-top font-semibold text-[var(--accent)]">Ramped-managed cloud, or a Mac mini we ship you</td></tr>
-                <tr><td class="px-4 py-3 align-top">Typical AI spend vs. baseline</td><td class="px-4 py-3 align-top text-[var(--muted)]">100%</td><td class="px-4 py-3 align-top font-semibold text-[var(--accent)]">30–50% lower</td></tr>
-                <tr><td class="px-4 py-3 align-top">Who holds the Anthropic contract</td><td class="px-4 py-3 align-top text-[var(--muted)]">Varies — often opaque</td><td class="px-4 py-3 align-top font-semibold text-[var(--accent)]">Your choice: Managed (we do) or Direct (you do)</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="text-[11px] text-[var(--muted)] mt-2 sm:hidden">← swipe the table horizontally →</div>
-          <p class="text-xs text-[var(--muted)] mt-3 leading-relaxed">Ramped participates in Anthropic&rsquo;s <strong class="text-[var(--ink)]">Claude Partner Network</strong> and operates strictly under Anthropic&rsquo;s Commercial Terms. We don&rsquo;t bundle, mark up, or resell subscription access. Full stop.</p>
+          <p style="font-weight:700;font-size:16px;color:var(--ink);">Xtractor Depot</p>
+          <p style="font-size:13px;color:var(--muted);">Industrial equipment supplier</p>
+        </div>
+      </div>
+
+      <p style="font-size:16px;color:var(--ink);line-height:1.75;margin-bottom:20px;">
+        Xtractor Depot was spending <span class="bracket">[X hours]</span>/week on manual intake and follow-up. After a 30-day Sprint, their AI agent now handles <span class="bracket">[workflow]</span>, cutting response time from <span class="bracket">[X hours]</span> to <span class="bracket">[Y minutes]</span>.
+      </p>
+
+      <blockquote style="border-left:2px solid var(--line);padding-left:16px;margin:0;">
+        <p style="font-size:15px;color:var(--muted);font-style:italic;line-height:1.65;margin-bottom:8px;"><span class="bracket">[founder quote placeholder]</span></p>
+        <footer style="font-size:13px;color:var(--muted);font-weight:500;">— <span class="bracket">[Founder Name]</span>, Xtractor Depot</footer>
+      </blockquote>
+
+      <div class="flex flex-wrap gap-3 mt-6">
+        <div style="padding:8px 14px;background:var(--paper);border-radius:8px;border:1px solid var(--line);text-align:center;">
+          <p style="font-size:22px;font-weight:800;color:var(--ink);font-family:'JetBrains Mono',monospace;"><span class="bracket">[X]</span>h</p>
+          <p style="font-size:11px;color:var(--muted);margin-top:2px;">hrs/week saved</p>
+        </div>
+        <div style="padding:8px 14px;background:var(--paper);border-radius:8px;border:1px solid var(--line);text-align:center;">
+          <p style="font-size:22px;font-weight:800;color:var(--ink);font-family:'JetBrains Mono',monospace;"><span class="bracket">[Y]</span>m</p>
+          <p style="font-size:11px;color:var(--muted);margin-top:2px;">response time</p>
+        </div>
+        <div style="padding:8px 14px;background:var(--paper);border-radius:8px;border:1px solid var(--line);text-align:center;">
+          <p style="font-size:22px;font-weight:800;color:var(--ink);font-family:'JetBrains Mono',monospace;">30d</p>
+          <p style="font-size:11px;color:var(--muted);margin-top:2px;">to go-live</p>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="border-t border-[var(--line)]">
-  <div class="max-w-6xl mx-auto px-6 py-16">
-    <div class="sectionnum mb-2">06 — Things you're probably wondering</div>
-    <h2 class="text-3xl md:text-4xl font-bold tracking-tight max-w-3xl">The questions every operator asks us in the first 15 minutes.</h2>
-    <div class="mt-10 divide-y divide-[var(--line)] border-y border-[var(--line)]">
-      <details class="py-5 group" open><summary class="flex items-center justify-between gap-4"><span class="font-semibold text-lg">"Is this just ChatGPT in a wrapper?"</span><span class="text-xl text-[var(--muted)] group-open:rotate-45 transition">+</span></summary><p class="mt-3 text-[var(--muted)] leading-relaxed max-w-3xl">No. The AI model is one piece. The work is in the wiring — prompts tuned to your industry and your language, a search layer over <em>your</em> SOPs and product catalog so the agent answers from your documents (not the open internet), hookups to your CRM, ERP, inbox, and phones, automated quality checks that catch the kinds of mistakes a human reviewer would, clear handoff rules for when the agent isn&rsquo;t sure, and a human-approval step on anything you want signed off before it leaves the building. Claude is the engine. The agent is the car.</p></details>
-      <details class="py-5 group"><summary class="flex items-center justify-between gap-4"><span class="font-semibold text-lg">"Who pays Anthropic? Do you mark up the AI?"</span><span class="text-xl text-[var(--muted)] group-open:rotate-45 transition">+</span></summary><p class="mt-3 text-[var(--muted)] leading-relaxed max-w-3xl">Your choice. On <strong class="text-[var(--ink)]">Ramped Managed</strong> (our default for SMBs), we hold the Anthropic contract and bundle AI usage into your monthly fee with transparent volume bands — one invoice, one vendor. On <strong class="text-[var(--ink)]">Ramped Direct</strong> (our default for regulated clients), you sign Anthropic directly (via Anthropic, AWS Bedrock, or Google Vertex) and we operate against your API keys — your compliance agreement, your contract terms. Either way, Ramped charges for engineering and operations, not an AI markup. We participate in Anthropic&rsquo;s <strong class="text-[var(--ink)]">Claude Partner Network</strong> and run under their Commercial Terms. Where we save you money is in <em>how</em> the agents are built — smart model selection, caching, sending only what&rsquo;s relevant — typically 30–50% below a first-pass build.</p></details>
-      <details class="py-5 group"><summary class="flex items-center justify-between gap-4"><span class="font-semibold text-lg">"What about HIPAA / compliance / our data?"</span><span class="text-xl text-[var(--muted)] group-open:rotate-45 transition">+</span></summary><p class="mt-3 text-[var(--muted)] leading-relaxed max-w-3xl">For healthcare, we deploy under your enterprise terms with a HIPAA Business Associate Agreement (BAA) in place — non-negotiable. Compliance scoping is the reason healthcare Sprints run 3 weeks of setup instead of 2 — we&rsquo;d rather pay that time up front than have legal kill the engagement at week 4. For cannabis, we handle COA docs, Metrc logs, and the state rulebook as searchable knowledge for the agent. For field services, we sit alongside ServiceTitan or Housecall Pro without owning the system of record.</p></details>
-      <details class="py-5 group"><summary class="flex items-center justify-between gap-4"><span class="font-semibold text-lg">"What happens at day 31?"</span><span class="text-xl text-[var(--muted)] group-open:rotate-45 transition">+</span></summary><p class="mt-3 text-[var(--muted)] leading-relaxed max-w-3xl">The monthly Operate &amp; Improve phase kicks in. It&rsquo;s signed on day zero alongside the Sprint, so there&rsquo;s no renewal conversation at day 30 — the partnership is already in force. You get runbooks, training recordings, automated quality checks, and a metrics dashboard. We handle monitoring, quarterly tune-ups, one new agent per year, and a quarterly business review. 12-month initial term, month-to-month after — you&rsquo;re never locked in past the first year.</p></details>
-      <details class="py-5 group"><summary class="flex items-center justify-between gap-4"><span class="font-semibold text-lg">"What if it doesn't work in 30 days?"</span><span class="text-xl text-[var(--muted)] group-open:rotate-45 transition">+</span></summary><p class="mt-3 text-[var(--muted)] leading-relaxed max-w-3xl">We extend the engagement at our cost until you&rsquo;re Fully Ramped. The criteria are written into the contract: agents running on your real inbox and phones, your team can adjust the agent without us, and a measurable improvement on the workflow we targeted. If those aren&rsquo;t true on day 30, we keep working until they are.</p></details>
+<!-- ─── PRICING ───────────────────────────────────────────────────────────── -->
+<section class="py-20 px-5 border-t border-[var(--line)]" id="pricing" style="background:#fff;">
+  <div class="max-w-5xl mx-auto">
+    <div class="mb-12">
+      <p class="sectionnum mb-3">Pricing</p>
+      <h2 style="font-size:clamp(1.75rem,4vw,2.5rem);font-weight:800;letter-spacing:-.02em;color:var(--ink);">
+        Simple, performance-backed pricing.
+      </h2>
+      <p style="font-size:16px;color:var(--muted);margin-top:10px;max-width:520px;line-height:1.6;">Half your setup fee held in escrow until your agent is live. If we don't ship in 30 days, you don't pay the second half.</p>
     </div>
-  </div>
-</section>
 
-<section id="book" class="border-t border-[var(--line)] bg-[var(--ink)] text-white">
-  <div class="max-w-4xl mx-auto px-6 py-20 text-center">
-    <div class="sectionnum mb-3" style="color:#9AA3B5">07 — Next step</div>
-    <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight">A free 30-minute call. We bring numbers. You decide.</h2>
-    <p class="mt-5 text-white/70 max-w-2xl mx-auto">Not a pitch. We'll ask what's actually breaking in your operation, share the Xtractor Depot model adapted to your business, and tell you straight whether a Sprint would move a number for you. If it wouldn't, we'll say so.</p>
-    <div class="mt-8 flex flex-wrap justify-center gap-3">
-      <a href="https://calendly.com/jon-30dayramp" target="_blank" rel="noopener" class="btn-primary" style="background:#fff;color:var(--ink);">Book a discovery call →</a>
-      <a href="mailto:jon@30dayramp.com?subject=Send%20me%20the%20Sprint%20sell%20sheet" class="btn-ghost" style="background:transparent;color:#fff;border-color:rgba(255,255,255,0.3);">Or just send me the sell sheet</a>
-    </div>
-    <div class="mt-8 text-xs text-white/40">Jon, COO · jon@30dayramp.com</div>
-  </div>
-</section>
-
-<footer class="border-t border-[var(--line)] bg-[var(--paper)]">
-  <div class="max-w-6xl mx-auto px-6 py-8 flex flex-wrap items-center justify-between gap-3 text-xs text-[var(--muted)]">
-    <div class="flex items-center gap-2">
-      <div class="flex items-end gap-[2px]" aria-hidden="true">
-        <div class="w-[3px] h-[5px] bg-[var(--ink)]"></div>
-        <div class="w-[3px] h-[8px] bg-[var(--ink)]"></div>
-        <div class="w-[3px] h-[11px] bg-[var(--ink)]"></div>
-        <div class="w-[3px] h-[14px] bg-[var(--accent)]"></div>
+    <div class="grid sm:grid-cols-2 gap-6 max-w-3xl">
+      <!-- Sprint -->
+      <div class="card p-7 hover-lift flex flex-col">
+        <div class="flex items-center justify-between mb-5">
+          <div>
+            <p class="mono" style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">Sprint</p>
+            <p style="font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.02em;">$5,000 <span style="font-size:15px;font-weight:500;color:var(--muted);">setup</span></p>
+            <p style="font-size:18px;font-weight:700;color:var(--ink);">+ $1,500<span style="font-size:13px;font-weight:500;color:var(--muted);">/mo</span></p>
+          </div>
+        </div>
+        <ul style="list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:11px;flex:1;">
+          <li class="flex items-start gap-2.5">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px;" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ECFDF5"/><path d="M4.5 8.5l2.5 2.5 4-5" stroke="var(--good)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:14px;color:var(--ink);">30-day go-live guarantee</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px;" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ECFDF5"/><path d="M4.5 8.5l2.5 2.5 4-5" stroke="var(--good)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:14px;color:var(--ink);">Half fee held in escrow until live</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px;" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ECFDF5"/><path d="M4.5 8.5l2.5 2.5 4-5" stroke="var(--good)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:14px;color:var(--ink);">1 production AI agent</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px;" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ECFDF5"/><path d="M4.5 8.5l2.5 2.5 4-5" stroke="var(--good)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:14px;color:var(--ink);">Monthly iteration & maintenance</span>
+          </li>
+        </ul>
+        <a href="#get-started" class="btn-primary w-full justify-center">Start with Sprint →</a>
       </div>
-      <span class="font-semibold text-[var(--ink)]">Ramped</span>
-      <span>· AI implementation for operating businesses</span>
+
+      <!-- Scale -->
+      <div class="card p-7 hover-lift flex flex-col" style="border-color:var(--accent);background:linear-gradient(160deg,#f5f8ff 0%,#fff 60%);">
+        <div class="flex items-center justify-between mb-2">
+          <span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);background:#EEF3FF;padding:3px 8px;border-radius:4px;">Most popular</span>
+        </div>
+        <div class="mb-5">
+          <p class="mono" style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">Scale</p>
+          <p style="font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.02em;">$5,000 <span style="font-size:15px;font-weight:500;color:var(--muted);">setup</span></p>
+          <p style="font-size:18px;font-weight:700;color:var(--ink);">+ $2,500<span style="font-size:13px;font-weight:500;color:var(--muted);">/mo</span></p>
+        </div>
+        <ul style="list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:11px;flex:1;">
+          <li class="flex items-start gap-2.5">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px;" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ECFDF5"/><path d="M4.5 8.5l2.5 2.5 4-5" stroke="var(--good)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:14px;color:var(--ink);">Everything in Sprint</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px;" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ECFDF5"/><path d="M4.5 8.5l2.5 2.5 4-5" stroke="var(--good)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:14px;color:var(--ink);">Up to 3 production AI agents</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px;" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ECFDF5"/><path d="M4.5 8.5l2.5 2.5 4-5" stroke="var(--good)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:14px;color:var(--ink);">Priority support & response</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px;" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ECFDF5"/><path d="M4.5 8.5l2.5 2.5 4-5" stroke="var(--good)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:14px;color:var(--ink);">Quarterly strategy review</span>
+          </li>
+        </ul>
+        <a href="#get-started" class="btn-primary w-full justify-center" style="background:var(--accent);">Start with Scale →</a>
+      </div>
     </div>
-    <div>© 2026 30 Day Ramp · All rights reserved</div>
+
+    <p style="font-size:14px;color:var(--muted);margin-top:20px;padding-left:2px;">
+      Not ready to commit? <a href="https://calendly.com/jon-30dayramp" target="_blank" rel="noopener" style="color:var(--accent);font-weight:500;">Book a free 30-minute discovery call first.</a>
+    </p>
+  </div>
+</section>
+
+<!-- ─── FINAL CTA ─────────────────────────────────────────────────────────── -->
+<section class="py-20 px-5 border-t border-[var(--line)] grid-bg" id="get-started">
+  <div class="max-w-5xl mx-auto">
+    <div class="max-w-xl mx-auto text-center mb-10">
+      <p class="sectionnum mb-4">Get started</p>
+      <h2 style="font-size:clamp(2rem,4.5vw,3rem);font-weight:800;letter-spacing:-.03em;color:var(--ink);line-height:1.1;">
+        Ready to ramp?
+      </h2>
+      <p style="font-size:16px;color:var(--muted);margin-top:12px;line-height:1.6;">
+        Tell us about your business and we'll follow up within one business day to scope the right starting point.
+      </p>
+    </div>
+
+    <!-- Final form -->
+    <div class="card ink-shadow p-7 max-w-md mx-auto">
+      <!-- Form inner -->
+      <div id="final-form-inner">
+        <form id="final-form" action="/api/contact" method="POST" class="flex flex-col gap-3">
+          <input class="form-input" type="text" name="name" placeholder="Your name" required autocomplete="name" />
+          <input class="form-input" type="email" name="email" placeholder="Work email" required autocomplete="email" />
+          <input class="form-input" type="text" name="company" placeholder="Company name" required autocomplete="organization" />
+          <button type="submit" class="btn-primary w-full justify-center mt-1">Get started →</button>
+        </form>
+        <div class="flex items-center gap-3 mt-5">
+          <div style="flex:1;height:1px;background:var(--line);"></div>
+          <span style="font-size:12px;color:var(--muted);">or</span>
+          <div style="flex:1;height:1px;background:var(--line);"></div>
+        </div>
+        <a href="https://calendly.com/jon-30dayramp" target="_blank" rel="noopener" class="btn-ghost w-full flex justify-center mt-3" style="text-decoration:none;font-size:14px;">
+          Book a call instead →
+        </a>
+      </div>
+      <!-- Success state -->
+      <div id="final-form-success" class="success-state flex-col items-center text-center py-4">
+        <div style="width:48px;height:48px;border-radius:999px;background:#ECFDF5;border:2px solid #D1FAE5;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 11.5l5 5 9-10" stroke="var(--good)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <p style="font-weight:700;font-size:17px;color:var(--ink);margin-bottom:6px;">You're on the list.</p>
+        <p style="font-size:14px;color:var(--muted);line-height:1.5;">We'll be in touch within one business day. In the meantime, feel free to <a href="https://calendly.com/jon-30dayramp" target="_blank" rel="noopener" style="color:var(--accent);font-weight:500;">book a discovery call</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ────────────────────────────────────────────────────────────── -->
+<footer class="border-t border-[var(--line)] px-5 py-10">
+  <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center sm:items-start justify-between gap-5">
+    <!-- Logo + tagline -->
+    <div class="flex flex-col items-center sm:items-start gap-2">
+      <div class="flex items-center gap-2.5">
+        <svg width="22" height="18" viewBox="0 0 26 22" fill="none" aria-hidden="true">
+          <rect x="0" y="14" width="5" height="8" rx="1.5" fill="var(--accent)"/>
+          <rect x="7" y="9" width="5" height="13" rx="1.5" fill="var(--accent)" opacity=".75"/>
+          <rect x="14" y="4" width="5" height="18" rx="1.5" fill="var(--accent)" opacity=".55"/>
+          <rect x="21" y="0" width="5" height="22" rx="1.5" fill="var(--accent)" opacity=".35"/>
+        </svg>
+        <span style="font-weight:700;font-size:14px;color:var(--ink);">30 Day Ramp</span>
+      </div>
+      <p style="font-size:13px;color:var(--muted);text-align:center;" class="sm:text-left">AI implementation for operating businesses</p>
+    </div>
+    <!-- Right side -->
+    <div class="flex flex-col items-center sm:items-end gap-1.5">
+      <a href="mailto:jon@30dayramp.com" style="font-size:13px;color:var(--muted);">jon@30dayramp.com</a>
+      <p style="font-size:12px;color:var(--muted);">© 2026 30 Day Ramp. All rights reserved.</p>
+    </div>
   </div>
 </footer>
 
 <script>
-const SCENARIOS = {
-  healthcare: {
-    channelLabel: "Inbox",
-    channelDetail: "admissions@ridgeline-snf.org",
-    from: "discharge.coord@memorialregional.org",
-    subject: "Discharge referral \u2014 Ellen H., Rm 402, ready 04/19",
-    body: "Sending over a discharge referral. Patient: Ellen H., 81F.\n\nAdmit dx: s/p R hip ORIF 04/12, secondary dx: A-fib, mild CHF.\nInsurance: Medicare A primary, AARP supplemental.\nAnticipated LOC: skilled rehab, PT/OT 5x/wk, est. 21\u201328 days.\nDischarge target: Sunday 04/19, AM.\n\nFamily prefers something within 15 miles of Riverdale.\nNeed confirmation by EOD Friday or we route to next facility.\n\n\u2014 Megan, Memorial Regional Discharge Planning",
-    steps: [
-      "Classifying intent \u00b7 'hospital discharge referral, short-term skilled rehab'",
-      "Extracting structured fields \u00b7 payer = Medicare A + supp; LOC = skilled; ALOS est. 21\u201328d",
-      "Querying bed-availability board \u00b7 3 compatible beds in B-wing, 2 in A-wing",
-      "Insurance eligibility pre-check (Medicare A) \u00b7 ACTIVE, no prior-auth flags",
-      "Geographic match \u00b7 Riverdale = 8.2 mi, within family preference",
-      "Match score \u00b7 92 / 100 \u00b7 drafting acknowledgement + admissions ping"
-    ],
-    action: "Notified Sarah T. (Admissions) \u00b7 match score 92/100 \u00b7 response queued",
-    actionMeta: "Acknowledged in 47 seconds vs. Tuesday's 14h average \u00b7 pre-auth pre-check complete \u00b7 family preference satisfied",
-    draft: "Hi Megan,\n\nThank you for sending Ellen over. Quick acknowledgement so you know we have her:\n\n\u2014 Bed availability: yes, we have 3 compatible beds in our B-wing rehab unit for a Sunday 4/19 admit.\n\u2014 Payer: Medicare A is active and we don't see any prior-auth flags for skilled rehab at this LOC. Will confirm with our biller and circle back today.\n\u2014 Distance from Riverdale: 8.2 miles, within the family's preference.\n\nSarah T., our admissions lead, is looped in and will be in touch in the next hour to coordinate the room and any pre-admission docs you need.\n\nBest,\nRidgeline SNF Admissions\n(this draft was prepared by our AI agent and reviewed by Sarah before send)",
-    metrics: [["Time to acknowledge","14 hrs","47 sec"],["Pre-auth pre-check","20 min manual","8 sec auto"],["Risk of losing referral","1-in-3","near-zero"]],
-    escalation: "Admissions lead"
-  },
-  cannabis: {
-    channelLabel: "Inbox",
-    channelDetail: "sales@xtractordepot.com",
-    from: "ops@verdantextracts.co",
-    subject: "Quote request \u2014 short-path system, 5L, replacement gaskets",
-    body: "Hey team \u2014 couple things:\n\n(1) Looking for pricing on a 5L short-path distillation kit, FDA-grade, food-safe gaskets. Need it shippable to NV by 04/30 if possible.\n(2) Also \u2014 the gaskets we got with our SPD-200 last August are starting to deform. Can you send a replacement set + the matching o-rings? PO will follow on net-30.\n\nTom Russo, Verdant Extracts (account #VE-0418).",
-    steps: [
-      "Classifying intent \u00b7 2 requests detected \u2192 quote (new equipment) + reorder (consumables)",
-      "Looking up account \u00b7 Verdant Extracts, VE-0418, net-30, in good standing",
-      "RAG over product catalog \u00b7 5L SPD-200 system identified, food-safe gasket SKU resolved",
-      "Pulling current pricing \u00b7 base $14,820 + freight to NV est. $640, lead time 11 business days",
-      "Reorder lookup \u00b7 gasket set GS-200-FS qty 6 + o-ring kit OR-200 qty 2 in stock, ships same day",
-      "Drafting consolidated reply + creating draft PO in NetSuite"
-    ],
-    action: "Drafted quote + reorder confirmation \u00b7 PO #DRF-8421 created in NetSuite for Tom's review",
-    actionMeta: "End-to-end response in 38 seconds vs. ~2-day average \u00b7 zero rep time consumed",
-    draft: "Hey Tom,\n\nGot both \u2014 handling them in one note so you can move on with your day.\n\nQUOTE \u2014 5L Short-Path Distillation, food-safe\nSKU: SPD-5L-FS \u00b7 Base: $14,820 \u00b7 Freight to NV (est.): $640\nLead time: 11 business days from PO. Hits your 4/30 target with 4 days of buffer.\n\nREORDER \u2014 VE-0418\nSPD-200 food-safe gasket set (GS-200-FS) \u00d7 6 \u2014 in stock\nSPD-200 o-ring kit (OR-200) \u00d7 2 \u2014 in stock\nShips today on your standard net-30. PO #DRF-8421 attached for your sign-off.\n\nLet me know if you want me to add anything (vacuum pump filters, the new condenser kit) before we ship.\n\n\u2014 XD Sales\n(prepared by our agent, reviewed by your rep before send)",
-    metrics: [["Quote turnaround","~2 days","38 seconds"],["Rep time consumed","~45 min","2 min review"],["PO data entry","Manual","Auto-drafted"]],
-    escalation: "Account rep on file"
-  },
-  livecall: {
-    channelLabel: "Phone \u00b7 Live call",
-    channelDetail: "Main line \u00b7 (555) 0199 \u00b7 answered ring 2 \u00b7 2m 47s",
-    from: "Inbound caller \u00b7 Derek Chen, Nocturne Labs \u00b7 2:14 PM",
-    subject: "Live call transcript \u2014 5L short-path inquiry \u2192 booked consult",
-    body: "AGENT: Thanks for calling Xtractor Depot, this is the intake line \u2014 can I get your name and what brought you in today?\n\nDEREK: Hi, Derek Chen, Nocturne Labs. We're scaling up our distillate line and I want to understand if your 5L short-path is the right jump from our current bench setup.\n\nAGENT: Got it \u2014 roughly a 4\u20135\u00d7 throughput lift. Two quick questions so I can get you to the right SKU. What solvent are you running upstream, and what purity are you targeting?\n\nDEREK: Ethanol winterization, and we want 85%+ on the main pass.\n\nAGENT: Good. That's squarely in the SPD-5L-FS range. Batch cadence you're planning? Matters for whether you want the standard or the jacketed condenser.\n\nDEREK: Twice a week, roughly 3L each run to start, maybe 4L by Q3.\n\nAGENT: At that cadence I'd steer you to the food-safe gasket package and the jacketed condenser \u2014 you'll feel the difference pushing toward 4L. Let me get you on with Priya, our technical sales lead \u2014 she's got a 45-minute window this Thursday at 10 AM Pacific. Does that work?\n\nDEREK: Thursday 10 works. Can you send a calendar invite and a product sheet I can share with my partner?\n\nAGENT: Yes \u2014 invite, spec sheet, and a short pre-call questionnaire so Priya can come in with tailored numbers. Anything else I can help with now?\n\nDEREK: No, that's great, thanks.\n\nAGENT: Thanks Derek \u2014 talk Thursday. \u25b8 Call ends.",
-    steps: [
-      "Answering call \u00b7 transcribing & diarizing live audio (Agent \u2194 Derek)",
-      "Intent detected \u00b7 mid-funnel B2B technical inquiry \u2192 qualify \u2192 book consult",
-      "Extracting fields in real time \u00b7 solvent=ethanol, target=85%+, cadence=2\u00d7wk 3\u20134L, scale=bench\u21925L",
-      "RAG over product catalog \u00b7 SPD-5L-FS + jacketed condenser = fit score 94",
-      "Calendar lookup \u00b7 Priya (technical sales) open Thu 04/23 10:00 PT",
-      "Confirming booking with caller in natural conversation",
-      "Call ended \u00b7 triggering 5 post-call actions in parallel"
-    ],
-    action: "Call handled live + 5 post-call actions executed in 11 seconds",
-    actionMeta: "Caller qualified, booked, and routed to the right rep \u00b7 zero human touch before handoff \u00b7 complete paper trail",
-    draft: "POST-CALL ACTIONS \u2014 all completed automatically after hang-up:\n\n1. HubSpot CRM \u00b7 Created contact Derek Chen @ Nocturne Labs \u00b7 tagged MQL \u00b7 lifecycle \u201cTechnical Consult Booked\u201d \u00b7 call notes synced verbatim\n\n2. Google Calendar \u00b7 Booked 45-min consult Thu 04/23 10:00 AM PT with Priya \u00b7 video link generated \u00b7 invite sent to Derek + Priya\n\n3. Email to caller \u00b7 Sent confirmation w/ calendar invite, SPD-5L-FS spec sheet PDF, and 6-question pre-call discovery form \u00b7 tracked for open/click\n\n4. Slack \u2192 #sales-consults \u00b7 Notified Priya w/ call summary, proposed SKU (SPD-5L-FS + jacketed condenser), extracted fields \u00b7 estimated deal band $16\u201319K\n\n5. NetSuite \u00b7 Opened draft quote DRF-9103 (SPD-5L-FS + jacketed condenser + food-safe gasket kit, freight TBD) for Priya to finalize before Thursday",
-    draftLabel: "Post-call actions (executed automatically)",
-    actionChip: "\u2713 5 actions taken",
-    metrics: [["Time to qualified meeting","~4 days","11 seconds"],["CRM data entry","15 min manual","0 min, verbatim"],["Handoff completeness","Rep starts cold","Rep briefed pre-meeting"]],
-    escalation: "Technical sales lead (Priya)"
-  },
-  field: {
-    channelLabel: "Phone",
-    channelDetail: "After-hours line \u00b7 (555) 0142",
-    from: "Inbound caller \u00b7 Karen Vasquez \u00b7 7:42 PM",
-    subject: "Voicemail transcript \u2014 water heater leak, no hot water",
-    body: "\"Hi, this is Karen Vasquez over at 412 Maple. I came home and the water heater is leaking pretty badly into the garage \u2014 there's water on the floor. We have no hot water at all. I'm a member, I think, with you guys? My husband says we signed up for the home protect plan last year. Can someone come out tonight or first thing tomorrow? Please call me back at this number.\"",
-    steps: [
-      "Transcribing voicemail \u00b7 22 sec audio \u2192 text",
-      "Classifying intent \u00b7 service call, water heater, ACTIVE LEAK = urgency tier 1",
-      "Customer lookup in ServiceTitan \u00b7 Karen Vasquez, 412 Maple, MEMBER (Home Protect Gold) \u2713",
-      "Checking on-call dispatch \u00b7 2 techs available within 18-mile radius",
-      "Booking provisional appointment \u00b7 tonight 9:30 PM ETA Mike R., truck #14",
-      "Drafting SMS confirmation + dispatching to on-call queue"
-    ],
-    action: "Booked tonight 9:30 PM with Mike R. \u00b7 ServiceTitan job #JX-77104 created \u00b7 SMS confirmation sent to caller",
-    actionMeta: "Call answered + booked in 41 seconds \u00b7 would otherwise have rolled to v-mail and been called back tomorrow morning (likely lost to next call she made)",
-    draft: "SMS to Karen Vasquez \u00b7 (555) 0142\n\n\"Hi Karen \u2014 this is Ridgeline Plumbing's after-hours line. Got your message about the water heater leak at 412 Maple. We see you're a Home Protect Gold member, so this is covered.\n\nWe have Mike R. on call \u2014 he can be at your house by 9:30 PM tonight to stop the leak and assess. Reply YES to confirm or call (555) 0143 if you'd rather we come first thing tomorrow morning.\n\nIf the leak is serious right now, please shut off the cold-water valve at the top of the heater (there's usually a lever or knob). We can walk you through it \u2014 just call.\n\n\u2014 Ridgeline Plumbing\"",
-    metrics: [["Call answer rate (after-hrs)","~35%","100%"],["Time to booked appt","~14 hrs","41 sec"],["Recovered job value (avg)","\u2014","$680 / call"]],
-    escalation: "On-call dispatcher"
-  }
-};
-
-const inboundChannel  = document.getElementById('inbound-channel');
-const inboundDetail   = document.getElementById('inbound-channel-detail');
-const inboundFrom     = document.getElementById('inbound-from');
-const inboundSubject  = document.getElementById('inbound-subject');
-const inboundBody     = document.getElementById('inbound-body');
-const reasoningList   = document.getElementById('reasoning-list');
-const outputBlock     = document.getElementById('output-block');
-const actionLine      = document.getElementById('action-line');
-const actionMeta      = document.getElementById('action-meta');
-const draftText       = document.getElementById('draft-text');
-const metricsRow      = document.getElementById('metrics-row');
-const statusPill      = document.getElementById('status-pill');
-const escalationChip  = document.getElementById('escalation-chip');
-const runBtn          = document.getElementById('run-btn');
-const resetBtn        = document.getElementById('reset-btn');
-
-let activeScenario = 'healthcare';
-let running = false;
-
-function loadScenario(key){
-  const s = SCENARIOS[key];
-  inboundChannel.textContent = s.channelLabel;
-  inboundDetail.textContent  = s.channelDetail;
-  inboundFrom.textContent    = s.from;
-  inboundSubject.textContent = s.subject;
-  inboundBody.textContent    = s.body;
-  resetAgentPane();
-}
-
-function resetAgentPane(){
-  reasoningList.innerHTML = '';
-  outputBlock.classList.add('hidden');
-  statusPill.textContent = 'IDLE';
-  statusPill.classList.remove('text-emerald-300');
-}
-
-function setActive(btn){
-  document.querySelectorAll('.scenario-btn').forEach(b=>{ b.setAttribute('aria-pressed','false'); });
-  btn.setAttribute('aria-pressed','true');
-}
-
-document.querySelectorAll('.scenario-btn').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    if (running) return;
-    activeScenario = btn.dataset.scenario;
-    setActive(btn);
-    loadScenario(activeScenario);
-  });
-});
-
-resetBtn.addEventListener('click',()=>{
-  if (running) return;
-  loadScenario(activeScenario);
-});
-
-runBtn.addEventListener('click', async ()=>{
-  if (running) return;
-  running = true;
-  runBtn.disabled = true;
-  runBtn.style.opacity = .6;
-
-  resetAgentPane();
-  statusPill.textContent = 'THINKING\u2026';
-  statusPill.classList.add('text-emerald-300');
-
-  const s = SCENARIOS[activeScenario];
-
-  for (let i=0; i<s.steps.length; i++){
-    const row = document.createElement('div');
-    row.className = 'step-line flex items-start gap-3 reasoning-row';
-    row.innerHTML =
-      '<div class="mt-[2px] w-[24px] h-[24px] rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center mono text-[10px] text-[var(--muted)]">' + String(i+1).padStart(2,'0') + '</div>' +
-      '<div class="flex-1"><div class="text-sm">' + escapeHtml(s.steps[i]) + '</div>' +
-      '<div class="text-[11px] text-[var(--muted)] mono mt-1 thinking-tag"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div></div>';
-    reasoningList.appendChild(row);
-    requestAnimationFrame(()=> row.classList.add('show'));
-    await wait(650 + Math.random()*350);
-    const tag = row.querySelector('.thinking-tag');
-    tag.innerHTML = '<span style="color:var(--good)">\u2713 done</span>';
-  }
-
-  await wait(350);
-  actionLine.textContent = s.action;
-  actionMeta.textContent = s.actionMeta;
-  draftText.textContent  = s.draft;
-  var draftLabelEl = document.getElementById('draft-label');
-  if (draftLabelEl) draftLabelEl.textContent = s.draftLabel || 'Drafted reply (queued for human review)';
-  var actionChipEl = document.getElementById('action-chip');
-  if (actionChipEl) actionChipEl.textContent = s.actionChip || '\u2713 Action taken';
-  escalationChip.textContent = s.escalation;
-  metricsRow.innerHTML = s.metrics.map(function(m){
-    var label = m[0], before = m[1], after = m[2];
-    return '<div class="card p-3 bg-[var(--paper)]"><div class="text-[10px] uppercase tracking-wide text-[var(--muted)] mono">' +
-      escapeHtml(label) + '</div><div class="text-sm font-semibold mt-1"><span class="text-[var(--muted)] line-through mr-1">' +
-      escapeHtml(before) + '</span>\u2192 ' + escapeHtml(after) + '</div></div>';
-  }).join('');
-  outputBlock.classList.remove('hidden');
-  statusPill.textContent = '\u2713 COMPLETE';
-  running = false;
-  runBtn.disabled = false;
-  runBtn.style.opacity = 1;
-});
-
-function wait(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
-function escapeHtml(s){ return s.replace(/[&<>"']/g, function(c){ return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"})[c]; }); }
-
-loadScenario('healthcare');
-
-/* v2026-04-18 — added livecall scenario + scheduler demo */
-
-/* ============================================================
-   SCHEDULER DEMO — interactive agent acting on a real calendar
-   Deterministic pattern-matching bot (no backend).
-   ============================================================ */
-(function(){
-  var DAYS = ['Mon','Tue','Wed','Thu','Fri'];
-  var DAY_LABELS = {Mon:'Mon 4/20', Tue:'Tue 4/21', Wed:'Wed 4/22', Thu:'Thu 4/23', Fri:'Fri 4/24'};
-  var HOURS = [8,9,10,11,12,13,14,15,16,17]; // 8am..5pm (end 6pm)
-  var TECHS = ['Mike','Elena','Priya'];
-  var TECH_COLORS = { Mike:'#1F4FFF', Elena:'#0F7A4B', Priya:'#B45309' };
-
-  // Seed state
-  var SEED = [
-    { id:1, day:'Mon', start:9,  end:11, customer:'Vasquez',  service:'Water heater swap',  tech:'Mike'  },
-    { id:2, day:'Mon', start:14, end:16, customer:'Chen',     service:'Leak repair',        tech:'Elena' },
-    { id:3, day:'Tue', start:10, end:12, customer:'Harper',   service:'Drain snake',        tech:'Mike'  },
-    { id:4, day:'Wed', start:13, end:15, customer:'Ramirez',  service:'Toilet install',     tech:'Priya' },
-    { id:5, day:'Thu', start:9,  end:11, customer:'Okafor',   service:'Sump pump',          tech:'Elena' },
-    { id:6, day:'Fri', start:10, end:12, customer:'Liu',      service:'Inspection',         tech:'Priya' }
-  ];
-  var state = { appts: JSON.parse(JSON.stringify(SEED)), nextId: 7 };
-
-  var chatLog    = document.getElementById('chat-log');
-  var chatInput  = document.getElementById('chat-input');
-  var chatSend   = document.getElementById('chat-send');
-  var chatReset  = document.getElementById('chat-reset');
-  var apptCount  = document.getElementById('appt-count');
-  var grid       = document.getElementById('calendar-grid');
-
-  /* ---- Rendering ---- */
-  function fmtHour(h){
-    var p = h >= 12 ? 'pm' : 'am';
-    var hh = h % 12 === 0 ? 12 : h % 12;
-    return hh + p;
-  }
-  function renderCalendar(){
-    var parts = [];
-    // header row
-    parts.push('<div style="display:grid;grid-template-columns:54px repeat(5,1fr);gap:4px;margin-bottom:4px;">');
-    parts.push('<div></div>');
-    for (var d=0; d<DAYS.length; d++){
-      parts.push('<div class="mono text-[10px] text-[var(--muted)] text-center py-1">' + DAY_LABELS[DAYS[d]] + '</div>');
-    }
-    parts.push('</div>');
-    // hour rows
-    parts.push('<div style="display:grid;grid-template-columns:54px repeat(5,1fr);gap:4px;">');
-    for (var h=0; h<HOURS.length; h++){
-      var hr = HOURS[h];
-      parts.push('<div class="mono text-[10px] text-[var(--muted)] pr-1 text-right" style="line-height:32px;">' + fmtHour(hr) + '</div>');
-      for (var di=0; di<DAYS.length; di++){
-        var day = DAYS[di];
-        var appt = apptStartingAt(day, hr);
-        if (appt){
-          var span = appt.end - appt.start;
-          var color = TECH_COLORS[appt.tech] || '#0B1220';
-          parts.push(
-            '<div class="rounded-md px-2 py-1 text-white text-[10px] leading-tight" ' +
-            'style="background:' + color + ';grid-row:span ' + span + ';min-height:' + (span*32 - 4) + 'px;" ' +
-            'title="' + escapeAttr(appt.customer + ' — ' + appt.service + ' · ' + appt.tech) + '">' +
-            '<div class="font-semibold">' + escapeHtml(appt.customer) + '</div>' +
-            '<div class="opacity-80">' + escapeHtml(appt.service) + '</div>' +
-            '<div class="opacity-80 mono">' + escapeHtml(appt.tech) + '</div>' +
-            '</div>'
-          );
-        } else if (isCoveredByAppt(day, hr)) {
-          // cell covered by spanning appt above — skip
-          parts.push('<div style="display:none"></div>');
-        } else {
-          parts.push('<div class="border border-dashed border-[var(--line)] rounded-md" style="height:32px;"></div>');
-        }
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+    a.addEventListener('click', function(e) {
+      var target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
-    }
-    parts.push('</div>');
-
-    // Tech legend
-    parts.push('<div class="mt-4 flex flex-wrap gap-3 text-[11px] text-[var(--muted)]">');
-    for (var t=0; t<TECHS.length; t++){
-      var tech = TECHS[t];
-      parts.push('<span class="flex items-center gap-1"><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:' + TECH_COLORS[tech] + '"></span>' + tech + '</span>');
-    }
-    parts.push('</div>');
-
-    grid.innerHTML = parts.join('');
-    apptCount.textContent = state.appts.length + ' appts';
-  }
-  function apptStartingAt(day, hr){
-    for (var i=0; i<state.appts.length; i++){
-      var a = state.appts[i];
-      if (a.day === day && a.start === hr) return a;
-    }
-    return null;
-  }
-  function isCoveredByAppt(day, hr){
-    for (var i=0; i<state.appts.length; i++){
-      var a = state.appts[i];
-      if (a.day === day && hr > a.start && hr < a.end) return true;
-    }
-    return false;
-  }
-
-  /* ---- Chat rendering ---- */
-  function addChat(role, html){
-    var row = document.createElement('div');
-    if (role === 'user'){
-      row.innerHTML = '<div class="flex justify-end"><div class="max-w-[82%] bg-[var(--ink)] text-white text-sm px-3 py-2 rounded-lg rounded-br-sm">' + html + '</div></div>';
-    } else if (role === 'agent'){
-      row.innerHTML = '<div class="flex justify-start"><div class="max-w-[82%] bg-[var(--paper)] border border-[var(--line)] text-sm px-3 py-2 rounded-lg rounded-bl-sm">' + html + '</div></div>';
-    } else if (role === 'tool'){
-      row.innerHTML = '<div class="flex justify-start"><div class="mono text-[11px] text-[var(--muted)] bg-white border border-dashed border-[var(--line)] rounded-md px-2 py-1">' + html + '</div></div>';
-    } else if (role === 'system'){
-      row.innerHTML = '<div class="text-[11px] text-[var(--muted)] text-center italic">' + html + '</div>';
-    }
-    chatLog.appendChild(row);
-    chatLog.scrollTop = chatLog.scrollHeight;
-  }
-  function toolCall(name, args){
-    var argStr = Object.keys(args).map(function(k){ return k + '=' + JSON.stringify(args[k]); }).join(', ');
-    addChat('tool', '<span style="color:var(--accent)">▸ tool_call</span> ' + name + '(' + escapeHtml(argStr) + ')');
-  }
-
-  /* ---- Parsing helpers ---- */
-  function parseDay(text){
-    var t = text.toLowerCase();
-    var map = {monday:'Mon', mon:'Mon', tuesday:'Tue', tue:'Tue', tues:'Tue',
-               wednesday:'Wed', wed:'Wed', thursday:'Thu', thu:'Thu', thurs:'Thu',
-               friday:'Fri', fri:'Fri'};
-    var keys = Object.keys(map);
-    for (var i=0; i<keys.length; i++){
-      var re = new RegExp('\\b' + keys[i] + '\\b');
-      if (re.test(t)) return map[keys[i]];
-    }
-    return null;
-  }
-  function parseTime(text){
-    var t = text.toLowerCase();
-    // "at 2pm", "at 10am", "at 2", "at 14:00", "10:30"
-    var m = t.match(/\b(\d{1,2})(?::(\d{2}))?\s*(am|pm)?\b/);
-    if (!m) return null;
-    var h = parseInt(m[1], 10);
-    var ampm = m[3];
-    if (ampm === 'pm' && h < 12) h += 12;
-    if (ampm === 'am' && h === 12) h = 0;
-    if (!ampm && h < 8) h += 12; // "2" meaning 2pm during work hours
-    if (h < 8 || h > 17) return null;
-    return h;
-  }
-  function parsePeriod(text){
-    var t = text.toLowerCase();
-    if (/\bmorning\b/.test(t)) return { start:8, end:12 };
-    if (/\bafternoon\b/.test(t)) return { start:12, end:17 };
-    if (/\bevening\b/.test(t)) return { start:15, end:18 };
-    return null;
-  }
-  function parseTech(text){
-    var t = text.toLowerCase();
-    for (var i=0; i<TECHS.length; i++){
-      if (new RegExp('\\b' + TECHS[i].toLowerCase() + '\\b').test(t)) return TECHS[i];
-    }
-    return null;
-  }
-  function parseCustomer(text){
-    // Look for capitalized words that aren't day/tech/common words
-    var skip = { Mon:1, Tue:1, Wed:1, Thu:1, Fri:1, Mike:1, Elena:1, Priya:1,
-                 Monday:1, Tuesday:1, Wednesday:1, Thursday:1, Friday:1,
-                 I:1, Book:1, Move:1, Cancel:1, Schedule:1, Reschedule:1 };
-    var words = text.split(/\s+/);
-    for (var i=0; i<words.length; i++){
-      var w = words[i].replace(/[^A-Za-z]/g, '');
-      if (w && /^[A-Z][a-z]+$/.test(w) && !skip[w]) return w;
-    }
-    // fallback: look for existing customer mention
-    for (var j=0; j<state.appts.length; j++){
-      if (text.toLowerCase().indexOf(state.appts[j].customer.toLowerCase()) !== -1) {
-        return state.appts[j].customer;
-      }
-    }
-    return null;
-  }
-  function parseService(text){
-    var t = text.toLowerCase();
-    var catalog = [
-      ['water heater', 'Water heater swap'],
-      ['heater', 'Water heater swap'],
-      ['leak', 'Leak repair'],
-      ['drain', 'Drain snake'],
-      ['toilet', 'Toilet install'],
-      ['sump', 'Sump pump'],
-      ['inspection', 'Inspection'],
-      ['install', 'Install'],
-      ['repair', 'Repair'],
-      ['swap', 'Replacement']
-    ];
-    for (var i=0; i<catalog.length; i++){
-      if (t.indexOf(catalog[i][0]) !== -1) return catalog[i][1];
-    }
-    return 'Service call';
-  }
-
-  /* ---- Slot logic ---- */
-  function slotFree(day, start, end, excludeId){
-    for (var i=0; i<state.appts.length; i++){
-      var a = state.appts[i];
-      if (excludeId && a.id === excludeId) continue;
-      if (a.day !== day) continue;
-      if (start < a.end && end > a.start) return false;
-    }
-    return true;
-  }
-  function techFree(tech, day, start, end, excludeId){
-    for (var i=0; i<state.appts.length; i++){
-      var a = state.appts[i];
-      if (excludeId && a.id === excludeId) continue;
-      if (a.tech !== tech) continue;
-      if (a.day !== day) continue;
-      if (start < a.end && end > a.start) return false;
-    }
-    return true;
-  }
-  function findOpenSlots(day, period){
-    var range = period || { start:8, end:17 };
-    var open = [];
-    for (var h=range.start; h<range.end; h++){
-      for (var t=0; t<TECHS.length; t++){
-        if (techFree(TECHS[t], day, h, h+2)) {
-          open.push({ tech:TECHS[t], start:h });
-          break; // one per hour is enough
-        }
-      }
-    }
-    return open;
-  }
-
-  /* ---- Commands ---- */
-  function cmdAdd(text){
-    var day = parseDay(text);
-    var hour = parseTime(text);
-    var tech = parseTech(text);
-    var customer = parseCustomer(text);
-    var service = parseService(text);
-
-    if (!day || hour === null){
-      return { speak: "I can book that, but I need a day and a time. Try: \u201CBook " + (customer || 'Smith') + " for Thursday at 2pm\u201D." };
-    }
-    if (!customer) customer = 'New customer';
-    if (!tech){
-      // auto-pick a free tech
-      for (var i=0; i<TECHS.length; i++){
-        if (techFree(TECHS[i], day, hour, hour+2)) { tech = TECHS[i]; break; }
-      }
-    }
-    if (!tech) {
-      return { speak: "All three techs are booked on " + day + " at " + fmtHour(hour) + ". Want me to check an adjacent slot?" };
-    }
-    if (!techFree(tech, day, hour, hour+2)){
-      return { speak: tech + " is already on a job " + day + " at " + fmtHour(hour) + ". Pick another tech or a different time." };
-    }
-
-    var appt = { id: state.nextId++, day:day, start:hour, end:hour+2, customer:customer, service:service, tech:tech };
-    state.appts.push(appt);
-    toolCall('add_appointment', { customer:customer, day:day, start:fmtHour(hour), duration:'2h', tech:tech, service:service });
-    return {
-      speak: 'Booked. ' + customer + ' \u2014 ' + service + ' with ' + tech + ' on ' + DAY_LABELS[day] + ' ' + fmtHour(hour) + '\u2013' + fmtHour(hour+2) + '. Calendar updated.',
-      reveal: true
-    };
-  }
-  function cmdMove(text){
-    var customer = parseCustomer(text);
-    if (!customer){
-      return { speak: "Which appointment would you like to move? Try: \u201CMove the Harper appointment to Wednesday morning.\u201D" };
-    }
-    var appt = null;
-    for (var i=0; i<state.appts.length; i++){
-      if (state.appts[i].customer.toLowerCase() === customer.toLowerCase()){ appt = state.appts[i]; break; }
-    }
-    if (!appt) return { speak: "I don't see an appointment for " + customer + " on the schedule." };
-
-    var newDay = parseDay(text);
-    var newHour = parseTime(text);
-    var period = parsePeriod(text);
-
-    if (!newDay){
-      return { speak: "Move " + customer + " to which day?" };
-    }
-    if (newHour === null && period){
-      // find first open slot in that period for the tech
-      for (var h=period.start; h<period.end; h++){
-        if (techFree(appt.tech, newDay, h, h+2, appt.id)) { newHour = h; break; }
-      }
-      if (newHour === null){
-        return { speak: appt.tech + " has nothing open " + newDay + " " + (period.start < 12 ? 'morning' : 'afternoon') + ". Try a different day or tech." };
-      }
-    }
-    if (newHour === null){
-      return { speak: "What time on " + newDay + " should I move it to?" };
-    }
-    if (!techFree(appt.tech, newDay, newHour, newHour+2, appt.id)){
-      return { speak: appt.tech + " is already booked " + newDay + " at " + fmtHour(newHour) + ". Pick another slot." };
-    }
-    var oldDay = appt.day, oldStart = appt.start;
-    appt.day = newDay; appt.start = newHour; appt.end = newHour + 2;
-    toolCall('move_appointment', { id:appt.id, from:oldDay+' '+fmtHour(oldStart), to:newDay+' '+fmtHour(newHour) });
-    return {
-      speak: 'Moved. ' + customer + ' is now on ' + DAY_LABELS[newDay] + ' at ' + fmtHour(newHour) + ' with ' + appt.tech + '. I\u2019ll fire a confirmation SMS.',
-      reveal: true
-    };
-  }
-  function cmdCancel(text){
-    var customer = parseCustomer(text);
-    if (!customer){
-      return { speak: "Which appointment should I cancel? I\u2019ll need a customer name." };
-    }
-    var idx = -1;
-    for (var i=0; i<state.appts.length; i++){
-      if (state.appts[i].customer.toLowerCase() === customer.toLowerCase()){ idx = i; break; }
-    }
-    if (idx === -1) return { speak: "I don't see an appointment for " + customer + "." };
-    var removed = state.appts.splice(idx, 1)[0];
-    toolCall('cancel_appointment', { id:removed.id, customer:removed.customer, day:removed.day, start:fmtHour(removed.start) });
-    return {
-      speak: 'Cancelled. ' + removed.customer + '\u2019s ' + removed.service + ' (' + DAY_LABELS[removed.day] + ' ' + fmtHour(removed.start) + ') is off the board. Sent the customer a cancellation note.',
-      reveal: true
-    };
-  }
-  function cmdList(text){
-    var day = parseDay(text);
-    var period = parsePeriod(text);
-    if (!day){
-      return { speak: "Which day should I check openings for? Monday through Friday." };
-    }
-    toolCall('list_slots', { day:day, period: period ? (period.start < 12 ? 'morning' : 'afternoon') : 'all' });
-    var open = findOpenSlots(day, period);
-    if (open.length === 0){
-      return { speak: DAY_LABELS[day] + (period ? ' ' + (period.start < 12 ? 'morning' : 'afternoon') : '') + ' is fully booked. Want me to check another day?' };
-    }
-    var byTech = {};
-    for (var i=0; i<open.length; i++){
-      if (!byTech[open[i].tech]) byTech[open[i].tech] = [];
-      byTech[open[i].tech].push(fmtHour(open[i].start));
-    }
-    var pieces = Object.keys(byTech).map(function(t){ return t + ': ' + byTech[t].slice(0,4).join(', '); });
-    return { speak: 'Open on ' + DAY_LABELS[day] + (period ? ' ' + (period.start < 12 ? 'morning' : 'afternoon') : '') + ' — ' + pieces.join(' · ') + '.' };
-  }
-
-  function route(text){
-    var t = text.toLowerCase();
-    if (/\b(cancel|remove|delete|drop)\b/.test(t)) return cmdCancel(text);
-    if (/\b(move|reschedule|shift|push|switch)\b/.test(t)) return cmdMove(text);
-    if (/\b(what'?s open|open slots?|availability|available|free|any openings?|what do i have|what's free)\b/.test(t)) return cmdList(text);
-    if (/\b(book|schedule|add|put in|slot|create)\b/.test(t)) return cmdAdd(text);
-    // fallback: if day + time present, assume book
-    if (parseDay(text) && parseTime(text) !== null) return cmdAdd(text);
-    return { speak: "I can book, move, cancel, or list openings. Try: \u201CBook Smith for Thursday at 2pm\u201D or \u201CWhat's open Friday afternoon?\u201D" };
-  }
-
-  /* ---- Submission flow ---- */
-  function handleSubmit(text){
-    text = (text || '').trim();
-    if (!text) return;
-    addChat('user', escapeHtml(text));
-    chatInput.value = '';
-
-    // Show thinking, then respond
-    var thinking = document.createElement('div');
-    thinking.innerHTML = '<div class="flex justify-start"><div class="bg-[var(--paper)] border border-[var(--line)] px-3 py-2 rounded-lg rounded-bl-sm"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div></div>';
-    chatLog.appendChild(thinking);
-    chatLog.scrollTop = chatLog.scrollHeight;
-
-    setTimeout(function(){
-      chatLog.removeChild(thinking);
-      var result = route(text);
-      addChat('agent', escapeHtml(result.speak));
-      if (result.reveal) renderCalendar();
-    }, 450 + Math.random()*300);
-  }
-
-  chatSend.addEventListener('click', function(){ handleSubmit(chatInput.value); });
-  chatInput.addEventListener('keydown', function(e){
-    if (e.key === 'Enter'){ e.preventDefault(); handleSubmit(chatInput.value); }
-  });
-  chatReset.addEventListener('click', function(){
-    state.appts = JSON.parse(JSON.stringify(SEED));
-    state.nextId = 7;
-    chatLog.innerHTML = '';
-    renderCalendar();
-    addChat('system', 'Schedule reset to Monday morning.');
-    addChat('agent', 'Morning. I can book, move, cancel, or check openings against the schedule. What do you need?');
-  });
-  document.querySelectorAll('.prompt-chip').forEach(function(btn){
-    btn.addEventListener('click', function(){ handleSubmit(btn.textContent); });
+    });
   });
 
-  function escapeAttr(s){ return String(s).replace(/"/g,'&quot;'); }
+  // Form handling — preventDefault + show success state
+  function handleFormSubmit(formId, innerWrapperId, successId) {
+    var form = document.getElementById(formId);
+    if (!form) return;
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var inner = document.getElementById(innerWrapperId);
+      var success = document.getElementById(successId);
+      if (inner) inner.style.display = 'none';
+      if (success) {
+        success.classList.add('visible');
+      }
+    });
+  }
 
-  // initial render
-  renderCalendar();
-  addChat('agent', 'Morning. I can book, move, cancel, or check openings against the schedule. What do you need?');
-})();
+  handleFormSubmit('hero-form', 'hero-form-inner', 'hero-form-success');
+  handleFormSubmit('final-form', 'final-form-inner', 'final-form-success');
 </script>
 
 </body>
