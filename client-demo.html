@@ -107,12 +107,19 @@
 
     <!-- Mobile: dropdown selector -->
     <div class="block sm:hidden mb-6">
-      <select id="scenario-select" style="width:100%;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:14px;font-weight:600;color:var(--ink);outline:none;cursor:pointer;appearance:none;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235B6272' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 12px center;">
-        <option value="healthcare">🏥 Healthcare — Referral intake</option>
-        <option value="cannabis">🌿 Cannabis — Quote request</option>
-        <option value="livecall">📞 Live call — Qualify + book + fan-out</option>
-        <option value="field">🔧 Field services — After-hours voicemail</option>
-      </select>
+      <label for="scenario-select" style="display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Choose an industry scenario</label>
+      <div style="position:relative;">
+        <select id="scenario-select" style="width:100%;padding:14px 48px 14px 16px;border:2px solid var(--ink);border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:15px;font-weight:600;color:var(--ink);outline:none;cursor:pointer;appearance:none;box-shadow:0 2px 8px rgba(11,18,32,.08);">
+          <option value="healthcare">🏥 Healthcare — Referral intake</option>
+          <option value="cannabis">🌿 Cannabis — Quote request</option>
+          <option value="livecall">📞 Live call — Qualify + book + fan-out</option>
+          <option value="field">🔧 Field services — After-hours voicemail</option>
+        </select>
+        <!-- Visible chevron icon -->
+        <div style="pointer-events:none;position:absolute;right:14px;top:50%;transform:translateY(-50%);width:28px;height:28px;background:var(--ink);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
     </div>
     <!-- Desktop: pill tabs -->
     <div class="hidden sm:flex gap-2 mb-6 flex-wrap" role="tablist" aria-label="Demo scenario">
