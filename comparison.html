@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VA vs. AI Agents — 30 Day Ramp</title>
+<meta name="description" content="See why founders are replacing virtual assistants with AI agents from 30 Day Ramp. A full cost, availability, and performance comparison." />
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B1220;
+    --ink-2:#1A2233;
+    --paper:#FAFAF7;
+    --line:#E6E4DC;
+    --muted:#5B6272;
+    --accent:#1F4FFF;
+    --accent-2:#0B2A8C;
+    --warn:#B45309;
+    --good:#0F7A4B;
+  }
+  html,body{background:var(--paper);color:var(--ink);font-family:'Inter',ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
+  html,body{max-width:100%;overflow-x:hidden;}
+  img,svg,video,iframe{max-width:100%;height:auto;}
+  .grid > *, .flex > *{min-width:0;}
+  p, li, blockquote, h1, h2, h3, td, th{overflow-wrap:anywhere;word-break:break-word;}
+  .mono{font-family:'JetBrains Mono',ui-monospace,monospace;}
+  .grid-bg{
+    background-image:
+      linear-gradient(to right, rgba(11,18,32,0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(11,18,32,0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .ink-shadow{box-shadow:0 1px 0 rgba(11,18,32,0.06), 0 8px 24px -12px rgba(11,18,32,0.18);}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:12px;color:var(--muted);}
+  .dot{width:6px;height:6px;border-radius:999px;background:var(--good);box-shadow:0 0 0 4px rgba(15,122,75,0.12);}
+  .btn-primary{background:var(--ink);color:#fff;padding:12px 20px;border-radius:10px;font-weight:600;display:inline-flex;align-items:center;gap:8px;transition:transform .12s ease,opacity .12s ease;}
+  .btn-primary:hover{opacity:.92;transform:translateY(-1px);}
+  .btn-ghost{padding:12px 16px;border-radius:10px;font-weight:600;color:var(--ink);border:1px solid var(--line);background:#fff;}
+  .btn-ghost:hover{background:#F2F0E8;}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;}
+  .chip{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:6px;background:#F2F0E8;color:var(--ink);font-size:11px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;}
+  .sectionnum{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;}
+  .nav-link{color:var(--muted);font-weight:500;font-size:14px;}
+  .nav-link:hover{color:var(--ink);}
+  .hover-lift{transition:transform .15s ease, box-shadow .15s ease;}
+  .hover-lift:hover{transform:translateY(-2px);box-shadow:0 12px 32px -16px rgba(11,18,32,.25);}
+
+  /* Comparison table */
+  .cmp-table{width:100%;border-collapse:separate;border-spacing:0;}
+  .cmp-table th{padding:14px 20px;font-size:13px;font-weight:700;letter-spacing:.02em;}
+  .cmp-table td{padding:16px 20px;font-size:14px;border-top:1px solid var(--line);}
+  .cmp-table tbody tr:hover td{background:#F7F6F2;}
+  .cmp-table .col-va{background:#FFFBF5;color:var(--muted);}
+  .cmp-table .col-ramp{background:#F0F4FF;color:var(--ink);}
+  .cmp-table .col-ramp-win{background:#F0FFF8;}
+  .cmp-table .label-col{font-weight:600;color:var(--ink);background:transparent;}
+  .win-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--good);letter-spacing:.04em;text-transform:uppercase;}
+
+  /* Math section */
+  .math-bar-track{height:10px;background:var(--line);border-radius:999px;overflow:hidden;}
+  .math-bar-fill{height:100%;border-radius:999px;transition:width 1s ease;}
+  .math-bar-va{background:#D9A441;}
+  .math-bar-ramp{background:var(--good);}
+
+  /* Scroll table on mobile */
+  .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  @media (max-width:640px){
+    .cmp-table th,.cmp-table td{padding:12px 12px;font-size:13px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="border-b border-[var(--line)] bg-[var(--paper)]/85 backdrop-blur sticky top-0 z-40">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+    <a href="/" class="flex items-center gap-2 shrink-0">
+      <div class="flex items-end gap-[3px]" aria-hidden="true">
+        <div class="w-[5px] h-[8px] bg-[var(--ink)]"></div>
+        <div class="w-[5px] h-[12px] bg-[var(--ink)]"></div>
+        <div class="w-[5px] h-[16px] bg-[var(--ink)]"></div>
+        <div class="w-[5px] h-[20px] bg-[var(--accent)]"></div>
+      </div>
+      <span class="font-bold text-lg tracking-tight ml-2">Ramped</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-7">
+      <a href="/#how-it-works" class="nav-link">How it works</a>
+      <a href="/#results" class="nav-link">Results</a>
+      <a href="/#pricing" class="nav-link">Pricing</a>
+      <a href="/demo" class="nav-link">See demo</a>
+    </nav>
+    <a href="/#get-started" class="btn-primary text-sm whitespace-nowrap">Get started →</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="relative overflow-hidden">
+  <div class="absolute inset-0 grid-bg opacity-60 pointer-events-none"></div>
+  <div class="max-w-6xl mx-auto px-6 pt-20 pb-16 relative">
+    <div class="pill mb-6">
+      <span class="dot"></span>
+      <span>AI vs. VA — A breakdown founders actually need</span>
+    </div>
+    <h1 class="text-4xl sm:text-5xl md:text-[3.5rem] font-extrabold tracking-tight leading-[1.05] max-w-4xl">
+      Why founders are choosing<br/>
+      <span class="text-[var(--accent)]">AI agents</span> over<br/>
+      virtual assistants
+    </h1>
+    <p class="mt-6 text-lg text-[var(--muted)] max-w-2xl">
+      A VA is a person — with a timezone, a sick day, and a learning curve. An AI agent is infrastructure. Here's the honest comparison, line by line.
+    </p>
+    <div class="mt-8 flex flex-wrap items-center gap-3">
+      <a href="/#get-started" class="btn-primary">Get started with Ramped →</a>
+      <a href="/demo" class="btn-ghost">See a live agent demo</a>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON TABLE -->
+<section id="comparison" class="border-t border-[var(--line)] bg-white">
+  <div class="max-w-6xl mx-auto px-6 py-16">
+    <div class="mb-10">
+      <div class="sectionnum mb-2">01 — Head to head</div>
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight">The full comparison</h2>
+      <p class="text-[var(--muted)] mt-2 max-w-2xl">Every dimension that matters when you're deciding where to put $30K–$48K a year.</p>
+    </div>
+
+    <div class="table-scroll card ink-shadow">
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th class="label-col text-left" style="width:30%;">Category</th>
+            <th class="col-va text-center rounded-tl-xl" style="width:35%;">
+              <div class="text-sm font-bold text-[var(--warn)] uppercase tracking-wide">Virtual Assistant</div>
+              <div class="text-xs text-[var(--muted)] font-normal mt-1">Traditional outsourced help</div>
+            </th>
+            <th class="col-ramp text-center rounded-tr-xl" style="width:35%;">
+              <div class="text-sm font-bold text-[var(--accent)] uppercase tracking-wide">30 Day Ramp</div>
+              <div class="text-xs text-[var(--muted)] font-normal mt-1">AI agent deployment</div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="label-col font-semibold">Cost</td>
+            <td class="col-va text-center">$2,500–$4,000/mo<br/><span class="text-xs text-[var(--muted)]">$30K–$48K per year, indefinitely</span></td>
+            <td class="col-ramp-win text-center">
+              $3,000 setup + retainer<br/>
+              <span class="text-xs text-[var(--muted)]">Fraction of annual VA cost</span>
+              <div class="win-badge mt-1">✓ Winner</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="label-col font-semibold">Setup time</td>
+            <td class="col-va text-center">2–6 weeks to hire &amp; onboard<br/><span class="text-xs text-[var(--muted)]">Then weeks more to be productive</span></td>
+            <td class="col-ramp-win text-center">
+              Live in 30 days<br/>
+              <span class="text-xs text-[var(--muted)]">Guaranteed deployment timeline</span>
+              <div class="win-badge mt-1">✓ Winner</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="label-col font-semibold">Availability (hours)</td>
+            <td class="col-va text-center">~8 hrs/day, 5 days/week<br/><span class="text-xs text-[var(--muted)]">Timezone-dependent</span></td>
+            <td class="col-ramp-win text-center">
+              24/7/365<br/>
+              <span class="text-xs text-[var(--muted)]">No downtime, no timezone friction</span>
+              <div class="win-badge mt-1">✓ Winner</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="label-col font-semibold">Response time</td>
+            <td class="col-va text-center">Minutes to hours<br/><span class="text-xs text-[var(--muted)]">Depends on workload &amp; hours</span></td>
+            <td class="col-ramp-win text-center">
+              &lt; 60 seconds<br/>
+              <span class="text-xs text-[var(--muted)]">Consistent, every time</span>
+              <div class="win-badge mt-1">✓ Winner</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="label-col font-semibold">Consistency</td>
+            <td class="col-va text-center">Variable — good days and bad days<br/><span class="text-xs text-[var(--muted)]">Human error, fatigue, mood</span></td>
+            <td class="col-ramp-win text-center">
+              Identical output every run<br/>
+              <span class="text-xs text-[var(--muted)]">Same quality at 2am as 2pm</span>
+              <div class="win-badge mt-1">✓ Winner</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="label-col font-semibold">Scalability</td>
+            <td class="col-va text-center">Hire another person<br/><span class="text-xs text-[var(--muted)]">Linear cost, linear effort</span></td>
+            <td class="col-ramp-win text-center">
+              Handle 10× volume, same cost<br/>
+              <span class="text-xs text-[var(--muted)]">No additional headcount needed</span>
+              <div class="win-badge mt-1">✓ Winner</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="label-col font-semibold">Sick days &amp; turnover</td>
+            <td class="col-va text-center">Yes — and re-training costs time &amp; money<br/><span class="text-xs text-[var(--muted)]">Average VA tenure: 18 months</span></td>
+            <td class="col-ramp-win text-center">
+              Zero sick days. No turnover.<br/>
+              <span class="text-xs text-[var(--muted)]">Institutional knowledge never walks out</span>
+              <div class="win-badge mt-1">✓ Winner</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="label-col font-semibold">Learning curve</td>
+            <td class="col-va text-center">90 days to full productivity<br/><span class="text-xs text-[var(--muted)]">You pay during ramp-up</span></td>
+            <td class="col-ramp-win text-center">
+              Trained on your SOP from day 1<br/>
+              <span class="text-xs text-[var(--muted)]">No productivity tax on your team</span>
+              <div class="win-badge mt-1">✓ Winner</div>
+            </td>
+          </tr>
+          <tr>
+            <td class="label-col font-semibold">Money-back guarantee</td>
+            <td class="col-va text-center">None<br/><span class="text-xs text-[var(--muted)]">Sunk cost if it doesn't work out</span></td>
+            <td class="col-ramp-win text-center">
+              50% of setup held until live<br/>
+              <span class="text-xs text-[var(--muted)]">We don't get paid if we don't deliver</span>
+              <div class="win-badge mt-1">✓ Winner</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- THE MATH -->
+<section id="math" class="border-t border-[var(--line)]">
+  <div class="max-w-6xl mx-auto px-6 py-16">
+    <div class="mb-10">
+      <div class="sectionnum mb-2">02 — The math</div>
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight">What it actually costs over 3 years</h2>
+      <p class="text-[var(--muted)] mt-2 max-w-2xl">Most founders compare monthly VA cost to monthly retainer cost and stop there. That misses the compounding advantage.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6 mb-10">
+      <!-- VA Card -->
+      <div class="card ink-shadow p-7 hover-lift border-l-4" style="border-left-color:#D9A441;">
+        <div class="chip mb-4" style="background:#FFF7E6;color:#7A4F00;">Virtual Assistant</div>
+        <div class="text-4xl font-extrabold tracking-tight mb-1">$108,000</div>
+        <div class="text-sm text-[var(--muted)] mb-6">Total spend over 3 years (mid-range $3k/mo)</div>
+        <ul class="space-y-3 text-sm text-[var(--muted)]">
+          <li class="flex items-start gap-2"><span class="text-[var(--warn)] mt-0.5">✕</span> $3,000/mo × 36 months = $108,000</li>
+          <li class="flex items-start gap-2"><span class="text-[var(--warn)] mt-0.5">✕</span> Plus 2–4 weeks of lost time onboarding</li>
+          <li class="flex items-start gap-2"><span class="text-[var(--warn)] mt-0.5">✕</span> Re-training costs when VA turns over</li>
+          <li class="flex items-start gap-2"><span class="text-[var(--warn)] mt-0.5">✕</span> Only available ~40 hrs/week max</li>
+          <li class="flex items-start gap-2"><span class="text-[var(--warn)] mt-0.5">✕</span> Every new task = more instructions = more time from you</li>
+        </ul>
+        <div class="mt-6 math-bar-track">
+          <div class="math-bar-fill math-bar-va" style="width:100%;"></div>
+        </div>
+        <div class="text-xs text-[var(--muted)] mt-1">$108K baseline</div>
+      </div>
+
+      <!-- Ramped Card -->
+      <div class="card ink-shadow p-7 hover-lift border-l-4" style="border-left-color:var(--good);">
+        <div class="chip mb-4" style="background:#F0FFF8;color:var(--good);">30 Day Ramp</div>
+        <div class="text-4xl font-extrabold tracking-tight mb-1">$60,000</div>
+        <div class="text-sm text-[var(--muted)] mb-6">Estimated total over 3 years (setup + $1,500/mo)</div>
+        <ul class="space-y-3 text-sm text-[var(--muted)]">
+          <li class="flex items-start gap-2"><span style="color:var(--good);" class="mt-0.5">✓</span> $3,000 setup + $1,500/mo × 35 = $55,500</li>
+          <li class="flex items-start gap-2"><span style="color:var(--good);" class="mt-0.5">✓</span> Live and productive from day 30</li>
+          <li class="flex items-start gap-2"><span style="color:var(--good);" class="mt-0.5">✓</span> Zero turnover risk — knowledge compounds</li>
+          <li class="flex items-start gap-2"><span style="color:var(--good);" class="mt-0.5">✓</span> Runs 24/7 — 3× the coverage hours</li>
+          <li class="flex items-start gap-2"><span style="color:var(--good);" class="mt-0.5">✓</span> Volume scales without adding headcount</li>
+        </ul>
+        <div class="mt-6 math-bar-track">
+          <div class="math-bar-fill math-bar-ramp" style="width:56%;"></div>
+        </div>
+        <div class="text-xs text-[var(--muted)] mt-1">~56% of VA cost over the same period</div>
+      </div>
+    </div>
+
+    <!-- ROI callout -->
+    <div class="card p-6 md:p-8 flex flex-col md:flex-row items-center gap-6" style="background:var(--ink);border-color:var(--ink-2);">
+      <div class="flex-1">
+        <div class="text-[var(--line)] text-xs font-bold uppercase tracking-widest mb-2">The bottom line</div>
+        <div class="text-white text-2xl md:text-3xl font-extrabold">Save ~$48K over 3 years.<br/>Get 3× the hours. Zero turnover risk.</div>
+        <p class="text-[rgba(255,255,255,0.55)] mt-3 text-sm max-w-lg">That's before you factor in a single lead captured at 11pm, a missed call that actually got followed up, or a proposal that went out the same day instead of next week.</p>
+      </div>
+      <div class="shrink-0">
+        <a href="/#get-started" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-[var(--ink)] bg-[var(--paper)] hover:opacity-90 transition-opacity">Start saving now →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 REASONS -->
+<section id="reasons" class="border-t border-[var(--line)] bg-white">
+  <div class="max-w-6xl mx-auto px-6 py-16">
+    <div class="mb-10">
+      <div class="sectionnum mb-2">03 — Why it works</div>
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight">Three things a VA can't do</h2>
+      <p class="text-[var(--muted)] mt-2 max-w-2xl">These aren't edge cases. They're the scenarios that show up every week in every growing business.</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      <!-- Reason 1 -->
+      <div class="card ink-shadow p-7 hover-lift">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-5" style="background:#F0F4FF;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="text-xl font-bold mb-3">Works 24/7</div>
+        <p class="text-[var(--muted)] text-sm leading-relaxed">A lead fills out your form at 9pm on a Friday. Your VA is offline. Your AI agent responds in under 60 seconds, qualifies the lead, and books the meeting — before your competitor even opens their email Monday morning.</p>
+        <div class="mt-5 pt-5 border-t border-[var(--line)]">
+          <div class="mono text-xs text-[var(--muted)]">Coverage comparison</div>
+          <div class="flex items-center gap-3 mt-2">
+            <div class="flex-1">
+              <div class="text-xs text-[var(--muted)] mb-1">VA</div>
+              <div class="math-bar-track"><div class="math-bar-fill math-bar-va" style="width:24%;"></div></div>
+              <div class="text-xs text-[var(--muted)] mt-1">~40 hrs/wk</div>
+            </div>
+            <div class="flex-1">
+              <div class="text-xs text-[var(--muted)] mb-1">Ramped</div>
+              <div class="math-bar-track"><div class="math-bar-fill math-bar-ramp" style="width:100%;"></div></div>
+              <div class="text-xs text-[var(--muted)] mt-1">168 hrs/wk</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reason 2 -->
+      <div class="card ink-shadow p-7 hover-lift">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-5" style="background:#F0FFF8;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--good)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 11.5a19.79 19.79 0 0 1-3-8.59A2 2 0 0 1 3.68 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.64a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 15.92z"/></svg>
+        </div>
+        <div class="text-xl font-bold mb-3">Never forgets a lead</div>
+        <p class="text-[var(--muted)] text-sm leading-relaxed">VAs context-switch, get pulled into other tasks, and miss follow-ups. An AI agent has one job: move every lead through the pipeline with the exact right message at the exact right time. No exceptions. No forgotten threads.</p>
+        <div class="mt-5 pt-5 border-t border-[var(--line)]">
+          <div class="mono text-xs text-[var(--muted)]">Follow-up rate</div>
+          <div class="flex gap-4 mt-3">
+            <div class="text-center">
+              <div class="text-2xl font-extrabold text-[var(--warn)]">62%</div>
+              <div class="text-xs text-[var(--muted)] mt-1">VA average<br/>follow-up rate</div>
+            </div>
+            <div class="w-px bg-[var(--line)]"></div>
+            <div class="text-center">
+              <div class="text-2xl font-extrabold" style="color:var(--good);">100%</div>
+              <div class="text-xs text-[var(--muted)] mt-1">AI agent<br/>follow-up rate</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reason 3 -->
+      <div class="card ink-shadow p-7 hover-lift">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-5" style="background:#FFF7E6;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div class="text-xl font-bold mb-3">Scales instantly</div>
+        <p class="text-[var(--muted)] text-sm leading-relaxed">Your VA handles 30 tasks a week. You land a new contract and need 300 done. You either hire, scramble, or drop things. With an AI agent, 10× volume is just another Tuesday. No hiring cycle. No quality dip.</p>
+        <div class="mt-5 pt-5 border-t border-[var(--line)]">
+          <div class="mono text-xs text-[var(--muted)]">Cost to 10× capacity</div>
+          <div class="flex gap-4 mt-3">
+            <div class="text-center">
+              <div class="text-2xl font-extrabold text-[var(--warn)]">10×</div>
+              <div class="text-xs text-[var(--muted)] mt-1">VA cost<br/>(hire more people)</div>
+            </div>
+            <div class="w-px bg-[var(--line)]"></div>
+            <div class="text-center">
+              <div class="text-2xl font-extrabold" style="color:var(--good);">$0</div>
+              <div class="text-xs text-[var(--muted)] mt-1">Ramped cost<br/>(already included)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OBJECTION SECTION -->
+<section class="border-t border-[var(--line)]">
+  <div class="max-w-6xl mx-auto px-6 py-16">
+    <div class="mb-10">
+      <div class="sectionnum mb-2">04 — Fair questions</div>
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight">Things we hear from founders</h2>
+    </div>
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="card p-6">
+        <div class="font-bold text-[var(--ink)] mb-2">"My VA knows my business. Will an agent understand context?"</div>
+        <p class="text-sm text-[var(--muted)] leading-relaxed">We spend the first two weeks of every engagement encoding your SOPs, your voice, your decision logic, and your history into the agent. It knows your business on day 30. And it never forgets what it learned.</p>
+      </div>
+      <div class="card p-6">
+        <div class="font-bold text-[var(--ink)] mb-2">"What if I need something done that the agent can't do?"</div>
+        <p class="text-sm text-[var(--muted)] leading-relaxed">We design around your actual workflow — not a generic template. If a task requires human judgment, we build a handoff into the agent so the right thing gets escalated to the right person, every time.</p>
+      </div>
+      <div class="card p-6">
+        <div class="font-bold text-[var(--ink)] mb-2">"I'm not technical. Can I manage this myself?"</div>
+        <p class="text-sm text-[var(--muted)] leading-relaxed">You don't need to. That's the whole point. We operate it for you, just like an outsourced IT partner. If something breaks or needs updating, that's on us — not you.</p>
+      </div>
+      <div class="card p-6">
+        <div class="font-bold text-[var(--ink)] mb-2">"What happens if AI gets it wrong?"</div>
+        <p class="text-sm text-[var(--muted)] leading-relaxed">We build confidence thresholds and human-in-the-loop checkpoints for high-stakes decisions. The agent handles volume and speed. You stay in control of anything that matters most.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="get-started" class="border-t border-[var(--line)] bg-[var(--ink)]">
+  <div class="max-w-6xl mx-auto px-6 py-20 text-center">
+    <div class="pill mb-6 mx-auto" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.12);color:rgba(255,255,255,0.5);">
+      <span class="dot"></span>
+      <span>Now booking Q2 2026 design partners</span>
+    </div>
+    <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight text-white max-w-3xl mx-auto">
+      Ready to retire your VA<br/>and build something that scales?
+    </h2>
+    <p class="mt-5 text-[rgba(255,255,255,0.55)] max-w-xl mx-auto text-lg">
+      Book a free 30-minute discovery call. We'll map your biggest operational bottleneck and show you what an agent would do with it.
+    </p>
+    <div class="mt-10 flex flex-wrap justify-center gap-4">
+      <a href="/#get-started" class="inline-flex items-center gap-2 px-7 py-4 rounded-xl font-bold text-[var(--ink)] bg-[var(--paper)] hover:opacity-90 transition-opacity text-base">Book a free discovery call →</a>
+      <a href="/demo" class="inline-flex items-center gap-2 px-7 py-4 rounded-xl font-bold text-white border border-[rgba(255,255,255,0.18)] hover:bg-[rgba(255,255,255,0.06)] transition-colors text-base">See the agent demo</a>
+    </div>
+    <p class="mt-6 text-xs text-[rgba(255,255,255,0.3)]">No pitch deck. No sales cycle. Just a real conversation about your operations.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="border-t border-[var(--line)] bg-white">
+  <div class="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[var(--muted)]">
+    <div class="flex items-center gap-2">
+      <div class="flex items-end gap-[2px]" aria-hidden="true">
+        <div class="w-[4px] h-[6px] bg-[var(--ink)]"></div>
+        <div class="w-[4px] h-[9px] bg-[var(--ink)]"></div>
+        <div class="w-[4px] h-[12px] bg-[var(--ink)]"></div>
+        <div class="w-[4px] h-[15px] bg-[var(--accent)]"></div>
+      </div>
+      <span class="font-bold text-[var(--ink)] ml-1">Ramped</span>
+      <span class="ml-2">© 2026</span>
+    </div>
+    <nav class="flex items-center gap-6">
+      <a href="/#how-it-works" class="hover:text-[var(--ink)] transition-colors">How it works</a>
+      <a href="/#pricing" class="hover:text-[var(--ink)] transition-colors">Pricing</a>
+      <a href="/demo" class="hover:text-[var(--ink)] transition-colors">Demo</a>
+      <a href="/comparison" class="hover:text-[var(--ink)] transition-colors font-medium text-[var(--ink)]">VA vs. AI</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
