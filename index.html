@@ -467,18 +467,31 @@
     });
   });
 
-  // Form handling — preventDefault + show success state
+  // Form handling — POST to /api/contact serverless function
   function handleFormSubmit(formId, innerWrapperId, successId) {
     var form = document.getElementById(formId);
     if (!form) return;
     form.addEventListener('submit', function(e) {
       e.preventDefault();
-      var inner = document.getElementById(innerWrapperId);
-      var success = document.getElementById(successId);
-      if (inner) inner.style.display = 'none';
-      if (success) {
-        success.classList.add('visible');
-      }
+      var btn = form.querySelector('button[type="submit"]');
+      if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+
+      var data = {
+        name: (form.querySelector('[name="name"]') || {}).value || null,
+        email: (form.querySelector('[name="email"]') || {}).value || null,
+        company: (form.querySelector('[name="company"]') || {}).value || null,
+      };
+
+      fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      }).finally(function() {
+        var inner = document.getElementById(innerWrapperId);
+        var success = document.getElementById(successId);
+        if (inner) inner.style.display = 'none';
+        if (success) success.classList.add('visible');
+      });
     });
   }
 
