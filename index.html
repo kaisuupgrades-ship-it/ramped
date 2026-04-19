@@ -161,6 +161,23 @@
   </div>
 </section>
 
+<!-- ─── INDUSTRY LOGO WALL ─────────────────────────────────────────────── -->
+<section style="padding:24px 0 32px;border-bottom:1px solid var(--line);background:#fff;">
+  <div style="max-width:900px;margin:0 auto;padding:0 24px;text-align:center;">
+    <p style="font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">Deployed across industries</p>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">
+      <span style="padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--paper);font-size:13px;font-weight:500;color:var(--muted);">Healthcare</span>
+      <span style="padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--paper);font-size:13px;font-weight:500;color:var(--muted);">Legal</span>
+      <span style="padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--paper);font-size:13px;font-weight:500;color:var(--muted);">Real Estate</span>
+      <span style="padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--paper);font-size:13px;font-weight:500;color:var(--muted);">Dental</span>
+      <span style="padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--paper);font-size:13px;font-weight:500;color:var(--muted);">Field Services</span>
+      <span style="padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--paper);font-size:13px;font-weight:500;color:var(--muted);">Logistics</span>
+      <span style="padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--paper);font-size:13px;font-weight:500;color:var(--muted);">Cannabis</span>
+      <span style="padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--paper);font-size:13px;font-weight:500;color:var(--muted);">Finance</span>
+    </div>
+  </div>
+</section>
+
 <!-- ─── PROBLEM ───────────────────────────────────────────────────────────── -->
 <section class="py-20 px-5 border-t border-[var(--line)]" id="problem">
   <div class="max-w-5xl mx-auto">
@@ -295,15 +312,15 @@
 
       <div class="flex flex-wrap gap-3 mt-6">
         <div style="padding:8px 14px;background:var(--paper);border-radius:8px;border:1px solid var(--line);text-align:center;">
-          <p style="font-size:22px;font-weight:800;color:var(--ink);font-family:'JetBrains Mono',monospace;">14h</p>
+          <p style="font-size:22px;font-weight:800;color:var(--ink);font-family:'JetBrains Mono',monospace;"><span data-countup="14" data-suffix="h">14h</span></p>
           <p style="font-size:11px;color:var(--muted);margin-top:2px;">hrs/week saved</p>
         </div>
         <div style="padding:8px 14px;background:var(--paper);border-radius:8px;border:1px solid var(--line);text-align:center;">
-          <p style="font-size:22px;font-weight:800;color:var(--ink);font-family:'JetBrains Mono',monospace;">8m</p>
+          <p style="font-size:22px;font-weight:800;color:var(--ink);font-family:'JetBrains Mono',monospace;"><span data-countup="8" data-suffix="m">8m</span></p>
           <p style="font-size:11px;color:var(--muted);margin-top:2px;">response time</p>
         </div>
         <div style="padding:8px 14px;background:var(--paper);border-radius:8px;border:1px solid var(--line);text-align:center;">
-          <p style="font-size:22px;font-weight:800;color:var(--ink);font-family:'JetBrains Mono',monospace;">30d</p>
+          <p style="font-size:22px;font-weight:800;color:var(--ink);font-family:'JetBrains Mono',monospace;"><span data-countup="30" data-suffix="d">30d</span></p>
           <p style="font-size:11px;color:var(--muted);margin-top:2px;">to go-live</p>
         </div>
       </div>
@@ -570,6 +587,50 @@
 
   handleFormSubmit('hero-form', 'hero-form-inner', 'hero-form-success');
   handleFormSubmit('final-form', 'final-form-inner', 'final-form-success');
+</script>
+
+<script>
+  // Count-up animation using IntersectionObserver
+  (function() {
+    var duration = 1500; // ms
+    var observed = new Set();
+
+    function animateCountUp(el) {
+      var target = parseInt(el.getAttribute('data-countup'), 10);
+      var suffix = el.getAttribute('data-suffix') || '';
+      var start = null;
+
+      function step(timestamp) {
+        if (!start) start = timestamp;
+        var elapsed = timestamp - start;
+        var progress = Math.min(elapsed / duration, 1);
+        // ease-out quad
+        var eased = 1 - (1 - progress) * (1 - progress);
+        var current = Math.round(eased * target);
+        el.textContent = current + suffix;
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        } else {
+          el.textContent = target + suffix;
+        }
+      }
+
+      requestAnimationFrame(step);
+    }
+
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting && !observed.has(entry.target)) {
+          observed.add(entry.target);
+          animateCountUp(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('[data-countup]').forEach(function(el) {
+      observer.observe(el);
+    });
+  })();
 </script>
 
 </body>
