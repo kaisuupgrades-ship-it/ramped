@@ -43,6 +43,27 @@
   .cursor{display:inline-block;width:2px;height:1em;background:var(--accent);margin-left:2px;vertical-align:text-bottom;animation:blink 1s step-end infinite;}
   @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   .fade-in{animation:fadeIn .3s ease forwards;}
+
+  /* ── Overflow containment ───────────────────────────── */
+  /* Prevent grid cells from blowing out their container */
+  .grid > * { min-width: 0; }
+  /* Tab buttons: never shrink, never wrap */
+  .scenario-btn { white-space: nowrap; flex-shrink: 0; }
+  /* All card content wraps instead of overflowing */
+  .card { overflow: hidden; }
+  /* Email content fields */
+  #inbound-from, #inbound-subject, #inbound-body,
+  #action-line, #action-meta, #draft-text {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    max-width: 100%;
+  }
+  /* Metrics row cells */
+  #metrics-row > * { min-width: 0; overflow: hidden; }
+  /* Step lines */
+  #reasoning-list > * { min-width: 0; overflow-wrap: anywhere; word-break: break-word; }
+  /* General text safety net */
+  .text-sm, .text-xs { overflow-wrap: anywhere; }
 </style>
 </head>
 <body>
@@ -94,11 +115,11 @@
     <div class="grid md:grid-cols-2 gap-6">
       <div class="card ink-shadow overflow-hidden">
         <div class="px-5 py-3 border-b border-[var(--line)] flex items-center justify-between bg-[var(--paper)]">
-          <div class="flex items-center gap-2">
-            <span class="chip" id="inbound-channel">Inbox</span>
-            <span class="text-sm text-[var(--muted)]" id="inbound-channel-detail">admissions@yourfacility.org</span>
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="chip flex-shrink-0" id="inbound-channel">Inbox</span>
+            <span class="text-sm text-[var(--muted)] truncate" id="inbound-channel-detail">admissions@yourfacility.org</span>
           </div>
-          <span class="mono text-xs text-[var(--muted)]">INBOUND</span>
+          <span class="mono text-xs text-[var(--muted)] flex-shrink-0 ml-2">INBOUND</span>
         </div>
         <div class="p-5">
           <div class="text-xs text-[var(--muted)] mb-1">From</div>
