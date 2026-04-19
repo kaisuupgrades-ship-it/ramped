@@ -68,7 +68,7 @@
 <section style="border-bottom:1px solid var(--line);" class="grid-bg">
   <div class="max-w-3xl mx-auto px-6 py-14 text-center">
     <div class="pill" style="margin:0 auto 16px;width:fit-content;"><span class="dot"></span> Live agent demos</div>
-    <h1 style="font-size:clamp(2rem,5vw,2.8rem);font-weight:800;letter-spacing:-0.03em;line-height:1.1;margin-bottom:16px;">This is what AI looks like<br>inside your business.</h1>
+    <h1 style="font-size:clamp(2rem,5vw,2.8rem);font-weight:800;letter-spacing:-0.03em;line-height:1.1;margin-bottom:16px;">Your next hire doesn't sleep,<br>forget, or drop the ball.</h1>
     <p style="font-size:16px;color:var(--muted);max-width:500px;margin:0 auto;line-height:1.6;">Pick your industry. Watch a live AI agent handle a real inbound workflow — exactly how it runs from day one of your Sprint.</p>
   </div>
 </section>
@@ -84,7 +84,7 @@
       <span class="chip">Mock — for demonstration</span>
     </div>
 
-    <div class="flex flex-wrap gap-2 mb-6" role="tablist" aria-label="Demo scenario">
+    <div class="flex gap-2 mb-6 overflow-x-auto pb-1 -mx-1 px-1" style="scrollbar-width:none;-ms-overflow-style:none;" role="tablist" aria-label="Demo scenario">
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="healthcare" aria-pressed="true">🏥 Healthcare — Referral intake</button>
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="cannabis" aria-pressed="false">🌿 Cannabis — Quote request</button>
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="livecall" aria-pressed="false">📞 Live call — Qualify + book + fan-out <span class="chip ml-1" style="background:#FFEDD5;color:#7A4F00;font-size:10px;padding:1px 6px;">NEW</span></button>
@@ -141,6 +141,12 @@
       </div>
     </div>
 
+    <!-- Inline CTA -->
+    <div style="margin-top:24px;padding:16px 20px;background:#F5F7FF;border:1px solid #D4DBFF;border-radius:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <p style="margin:0;font-size:14px;color:var(--ink);">Want this running in your business? We map your highest-value workflow and deploy in 30 days.</p>
+      <a href="https://calendly.com/jon-30dayramp" style="display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;font-weight:600;font-size:13px;text-decoration:none;white-space:nowrap;">Book a free call →</a>
+    </div>
+
     <p class="text-xs text-[var(--muted)] mt-4 max-w-3xl">
       What you're seeing is the same shape as the Week-1 agent we deploy in every Ramp Sprint — classifier, RAG over your knowledge base, action against your system of record (CRM / EHR / ServiceTitan / NetSuite / etc.), drafted output with a configurable approval gate. In a real Sprint this is wired to your live inbox <em>or phone line</em> by Friday of week one. For voice, the agent picks up, converses with the caller in natural language, and the moment the call ends it fans out to every downstream system that needs to know — CRM, calendar, email, Slack, quoting tool — so your rep picks up the thread already briefed.
     </p>
@@ -148,14 +154,17 @@
 </section>
 
 <section style="border-top:1px solid var(--line);background:var(--ink);color:#fff;">
-  <div class="max-w-3xl mx-auto px-6 py-16 text-center">
-    <h2 style="font-size:clamp(1.6rem,4vw,2.2rem);font-weight:800;letter-spacing:-0.02em;margin-bottom:12px;">Ready to put this in your business?</h2>
-    <p style="color:rgba(255,255,255,0.7);font-size:16px;margin-bottom:28px;">30-day go-live guarantee. Flat monthly fee. No consultants, no decks — just working software.</p>
-    <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;">
-      <a href="/#get-started" class="btn-primary" style="background:#fff;color:var(--ink);">Get started today →</a>
-      <a href="mailto:jon@30dayramp.com" class="btn-ghost" style="background:transparent;color:#fff;border-color:rgba(255,255,255,0.3);">Email Jon directly</a>
+  <div class="max-w-3xl mx-auto px-6 py-20 text-center">
+    <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:20px;">
+      <span style="width:6px;height:6px;border-radius:999px;background:#7CFFB7;display:inline-block;"></span> Free · No commitment
     </div>
-    <p style="margin-top:16px;font-size:12px;color:rgba(255,255,255,0.4);">Free 30-min discovery call · No commitment required</p>
+    <h2 style="font-size:clamp(1.8rem,4.5vw,2.6rem);font-weight:800;letter-spacing:-0.03em;line-height:1.1;margin-bottom:16px;">Ready to see what's possible<br>for your business?</h2>
+    <p style="color:rgba(255,255,255,0.65);font-size:17px;max-width:520px;margin:0 auto 32px;line-height:1.6;">Book a free 30-minute call. We'll map your highest-value workflow and show you what an agent would look like inside it.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;align-items:center;">
+      <a href="https://calendly.com/jon-30dayramp" style="display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--ink);padding:14px 24px;border-radius:10px;font-weight:700;font-size:15px;text-decoration:none;transition:opacity .12s ease;" onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">Book a call →</a>
+      <a href="/#get-started" style="display:inline-flex;align-items:center;gap:8px;color:#fff;padding:14px 24px;border-radius:10px;font-weight:600;font-size:15px;text-decoration:none;border:1px solid rgba(255,255,255,0.25);background:transparent;transition:background .12s ease;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='transparent'">Get started online →</a>
+    </div>
+    <p style="margin-top:20px;font-size:12px;color:rgba(255,255,255,0.35);">30-day go-live guarantee · Flat monthly fee · No consultants, no decks</p>
   </div>
 </section>
 
