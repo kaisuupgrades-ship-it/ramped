@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>404 — Page Not Found | 30 Day Ramp</title>
+<meta name="robots" content="noindex" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="alternate icon" href="/favicon.ico" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script defer src="/_vercel/insights/script.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0B1220;
+    --paper: #FAFAF7;
+    --line: rgba(250,250,247,0.1);
+    --muted: #8A95A8;
+    --accent: #1F4FFF;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .grid-bg {
+    background-image:
+      linear-gradient(to right, rgba(250,250,247,0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(250,250,247,0.03) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  .page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    text-align: center;
+    position: relative;
+  }
+
+  .logo-link {
+    position: absolute;
+    top: 28px;
+    left: 32px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .logo-name {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--paper);
+    letter-spacing: -0.01em;
+  }
+
+  .error-num {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: clamp(96px, 18vw, 180px);
+    font-weight: 700;
+    color: var(--paper);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    opacity: 0.08;
+    user-select: none;
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    max-width: 480px;
+  }
+
+  .badge {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: rgba(31,79,255,0.12);
+    border: 1px solid rgba(31,79,255,0.25);
+    border-radius: 6px;
+    padding: 4px 12px;
+  }
+
+  h1 {
+    font-size: clamp(26px, 5vw, 36px);
+    font-weight: 700;
+    color: var(--paper);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+
+  .sub {
+    font-size: 17px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .sub em {
+    color: var(--paper);
+    font-style: normal;
+    font-weight: 500;
+  }
+
+  .divider {
+    width: 40px;
+    height: 1px;
+    background: rgba(250,250,247,0.15);
+    margin: 4px auto;
+  }
+
+  .btn-home {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 12px 28px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 8px;
+    letter-spacing: -0.01em;
+    transition: opacity 0.15s;
+  }
+  .btn-home:hover { opacity: 0.88; }
+</style>
+</head>
+<body class="grid-bg">
+<div class="page">
+
+  <!-- Logo top-left -->
+  <a href="/" class="logo-link" aria-label="30 Day Ramp home">
+    <svg width="22" height="18" viewBox="0 0 26 22" fill="none" aria-hidden="true">
+      <rect x="0"  y="14" width="5" height="8"  rx="1.5" fill="#1F4FFF"/>
+      <rect x="7"  y="9"  width="5" height="13" rx="1.5" fill="#1F4FFF" opacity=".75"/>
+      <rect x="14" y="4"  width="5" height="18" rx="1.5" fill="#1F4FFF" opacity=".55"/>
+      <rect x="21" y="0"  width="5" height="22" rx="1.5" fill="#1F4FFF" opacity=".35"/>
+    </svg>
+    <span class="logo-name">30 Day Ramp</span>
+  </a>
+
+  <!-- Big ghost 404 -->
+  <span class="error-num" aria-hidden="true">404</span>
+
+  <!-- Main content -->
+  <div class="content">
+    <span class="badge">404 — Not Found</span>
+    <h1>This page doesn't exist.</h1>
+    <div class="divider"></div>
+    <p class="sub">But your AI department can.</p>
+    <a href="/" class="btn-home">&#8592; Back to home</a>
+  </div>
+
+</div>
+</body>
+</html>
