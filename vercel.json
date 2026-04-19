@@ -3,6 +3,10 @@
     {
       "source": "/demo",
       "destination": "/client-demo.html"
+    },
+    {
+      "source": "/logo-concepts",
+      "destination": "/logo-concepts.html"
     }
   ]
 }
