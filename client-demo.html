@@ -119,6 +119,11 @@
           <option value="dental">🦷 Dental — Scheduling & reminders</option>
           <option value="logistics">📦 Logistics — Load status inquiry</option>
           <option value="financial">📊 Financial — P&amp;L TTM report</option>
+          <option value="ecommerce">🛒 E-commerce — Returns &amp; refunds</option>
+          <option value="recruiting">🎯 Recruiting — Application screening</option>
+          <option value="property">🏢 Property mgmt — Maintenance request</option>
+          <option value="insurance">🛡️ Insurance — Claims intake</option>
+          <option value="saas">💻 SaaS — Renewal risk &amp; outreach</option>
         </select>
         <!-- Visible chevron icon -->
         <div style="pointer-events:none;position:absolute;right:14px;top:50%;transform:translateY(-50%);width:28px;height:28px;background:var(--ink);border-radius:6px;display:flex;align-items:center;justify-content:center;">
@@ -137,6 +142,11 @@
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="dental" aria-pressed="false">🦷 Dental — Scheduling & reminders</button>
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="logistics" aria-pressed="false">📦 Logistics — Load status inquiry</button>
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="financial" aria-pressed="false">📊 Financial — P&amp;L TTM report</button>
+      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="ecommerce" aria-pressed="false">🛒 E-commerce — Returns &amp; refunds</button>
+      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="recruiting" aria-pressed="false">🎯 Recruiting — Application screening</button>
+      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="property" aria-pressed="false">🏢 Property mgmt — Maintenance request</button>
+      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="insurance" aria-pressed="false">🛡️ Insurance — Claims intake</button>
+      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="saas" aria-pressed="false">💻 SaaS — Renewal risk &amp; outreach</button>
     </div>
 
     <div class="grid md:grid-cols-2 gap-6">
@@ -417,6 +427,107 @@ const SCENARIOS = {
     draftLabel: "TTM Report (auto-compiled, ready for board deck)",
     metrics: [["Time to compile","45–60 min in Excel","6 seconds"],["Files touched","12 spreadsheets, manually","Zero — agent pulled all"],["Error risk","Manual copy-paste","Reconciled automatically"]],
     escalation: "Owner / CFO review before send"
+  },
+  ecommerce: {
+    channelLabel: "Inbox · Support ticket",
+    channelDetail: "support@shopbright.com",
+    from: "tyler.nguyen@gmail.com",
+    subject: "Wrong item received — order #ORD-29451",
+    body: "Hi,\n\nI ordered the Slate Gray Backpack (SKU: BP-104-GRY) but received the Navy Blue version instead. Order #ORD-29451, placed 04/14.\n\nI need the correct color for a work trip on Friday. Can you send the right one and let me know how to return this one?\n\n— Tyler Nguyen",
+    steps: [
+      "Parsing order #ORD-29451 \u00b7 Tyler Nguyen \u00b7 placed 04/14 \u00b7 querying OMS",
+      "OMS result \u00b7 BP-104-GRY (Slate Gray) ordered \u00b7 BP-104-NVY (Navy) shipped \u00b7 confirmed pick error",
+      "Checking inventory \u00b7 BP-104-GRY \u00b7 12 units in stock \u00b7 2-day ship available",
+      "Generating prepaid return label \u00b7 USPS \u00b7 no action required from Tyler until new item arrives",
+      "Initiating replacement shipment \u00b7 priority 2-day \u00b7 tracking #9400111899223487221",
+      "Drafting apology response \u00b7 including return label link + replacement tracking \u00b7 flagging pick error to warehouse team"
+    ],
+    action: "Replacement shipped priority 2-day \u00b7 return label sent \u00b7 warehouse pick error flagged",
+    actionMeta: "Full resolution in 29 seconds \u00b7 Tyler gets correct item before Friday \u00b7 zero support rep required",
+    draft: "Hi Tyler,\n\nSo sorry about that — that's a pick error on our end and we're fixing it right now.\n\nHere's what's happening:\n\u2022 Replacement (Slate Gray, BP-104-GRY) is shipping priority 2-day — tracking: 9400111899223487221\n\u2022 Prepaid return label for the Navy one: [link] — just drop it in any USPS box, no rush\n\nYou should have the right bag by Thursday. No need to wait for the return before we ship.\n\nAgain, really sorry for the hassle. Let me know if anything else comes up.\n\nShopBright Support\n(this response was drafted by our AI agent)",
+    metrics: [["Time to resolution","24–48 hrs (ticket queue)","29 seconds"],["Return label generation","Manual + email thread","Automatic"],["Customer effort required","Ship first, then get replacement","Return label only, replacement already shipped"]],
+    escalation: "Warehouse ops (pick error logged)"
+  },
+  recruiting: {
+    channelLabel: "Inbox \u00b7 Careers",
+    channelDetail: "careers@novabuild.io",
+    from: "james.okafor@gmail.com",
+    subject: "Application: Senior Sales Representative",
+    body: "Hi NovaBuild team,\n\nI'm applying for the Senior Sales Rep role. 6 years in B2B SaaS sales, last two at a construction tech startup where I closed $2.1M ARR in 2025 and consistently hit 130%+ of quota. My strength is mid-market accounts ($50k\u2013$250k ACV).\n\nI'm based in Chicago and open to the travel requirements. LinkedIn: linkedin.com/in/jamesokafor\n\nAttaching resume. Happy to connect whenever.\n\n\u2014 James",
+    steps: [
+      "Parsing application \u00b7 James Okafor \u00b7 Senior Sales Rep \u00b7 extracting structured fields",
+      "Scoring against job req \u00b7 B2B SaaS \u2713 \u00b7 6 yrs exp \u2713 \u00b7 $2.1M ARR \u2713 \u00b7 130%+ quota \u2713 \u00b7 mid-market focus \u2713",
+      "Checking hard disqualifiers \u00b7 geography (Chicago \u2714) \u00b7 travel availability \u2714 \u00b7 ACV range match \u2714",
+      "Ranking vs. applicant pool \u00b7 James scores 91/100 \u00b7 top 8% of 74 applicants received this week",
+      "Checking hiring manager calendar \u00b7 Sarah K. \u00b7 3 open 30-min slots this week",
+      "Drafting interview invite \u00b7 personalizing with ARR + quota callout \u00b7 attaching prep guide"
+    ],
+    action: "Interview invite sent to James \u00b7 ranked 91/100 \u00b7 Sarah K. calendar blocked",
+    actionMeta: "Application processed in 38 seconds \u00b7 top candidates advance same day instead of waiting 2 weeks",
+    draft: "Hi James,\n\nThanks for applying to the Senior Sales Rep role at NovaBuild.\n\nYour background stood out \u2014 especially the $2.1M ARR close last year and the mid-market ACV range which maps well to our core segment. We'd like to set up a quick conversation.\n\nHere are a few times that work this week:\n\u2022 Tuesday, Apr 22 \u00b7 10:00 AM CT\n\u2022 Wednesday, Apr 23 \u00b7 2:00 PM CT\n\u2022 Thursday, Apr 24 \u00b7 11:00 AM CT\n\nReply with your preference and I'll send a calendar invite. You'll be speaking with Sarah K., our VP of Sales.\n\nLooking forward to it.\n\nNovaBuild Recruiting\n(initial screening handled by our AI agent)",
+    metrics: [["Time to first response","5\u201314 business days","38 seconds"],["Top candidate advance rate","~30% (slow response)","Same-day outreach"],["Recruiter hours per 100 apps","~40 hrs screening","< 2 hrs (review only)"]],
+    escalation: "VP of Sales (interview)"
+  },
+  property: {
+    channelLabel: "Text message \u00b7 Tenant",
+    channelDetail: "Unit 4B \u00b7 Maple Court Apartments",
+    from: "Tenant \u00b7 Diana Cruz \u00b7 Unit 4B",
+    subject: "Maintenance issue — kitchen faucet leak",
+    body: "Hi, this is Diana in unit 4B. The kitchen faucet has been dripping since yesterday and now there's water pooling under the sink. Getting kind of bad. Can someone come take a look? I'm home most mornings.",
+    steps: [
+      "Classifying issue \u00b7 water leak, active pooling \u00b7 urgency: HIGH \u00b7 water damage risk if unaddressed > 24 hrs",
+      "Looking up unit 4B \u00b7 Diana Cruz \u00b7 lease current \u00b7 no open maintenance tickets \u00b7 last work order: 11/2024",
+      "Querying vendor roster \u00b7 plumbing \u00b7 preferred vendor: Mike's Plumbing \u00b7 available tomorrow 8\u201310 AM",
+      "Booking work order \u00b7 WO-4411 \u00b7 Mike's Plumbing \u00b7 Tue 04/22 \u00b7 8\u201310 AM window",
+      "Notifying property manager \u00b7 Lisa R. \u00b7 summary + water damage risk flag sent",
+      "Drafting confirmation SMS to Diana \u00b7 vendor name, time window, work order number"
+    ],
+    action: "Mike\u2019s Plumbing dispatched Tue 8\u201310 AM \u00b7 Diana confirmed \u00b7 Lisa R. notified",
+    actionMeta: "Issue triaged and vendor booked in 51 seconds \u00b7 water damage risk contained before business hours",
+    draft: "Hi Diana! Got your message. We're sending Mike's Plumbing to your unit:\n\nTuesday, April 22\n8:00 \u2013 10:00 AM\nWork order #WO-4411\n\nThey'll knock when they arrive. No need to call ahead.\n\nFor the pooling water in the meantime \u2014 if you have any towels to put under the cabinet that would help prevent any floor damage.\n\nReply here if anything changes. Thanks for letting us know quickly!\n\u2014 Maple Court Maintenance",
+    metrics: [["Time to vendor dispatch","Next business day (phone/email)","51 seconds"],["After-hours coverage","Emergency line only","24/7 automatic triage"],["Water damage risk","High (unattended 12+ hrs)","Contained same night"]],
+    escalation: "Property manager (Lisa R.)"
+  },
+  insurance: {
+    channelLabel: "Inbox \u00b7 Claims",
+    channelDetail: "claims@brightshieldinsurance.com",
+    from: "rachel.morgan@outlook.com",
+    subject: "Fender bender claim \u2014 policy #AUTO-88211",
+    body: "Hi,\n\nI was in a minor accident on Saturday 04/12. I was rear-ended at a stoplight on Oak Street. The other driver exchanged info. My bumper has a crack and the trunk won't open smoothly.\n\nMy policy number is AUTO-88211. I have photos but I'm not sure what you need. The police weren't called since it was minor. Do I need a police report?\n\n\u2014 Rachel Morgan\n(847) 555-0167",
+    steps: [
+      "Looking up policy AUTO-88211 \u00b7 Rachel Morgan \u00b7 active \u00b7 comprehensive + collision \u00b7 $500 deductible",
+      "Verifying coverage \u00b7 rear-end collision \u2714 \u00b7 no lapse in coverage \u2714 \u00b7 claim window open (within 30 days) \u2714",
+      "Assessing police report requirement \u00b7 Illinois: not required for property damage < $1,500 \u00b7 photos sufficient",
+      "Flagging missing items \u00b7 need: 3+ photos of damage, other driver's info, repair estimate",
+      "Pre-computing estimate \u00b7 bumper replacement + trunk realignment \u00b7 typical range $800\u2013$1,400 \u00b7 above deductible",
+      "Drafting acknowledgement + checklist \u00b7 assigning to adjuster Mark T. \u00b7 claim ID CLM-2026-8821 issued"
+    ],
+    action: "Claim CLM-2026-8821 opened \u00b7 Rachel answered on police report \u00b7 adjuster Mark T. assigned",
+    actionMeta: "First response in 44 seconds \u00b7 Rachel gets answers immediately instead of waiting on hold \u00b7 adjuster briefed before first call",
+    draft: "Hi Rachel,\n\nThank you for reaching out \u2014 we've opened a claim for you.\n\nClaim ID: CLM-2026-8821\nPolicy: AUTO-88211\nIncident date: April 12, 2026\n\nOn your question about the police report: for property-damage-only accidents in Illinois, a police report is not required as long as you have the other driver's info and photos. You're fine.\n\nTo move your claim forward, we'll need:\n\u2022 3+ photos of the damage (bumper crack + trunk area)\n\u2022 Other driver's name, insurance carrier, and policy number\n\u2022 A repair estimate from a licensed shop (we can recommend one if needed)\n\nYour adjuster is Mark T. \u2014 he'll reach out within one business day once you submit the above. Your deductible is $500; based on the damage description, repair costs will likely exceed that.\n\nReply to this email or upload documents at: [portal link]\n\nBrightShield Claims Team\n(initial intake handled by our AI agent)",
+    metrics: [["Time to first response","45\u201390 min (hold time)","44 seconds"],["Policy questions answered","Requires agent callback","Instant, accurate"],["Adjuster briefed before first call","Cold start","Full context pre-loaded"]],
+    escalation: "Adjuster Mark T."
+  },
+  saas: {
+    channelLabel: "Internal \u00b7 CRM alert",
+    channelDetail: "cs-alerts@novabuild.io \u00b7 automated trigger",
+    from: "CRM System \u00b7 Renewal Risk Alert",
+    subject: "Renewal risk: Acme Corp \u2014 34 days to renewal, usage at 12%",
+    body: "Automated alert: Acme Corp\nAccount ID: ACC-7741\nContract value: $84,000/yr\nRenewal date: May 23, 2026\nLast login: March 2, 2026 (47 days ago)\nFeature adoption: 12% of licensed seats active\nCSM assigned: Kevin L.\n\nThis account has not been contacted in 62 days.",
+    steps: [
+      "Pulling live usage data \u00b7 Acme Corp (ACC-7741) \u00b7 4 of 33 seats active \u00b7 last session: 47 days ago",
+      "Benchmarking against cohort \u00b7 12% adoption at renewal = 78% churn likelihood in similar accounts",
+      "Identifying unused features \u00b7 Workflow Automation \u00b7 Reporting Suite \u00b7 API integrations \u00b7 none configured",
+      "Researching account context \u00b7 Acme hired new VP Ops (LinkedIn, Jan 2026) \u00b7 possible internal transition",
+      "Drafting personalized QBR email \u00b7 referencing new VP, unused features, ROI framing \u00b7 no generic template",
+      "Flagging Kevin L. (CSM) \u00b7 churn risk score 78% \u00b7 suggesting exec call before May 1 \u00b7 renewal playbook attached"
+    ],
+    action: "QBR email drafted for Kevin\u2019s review \u00b7 churn risk flagged \u00b7 exec outreach recommended by May 1",
+    actionMeta: "At-risk account surfaced 34 days before renewal \u00b7 personalized outreach drafted in 53 seconds \u00b7 Kevin briefed with full context",
+    draft: "Hi [Acme VP Ops name],\n\nI wanted to reach out ahead of your May renewal \u2014 and I'll be direct: looking at your account, I don't think you've gotten the full value of NovaBuild yet, and I'd like to fix that.\n\nYour team has 33 seats but only 4 are actively logging in. That usually means one of two things: onboarding got dropped, or there was an internal transition. (We noticed you brought on a new VP of Ops earlier this year \u2014 congrats on that.)\n\nThe three features your team hasn't touched yet \u2014 Workflow Automation, Reporting Suite, and API integrations \u2014 are where most of our customers see the biggest ROI. I'd love to show you what those look like for a team your size.\n\nCan we get 30 minutes before May 1? I'll come with a concrete game plan, not a sales pitch.\n\nKevin L.\nCustomer Success, NovaBuild\n(draft prepared by AI \u00b7 review before sending)",
+    draftLabel: "QBR outreach draft (Kevin to review before sending)",
+    metrics: [["Risk identified","Often missed until post-churn","34 days before renewal"],["Outreach personalization","Generic template","New VP + unused features + cohort data"],["CSM time to brief","60 min research","53 seconds, full context ready"]],
+    escalation: "CSM Kevin L. + executive sponsor"
   }
 };
 
