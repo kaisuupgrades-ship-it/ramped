@@ -70,7 +70,7 @@
   .form-input{width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:8px;background:#fff;font-family:'Inter',sans-serif;font-size:15px;color:var(--ink);outline:none;transition:border-color .12s ease;}
   .form-input:focus{border-color:var(--accent);}
   .form-input::placeholder{color:var(--muted);}
-  .escrow-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;border:1px solid #F59E0B;background:#FFFBEB;font-size:12px;color:#92400E;font-weight:600;}
+  .escrow-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;border:2px solid var(--ink);background:#FFFBEB;font-size:12px;color:#92400E;font-weight:600;box-shadow:0 0 0 1px #F59E0B inset;}
   .pain-icon{width:40px;height:40px;border-radius:10px;background:#F2F0E8;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
   nav a{color:var(--muted);font-weight:500;font-size:14px;transition:color .12s ease;}
   nav a:hover{color:var(--ink);}
@@ -125,38 +125,40 @@
         We deploy AI agents into your operating business — answering calls, routing leads, and automating your highest-friction workflows. Flat monthly fee. Go-live guarantee.
       </p>
 
-      <!-- Hero form -->
-      <div class="card ink-shadow p-6 max-w-md" id="hero-form-wrap">
-        <!-- Form -->
-        <div id="hero-form-inner">
-          <p style="font-weight:600;font-size:16px;margin-bottom:16px;color:var(--ink);">Tell us about your business</p>
-          <form id="hero-form" action="/api/contact" method="POST" class="flex flex-col gap-3">
-            <input class="form-input" type="text" name="name" placeholder="Your name" required autocomplete="name" />
-            <input class="form-input" type="email" name="email" placeholder="Work email" required autocomplete="email" />
-            <input class="form-input" type="text" name="company" placeholder="Company name" required autocomplete="organization" />
-            <button type="submit" class="btn-primary w-full justify-center mt-1">Get started →</button>
-          </form>
-          <p style="font-size:12px;color:var(--muted);margin-top:12px;text-align:center;">
-            Or <a href="https://calendly.com/jon-30dayramp" target="_blank" rel="noopener" style="color:var(--accent);font-weight:500;">book a free 30-min call</a> first — no commitment.
-          </p>
-        </div>
-        <!-- Success state -->
-        <div id="hero-form-success" class="success-state flex-col items-center text-center py-4">
-          <div style="width:48px;height:48px;border-radius:999px;background:#ECFDF5;border:2px solid #D1FAE5;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 11.5l5 5 9-10" stroke="var(--good)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <!-- Hero form + trust signals wrapped together -->
+      <div class="max-w-md">
+        <div class="card ink-shadow p-6" id="hero-form-wrap">
+          <!-- Form -->
+          <div id="hero-form-inner">
+            <p style="font-weight:600;font-size:16px;margin-bottom:16px;color:var(--ink);">Tell us about your business</p>
+            <form id="hero-form" action="/api/contact" method="POST" class="flex flex-col gap-3">
+              <input class="form-input" type="text" name="name" placeholder="Your name" required autocomplete="name" />
+              <input class="form-input" type="email" name="email" placeholder="Work email" required autocomplete="email" />
+              <input class="form-input" type="text" name="company" placeholder="Company name" required autocomplete="organization" />
+              <button type="submit" class="btn-primary w-full justify-center mt-1">Get started →</button>
+            </form>
+            <p style="font-size:12px;color:var(--muted);margin-top:12px;text-align:center;">
+              Or <a href="https://calendly.com/jon-30dayramp" target="_blank" rel="noopener" style="color:var(--accent);font-weight:500;">book a free 30-min call</a> first — no commitment.
+            </p>
           </div>
-          <p style="font-weight:700;font-size:17px;color:var(--ink);margin-bottom:6px;">You're on the list.</p>
-          <p style="font-size:14px;color:var(--muted);line-height:1.5;">We'll be in touch within one business day. In the meantime, feel free to <a href="https://calendly.com/jon-30dayramp" target="_blank" rel="noopener" style="color:var(--accent);font-weight:500;">book a discovery call</a>.</p>
+          <!-- Success state -->
+          <div id="hero-form-success" class="success-state flex-col items-center text-center py-4">
+            <div style="width:48px;height:48px;border-radius:999px;background:#ECFDF5;border:2px solid #D1FAE5;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 11.5l5 5 9-10" stroke="var(--good)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <p style="font-weight:700;font-size:17px;color:var(--ink);margin-bottom:6px;">You're on the list.</p>
+            <p style="font-size:14px;color:var(--muted);line-height:1.5;">We'll be in touch within one business day. In the meantime, feel free to <a href="https://calendly.com/jon-30dayramp" target="_blank" rel="noopener" style="color:var(--accent);font-weight:500;">book a discovery call</a>.</p>
+          </div>
         </div>
-      </div>
 
-      <!-- Trust signals -->
-      <div class="flex flex-wrap items-center justify-center gap-4 mt-6" style="text-align:center;">
-        <span class="escrow-badge">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1L2 3.5v4C2 10.1 4.2 12.6 7 13.5c2.8-.9 5-3.4 5-6V3.5L7 1z" fill="#F59E0B" opacity=".3" stroke="#F59E0B" stroke-width="1.2"/></svg>
-          30-day money-back guarantee
-        </span>
-        <span class="sectionnum">No lock-in · Cancel anytime</span>
+        <!-- Trust signals -->
+        <div class="flex flex-wrap items-center justify-center gap-4 mt-4" style="text-align:center;">
+          <span class="escrow-badge">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1L2 3.5v4C2 10.1 4.2 12.6 7 13.5c2.8-.9 5-3.4 5-6V3.5L7 1z" fill="#F59E0B" opacity=".3" stroke="#F59E0B" stroke-width="1.2"/></svg>
+            30-day money-back guarantee
+          </span>
+          <span class="sectionnum">No lock-in · Cancel anytime</span>
+        </div>
       </div>
     </div>
   </div>
@@ -404,7 +406,18 @@
       </div>
     </div>
 
-    <p style="font-size:14px;color:var(--muted);margin-top:20px;padding-left:2px;">
+    <!-- Guarantee banner -->
+    <div style="margin-top:28px;max-width:672px;padding:18px 24px;border-radius:14px;border:2px solid var(--ink);background:#FFFBEB;display:flex;align-items:center;gap:16px;">
+      <div style="flex-shrink:0;width:44px;height:44px;border-radius:50%;background:#FEF3C7;border:2px solid #F59E0B;display:flex;align-items:center;justify-content:center;">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2L3 6v6c0 5 3.6 9.1 8 10.5C15.4 21.1 19 17 19 12V6L11 2z" fill="#F59E0B" opacity=".25" stroke="#F59E0B" stroke-width="1.5" stroke-linejoin="round"/></svg>
+      </div>
+      <div>
+        <p style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:2px;">30-day guaranteed satisfaction or your money back.</p>
+        <p style="font-size:13px;color:#92400E;line-height:1.5;">If your AI agent isn't live and running within 30 days, you get a full refund. No questions, no partial payments, no fine print.</p>
+      </div>
+    </div>
+
+    <p style="font-size:14px;color:var(--muted);margin-top:16px;padding-left:2px;">
       Not ready to commit? <a href="https://calendly.com/jon-30dayramp" target="_blank" rel="noopener" style="color:var(--accent);font-weight:500;">Book a free 30-minute discovery call first.</a>
     </p>
   </div>
