@@ -118,6 +118,7 @@
           <option value="realestate">🏠 Real estate — Lead follow-up</option>
           <option value="dental">🦷 Dental — Scheduling & reminders</option>
           <option value="logistics">📦 Logistics — Load status inquiry</option>
+          <option value="financial">📊 Financial — P&amp;L TTM report</option>
         </select>
         <!-- Visible chevron icon -->
         <div style="pointer-events:none;position:absolute;right:14px;top:50%;transform:translateY(-50%);width:28px;height:28px;background:var(--ink);border-radius:6px;display:flex;align-items:center;justify-content:center;">
@@ -135,6 +136,7 @@
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="realestate" aria-pressed="false">🏠 Real estate — Lead follow-up</button>
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="dental" aria-pressed="false">🦷 Dental — Scheduling & reminders</button>
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="logistics" aria-pressed="false">📦 Logistics — Load status inquiry</button>
+      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="financial" aria-pressed="false">📊 Financial — P&amp;L TTM report</button>
     </div>
 
     <div class="grid md:grid-cols-2 gap-6">
@@ -394,6 +396,27 @@ const SCENARIOS = {
     draft: "Hi Kendra,\n\nApologies for the delay and the lack of proactive communication — that's on us.\n\nHere's the current status on TRK-8821:\n\u25b8 Driver: Pete R.\n\u25b8 Current location: I-80 westbound near Shorewood, MM 118\n\u25b8 Delay cause: active construction closure forcing reroute\n\u25b8 Revised ETA to Joliet dock: 12:40 PM (approximately 100 minutes behind schedule)\n\nYour dock coordinator at Joliet has already been notified and is adjusting the receiving schedule.\n\nRegarding the pattern of delays — I've flagged your account for a review with our operations lead, who will reach out by end of day to discuss what we're doing differently going forward.\n\nThank you for your patience.\nTristate Hauling Dispatch\n(this update was prepared by our agent \u00b7 reviewed before send)",
     metrics: [["Time to status update","20–45 min (dispatcher callback)","44 seconds"],["Dispatcher touch required","Yes — manual lookup","Zero"],["Dock notified proactively","Rarely","Automatic"]],
     escalation: "Account manager (repeat delay flag)"
+  },
+  financial: {
+    channelLabel: "Slack · #finance",
+    channelDetail: "Direct message to AI agent",
+    from: "Jon K. · Owner",
+    subject: "TTM request for board deck",
+    body: "Hey — can you access the P&L folder and give me a TTM through 3/31/26? Need it for the board deck.",
+    steps: [
+      "Accessing connected folder · Financials/Monthly P&L · Google Drive",
+      "Scanning folder · 12 files found · Apr 2025 → Mar 2026 · Excel format",
+      "Extracting line items · Revenue, COGS, 5 OpEx categories · 96 data points total",
+      "Cross-checking monthly totals for consistency · all 12 files reconcile cleanly",
+      "Calculating TTM metrics · gross margin, EBITDA, net income · MoM trend · YoY delta",
+      "Formatting board-ready summary · prior TTM comparison included · delivered to Jon"
+    ],
+    action: "TTM P&L delivered to Jon · 12 files processed · board deck ready",
+    actionMeta: "Full P&L compiled in 6 seconds · manually this takes 45–60 minutes in Excel",
+    draft: "TTM P&L SUMMARY — Apr 2025 through Mar 2026\nCompiled: 04/19/26\n\nREVENUE\n  Total Revenue            $4,287,400\n  Prior TTM (YoY)          $3,620,800\n  YoY Growth               +18.4%\n\nCOST OF GOODS SOLD       $2,143,700\nGROSS PROFIT             $2,143,700   (50.0%)\n\nOPERATING EXPENSES\n  Payroll & Benefits         $892,400\n  Rent & Utilities           $148,200\n  Marketing                  $187,600\n  Software & Tech             $64,100\n  Other G&A                  $163,900\n  Total OpEx               $1,456,200\n\nEBITDA                   $  687,500   (16.0%)\n  D&A                        $98,400\nEBIT                     $  589,100   (13.7%)\n  Interest Expense           $67,300\nNET INCOME               $  521,800   (12.2%)\n\nHIGHLIGHTS\n  Peak month:  Dec 2025  ($487,200)\n  Soft month:  Jul 2025  ($288,100)\n  Trailing 3-mo run rate: $4.6M annualized\n\nSource: 12 files · Financials/Monthly P&L",
+    draftLabel: "TTM Report (auto-compiled, ready for board deck)",
+    metrics: [["Time to compile","45–60 min in Excel","6 seconds"],["Files touched","12 spreadsheets, manually","Zero — agent pulled all"],["Error risk","Manual copy-paste","Reconciled automatically"]],
+    escalation: "Owner / CFO review before send"
   }
 };
 
