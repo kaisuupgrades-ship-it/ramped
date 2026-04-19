@@ -114,6 +114,10 @@
           <option value="cannabis">🌿 Cannabis — Quote request</option>
           <option value="livecall">📞 Live call — Qualify + book + fan-out</option>
           <option value="field">🔧 Field services — After-hours voicemail</option>
+          <option value="legal">⚖️ Legal — New client intake</option>
+          <option value="realestate">🏠 Real estate — Lead follow-up</option>
+          <option value="dental">🦷 Dental — Scheduling & reminders</option>
+          <option value="logistics">📦 Logistics — Load status inquiry</option>
         </select>
         <!-- Visible chevron icon -->
         <div style="pointer-events:none;position:absolute;right:14px;top:50%;transform:translateY(-50%);width:28px;height:28px;background:var(--ink);border-radius:6px;display:flex;align-items:center;justify-content:center;">
@@ -127,6 +131,10 @@
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="cannabis" aria-pressed="false">🌿 Cannabis — Quote request</button>
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="livecall" aria-pressed="false">📞 Live call — Qualify + book + fan-out <span class="chip ml-1" style="background:#FFEDD5;color:#7A4F00;font-size:10px;padding:1px 6px;">NEW</span></button>
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="field" aria-pressed="false">🔧 Field services — After-hours voicemail</button>
+      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="legal" aria-pressed="false">⚖️ Legal — New client intake</button>
+      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="realestate" aria-pressed="false">🏠 Real estate — Lead follow-up</button>
+      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="dental" aria-pressed="false">🦷 Dental — Scheduling & reminders</button>
+      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="logistics" aria-pressed="false">📦 Logistics — Load status inquiry</button>
     </div>
 
     <div class="grid md:grid-cols-2 gap-6">
@@ -306,6 +314,86 @@ const SCENARIOS = {
     draft: "SMS to Karen Vasquez \u00b7 (555) 0142\n\n\"Hi Karen \u2014 this is Ridgeline Plumbing's after-hours line. Got your message about the water heater leak at 412 Maple. We see you're a Home Protect Gold member, so this is covered.\n\nWe have Mike R. on call \u2014 he can be at your house by 9:30 PM tonight to stop the leak and assess. Reply YES to confirm or call (555) 0143 if you'd rather we come first thing tomorrow morning.\n\nIf the leak is serious right now, please shut off the cold-water valve at the top of the heater (there's usually a lever or knob). We can walk you through it \u2014 just call.\n\n\u2014 Ridgeline Plumbing\"",
     metrics: [["Call answer rate (after-hrs)","~35%","100%"],["Time to booked appt","~14 hrs","41 sec"],["Recovered job value (avg)","\u2014","$680 / call"]],
     escalation: "On-call dispatcher"
+  },
+  legal: {
+    channelLabel: "Inbox",
+    channelDetail: "intake@harrisonlawgroup.com",
+    from: "mike.deluca@gmail.com",
+    subject: "Need a lawyer — rear-ended on I-90, other driver at fault",
+    body: "Hi,\n\nI was rear-ended on I-90 last Thursday (04/10) by a driver who ran a red. Police report was filed, I have the report number. My car is totaled and I've been having neck pain — saw a doctor yesterday.\n\nThe other driver's insurance has already called me twice asking for a recorded statement. I don't want to say the wrong thing.\n\nI'm in Cook County. Is this something you handle? How does this work?\n\n— Mike DeLuca\n(312) 555-0174",
+    steps: [
+      "Classifying intent \u00b7 personal injury \u2192 auto accident, liability appears clear",
+      "Jurisdiction check \u00b7 Cook County, IL \u00b7 2-year SOL for PI \u00b7 10 months remaining",
+      "Conflict of interest check \u00b7 querying client database for 'DeLuca' + adverse parties \u00b7 no conflicts found",
+      "Triage score \u00b7 liability clear + documented injuries + active insurer contact = HIGH priority intake",
+      "Flagging insurer contact attempt \u00b7 advising client NOT to give recorded statement \u00b7 standard PI protocol",
+      "Routing to Jennifer S. (PI lead) \u00b7 drafting intake acknowledgement + intake form link"
+    ],
+    action: "Routed to Jennifer S. (PI) \u00b7 conflict-clear \u00b7 intake form + urgent reply queued",
+    actionMeta: "Responded in 52 seconds \u00b7 conflict check complete \u00b7 insurer statement risk flagged before client calls back",
+    draft: "Hi Mike,\n\nThank you for reaching out to Harrison Law Group.\n\nFirst — important: do not give the other driver's insurance company a recorded statement. You are not required to and it can be used against your claim. Tell them your attorney will be in touch.\n\nWe handle exactly this type of case. Based on what you've described — documented liability, police report, medical treatment already started — this looks like a strong claim.\n\nJennifer, our personal injury lead, has been looped in and will call you within the hour. In the meantime, please fill out our quick intake form (link below) so she has your details before she calls.\n\n[INTAKE FORM LINK]\n\nWe work on contingency — no fee unless we win.\n\nHarrison Law Group\n(this message was prepared by our intake agent and reviewed before send)",
+    metrics: [["Time to first response","1–3 business days","52 seconds"],["Conflict check","15 min manual","instant"],["Risk: client gives statement","High (no guidance)","Eliminated"]],
+    escalation: "PI attorney on intake rotation"
+  },
+  realestate: {
+    channelLabel: "Inbox \u00b7 Zillow lead",
+    channelDetail: "leads@parkplacerealty.com",
+    from: "Zillow Lead \u00b7 Sarah Okonkwo",
+    subject: "New lead: 3BR in Maplewood, budget $420k, pre-approved",
+    body: "Zillow Lead Notification\n\nBuyer: Sarah Okonkwo\nEmail: s.okonkwo@outlook.com\nPhone: (708) 555-0231\nMessage: \"Hi, I'm looking for a 3-bedroom in Maplewood or Elmwood Park, $380–$420k. I'm pre-approved through Chase, lease ends June 30 so I need to move fast. Can someone call me?\"\n\nLead received: 11:47 PM\nListing viewed: 2847 Birchwood Ave, Maplewood (3BR/2BA, $399k)",
+    steps: [
+      "Classifying lead \u00b7 active buyer, pre-approved, hard deadline (June 30 lease end) = HIGH urgency",
+      "Extracting criteria \u00b7 3BR, Maplewood/Elmwood Park, $380\u2013420k, pre-approved Chase, timeline 8 wks",
+      "Querying MLS \u00b7 4 active matches found within criteria \u00b7 2847 Birchwood already viewed",
+      "Assigning to Marcus T. (Maplewood specialist) \u00b7 checking calendar for showing availability",
+      "Next available showing slot \u00b7 Saturday 10 AM or Sunday 2 PM at 2847 Birchwood",
+      "Drafting immediate response \u00b7 personalizing with her timeline + pre-approval note"
+    ],
+    action: "Assigned to Marcus T. \u00b7 showing options sent \u00b7 3 additional matches queued for follow-up",
+    actionMeta: "Responded at 11:47 PM in 61 seconds \u00b7 leads contacted within 5 min are 9\u00d7 more likely to convert",
+    draft: "Hi Sarah!\n\nThank you for reaching out — I saw you were looking at 2847 Birchwood, great eye, that one just came back to market.\n\nGiven your June 30 deadline and pre-approval, let's move fast. Marcus, our Maplewood specialist, has two showing slots this weekend:\n\n\u25b8 Saturday 4/19 at 10:00 AM\n\u25b8 Sunday 4/20 at 2:00 PM\n\nI've also found 3 other listings that match your 3BR/$380\u2013420k criteria in Maplewood and Elmwood Park — I'll send those over as soon as you confirm a showing time.\n\nWhich works for you, or would you prefer a quick call first?\n\nPark Place Realty\n(this response was prepared by our agent and reviewed before send)",
+    metrics: [["Response time","9 hrs avg (next morning)","61 seconds"],["Lead conversion (< 5 min reply)","Baseline","9\u00d7 higher"],["Showing booked same night","Rare","Standard"]],
+    escalation: "Assigned agent (Marcus T.)"
+  },
+  dental: {
+    channelLabel: "Phone \u00b7 Voicemail",
+    channelDetail: "Main line \u00b7 (555) 0144 \u00b7 received 7:22 AM",
+    from: "Patient \u00b7 Robert Finley \u00b7 DOB 06/14/1961",
+    subject: "Voicemail — reschedule request, crown prep appt 04/21",
+    body: "Voicemail transcript:\n\n\"Hi, this is Robert Finley calling for Lakeside Dental. Um, I have an appointment on Monday the 21st at 9 AM for my crown prep, but something came up at work and I can't make it. I've tried to call twice but keep getting the machine. Can someone please call me back and move it? I'm pretty flexible — anytime Tuesday through Thursday works, mornings are better. My number is 312-555-0188. Thank you.\"\n\nCall received: 7:22 AM (before office opens)\nPatient ID: #LKS-4471 \u00b7 Robert Finley, 64M",
+    steps: [
+      "Transcribing voicemail \u00b7 diarizing speaker \u00b7 classifying intent: reschedule request",
+      "Looking up patient \u00b7 Robert Finley #LKS-4471 \u00b7 crown prep scheduled Mon 04/21 9:00 AM with Dr. Patel",
+      "Checking availability \u00b7 Tue\u2013Thu mornings with Dr. Patel \u00b7 3 open slots found",
+      "Flagging urgency \u00b7 crown prep = time-sensitive (temp crown placed) \u00b7 cannot delay > 2 wks",
+      "Drafting rescheduling options via SMS \u00b7 no human needed until patient selects slot",
+      "Updating recall queue \u00b7 Monday 04/21 slot freed \u00b7 waitlist patient auto-notified"
+    ],
+    action: "SMS sent to Robert with 3 options \u00b7 Mon slot released to waitlist \u00b7 Dr. Patel notified",
+    actionMeta: "Handled at 7:22 AM before staff arrived \u00b7 waitlist patient auto-filled the open slot \u00b7 zero revenue lost",
+    draft: "Hi Robert, this is Lakeside Dental — we got your voicemail about rescheduling your crown prep on Monday 4/21.\n\nDr. Patel has the following openings that work with your Tue–Thu morning preference:\n\n1\ufe0f\u20e3 Tuesday 4/22 at 8:30 AM\n2\ufe0f\u20e3 Wednesday 4/23 at 9:00 AM\n3\ufe0f\u20e3 Thursday 4/24 at 8:00 AM\n\nReply with 1, 2, or 3 to confirm, or call us at (555) 0144 and we'll get you sorted.\n\nNote: since you have a temporary crown placed, we recommend rescheduling within the next 10 days.\n\nLakeside Dental\n(this message was prepared by our scheduling agent)",
+    metrics: [["Time to response","Next business day (3+ hrs)","7:22 AM \u00b7 immediate"],["Slot recovered","Often goes unfilled","Auto-filled from waitlist"],["Front desk calls handled","Manual callback required","Zero"]],
+    escalation: "Front desk coordinator"
+  },
+  logistics: {
+    channelLabel: "Inbox",
+    channelDetail: "dispatch@tristatehauling.com",
+    from: "kendra.walsh@packagingplus.com",
+    subject: "Where is load #TRK-8821? Supposed to deliver this morning",
+    body: "Hi,\n\nLoad #TRK-8821 was scheduled for delivery this morning by 10 AM at our Joliet facility. It's now 11:35 and the dock supervisor says nothing has arrived. We have a production line scheduled around this delivery.\n\nCan someone tell me what's going on? This is the third time in two months we've had a delay with no communication.\n\nKendra Walsh\nOps Manager, Packaging Plus\n(815) 555-0392",
+    steps: [
+      "Parsing load number \u00b7 TRK-8821 \u00b7 querying TMS for current status",
+      "TMS result \u00b7 driver: Pete R. \u00b7 current location: I-80 MM 118 \u00b7 ETA 12:40 PM (100 min delay)",
+      "Delay root cause \u00b7 construction closure I-80 westbound near Shorewood \u00b7 reroute in progress",
+      "Account history check \u00b7 Packaging Plus \u00b7 3 delayed loads in 60 days \u00b7 flagging for account review",
+      "Dock coordinator at Joliet facility \u00b7 notified of revised ETA \u00b7 production schedule adjustment sent",
+      "Drafting proactive response to Kendra \u00b7 including cause, ETA, apology, account flag raised"
+    ],
+    action: "Kendra notified \u00b7 Joliet dock updated \u00b7 account flagged for ops review \u00b7 driver ETA confirmed",
+    actionMeta: "Full resolution in 44 seconds \u00b7 dispatcher not contacted \u00b7 Joliet dock rescheduled before driver arrives",
+    draft: "Hi Kendra,\n\nApologies for the delay and the lack of proactive communication — that's on us.\n\nHere's the current status on TRK-8821:\n\u25b8 Driver: Pete R.\n\u25b8 Current location: I-80 westbound near Shorewood, MM 118\n\u25b8 Delay cause: active construction closure forcing reroute\n\u25b8 Revised ETA to Joliet dock: 12:40 PM (approximately 100 minutes behind schedule)\n\nYour dock coordinator at Joliet has already been notified and is adjusting the receiving schedule.\n\nRegarding the pattern of delays — I've flagged your account for a review with our operations lead, who will reach out by end of day to discuss what we're doing differently going forward.\n\nThank you for your patience.\nTristate Hauling Dispatch\n(this update was prepared by our agent \u00b7 reviewed before send)",
+    metrics: [["Time to status update","20–45 min (dispatcher callback)","44 seconds"],["Dispatcher touch required","Yes — manual lookup","Zero"],["Dock notified proactively","Rarely","Automatic"]],
+    escalation: "Account manager (repeat delay flag)"
   }
 };
 
