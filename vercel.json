@@ -7,6 +7,10 @@
     {
       "source": "/logo-concepts",
       "destination": "/logo-concepts.html"
+    },
+    {
+      "source": "/one-pager",
+      "destination": "/one-pager.html"
     }
   ]
 }
