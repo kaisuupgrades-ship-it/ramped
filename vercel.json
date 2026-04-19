@@ -11,6 +11,10 @@
     {
       "source": "/one-pager",
       "destination": "/one-pager.html"
+    },
+    {
+      "source": "/comparison",
+      "destination": "/comparison.html"
     }
   ]
 }
