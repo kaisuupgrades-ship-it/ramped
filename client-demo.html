@@ -185,7 +185,7 @@
       <button class="sub-btn" data-scenario="recruiting">🎯 Recruiting</button>
     </div>
 
-    <div class="grid md:grid-cols-2 gap-6">
+    <div class="grid md:grid-cols-2 gap-6" id="main-demo-grid">
       <div class="card ink-shadow overflow-hidden">
         <div class="px-5 py-3 border-b border-[var(--line)] flex items-center justify-between bg-[var(--paper)]">
           <div class="flex items-center gap-2 min-w-0">
@@ -234,6 +234,64 @@
         </div>
       </div>
     </div>
+
+    <!-- Interactive Scheduling Demo Panel (shown only when Scheduling tab is active) -->
+<div id="scheduler-panel" style="display:none;">
+  <div class="card ink-shadow overflow-hidden">
+    <div class="px-5 py-3 border-b border-[var(--line)] flex items-center justify-between bg-[var(--paper)]">
+      <div class="flex items-center gap-2">
+        <span class="chip">📅 Live Schedule</span>
+        <span class="text-sm text-[var(--muted)]">Acme Field Services · This week</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="mono text-xs text-[var(--muted)]">Appts: <strong id="appt-count">6</strong></span>
+        <button id="chat-reset" class="btn-ghost text-xs py-1 px-2">↺ Reset</button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:0;min-height:460px;">
+      <!-- Calendar -->
+      <div class="p-4 border-r border-[var(--line)]">
+        <div class="flex items-center gap-4 mb-3 text-[11px]">
+          <span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#1F4FFF;display:inline-block;"></span> Mike</span>
+          <span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#0F7A4B;display:inline-block;"></span> Elena</span>
+          <span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#B45309;display:inline-block;"></span> Priya</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <div id="calendar-grid" style="min-width:420px;"></div>
+        </div>
+      </div>
+      <!-- Chat -->
+      <div style="display:flex;flex-direction:column;">
+        <div class="px-4 py-3 border-b border-[var(--line)] bg-[var(--ink)] text-white">
+          <div class="flex items-center gap-2">
+            <span class="dot" style="background:#7CFFB7;box-shadow:0 0 0 4px rgba(124,255,183,.15)"></span>
+            <span class="font-semibold text-sm">Ramped Agent · Scheduler</span>
+          </div>
+        </div>
+        <div id="chat-log" style="flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:280px;max-height:320px;"></div>
+        <!-- Preset chips -->
+        <div style="padding:8px 12px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:6px;">
+          <button class="prompt-chip chip text-xs cursor-pointer hover:bg-[var(--accent)] hover:text-white transition-colors" style="background:var(--paper);">Book Martinez · inspection · Tue 3pm</button>
+          <button class="prompt-chip chip text-xs cursor-pointer hover:bg-[var(--accent)] hover:text-white transition-colors" style="background:var(--paper);">Move Chen to Friday 10am</button>
+          <button class="prompt-chip chip text-xs cursor-pointer hover:bg-[var(--accent)] hover:text-white transition-colors" style="background:var(--paper);">What's open Thursday?</button>
+          <button class="prompt-chip chip text-xs cursor-pointer hover:bg-[var(--accent)] hover:text-white transition-colors" style="background:var(--paper);">Cancel Okafor Thu 9am</button>
+          <button class="prompt-chip chip text-xs cursor-pointer hover:bg-[var(--accent)] hover:text-white transition-colors" style="background:var(--paper);">Who's available Wed afternoon?</button>
+        </div>
+        <!-- Input -->
+        <div style="padding:8px 12px;border-top:1px solid var(--line);display:flex;gap:8px;align-items:center;">
+          <input id="chat-input" type="text" placeholder="e.g. Book Smith for drain repair Fri 2pm…" style="flex:1;border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-size:13px;font-family:inherit;outline:none;background:var(--paper);">
+          <button id="chat-send" class="btn-primary text-sm" style="white-space:nowrap;padding:8px 14px;">Send</button>
+        </div>
+      </div>
+    </div>
+    <!-- Metrics strip -->
+    <div class="px-5 py-3 border-t border-[var(--line)] bg-[var(--paper)]" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center;">
+      <div><div class="mono text-xs text-[var(--muted)]">Response time</div><div class="font-semibold text-sm">~0.4 sec</div></div>
+      <div><div class="mono text-xs text-[var(--muted)]">Manual equivalent</div><div class="font-semibold text-sm">3–8 min/call</div></div>
+      <div><div class="mono text-xs text-[var(--muted)]">Integrations</div><div class="font-semibold text-sm">EHR · CRM · SMS</div></div>
+    </div>
+  </div>
+</div>
 
     <!-- Inline CTA -->
     <div style="margin-top:24px;padding:16px 20px;background:#F5F7FF;border:1px solid #D4DBFF;border-radius:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
@@ -681,16 +739,33 @@ document.querySelectorAll('.scenario-btn').forEach(btn=>{
     const category = btn.dataset.category;
     activeScenario = btn.dataset.scenario;
     setActive(btn);
-    // Show/hide email sub-selector
-    if (category === 'email') {
-      emailSubSelector.classList.add('visible');
-    } else {
+
+    const schedulerPanel = document.getElementById('scheduler-panel');
+    const mainGrid = document.getElementById('main-demo-grid');
+
+    if (activeScenario === 'scheduling') {
+      if (mainGrid) mainGrid.style.display = 'none';
+      if (schedulerPanel) schedulerPanel.style.display = 'block';
+      initScheduler();
+      // Hide email sub-selector when scheduling tab is active
       emailSubSelector.classList.remove('visible');
+      // Sync mobile dropdown
+      const sel = document.getElementById('scenario-select');
+      if (sel) sel.value = activeScenario;
+    } else {
+      if (mainGrid) mainGrid.style.display = '';
+      if (schedulerPanel) schedulerPanel.style.display = 'none';
+      // Show/hide email sub-selector
+      if (category === 'email') {
+        emailSubSelector.classList.add('visible');
+      } else {
+        emailSubSelector.classList.remove('visible');
+      }
+      // Sync mobile dropdown
+      const sel = document.getElementById('scenario-select');
+      if (sel) sel.value = activeScenario;
+      loadScenario(activeScenario);
     }
-    // Sync mobile dropdown
-    const sel = document.getElementById('scenario-select');
-    if (sel) sel.value = activeScenario;
-    loadScenario(activeScenario);
   });
 });
 
@@ -735,7 +810,17 @@ if (scenarioSelect) {
     } else {
       emailSubSelector.classList.remove('visible');
     }
-    loadScenario(activeScenario);
+    const schedulerPanelMobile = document.getElementById('scheduler-panel');
+    const mainGridMobile = document.getElementById('main-demo-grid');
+    if (activeScenario === 'scheduling') {
+      if (mainGridMobile) mainGridMobile.style.display = 'none';
+      if (schedulerPanelMobile) schedulerPanelMobile.style.display = 'block';
+      initScheduler();
+    } else {
+      if (mainGridMobile) mainGridMobile.style.display = '';
+      if (schedulerPanelMobile) schedulerPanelMobile.style.display = 'none';
+      loadScenario(activeScenario);
+    }
   });
 }
 
@@ -812,8 +897,11 @@ loadScenario('healthcare');
    SCHEDULER DEMO — interactive agent acting on a real calendar
    Deterministic pattern-matching bot (no backend).
    ============================================================ */
-(function(){
+var schedulerInitialized = false;
+function initScheduler(){
+  if (schedulerInitialized) return;
   var grid = document.getElementById('calendar-grid'); if (!grid) return;
+  schedulerInitialized = true;
   var DAYS = ['Mon','Tue','Wed','Thu','Fri'];
   var DAY_LABELS = {Mon:'Mon 4/20', Tue:'Tue 4/21', Wed:'Wed 4/22', Thu:'Thu 4/23', Fri:'Fri 4/24'};
   var HOURS = [8,9,10,11,12,13,14,15,16,17]; // 8am..5pm (end 6pm)
@@ -1205,7 +1293,7 @@ loadScenario('healthcare');
   // initial render
   renderCalendar();
   addChat('agent', 'Morning. I can book, move, cancel, or check openings against the schedule. What do you need?');
-})();
+}
 
 </script>
 </body>
