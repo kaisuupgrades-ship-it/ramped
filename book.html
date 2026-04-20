@@ -279,8 +279,9 @@ async function showSlots(){
     var utcDate = new Date(tempDate.getTime() - offsetMs);
     var iso = utcDate.toISOString();
     var isBooked = booked.some(function(b){return Math.abs(new Date(b)-new Date(iso))<60000;});
+    var isPast = new Date(iso) < new Date(Date.now() + 2*60*60*1000); // disable slots within 2 hrs
     var localLabel = utcDate.toLocaleString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
-    return '<button class="slot-btn" '+(isBooked?'disabled':'')+' data-iso="'+iso+'" data-label="'+localLabel+'">'+localLabel+'</button>';
+    return '<button class="slot-btn" '+((isBooked||isPast)?'disabled':'')+' data-iso="'+iso+'" data-label="'+localLabel+'">'+localLabel+'</button>';
   }).join('');
 
   document.getElementById('slots-container').innerHTML = '<div class="slot-grid">'+slotsHTML+'</div>';
