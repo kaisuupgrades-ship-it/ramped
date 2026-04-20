@@ -95,7 +95,8 @@
 <body>
 <div class="page">
   <header class="border-b border-[var(--line)] bg-[var(--paper)]/85 backdrop-blur sticky top-0 z-40">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3 site-header-inner" style="flex-wrap:nowrap;">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+    <!-- Logo -->
     <a href="/" class="flex items-center gap-2 shrink-0">
   <svg width="26" height="22" viewBox="0 0 26 22" fill="none" aria-hidden="true">
     <rect x="0" y="14" width="5" height="8" rx="1.5" fill="var(--accent)"/>
@@ -103,11 +104,17 @@
     <rect x="14" y="4" width="5" height="18" rx="1.5" fill="var(--accent)" opacity=".55"/>
     <rect x="21" y="0" width="5" height="22" rx="1.5" fill="var(--accent)" opacity=".35"/>
   </svg>
-  <span class="book-logo-text font-bold text-lg tracking-tight ml-2">Ramped AI</span>
+  <span class="font-bold text-lg tracking-tight ml-2">Ramped AI</span>
 </a>
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:nowrap;">
-      <a href="/demo" style="padding:6px 12px;font-size:12px;font-weight:500;color:inherit;text-decoration:none;border:1.5px solid #ddd;border-radius:8px;white-space:nowrap;">Demo</a>
-      <a href="/#get-started" style="padding:6px 12px;font-size:12px;font-weight:600;background:#0B1220;color:#fff;border-radius:8px;text-decoration:none;white-space:nowrap;">Get started &rarr;</a>
+    <!-- Nav links -->
+    <nav class="hidden sm:flex items-center gap-3">
+      <a href="/demo" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Demo</a>
+      <a href="#get-started" class="btn-primary whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Get started →</a>
+    </nav>
+    <!-- Mobile CTA -->
+    <div class="sm:hidden flex items-center gap-2">
+      <a href="/demo" class="btn-ghost" style="padding:8px 12px;font-size:13px;">Demo</a>
+      <a href="#get-started" class="btn-primary" style="padding:8px 14px;font-size:13px;">Get started →</a>
     </div>
   </div>
 </header>
