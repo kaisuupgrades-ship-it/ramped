@@ -116,21 +116,23 @@
 </head>
 <body>
 <div class="page">
-  <header>
-    <a href="/" class="logo" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:inherit;">
-      <svg width="26" height="22" viewBox="0 0 26 22" fill="none" aria-hidden="true">
-        <rect x="0" y="14" width="5" height="8" rx="1.5" fill="var(--ink)"/>
-        <rect x="7" y="9" width="5" height="13" rx="1.5" fill="var(--ink)" opacity=".75"/>
-        <rect x="14" y="4" width="5" height="18" rx="1.5" fill="var(--ink)" opacity=".55"/>
-        <rect x="21" y="0" width="5" height="22" rx="1.5" fill="var(--ink)" opacity=".35"/>
-      </svg>
-      Ramped AI
-    </a>
+  <header class="border-b border-[var(--line)] bg-[var(--paper)]/85 backdrop-blur sticky top-0 z-40">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+    <a href="/" class="flex items-center gap-2 shrink-0">
+  <svg width="26" height="22" viewBox="0 0 26 22" fill="none" aria-hidden="true">
+    <rect x="0" y="14" width="5" height="8" rx="1.5" fill="var(--accent)"/>
+    <rect x="7" y="9" width="5" height="13" rx="1.5" fill="var(--accent)" opacity=".75"/>
+    <rect x="14" y="4" width="5" height="18" rx="1.5" fill="var(--accent)" opacity=".55"/>
+    <rect x="21" y="0" width="5" height="22" rx="1.5" fill="var(--accent)" opacity=".35"/>
+  </svg>
+  <span class="font-bold text-lg tracking-tight ml-2">Ramped AI</span>
+</a>
     <div style="display:flex;align-items:center;gap:8px;">
       <a href="/demo" style="padding:8px 16px;font-size:13px;font-weight:500;color:inherit;text-decoration:none;border:1.5px solid #ddd;border-radius:8px;white-space:nowrap;">Demo</a>
       <a href="/#get-started" style="padding:8px 16px;font-size:13px;font-weight:600;background:#0B1220;color:#fff;border-radius:8px;text-decoration:none;white-space:nowrap;">Get started →</a>
     </div>
-  </header>
+  </div>
+</header>
 
   <h1>Book a discovery call.</h1>
   <p class="subtitle">Free · 30 minutes · We'll map exactly where AI agents will move the needle in your business.</p>
@@ -153,11 +155,48 @@
   <div class="booking-shell" id="booking-shell">
     <!-- Left panel -->
     <div class="left-panel">
-      <div class="panel-label">Select a date</div>
-      <div class="date-strip" id="date-strip"></div>
-      <div class="panel-label">Select a time</div>
-      <div class="slots-grid" id="slots-grid">
-        <div class="no-slots-msg">Pick a date above</div>
+      <h1 style="font-size:22px;font-weight:700;line-height:1.3;margin-bottom:8px;">Book a free 30-min discovery call</h1>
+      <p style="font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:24px;">We'll map out exactly what AI can automate in your business — no pitch, just a real conversation.</p>
+
+      <div style="margin-bottom:24px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">What we'll cover</p>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:14px;">
+            <span style="color:var(--accent);font-size:16px;line-height:1.4;">✓</span>
+            <span>Where AI can save you 10+ hours/week right now</span>
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:14px;">
+            <span style="color:var(--accent);font-size:16px;line-height:1.4;">✓</span>
+            <span>Which workflows to automate first for fastest ROI</span>
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:14px;">
+            <span style="color:var(--accent);font-size:16px;line-height:1.4;">✓</span>
+            <span>What a 30-day implementation looks like for your business</span>
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:14px;">
+            <span style="color:var(--accent);font-size:16px;line-height:1.4;">✓</span>
+            <span>Honest assessment — if it's not a fit, we'll tell you</span>
+          </li>
+        </ul>
+      </div>
+
+      <hr style="border:none;border-top:1px solid var(--line);margin-bottom:24px;">
+
+      <blockquote style="margin:0 0 24px;padding:16px;background:var(--surface,#F9F9F9);border-radius:10px;border-left:3px solid var(--accent);">
+        <p style="font-size:14px;line-height:1.6;color:var(--ink);margin:0 0 10px;">"We went live in 26 days. The AI handles our after-hours leads and I haven't touched the inbox since."</p>
+        <footer style="font-size:12px;color:var(--muted);">— Marcus D., Harbor Peak Realty Group</footer>
+      </blockquote>
+
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);">
+          <span>🕐</span><span>30 minutes</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);">
+          <span>📹</span><span>Google Meet or phone — your choice</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);">
+          <span>🚫</span><span>No pressure, no hard sell</span>
+        </div>
       </div>
     </div>
 
