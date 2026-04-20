@@ -72,6 +72,8 @@
     border-color: var(--accent);
     font-weight: 600;
   }
+  .scenario-btn.coming-soon { opacity:0.45; cursor:not-allowed; }
+  .scenario-btn.coming-soon:hover { background:inherit; color:inherit; }
   /* Email industry sub-selector */
   .sub-selector { display:none; margin-bottom:16px; }
   .sub-selector.visible { display:flex; flex-wrap:wrap; gap:8px; }
@@ -143,9 +145,9 @@
           <option value="property">📥 Email — Property maintenance</option>
           <option value="insurance">📥 Email — Insurance claims</option>
           <option value="field">📥 Email — Field services voicemail</option>
+          <option value="logistics">📥 Email — Logistics load status</option>
+          <option value="recruiting">📥 Email — Recruiting application screening</option>
           <option value="financial">📊 Financial — P&amp;L TTM report</option>
-          <option value="logistics">📦 Logistics — Load status inquiry</option>
-          <option value="recruiting">🎯 Recruiting — Application screening</option>
           <option value="saas">💻 SaaS — Renewal risk &amp; outreach</option>
         </select>
         <!-- Visible chevron icon -->
@@ -159,9 +161,9 @@
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-category="livecall" data-scenario="livecall" aria-pressed="false">📞 Live call <span class="chip ml-1" style="background:#FFEDD5;color:#7A4F00;font-size:10px;padding:1px 6px;">FEATURED</span></button>
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-category="email" data-scenario="healthcare" aria-pressed="false">📥 Email intake</button>
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-category="financial" data-scenario="financial" aria-pressed="false">📊 Financial</button>
-      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-category="logistics" data-scenario="logistics" aria-pressed="false">📦 Logistics &amp; ops</button>
-      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-category="recruiting" data-scenario="recruiting" aria-pressed="false">🎯 Recruiting</button>
-      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-category="saas" data-scenario="saas" aria-pressed="false">💻 SaaS</button>
+      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold coming-soon" data-category="slack" data-scenario="slack" aria-pressed="false" disabled>💬 Slack <span style="font-size:10px;font-weight:400;opacity:0.7;">(soon)</span></button>
+      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold coming-soon" data-category="crm" data-scenario="crm" aria-pressed="false" disabled>📋 CRM <span style="font-size:10px;font-weight:400;opacity:0.7;">(soon)</span></button>
+      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold coming-soon" data-category="scheduling" data-scenario="scheduling" aria-pressed="false" disabled>📅 Scheduling <span style="font-size:10px;font-weight:400;opacity:0.7;">(soon)</span></button>
     </div>
 
     <!-- Email industry sub-selector (hidden by default) -->
@@ -175,6 +177,8 @@
       <button class="sub-btn" data-scenario="property">🏢 Property mgmt</button>
       <button class="sub-btn" data-scenario="insurance">🛡️ Insurance</button>
       <button class="sub-btn" data-scenario="field">🔧 Field services</button>
+      <button class="sub-btn" data-scenario="logistics">📦 Logistics</button>
+      <button class="sub-btn" data-scenario="recruiting">🎯 Recruiting</button>
     </div>
 
     <div class="grid md:grid-cols-2 gap-6">
@@ -436,25 +440,25 @@ const SCENARIOS = {
     escalation: "Account manager (repeat delay flag)"
   },
   financial: {
-    channelLabel: "Slack · #finance",
-    channelDetail: "Direct message to AI agent",
-    from: "Jon K. · Owner",
-    subject: "TTM request for board deck",
-    body: "Hey — can you access the P&L folder and give me a TTM through 3/31/26? Need it for the board deck.",
+    channelLabel: "Report request",
+    channelDetail: "finance@acme-operations.com",
+    from: "CEO — Derek Walton <derek@acme-operations.com>",
+    subject: "TTM P&L — pull and flag anything I should know before Monday",
+    body: "Hey — before the board call Monday I need a clean TTM P&L. Pull from NetSuite, run the usual variance analysis, and flag anything that looks off. Revenue trend, margin compression, OpEx creep — you know what I care about. Don't just give me the numbers, tell me what they mean.\n\n— Derek",
     steps: [
-      "Accessing connected folder · Financials/Monthly P&L · Google Drive",
-      "Scanning folder · 12 files found · Apr 2025 → Mar 2026 · Excel format",
-      "Extracting line items · Revenue, COGS, 5 OpEx categories · 96 data points total",
-      "Cross-checking monthly totals for consistency · all 12 files reconcile cleanly",
-      "Calculating TTM metrics · gross margin, EBITDA, net income · MoM trend · YoY delta",
-      "Formatting board-ready summary · prior TTM comparison included · delivered to Jon"
+      "Authenticating with NetSuite API · pulling GL transactions Apr 2024 – Mar 2025",
+      "Aggregating revenue streams · SaaS recurring + professional services + one-time",
+      "Computing COGS, gross profit, and operating expense line items by month",
+      "Running MoM and QoQ variance analysis · flagging movements > ±8%",
+      "Comparing gross margin % vs. prior TTM baseline (58.2%)",
+      "Scanning for red flags · OpEx concentration, margin compression, revenue mix shift",
+      "Generating narrative commentary · trend summary + executive flag list"
     ],
-    action: "TTM P&L delivered to Jon · 12 files processed · board deck ready",
-    actionMeta: "Full P&L compiled in 6 seconds · manually this takes 45–60 minutes in Excel",
-    draft: "TTM P&L SUMMARY — Apr 2025 through Mar 2026\nCompiled: 04/19/26\n\nREVENUE\n  Total Revenue            $4,287,400\n  Prior TTM (YoY)          $3,620,800\n  YoY Growth               +18.4%\n\nCOST OF GOODS SOLD       $2,143,700\nGROSS PROFIT             $2,143,700   (50.0%)\n\nOPERATING EXPENSES\n  Payroll & Benefits         $892,400\n  Rent & Utilities           $148,200\n  Marketing                  $187,600\n  Software & Tech             $64,100\n  Other G&A                  $163,900\n  Total OpEx               $1,456,200\n\nEBITDA                   $  687,500   (16.0%)\n  D&A                        $98,400\nEBIT                     $  589,100   (13.7%)\n  Interest Expense           $67,300\nNET INCOME               $  521,800   (12.2%)\n\nHIGHLIGHTS\n  Peak month:  Dec 2025  ($487,200)\n  Soft month:  Jul 2025  ($288,100)\n  Trailing 3-mo run rate: $4.6M annualized\n\nSource: 12 files · Financials/Monthly P&L",
-    draftLabel: "TTM Report (auto-compiled, ready for board deck)",
-    metrics: [["Time to compile","45–60 min in Excel","6 seconds"],["Files touched","12 spreadsheets, manually","Zero — agent pulled all"],["Error risk","Manual copy-paste","Reconciled automatically"]],
-    escalation: "Owner / CFO review before send"
+    action: "TTM P&L assembled · 3 red flags identified · board-ready summary drafted",
+    actionMeta: "Pulled 12 months of GL data in 4.1 seconds · variance analysis complete · executive narrative ready",
+    draft: "TRAILING TWELVE MONTHS — P&L SUMMARY\nApr 2024 – Mar 2025  |  Acme Operations LLC\n\n[TTM_TABLE]\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nAGENT ANALYSIS — KEY FINDINGS\n\n▲ Revenue trend: +18.4% YoY growth, but the mix is shifting. Professional services grew 34% while SaaS recurring grew only 9%. That's a warning sign — services revenue is lumpy and doesn't compound.\n\n⚠ RED FLAG 1 — Gross margin compression: GM% dropped from 58.2% (prior TTM) to 52.7% this TTM. That's a 550 bps decline. Primary driver: COGS on professional services engagements running 12% over estimate. Fix the scoping problem or reprice.\n\n⚠ RED FLAG 2 — OpEx acceleration: Total OpEx grew 31% YoY vs. revenue growth of 18%. The gap is widening. Sales & marketing is the largest driver (+44% YoY) with no corresponding CAC efficiency gain visible in the data.\n\n⚠ RED FLAG 3 — Q1 revenue dip: Jan–Mar 2025 revenue averaged $612K/mo vs. $684K/mo in Q4 2024. This is outside normal seasonality for your segment. Investigate whether this is pipeline timing, churn, or a demand signal.\n\n✓ POSITIVE: EBITDA margin held at 14.1% despite compression, driven by headcount discipline. G&A grew only 6% YoY.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nRECOMMENDATION FOR MONDAY\nLead with the revenue growth story (+18.4%) but get ahead of the margin question — the board will ask. Frame the GM compression as a known issue with a fix in motion (repricing effective Q2). Don't present without a CAC/LTV slide given the S&M spend acceleration.",
+    metrics: [["Data pulled","Manual: 3–4 hrs","4.1 seconds"],["Red flags surfaced","Depends on analyst","3 flagged automatically"],["Board-ready","Next day, if lucky","Same session"]],
+    escalation: "CFO / Board prep"
   },
   ecommerce: {
     channelLabel: "Inbox · Support ticket",
@@ -606,6 +610,7 @@ function setActive(btn){
 document.querySelectorAll('.scenario-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     if (running) return;
+    if (btn.classList.contains('coming-soon')) return;
     const category = btn.dataset.category;
     activeScenario = btn.dataset.scenario;
     setActive(btn);
@@ -643,7 +648,7 @@ if (scenarioSelect) {
     if (running) return;
     activeScenario = scenarioSelect.value;
     // Sync desktop tabs: find matching category tab
-    const emailScenarios = ['healthcare','cannabis','legal','realestate','dental','ecommerce','property','insurance','field'];
+    const emailScenarios = ['healthcare','cannabis','legal','realestate','dental','ecommerce','property','insurance','field','logistics','recruiting'];
     document.querySelectorAll('.scenario-btn').forEach(b => {
       let isActive = false;
       if (emailScenarios.includes(activeScenario) && b.dataset.category === 'email') {
@@ -705,9 +710,14 @@ runBtn.addEventListener('click', async ()=>{
   await wait(350);
   actionLine.textContent = s.action;
   actionMeta.textContent = s.actionMeta;
-  draftText.textContent  = s.draft;
   var draftLabelEl = document.getElementById('draft-label');
-  if (draftLabelEl) draftLabelEl.textContent = s.draftLabel || 'Drafted reply (queued for human review)';
+  if (draftLabelEl) draftLabelEl.textContent = activeScenario === 'financial' ? 'AI analysis — board-ready summary' : (s.draftLabel || 'Drafted reply (queued for human review)');
+  if (s.draft && s.draft.includes('[TTM_TABLE]')) {
+    const TTM_TABLE_HTML = `<div style="overflow-x:auto;margin:12px 0;border-radius:8px;border:1px solid var(--line);"><table style="width:100%;border-collapse:collapse;font-size:11px;font-family:'JetBrains Mono',monospace;min-width:700px;"><thead><tr style="background:var(--ink);color:#fff;"><th style="padding:8px 10px;text-align:left;font-weight:600;position:sticky;left:0;background:var(--ink);min-width:140px;">Line Item</th><th style="padding:8px 6px;text-align:right;">Apr</th><th style="padding:8px 6px;text-align:right;">May</th><th style="padding:8px 6px;text-align:right;">Jun</th><th style="padding:8px 6px;text-align:right;">Jul</th><th style="padding:8px 6px;text-align:right;">Aug</th><th style="padding:8px 6px;text-align:right;">Sep</th><th style="padding:8px 6px;text-align:right;">Oct</th><th style="padding:8px 6px;text-align:right;">Nov</th><th style="padding:8px 6px;text-align:right;">Dec</th><th style="padding:8px 6px;text-align:right;">Jan</th><th style="padding:8px 6px;text-align:right;">Feb</th><th style="padding:8px 6px;text-align:right;">Mar</th><th style="padding:8px 8px;text-align:right;font-weight:700;">TTM</th></tr></thead><tbody><tr style="background:#F8F8F6;"><td style="padding:7px 10px;font-weight:700;color:var(--ink);position:sticky;left:0;background:#F8F8F6;">Revenue</td><td style="padding:7px 6px;text-align:right;">589</td><td style="padding:7px 6px;text-align:right;">612</td><td style="padding:7px 6px;text-align:right;">634</td><td style="padding:7px 6px;text-align:right;">658</td><td style="padding:7px 6px;text-align:right;">671</td><td style="padding:7px 6px;text-align:right;">695</td><td style="padding:7px 6px;text-align:right;">702</td><td style="padding:7px 6px;text-align:right;">718</td><td style="padding:7px 6px;text-align:right;">731</td><td style="padding:7px 6px;text-align:right;">608</td><td style="padding:7px 6px;text-align:right;">619</td><td style="padding:7px 6px;text-align:right;">610</td><td style="padding:7px 8px;text-align:right;font-weight:700;">7,847</td></tr><tr><td style="padding:6px 10px;color:var(--muted);padding-left:20px;position:sticky;left:0;background:#fff;">&#8627; SaaS recurring</td><td style="padding:6px 6px;text-align:right;color:var(--muted);">401</td><td style="padding:6px 6px;text-align:right;color:var(--muted);">411</td><td style="padding:6px 6px;text-align:right;color:var(--muted);">418</td><td style="padding:6px 6px;text-align:right;color:var(--muted);">424</td><td style="padding:6px 6px;text-align:right;color:var(--muted);">429</td><td style="padding:6px 6px;text-align:right;color:var(--muted);">437</td><td style="padding:6px 6px;text-align:right;color:var(--muted);">441</td><td style="padding:6px 6px;text-align:right;color:var(--muted);">448</td><td style="padding:6px 6px;text-align:right;color:var(--muted);">452</td><td style="padding:6px 6px;text-align:right;color:var(--muted);">438</td><td style="padding:6px 6px;text-align:right;color:var(--muted);">441</td><td style="padding:6px 6px;text-align:right;color:var(--muted);">437</td><td style="padding:6px 8px;text-align:right;color:var(--muted);">5,177</td></tr><tr style="background:#F8F8F6;"><td style="padding:6px 10px;color:var(--muted);padding-left:20px;position:sticky;left:0;background:#F8F8F6;">&#8627; Prof. services</td><td style="padding:6px 6px;text-align:right;color:var(--muted);">188</td><td style="padding:6px 6px;text-align:right;color:var(--muted);">201</td><td style="padding:6px 6px;text-align:right;color:var(--muted);">216</td><td style="padding:6px 6px;text-align:right;color:var(--muted);">234</td><td style="padding:6px 6px;text-align:right;color:var(--muted);">242</td><td style="padding:6px 6px;text-align:right;color:var(--muted);">258</td><td style="padding:6px 6px;text-align:right;color:var(--muted);">261</td><td style="padding:6px 6px;text-align:right;color:var(--muted);">270</td><td style="padding:6px 6px;text-align:right;color:var(--muted);">279</td><td style="padding:6px 6px;text-align:right;color:var(--muted);">170</td><td style="padding:6px 6px;text-align:right;color:var(--muted);">178</td><td style="padding:6px 6px;text-align:right;color:var(--muted);">173</td><td style="padding:6px 8px;text-align:right;color:var(--muted);">2,670</td></tr><tr style="border-top:1px solid var(--line);"><td style="padding:7px 10px;font-weight:600;position:sticky;left:0;background:#fff;">COGS</td><td style="padding:7px 6px;text-align:right;">(271)</td><td style="padding:7px 6px;text-align:right;">(286)</td><td style="padding:7px 6px;text-align:right;">(301)</td><td style="padding:7px 6px;text-align:right;">(318)</td><td style="padding:7px 6px;text-align:right;">(328)</td><td style="padding:7px 6px;text-align:right;">(334)</td><td style="padding:7px 6px;text-align:right;">(337)</td><td style="padding:7px 6px;text-align:right;">(348)</td><td style="padding:7px 6px;text-align:right;">(351)</td><td style="padding:7px 6px;text-align:right;">(293)</td><td style="padding:7px 6px;text-align:right;">(298)</td><td style="padding:7px 6px;text-align:right;">(291)</td><td style="padding:7px 8px;text-align:right;font-weight:700;">(3,756)</td></tr><tr style="background:#F0F7F4;border-top:2px solid var(--good);"><td style="padding:8px 10px;font-weight:700;color:var(--good);position:sticky;left:0;background:#F0F7F4;">Gross Profit</td><td style="padding:8px 6px;text-align:right;font-weight:600;">318</td><td style="padding:8px 6px;text-align:right;font-weight:600;">326</td><td style="padding:8px 6px;text-align:right;font-weight:600;">333</td><td style="padding:8px 6px;text-align:right;font-weight:600;">340</td><td style="padding:8px 6px;text-align:right;font-weight:600;">343</td><td style="padding:8px 6px;text-align:right;font-weight:600;">361</td><td style="padding:8px 6px;text-align:right;font-weight:600;">365</td><td style="padding:8px 6px;text-align:right;font-weight:600;">370</td><td style="padding:8px 6px;text-align:right;font-weight:600;">380</td><td style="padding:8px 6px;text-align:right;font-weight:600;">315</td><td style="padding:8px 6px;text-align:right;font-weight:600;">321</td><td style="padding:8px 6px;text-align:right;font-weight:600;">319</td><td style="padding:8px 8px;text-align:right;font-weight:700;">4,091</td></tr><tr style="background:#F8F6F0;"><td style="padding:6px 10px;font-size:10px;color:var(--muted);position:sticky;left:0;background:#F8F6F0;">GM %</td><td style="padding:6px 6px;text-align:right;font-size:10px;color:var(--muted);">54.0%</td><td style="padding:6px 6px;text-align:right;font-size:10px;color:var(--muted);">53.3%</td><td style="padding:6px 6px;text-align:right;font-size:10px;color:var(--muted);">52.5%</td><td style="padding:6px 6px;text-align:right;font-size:10px;color:var(--muted);">51.7%</td><td style="padding:6px 6px;text-align:right;font-size:10px;color:var(--muted);">51.1%</td><td style="padding:6px 6px;text-align:right;font-size:10px;color:var(--muted);">51.9%</td><td style="padding:6px 6px;text-align:right;font-size:10px;color:var(--muted);">52.0%</td><td style="padding:6px 6px;text-align:right;font-size:10px;color:var(--muted);">51.5%</td><td style="padding:6px 6px;text-align:right;font-size:10px;color:var(--muted);">52.0%</td><td style="padding:6px 6px;text-align:right;font-size:10px;color:var(--muted);">51.8%</td><td style="padding:6px 6px;text-align:right;font-size:10px;color:var(--muted);">51.9%</td><td style="padding:6px 6px;text-align:right;font-size:10px;color:var(--muted);">52.3%</td><td style="padding:6px 8px;text-align:right;font-size:10px;font-weight:700;color:#B45309;">52.1%</td></tr><tr style="border-top:1px solid var(--line);"><td style="padding:7px 10px;font-weight:600;position:sticky;left:0;background:#fff;">Total OpEx</td><td style="padding:7px 6px;text-align:right;">(218)</td><td style="padding:7px 6px;text-align:right;">(224)</td><td style="padding:7px 6px;text-align:right;">(231)</td><td style="padding:7px 6px;text-align:right;">(238)</td><td style="padding:7px 6px;text-align:right;">(244)</td><td style="padding:7px 6px;text-align:right;">(251)</td><td style="padding:7px 6px;text-align:right;">(259)</td><td style="padding:7px 6px;text-align:right;">(263)</td><td style="padding:7px 6px;text-align:right;">(271)</td><td style="padding:7px 6px;text-align:right;">(226)</td><td style="padding:7px 6px;text-align:right;">(229)</td><td style="padding:7px 6px;text-align:right;">(231)</td><td style="padding:7px 8px;text-align:right;font-weight:700;">(2,885)</td></tr><tr style="background:#F8F8F6;border-top:2px solid var(--ink);"><td style="padding:8px 10px;font-weight:700;position:sticky;left:0;background:#F8F8F6;">EBITDA</td><td style="padding:8px 6px;text-align:right;font-weight:600;">100</td><td style="padding:8px 6px;text-align:right;font-weight:600;">102</td><td style="padding:8px 6px;text-align:right;font-weight:600;">102</td><td style="padding:8px 6px;text-align:right;font-weight:600;">102</td><td style="padding:8px 6px;text-align:right;font-weight:600;">99</td><td style="padding:8px 6px;text-align:right;font-weight:600;">110</td><td style="padding:8px 6px;text-align:right;font-weight:600;">106</td><td style="padding:8px 6px;text-align:right;font-weight:600;">107</td><td style="padding:8px 6px;text-align:right;font-weight:600;">109</td><td style="padding:8px 6px;text-align:right;font-weight:600;">89</td><td style="padding:8px 6px;text-align:right;font-weight:600;">92</td><td style="padding:8px 6px;text-align:right;font-weight:600;">88</td><td style="padding:8px 8px;text-align:right;font-weight:700;">1,206</td></tr><tr style="background:#F0F6FF;"><td style="padding:6px 10px;font-size:10px;color:var(--muted);position:sticky;left:0;background:#F0F6FF;">EBITDA %</td><td style="padding:6px 6px;text-align:right;font-size:10px;color:var(--muted);">17.0%</td><td style="padding:6px 6px;text-align:right;font-size:10px;color:var(--muted);">16.7%</td><td style="padding:6px 6px;text-align:right;font-size:10px;color:var(--muted);">16.1%</td><td style="padding:6px 6px;text-align:right;font-size:10px;color:var(--muted);">15.5%</td><td style="padding:6px 6px;text-align:right;font-size:10px;color:var(--muted);">14.8%</td><td style="padding:6px 6px;text-align:right;font-size:10px;color:var(--muted);">15.8%</td><td style="padding:6px 6px;text-align:right;font-size:10px;color:var(--muted);">15.1%</td><td style="padding:6px 6px;text-align:right;font-size:10px;color:var(--muted);">14.9%</td><td style="padding:6px 6px;text-align:right;font-size:10px;color:var(--muted);">14.9%</td><td style="padding:6px 6px;text-align:right;font-size:10px;color:var(--muted);">14.6%</td><td style="padding:6px 6px;text-align:right;font-size:10px;color:var(--muted);">14.9%</td><td style="padding:6px 6px;text-align:right;font-size:10px;color:var(--muted);">14.4%</td><td style="padding:6px 8px;text-align:right;font-size:10px;font-weight:700;color:var(--accent);">15.4%</td></tr></tbody></table><p style="font-size:10px;color:var(--muted);padding:6px 10px;margin:0;border-top:1px solid var(--line);">All figures in $000s · Source: NetSuite GL · Apr 2024 – Mar 2025</p></div>`;
+    draftText.innerHTML = s.draft.replace('[TTM_TABLE]', TTM_TABLE_HTML).replace(/\n/g, '<br>');
+  } else {
+    draftText.textContent = s.draft || '';
+  }
   var actionChipEl = document.getElementById('action-chip');
   if (actionChipEl) actionChipEl.textContent = s.actionChip || '\u2713 Action taken';
   escalationChip.textContent = s.escalation;
