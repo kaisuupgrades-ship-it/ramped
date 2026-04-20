@@ -90,6 +90,8 @@
   .sub-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); font-weight:600; }
   .scenario-tabs { flex-wrap: wrap; }
   @media (min-width: 640px) { .scenario-tabs { flex-wrap: nowrap; } }
+  .section-wrap{max-width:1120px;margin-left:auto;margin-right:auto;padding-left:24px;padding-right:24px;}
+  @media(min-width:768px){.section-wrap{padding-left:32px;padding-right:32px;}}
 </style>
 </head>
 <body>
@@ -120,15 +122,15 @@
 
 
 <section class="border-b border-[var(--line)] grid-bg">
-  <div class="max-w-3xl mx-auto px-6 py-14 text-center">
+  <div class="section-wrap py-14">
     <div class="pill" style="margin:0 0 16px;width:fit-content;"><span class="dot"></span> Live agent demos</div>
-    <h1 style="font-size:clamp(2rem,5vw,2.8rem);font-weight:800;letter-spacing:-0.03em;line-height:1.1;margin-bottom:16px;text-align:center;">Your next hire doesn't sleep,<br>forget, or drop the ball.</h1>
-    <p style="font-size:16px;color:var(--muted);max-width:500px;margin:0;line-height:1.6;text-align:center;">Pick your industry. Watch a live AI agent handle a real inbound workflow — exactly how it runs from day one of your Sprint.</p>
+    <h1 style="font-size:clamp(2rem,5vw,2.8rem);font-weight:800;letter-spacing:-0.03em;line-height:1.1;margin-bottom:16px;text-align:left;">Your next hire doesn't sleep,<br>forget, or drop the ball.</h1>
+    <p style="font-size:16px;color:var(--muted);max-width:500px;margin:0;line-height:1.6;text-align:left;">Pick your industry. Watch a live AI agent handle a real inbound workflow — exactly how it runs from day one of your Sprint.</p>
   </div>
 </section>
 
 <section id="demo" class="border-t border-[var(--line)] bg-white">
-  <div class="max-w-6xl mx-auto px-6 py-16">
+  <div class="section-wrap py-16">
     <div class="flex items-end justify-between flex-wrap gap-4 mb-8">
       <div>
         <div class="sectionnum mb-2">01 — Live demo</div>
@@ -318,13 +320,13 @@
 </section>
 
 <section style="border-top:1px solid var(--line);background:var(--ink);color:#fff;">
-  <div class="max-w-3xl mx-auto px-6 py-20 text-center">
+  <div class="section-wrap py-20">
     <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:20px;">
       <span style="width:6px;height:6px;border-radius:999px;background:#7CFFB7;display:inline-block;"></span> Free · No commitment
     </div>
     <h2 style="font-size:clamp(1.8rem,4.5vw,2.6rem);font-weight:800;letter-spacing:-0.03em;line-height:1.1;margin-bottom:16px;">Ready to see what's possible<br>for your business?</h2>
-    <p style="color:rgba(255,255,255,0.65);font-size:17px;max-width:520px;margin:0 auto 32px;line-height:1.6;">Book a free 30-minute call. We'll map your highest-value workflow and show you what an agent would look like inside it.</p>
-    <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;align-items:center;">
+    <p style="color:rgba(255,255,255,0.65);font-size:17px;max-width:520px;margin:0 0 32px;line-height:1.6;">Book a free 30-minute call. We'll map your highest-value workflow and show you what an agent would look like inside it.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;">
       <a href="/book" style="display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--ink);padding:14px 24px;border-radius:10px;font-weight:700;font-size:15px;text-decoration:none;transition:opacity .12s ease;" onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">Book a call →</a>
       <a href="/#get-started" style="display:inline-flex;align-items:center;gap:8px;color:#fff;padding:14px 24px;border-radius:10px;font-weight:600;font-size:15px;text-decoration:none;border:1px solid rgba(255,255,255,0.25);background:transparent;transition:background .12s ease;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='transparent'">Get started online →</a>
     </div>
@@ -333,7 +335,7 @@
 </section>
 
 <footer class="border-t border-[var(--line)]">
-  <div class="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+  <div class="section-wrap py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
     <div class="flex items-center gap-2">
       <svg width="22" height="18" viewBox="0 0 26 22" fill="none" aria-hidden="true">
         <rect x="0" y="14" width="5" height="8" rx="1.5" fill="var(--accent)"/>
