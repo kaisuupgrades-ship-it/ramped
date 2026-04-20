@@ -108,9 +108,9 @@
   </div>
 </header>
 
-<div style="text-align:center;padding:12px 24px;background:#F8F9FA;border-bottom:1px solid #E5E7EB;">
-  <span style="font-size:14px;color:#6B7280;">Wondering how this compares to hiring a VA? </span>
-  <a href="/comparison" style="font-size:14px;font-weight:600;color:#111827;text-decoration:underline;">See the full breakdown →</a>
+<div style="text-align:center;padding:12px 24px;background:var(--paper);border-bottom:1px solid var(--line);">
+  <span style="font-size:14px;color:var(--muted);">Wondering how this compares to hiring a VA? </span>
+  <a href="/comparison" style="font-size:14px;font-weight:600;color:var(--ink);text-decoration:underline;">See the full breakdown →</a>
 </div>
 
 <section style="border-bottom:1px solid var(--line);" class="grid-bg">
@@ -460,7 +460,7 @@ const SCENARIOS = {
     ],
     action: "TTM P&L assembled · 3 red flags identified",
     actionMeta: "Pulled 12 months of GL data in 4.1 seconds · board-ready summary drafted · variance analysis complete",
-    draft: "TRAILING TWELVE MONTHS — P&L SUMMARY\nApr 2024 – Mar 2025  |  Acme Operations LLC\n\n[TTM_TABLE]\n\n<hr style="border:none;border-top:1px solid var(--line);margin:20px 0;">\n\nAGENT ANALYSIS — KEY FINDINGS\n\n▲ Revenue trend: +18.4% YoY growth, but the mix is shifting. Professional services grew 34% while SaaS recurring grew only 9%. That's a warning sign — services revenue is lumpy and doesn't compound.\n\n⚠ RED FLAG 1 — Gross margin compression: GM% dropped from 58.2% (prior TTM) to 52.7% this TTM. That's a 550 bps decline. Primary driver: COGS on professional services engagements running 12% over estimate. Fix the scoping problem or reprice.\n\n⚠ RED FLAG 2 — OpEx acceleration: Total OpEx grew 31% YoY vs. revenue growth of 18%. The gap is widening. Sales & marketing is the largest driver (+44% YoY) with no corresponding CAC efficiency gain visible in the data.\n\n⚠ RED FLAG 3 — Q1 revenue dip: Jan–Mar 2025 revenue averaged $612K/mo vs. $684K/mo in Q4 2024. This is outside normal seasonality for your segment. Investigate whether this is pipeline timing, churn, or a demand signal.\n\n✓ POSITIVE: EBITDA margin held at 14.1% despite compression, driven by headcount discipline. G&A grew only 6% YoY.\n\n<hr style="border:none;border-top:1px solid var(--line);margin:20px 0;">\n\nRECOMMENDATION FOR MONDAY\nLead with the revenue growth story (+18.4%) but get ahead of the margin question — the board will ask. Frame the GM compression as a known issue with a fix in motion (repricing effective Q2). Don't present without a CAC/LTV slide given the S&M spend acceleration.",
+    draft: `TRAILING TWELVE MONTHS — P&L SUMMARY\nApr 2024 – Mar 2025  |  Acme Operations LLC\n\n[TTM_TABLE]\n\n<hr style="border:none;border-top:1px solid var(--line);margin:20px 0;">\n\nAGENT ANALYSIS — KEY FINDINGS\n\n▲ Revenue trend: +18.4% YoY growth, but the mix is shifting. Professional services grew 34% while SaaS recurring grew only 9%. That's a warning sign — services revenue is lumpy and doesn't compound.\n\n⚠ RED FLAG 1 — Gross margin compression: GM% dropped from 58.2% (prior TTM) to 52.7% this TTM. That's a 550 bps decline. Primary driver: COGS on professional services engagements running 12% over estimate. Fix the scoping problem or reprice.\n\n⚠ RED FLAG 2 — OpEx acceleration: Total OpEx grew 31% YoY vs. revenue growth of 18%. The gap is widening. Sales & marketing is the largest driver (+44% YoY) with no corresponding CAC efficiency gain visible in the data.\n\n⚠ RED FLAG 3 — Q1 revenue dip: Jan–Mar 2025 revenue averaged $612K/mo vs. $684K/mo in Q4 2024. This is outside normal seasonality for your segment. Investigate whether this is pipeline timing, churn, or a demand signal.\n\n✓ POSITIVE: EBITDA margin held at 14.1% despite compression, driven by headcount discipline. G&A grew only 6% YoY.\n\n<hr style="border:none;border-top:1px solid var(--line);margin:20px 0;">\n\nRECOMMENDATION FOR MONDAY\nLead with the revenue growth story (+18.4%) but get ahead of the margin question — the board will ask. Frame the GM compression as a known issue with a fix in motion (repricing effective Q2). Don't present without a CAC/LTV slide given the S&M spend acceleration.`,
     metrics: [["Data pulled","Manual: 3–4 hrs","4.1 seconds"],["Red flags surfaced","Depends on analyst","3 flagged automatically"],["Board-ready","Next day, if lucky","Same session"]],
     escalation: "CFO / Board prep"
   },
@@ -604,7 +604,7 @@ crm: {
   ],
   action: "HubSpot deal created · rep notified in Slack · outreach draft queued for review",
   actionMeta: "ICP score 94/100 · referral source confirmed · estimated ARR $4,200/mo · response drafted in 8 seconds",
-  draft: "Hi Priya,\n\nThanks for reaching out — and good to hear from a Harbor Peak connection.\n\nWhat you're describing is exactly what we deploy in logistics operations. The classification and routing layer your dispatchers are doing manually is a strong fit for an AI agent — we've seen teams like yours reclaim 60–70% of the manual triage time within the first 30 days.\n\nI'd love to show you what this looks like in practice. I have a demo that walks through inbound freight request handling — classification, priority routing, exception flagging — all live.\n\nAre you available this week for a 30-minute call? I can show you the full workflow and give you a sense of what implementation would look like for a team your size.\n\n[Calendly link will insert here — or reply directly to this email]\n\nLooking forward to connecting.\n\nBest,\n[Rep Name]\nRamped AI\n\n---\n[This draft was prepared by the Ramped intake agent and is queued for rep review before send. HubSpot deal ID: #VL-2847 · ICP score: 94 · source: referral (Harbor Peak)]",
+  draft: "Hi Priya,\n\nThanks for reaching out — and good to hear from a Harbor Peak connection.\n\nWhat you're describing is exactly what we deploy in logistics operations. The classification and routing layer your dispatchers are doing manually is a strong fit for an AI agent — we've seen teams like yours reclaim 60–70% of the manual triage time within the first 30 days.\n\nI'd love to show you what this looks like in practice. I have a demo that walks through inbound freight request handling — classification, priority routing, exception flagging — all live.\n\nAre you available this week for a 30-minute call? I can show you the full workflow and give you a sense of what implementation would look like for a team your size.\n\nhttps://calendly.com/ramped/30min\n\nLooking forward to connecting.\n\nBest,\nAlex\nRamped AI\n[This draft was prepared by the Ramped intake agent and is queued for rep review before send. HubSpot deal ID: #VL-2847 · ICP score: 94 · source: referral (Harbor Peak)]",
   metrics: [["Lead response time","Industry avg: 47 min","8 seconds"],["Data enrichment","Manual research: 20 min","Automatic"],["CRM entry","Rep manually enters","Auto-created + scored"]],
   escalation: "Enterprise rep (referral + ICP > 90)"
 },
@@ -813,6 +813,7 @@ loadScenario('healthcare');
    Deterministic pattern-matching bot (no backend).
    ============================================================ */
 (function(){
+  var grid = document.getElementById('calendar-grid'); if (!grid) return;
   var DAYS = ['Mon','Tue','Wed','Thu','Fri'];
   var DAY_LABELS = {Mon:'Mon 4/20', Tue:'Tue 4/21', Wed:'Wed 4/22', Thu:'Thu 4/23', Fri:'Fri 4/24'};
   var HOURS = [8,9,10,11,12,13,14,15,16,17]; // 8am..5pm (end 6pm)
