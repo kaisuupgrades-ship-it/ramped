@@ -158,6 +158,8 @@
           <option value="crm">📋 CRM — Lead enrichment &amp; routing</option>
           <option value="scheduling">📅 Scheduling — Reschedule via natural language</option>
           <option value="multiagent">🤖 Multi-agent — Parallel agent orchestration</option>
+                  <option value="quote">💼 Quote — Field services quote request</option>
+          <option value="documents">📄 Documents — Invoice processing &amp; AP automation</option>
         </select>
         <!-- Visible chevron icon -->
         <div style="pointer-events:none;position:absolute;right:14px;top:50%;transform:translateY(-50%);width:28px;height:28px;background:var(--ink);border-radius:6px;display:flex;align-items:center;justify-content:center;">
@@ -174,6 +176,8 @@
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-category="crm" data-scenario="crm" aria-pressed="false">📋 CRM</button>
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-category="scheduling" data-scenario="scheduling" aria-pressed="false">📅 Scheduling</button>
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-category="multiagent" data-scenario="multiagent" aria-pressed="false">🤖 Multi-agent</button>
+      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-category="quote" data-scenario="quote" aria-pressed="false">💼 Quote request</button>
+      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-category="documents" data-scenario="documents" aria-pressed="false">📄 Documents</button>
     </div>
 
     <!-- Email industry sub-selector (hidden by default) -->
@@ -721,7 +725,120 @@ scheduling: {
     draft: "\u2500\u2500 ORCHESTRATOR SUMMARY \u2014 Deal #HS-8821 \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nMeridian Logistics \u00b7 Sandra Okeke, VP Ops \u00b7 $42K ARR\n\n3 AGENTS \u00b7 PARALLEL EXECUTION \u00b7 8.3 SECONDS\n\n\ud83e\udd16 AGENT A \u2014 ACCOUNT RESEARCH\n   Revenue: ~$28M \u00b7 Employees: 340\n   Industry: 3PL / regional logistics \u00b7 4-state footprint\n   Key pain (identified): manual dispatch reporting \u2014 ops team\n   spends ~12 hrs/week on manual status updates\n   Trigger fit: HIGH \u2014 our dispatch automation module is exact match\n\n\ud83e\udd16 AGENT B \u2014 COMPETITIVE INTEL\n   No competitor product evals in CRM (past 90 days)\n   No pricing objections flagged in call notes\n   Last touchpoint: demo Apr 14 \u00b7 positive sentiment\n   Risk score: LOW \u00b7 Window: OPEN\n\n\ud83e\udd16 AGENT C \u2014 TIMING & OUTREACH\n   Sandra's open pattern: Tue + Thu \u00b7 7\u20139 AM\n   Calendar: Thu Apr 24 has open slots 8\u20139 AM\n   Recommended send: Thu Apr 24 \u00b7 8:05 AM (personalized)\n\n\u2500\u2500 FOLLOW-UP DRAFT (scheduled Thu 8:05 AM) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nSubject: One thing I noticed about Meridian's dispatch ops\n\nHi Sandra,\n\nI was reviewing your ops footprint ahead of our next conversation and noticed something \u2014 businesses at Meridian's scale (4-state, ~340 people) typically spend 10\u201315 hrs/week on manual dispatch status updates before implementing our reporting module.\n\nWe fixed exactly that for Harbor Peak last quarter \u2014 cut their weekly ops reporting from 11 hours to under 30 minutes.\n\nWorth 20 minutes Thursday to show you how it would work for your team specifically?\n\nJordan M. \u00b7 Ramped Sales\n(Drafted by Ramped Orchestrator \u00b7 reviewed by Jordan before send)",
     metrics: [["Research time","4\u20136 hrs (manual)","8.3 seconds (3 agents)"],["Personalization depth","Generic follow-up","Account + pain + timing matched"],["Follow-up speed","Next day, maybe","Scheduled before rep's coffee"]],
     escalation: "Jordan M. (rep) \u2014 reviews + approves draft before Thu 8:05 AM send"
-  }
+  },
+
+  slack: {
+    channelLabel: "Slack \u00b7 Direct message",
+    channelDetail: "#ops-team \u00b7 @ramped",
+    from: "Taylor M. \u00b7 Head of Customer Success",
+    subject: "Agent request \u2014 Zendesk ticket analysis",
+    body: "@ramped can you pull our Zendesk ticket volume by category for the past 30 days and flag anything that looks off? We're trying to figure out where support is breaking down before the board meeting.",
+    steps: [
+      "Parsing request \u00b7 Taylor M. \u00b7 Zendesk ticket analysis \u00b7 last 30 days",
+      "Connecting to Zendesk API \u00b7 authenticating \u00b7 pulling ticket data",
+      "Fetching 847 tickets \u00b7 categorizing by type \u00b7 calculating resolution times",
+      "Ticket breakdown: Billing (201) \u00b7 Technical (318) \u00b7 Feature requests (189) \u00b7 Onboarding (139)",
+      "Analyzing resolution times by category \u00b7 comparing to 30-day prior period",
+      "\u26a0 Flag 1: Technical SLA breach rate up 34% \u2014 avg resolution 4.2 days vs 3.1 days prior period",
+      "\u26a0 Flag 2: Onboarding tickets up 61% \u2014 correlated with new pricing tier launched Apr 1",
+      "Drafting summary for Taylor \u00b7 board-ready format \u00b7 flagging 2 issues for follow-up"
+    ],
+    action: "Analysis complete \u00b7 2 issues flagged \u00b7 summary posted to Slack",
+    actionMeta: "847 tickets analyzed in 3.1 seconds \u00b7 manual equivalent: 2\u20133 analyst hours",
+    draft: "Hey Taylor \u2014 here's the 30-day Zendesk breakdown:\n\n\ud83d\udcca TICKET VOLUME BY CATEGORY\n   Billing: 201 (24%) \u2194 flat\n   Technical: 318 (38%) \u2191 +12% vs prior 30d\n   Feature requests: 189 (22%) \u2194 flat\n   Onboarding: 139 (16%) \u2191 +61% vs prior 30d\n\n\u26a0 FLAG 1 \u2014 Technical SLA degradation\n   Avg resolution: 4.2 days (vs 3.1 prior period, +35%)\n   Breached SLA on 89 tickets (27% of Technical)\n   Recommend: review engineering escalation queue \u2014 may be a staffing or routing issue\n\n\u26a0 FLAG 2 \u2014 Onboarding spike (+61%)\n   Strongly correlated with Apr 1 pricing tier launch\n   Most common subject line pattern: \"confused about plan limits\"\n   Recommend: update onboarding docs for new tier, or add a limit explainer to the upgrade email\n\nWant me to break this down further by assignee or pull the specific ticket IDs for board prep?",
+    metrics: [["Analysis time","2\u20133 analyst hours","3.1 seconds"],["Tickets reviewed","Sample (time-limited)","All 847, every category"],["Flags identified","Depends on analyst","2 surfaced automatically"]],
+    escalation: "Taylor M. \u2014 CS lead review + board prep"
+  },
+
+  crm: {
+    channelLabel: "Web form \u00b7 CRM intake",
+    channelDetail: "30dayramp.com/contact \u2192 HubSpot",
+    from: "Priya Nair <priya.nair@meridianlogistics.com>",
+    subject: "Contact form submission \u2014 enterprise inquiry",
+    body: "Name: Priya Nair\nTitle: VP of Operations\nCompany: Meridian Logistics\nEmail: priya.nair@meridianlogistics.com\nPhone: (312) 555-0174\nMessage: We're a 340-person logistics company running 4 distribution centers. We've been manually tracking dispatch updates in spreadsheets and it's becoming a real problem at our scale. I saw your demo and wanted to understand if you work with companies our size and what implementation looks like.",
+    steps: [
+      "Web form submitted \u00b7 Priya Nair \u00b7 VP Operations \u00b7 Meridian Logistics",
+      "Enriching contact data \u00b7 Clearbit + LinkedIn \u00b7 company: Meridian Logistics",
+      "Enrichment complete \u00b7 340 employees \u00b7 $28M revenue \u00b7 4 distribution centers \u00b7 Series B",
+      "Scoring lead against ICP criteria \u00b7 company size \u2713 \u00b7 ops role \u2713 \u00b7 manual process pain \u2713 \u00b7 budget signal \u2713",
+      "ICP score: 94/100 \u00b7 Tier 1 lead \u00b7 flagging for immediate outreach",
+      "Creating HubSpot contact + company \u00b7 stage: New Lead \u00b7 source: Website \u00b7 assigned to: Jordan M.",
+      "Creating HubSpot deal \u00b7 est. ARR: $42,000 \u00b7 stage: Inquiry \u00b7 close date: 60 days",
+      "Drafting personalized outreach for Jordan's review \u00b7 referencing dispatch pain + company scale"
+    ],
+    action: "Lead enriched \u00b7 HubSpot deal created \u00b7 outreach drafted \u00b7 rep notified",
+    actionMeta: "94/100 ICP score \u00b7 $42K est. ARR \u00b7 enriched in 2.8 seconds \u00b7 zero manual data entry",
+    draft: "Hi Priya,\n\nThanks for reaching out \u2014 the dispatch tracking problem you're describing is exactly what we hear from ops leaders at your scale.\n\nAt 340 people across 4 distribution centers, the spreadsheet approach typically creates two specific breakdowns: (1) status updates that lag by hours and cause customer escalations, and (2) no single source of truth when something goes wrong on a run.\n\nWe built our dispatch ops module specifically for this. Harbor Peak Realty (similar ops footprint) cut their weekly status reporting from 11 hours to under 30 minutes in the first month.\n\nI'd love to show you exactly how it would work for Meridian's setup \u2014 20 minutes, I'll use your actual workflow as the demo.\n\nWhat does your calendar look like this week?\n\nJordan M.\nAccount Executive \u00b7 Ramped AI\n(Reviewed by Jordan before send \u2014 drafted in 2.8 sec)",
+    metrics: [["Lead response time","Hours to next business day","2.8 seconds to drafted outreach"],["Data entry","Rep manually enters 8\u201312 fields","Zero \u2014 fully enriched + logged"],["ICP qualification","Gut feel or manual research","94/100 scored automatically"]],
+    escalation: "Jordan M. (AE) \u2014 Tier 1 lead, immediate outreach"
+  },
+
+  scheduling: {
+    channelLabel: "SMS",
+    channelDetail: "+1 (312) 555-0182 \u00b7 client text line",
+    from: "Client \u2014 Rachel Torres (+1 773-555-0241)",
+    subject: "Appointment reschedule request",
+    body: "Hi, this is Rachel Torres. I have an appointment with Dr. Kim on Thursday at 2pm but something came up and I need to move it. Can we do next Tuesday or Wednesday afternoon instead? Anytime after 1pm works for me.",
+    steps: [
+      "Parsing reschedule intent \u00b7 current appt: Thursday 2:00 PM with Dr. Kim \u00b7 patient: Rachel Torres",
+      "Looking up Rachel Torres in EHR \u00b7 confirmed patient, appt ID #A-4821",
+      "Checking Dr. Kim's availability \u00b7 Tuesday Apr 22 and Wednesday Apr 23, after 1:00 PM",
+      "Tuesday Apr 22: 1:00 PM booked, 1:30 PM booked, 2:00 PM OPEN, 2:30 PM OPEN, 3:00 PM booked",
+      "Wednesday Apr 23: 1:30 PM OPEN, 2:00 PM OPEN, 3:30 PM OPEN",
+      "Cancelling appt #A-4821 \u00b7 rebooking slot pending patient confirmation \u00b7 drafting reply with options"
+    ],
+    action: "Reschedule options sent \u00b7 Thursday slot held for 15 min pending confirmation",
+    actionMeta: "Checked 6 slots across 2 days in 1.8 seconds \u00b7 old slot soft-cancelled \u00b7 confirmation reply drafted",
+    draft: "Hi Rachel! Got it \u2014 no problem at all.\n\nHere are the open slots with Dr. Kim that work for you:\n\n\ud83d\udcc5 Tuesday, April 22\n   \u2022 2:00 PM\n   \u2022 2:30 PM\n\n\ud83d\udcc5 Wednesday, April 23\n   \u2022 1:30 PM\n   \u2022 2:00 PM\n   \u2022 3:30 PM\n\nJust reply with your preferred time and I'll get you confirmed right away. Your Thursday 2pm slot will be held until we hear back from you (about 15 minutes).\n\nTalk soon!\nFront Desk \u00b7 Lakeside Medical",
+    metrics: [["Time to respond","Staff avg: 18 min","1.8 seconds"],["Slots checked","One at a time, manually","6 slots, 2 days, instant"],["Patient experience","Put on hold or called back","Instant text, done"]],
+    escalation: "Front desk staff"
+  },
+
+  quote: {
+    channelLabel: "Email",
+    channelDetail: "quotes@acmeservices.com",
+    from: "Marcus Holden <m.holden@tristateindustrial.com>",
+    subject: "Quote request \u2014 industrial vacuum truck service, 2 locations",
+    body: "Hi,\n\nWe operate two processing facilities in Elgin, IL and Rockford, IL and are looking for a reliable vendor for vacuum truck service on a monthly basis.\n\nElgin location: ~4,200 sq ft, 3 lift stations, grease trap, last serviced ~4 months ago (overdue).\nRockford: ~2,800 sq ft, 1 lift station. Newer facility.\n\nWe'd want monthly service at both sites. Do you cover both areas? Can you get us a quote with a contract option?\n\nMarcus Holden\nFacilities Manager, Tri-State Industrial",
+    steps: [
+      "Parsing quote request \u00b7 2 locations \u00b7 Elgin IL + Rockford IL \u00b7 vacuum truck + lift stations + grease trap",
+      "Checking service area coverage \u00b7 Elgin IL \u2713 (Zone 2) \u00b7 Rockford IL \u2713 (Zone 3, +$85/visit surcharge)",
+      "Pulling pricing from ERP \u00b7 vacuum truck service \u00b7 lift station \u00b7 grease trap \u00b7 monthly contract rates",
+      "Elgin: 3 lift stations ($180 ea) + grease trap ($220) + base visit ($95) = $835/mo",
+      "Rockford: 1 lift station ($180) + base visit ($95) + Zone 3 surcharge ($85) = $360/mo",
+      "Generating quote doc \u00b7 combined monthly $1,195 \u00b7 annual contract $13,660 (5% discount applied)",
+      "Creating CRM lead \u00b7 Tri-State Industrial \u00b7 Facilities Manager \u00b7 estimated ARR $13,660",
+      "Notifying sales rep via Slack \u00b7 @priya \u2014 new quote sent, Elgin overdue (upsell opportunity flagged)"
+    ],
+    action: "Quote sent \u00b7 CRM lead created \u00b7 sales rep notified",
+    actionMeta: "2 locations quoted in 4.2 seconds \u00b7 ERP pricing pulled live \u00b7 annual contract value $13,660",
+    draft: "Hi Marcus,\n\nThanks for reaching out \u2014 yes, we cover both Elgin and Rockford.\n\nHere's your monthly service quote:\n\n\ud83d\udccd Elgin, IL \u2014 $835/month\n   \u2022 Base service visit: $95\n   \u2022 Lift station service (\u00d73): $540\n   \u2022 Grease trap service: $220\n\n\ud83d\udccd Rockford, IL \u2014 $360/month\n   \u2022 Base service visit: $95\n   \u2022 Lift station service (\u00d71): $180\n   \u2022 Zone 3 travel supplement: $85\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nCombined monthly: $1,195\nAnnual contract (5% off): $13,660\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\nA couple of notes:\n\u2022 Your Elgin lift stations are flagged as ~4 months since last service \u2014 we'd recommend scheduling an initial clean-out visit before the monthly contract starts. We can include that at cost.\n\u2022 Annual contracts include priority scheduling, 24-hr emergency response, and a dedicated account manager.\n\nI can have someone out for an initial walkthrough this week if you'd like to confirm scope before signing. What does your calendar look like?\n\nBest,\nAlex Rivera\nQuote Desk \u00b7 Acme Field Services\n(555) 0142 \u00b7 quotes@acmeservices.com",
+    metrics: [["Quote turnaround","3\u20135 business days","4.2 seconds"],["Coverage check","Manual call to ops","Instant, live from ERP"],["Follow-up rate","~23% (manual)","100% (auto-drafted)"]],
+    escalation: "Sales rep (Priya) \u2014 flagged for upsell outreach"
+  },
+
+  documents: {
+    channelLabel: "Email \u00b7 Attachment",
+    channelDetail: "ap@acmeco.com \u00b7 Invoice processing queue",
+    from: "Accounts Payable \u00b7 Brennan Supply Co <ap@brennansupply.com>",
+    subject: "Invoice #BSC-20941 \u2014 March services",
+    body: "Hi,\n\nPlease find attached Invoice #BSC-20941 for March services rendered per our agreement.\n\nInvoice total: $4,847.50\nDue date: April 30, 2026\nPO reference: PO-2024-0381\n\nPlease confirm receipt and expected payment date.\n\nThank you,\nBrennan Supply Co \u00b7 Accounts Payable",
+    steps: [
+      "Receiving email \u00b7 attachment detected \u00b7 Invoice #BSC-20941.pdf \u00b7 1 page \u00b7 847KB",
+      "Extracting invoice data via OCR \u00b7 vendor: Brennan Supply Co \u00b7 total: $4,847.50 \u00b7 due: Apr 30",
+      "Matching PO reference PO-2024-0381 \u00b7 found in ERP \u00b7 authorized amount: $4,600.00",
+      "\u26a0 Discrepancy flagged \u00b7 invoice $4,847.50 vs PO $4,600.00 \u00b7 overage: $247.50 (5.4%)",
+      "Checking vendor contract \u00b7 overage clause: up to 10% allowed with line-item justification",
+      "Logging invoice in AP system \u00b7 status: PENDING APPROVAL \u00b7 assigned to: Finance Manager",
+      "Drafting exception notice to vendor \u00b7 requesting line-item breakdown for $247.50 overage",
+      "Notifying Finance Manager via Slack \u00b7 #ap-review \u00b7 invoice flagged \u00b7 approval needed before Apr 28"
+    ],
+    action: "Invoice logged \u00b7 discrepancy flagged \u00b7 approval request sent",
+    actionMeta: "PO matched in 0.9 seconds \u00b7 $247.50 overage identified \u00b7 routed for human approval",
+    draft: "Hi Brennan Supply AP team,\n\nThank you \u2014 we've received Invoice #BSC-20941 for $4,847.50.\n\nWe've matched it to PO-2024-0381 (authorized: $4,600.00) and flagged a $247.50 variance (5.4% over PO amount).\n\nPer our vendor agreement, overages above the PO amount require line-item documentation before we can process payment. Could you send a breakdown of the additional $247.50?\n\nOnce we receive that, our Finance team will review and we'll target payment by April 30 as requested.\n\nThank you,\nAP Automation \u00b7 Acme Co\n(Managed by Ramped Agent \u00b7 reviewed by Finance team before release)",
+    metrics: [["Invoice processing time","2\u20134 days (manual review)","0.9 seconds to flag"],["Discrepancy catch rate","~60% (human error)","100% (automated match)"],["AP staff hours saved","~6 hrs/week","Near zero for routine invoices"]],
+    escalation: "Finance Manager (Slack #ap-review) \u2014 approval required"
+  },
 };
 
 const inboundChannel  = document.getElementById('inbound-channel');
