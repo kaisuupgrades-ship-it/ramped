@@ -64,6 +64,14 @@
   #reasoning-list > * { min-width: 0; overflow-wrap: anywhere; word-break: break-word; }
   /* General text safety net */
   .text-sm, .text-xs { overflow-wrap: anywhere; }
+  /* Active/selected state for scenario pill buttons */
+  .scenario-btn.active,
+  .scenario-btn[aria-pressed="true"] {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    font-weight: 600;
+  }
 </style>
 </head>
 <body>
@@ -577,8 +585,9 @@ function resetAgentPane(){
 }
 
 function setActive(btn){
-  document.querySelectorAll('.scenario-btn').forEach(b=>{ b.setAttribute('aria-pressed','false'); });
+  document.querySelectorAll('.scenario-btn').forEach(b=>{ b.setAttribute('aria-pressed','false'); b.classList.remove('active'); });
   btn.setAttribute('aria-pressed','true');
+  btn.classList.add('active');
 }
 
 document.querySelectorAll('.scenario-btn').forEach(btn=>{
@@ -601,7 +610,9 @@ if (scenarioSelect) {
     activeScenario = scenarioSelect.value;
     // Sync desktop tabs
     document.querySelectorAll('.scenario-btn').forEach(b => {
-      b.setAttribute('aria-pressed', b.dataset.scenario === activeScenario ? 'true' : 'false');
+      const isActive = b.dataset.scenario === activeScenario;
+      b.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      b.classList.toggle('active', isActive);
     });
     loadScenario(activeScenario);
   });
@@ -611,6 +622,10 @@ resetBtn.addEventListener('click',()=>{
   if (running) return;
   loadScenario(activeScenario);
 });
+
+// Auto-select the first scenario button on page load
+const firstScenario = document.querySelector('.scenario-btn');
+if (firstScenario) firstScenario.click();
 
 runBtn.addEventListener('click', async ()=>{
   if (running) return;
