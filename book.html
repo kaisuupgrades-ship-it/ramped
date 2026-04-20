@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Book a Discovery Call — Ramped AI</title>
 <meta name="description" content="Schedule a free 30-minute discovery call with the Ramped AI team." />
@@ -23,7 +26,7 @@
     --surface:#F5F5F3;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;}
+  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;}
   a{color:inherit;text-decoration:none;}
 
   /* ── Layout ── */
@@ -90,6 +93,21 @@
   /* ── Confirmation ── */
   .confirm-box{text-align:center;padding:32px 16px;}
   .confirm-box .check{font-size:48px;margin-bottom:12px;}
+  .btn-primary {
+    display:inline-flex;align-items:center;gap:6px;
+    background:var(--accent);color:#fff;
+    padding:10px 20px;border-radius:6px;
+    font-size:14px;font-weight:600;text-decoration:none;
+    transition:opacity .15s;
+  }
+  .btn-primary:hover { opacity:.88; }
+  .btn-ghost {
+    display:inline-flex;align-items:center;gap:6px;
+    color:var(--ink);padding:10px 16px;border-radius:6px;
+    font-size:14px;font-weight:500;text-decoration:none;
+    transition:background .15s;
+  }
+  .btn-ghost:hover { background:var(--surface); }
 </style>
 </head>
 <body>
@@ -109,12 +127,12 @@
     <!-- Nav links -->
     <nav class="hidden sm:flex items-center gap-3">
       <a href="/demo" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Demo</a>
-      <a href="#get-started" class="btn-primary whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Get started →</a>
+      <a href="/book" class="btn-primary whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Get started →</a>
     </nav>
     <!-- Mobile CTA -->
     <div class="sm:hidden flex items-center gap-2">
       <a href="/demo" class="btn-ghost" style="padding:8px 12px;font-size:13px;">Demo</a>
-      <a href="#get-started" class="btn-primary" style="padding:8px 14px;font-size:13px;">Get started →</a>
+      <a href="/book" class="btn-primary" style="padding:8px 14px;font-size:13px;">Get started →</a>
     </div>
   </div>
 </header>
@@ -326,5 +344,6 @@ function showConfirmation(name, email){
 
 document.addEventListener('DOMContentLoaded', init);
 </script>
+<script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
