@@ -19,6 +19,7 @@
 <meta name="twitter:description" content="Schedule a free 30-minute call to see how Ramped AI can automate your business workflows." />
 <meta name="twitter:image" content="https://www.30dayramp.com/og-image.png" />
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
   :root{
     --ink:#0B1220;--paper:#FAFAF7;--line:#E6E4DC;
@@ -127,12 +128,14 @@
     <!-- Nav links -->
     <nav class="hidden sm:flex items-center gap-3">
       <a href="/demo" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Demo</a>
-      <a href="/book" class="btn-primary whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Get started →</a>
+      <a href="/comparison" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">VA vs. AI</a>
+      <a href="/#get-started" class="btn-primary whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Get started →</a>
     </nav>
     <!-- Mobile CTA -->
     <div class="sm:hidden flex items-center gap-2">
       <a href="/demo" class="btn-ghost" style="padding:8px 12px;font-size:13px;">Demo</a>
-      <a href="/book" class="btn-primary" style="padding:8px 14px;font-size:13px;">Get started →</a>
+      <a href="/comparison" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">VA vs. AI</a>
+      <a href="/#get-started" class="btn-primary" style="padding:8px 14px;font-size:13px;">Get started →</a>
     </div>
   </div>
 </header>
@@ -345,5 +348,23 @@ function showConfirmation(name, email){
 document.addEventListener('DOMContentLoaded', init);
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
+<footer class="border-t border-[var(--line)]">
+  <div class="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-2">
+      <svg width="22" height="18" viewBox="0 0 26 22" fill="none" aria-hidden="true">
+        <rect x="0" y="14" width="5" height="8" rx="1.5" fill="var(--accent)"/>
+        <rect x="7" y="9" width="5" height="13" rx="1.5" fill="var(--accent)" opacity=".75"/>
+        <rect x="14" y="4" width="5" height="18" rx="1.5" fill="var(--accent)" opacity=".55"/>
+        <rect x="21" y="0" width="5" height="22" rx="1.5" fill="var(--accent)" opacity=".35"/>
+      </svg>
+      <span style="font-size:14px;font-weight:600;color:var(--ink);">Ramped AI</span>
+    </div>
+    <p style="font-size:13px;color:var(--muted);text-align:center;">AI implementation for operating businesses</p>
+    <div class="flex flex-col items-center sm:items-end gap-1.5">
+      <a href="mailto:jon@30dayramp.com" style="font-size:13px;color:var(--muted);">jon@30dayramp.com</a>
+      <p style="font-size:12px;color:var(--muted);">© 2026 Ramped AI. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
 </body>
 </html>
