@@ -19,6 +19,10 @@
     {
       "source": "/case-studies",
       "destination": "/case-studies.html"
+    },
+    {
+      "source": "/book",
+      "destination": "/book.html"
     }
   ]
 }
