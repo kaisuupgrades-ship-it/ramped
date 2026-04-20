@@ -72,6 +72,12 @@
     border-color: var(--accent);
     font-weight: 600;
   }
+  /* Email industry sub-selector */
+  .sub-selector { display:none; margin-bottom:16px; }
+  .sub-selector.visible { display:flex; flex-wrap:wrap; gap:8px; }
+  .sub-btn { padding:5px 12px; border-radius:999px; border:1px solid var(--line); background:#fff; font-size:12px; font-weight:500; cursor:pointer; color:var(--muted); }
+  .sub-btn:hover { border-color:var(--accent); color:var(--accent); }
+  .sub-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); font-weight:600; }
 </style>
 </head>
 <body>
@@ -127,19 +133,19 @@
       <label for="scenario-select" style="display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Choose an industry scenario</label>
       <div style="position:relative;">
         <select id="scenario-select" style="width:100%;padding:14px 48px 14px 16px;border:2px solid var(--ink);border-radius:10px;background:#fff;font-family:'Inter',sans-serif;font-size:15px;font-weight:600;color:var(--ink);outline:none;cursor:pointer;appearance:none;box-shadow:0 2px 8px rgba(11,18,32,.08);">
-          <option value="healthcare">🏥 Healthcare — Referral intake</option>
-          <option value="cannabis">🌿 Cannabis — Quote request</option>
           <option value="livecall">📞 Live call — Qualify + book + fan-out</option>
-          <option value="field">🔧 Field services — After-hours voicemail</option>
-          <option value="legal">⚖️ Legal — New client intake</option>
-          <option value="realestate">🏠 Real estate — Lead follow-up</option>
-          <option value="dental">🦷 Dental — Scheduling & reminders</option>
-          <option value="logistics">📦 Logistics — Load status inquiry</option>
+          <option value="healthcare">📥 Email — Healthcare referral intake</option>
+          <option value="cannabis">📥 Email — Cannabis quote request</option>
+          <option value="legal">📥 Email — Legal new client intake</option>
+          <option value="realestate">📥 Email — Real estate lead follow-up</option>
+          <option value="dental">📥 Email — Dental scheduling</option>
+          <option value="ecommerce">📥 Email — E-commerce returns</option>
+          <option value="property">📥 Email — Property maintenance</option>
+          <option value="insurance">📥 Email — Insurance claims</option>
+          <option value="field">📥 Email — Field services voicemail</option>
           <option value="financial">📊 Financial — P&amp;L TTM report</option>
-          <option value="ecommerce">🛒 E-commerce — Returns &amp; refunds</option>
+          <option value="logistics">📦 Logistics — Load status inquiry</option>
           <option value="recruiting">🎯 Recruiting — Application screening</option>
-          <option value="property">🏢 Property mgmt — Maintenance request</option>
-          <option value="insurance">🛡️ Insurance — Claims intake</option>
           <option value="saas">💻 SaaS — Renewal risk &amp; outreach</option>
         </select>
         <!-- Visible chevron icon -->
@@ -148,22 +154,27 @@
         </div>
       </div>
     </div>
-    <!-- Desktop: pill tabs -->
-    <div class="hidden sm:flex gap-2 mb-6 flex-wrap" role="tablist" aria-label="Demo scenario">
-      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="healthcare" aria-pressed="true">🏥 Healthcare — Referral intake</button>
-      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="cannabis" aria-pressed="false">🌿 Cannabis — Quote request</button>
-      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="livecall" aria-pressed="false">📞 Live call — Qualify + book + fan-out <span class="chip ml-1" style="background:#FFEDD5;color:#7A4F00;font-size:10px;padding:1px 6px;">NEW</span></button>
-      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="field" aria-pressed="false">🔧 Field services — After-hours voicemail</button>
-      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="legal" aria-pressed="false">⚖️ Legal — New client intake</button>
-      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="realestate" aria-pressed="false">🏠 Real estate — Lead follow-up</button>
-      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="dental" aria-pressed="false">🦷 Dental — Scheduling & reminders</button>
-      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="logistics" aria-pressed="false">📦 Logistics — Load status inquiry</button>
-      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="financial" aria-pressed="false">📊 Financial — P&amp;L TTM report</button>
-      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="ecommerce" aria-pressed="false">🛒 E-commerce — Returns &amp; refunds</button>
-      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="recruiting" aria-pressed="false">🎯 Recruiting — Application screening</button>
-      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="property" aria-pressed="false">🏢 Property mgmt — Maintenance request</button>
-      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="insurance" aria-pressed="false">🛡️ Insurance — Claims intake</button>
-      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-scenario="saas" aria-pressed="false">💻 SaaS — Renewal risk &amp; outreach</button>
+    <!-- Desktop: category tabs -->
+    <div class="hidden sm:flex gap-2 mb-3 flex-wrap" role="tablist" aria-label="Demo capability">
+      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-category="livecall" data-scenario="livecall" aria-pressed="false">📞 Live call <span class="chip ml-1" style="background:#FFEDD5;color:#7A4F00;font-size:10px;padding:1px 6px;">FEATURED</span></button>
+      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-category="email" data-scenario="healthcare" aria-pressed="false">📥 Email intake</button>
+      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-category="financial" data-scenario="financial" aria-pressed="false">📊 Financial</button>
+      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-category="logistics" data-scenario="logistics" aria-pressed="false">📦 Logistics &amp; ops</button>
+      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-category="recruiting" data-scenario="recruiting" aria-pressed="false">🎯 Recruiting</button>
+      <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-category="saas" data-scenario="saas" aria-pressed="false">💻 SaaS</button>
+    </div>
+
+    <!-- Email industry sub-selector (hidden by default) -->
+    <div class="sub-selector" id="email-sub-selector">
+      <button class="sub-btn active" data-scenario="healthcare">🏥 Healthcare</button>
+      <button class="sub-btn" data-scenario="cannabis">🌿 Cannabis</button>
+      <button class="sub-btn" data-scenario="legal">⚖️ Legal</button>
+      <button class="sub-btn" data-scenario="realestate">🏠 Real estate</button>
+      <button class="sub-btn" data-scenario="dental">🦷 Dental</button>
+      <button class="sub-btn" data-scenario="ecommerce">🛒 E-commerce</button>
+      <button class="sub-btn" data-scenario="property">🏢 Property mgmt</button>
+      <button class="sub-btn" data-scenario="insurance">🛡️ Insurance</button>
+      <button class="sub-btn" data-scenario="field">🔧 Field services</button>
     </div>
 
     <div class="grid md:grid-cols-2 gap-6">
@@ -219,7 +230,7 @@
     <!-- Inline CTA -->
     <div style="margin-top:24px;padding:16px 20px;background:#F5F7FF;border:1px solid #D4DBFF;border-radius:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
       <p style="margin:0;font-size:14px;color:var(--ink);">Want this running in your business? We map your highest-value workflow and deploy in 30 days.</p>
-      <a href="https://calendly.com/kaisuupgrades/30min" style="display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;font-weight:600;font-size:13px;text-decoration:none;white-space:nowrap;">Book a free call →</a>
+      <a href="/book" style="display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;font-weight:600;font-size:13px;text-decoration:none;white-space:nowrap;">Book a free call →</a>
     </div>
 
     <p class="text-xs text-[var(--muted)] mt-4 max-w-3xl">
@@ -236,7 +247,7 @@
     <h2 style="font-size:clamp(1.8rem,4.5vw,2.6rem);font-weight:800;letter-spacing:-0.03em;line-height:1.1;margin-bottom:16px;">Ready to see what's possible<br>for your business?</h2>
     <p style="color:rgba(255,255,255,0.65);font-size:17px;max-width:520px;margin:0 auto 32px;line-height:1.6;">Book a free 30-minute call. We'll map your highest-value workflow and show you what an agent would look like inside it.</p>
     <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;align-items:center;">
-      <a href="https://calendly.com/kaisuupgrades/30min" style="display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--ink);padding:14px 24px;border-radius:10px;font-weight:700;font-size:15px;text-decoration:none;transition:opacity .12s ease;" onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">Book a call →</a>
+      <a href="/book" style="display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--ink);padding:14px 24px;border-radius:10px;font-weight:700;font-size:15px;text-decoration:none;transition:opacity .12s ease;" onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">Book a call →</a>
       <a href="/#get-started" style="display:inline-flex;align-items:center;gap:8px;color:#fff;padding:14px 24px;border-radius:10px;font-weight:600;font-size:15px;text-decoration:none;border:1px solid rgba(255,255,255,0.25);background:transparent;transition:background .12s ease;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='transparent'">Get started online →</a>
     </div>
     <p style="margin-top:20px;font-size:12px;color:rgba(255,255,255,0.35);">30-day go-live guarantee · Flat monthly fee · No consultants, no decks</p>
@@ -584,6 +595,8 @@ function resetAgentPane(){
   statusPill.classList.remove('text-emerald-300');
 }
 
+const emailSubSelector = document.getElementById('email-sub-selector');
+
 function setActive(btn){
   document.querySelectorAll('.scenario-btn').forEach(b=>{ b.setAttribute('aria-pressed','false'); b.classList.remove('active'); });
   btn.setAttribute('aria-pressed','true');
@@ -593,8 +606,29 @@ function setActive(btn){
 document.querySelectorAll('.scenario-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     if (running) return;
+    const category = btn.dataset.category;
     activeScenario = btn.dataset.scenario;
     setActive(btn);
+    // Show/hide email sub-selector
+    if (category === 'email') {
+      emailSubSelector.classList.add('visible');
+    } else {
+      emailSubSelector.classList.remove('visible');
+    }
+    // Sync mobile dropdown
+    const sel = document.getElementById('scenario-select');
+    if (sel) sel.value = activeScenario;
+    loadScenario(activeScenario);
+  });
+});
+
+// Sub-selector click handlers
+document.querySelectorAll('.sub-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    if (running) return;
+    document.querySelectorAll('.sub-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    activeScenario = btn.dataset.scenario;
     // Sync mobile dropdown
     const sel = document.getElementById('scenario-select');
     if (sel) sel.value = activeScenario;
@@ -608,12 +642,27 @@ if (scenarioSelect) {
   scenarioSelect.addEventListener('change', () => {
     if (running) return;
     activeScenario = scenarioSelect.value;
-    // Sync desktop tabs
+    // Sync desktop tabs: find matching category tab
+    const emailScenarios = ['healthcare','cannabis','legal','realestate','dental','ecommerce','property','insurance','field'];
     document.querySelectorAll('.scenario-btn').forEach(b => {
-      const isActive = b.dataset.scenario === activeScenario;
+      let isActive = false;
+      if (emailScenarios.includes(activeScenario) && b.dataset.category === 'email') {
+        isActive = true;
+      } else if (b.dataset.scenario === activeScenario && b.dataset.category !== 'email') {
+        isActive = true;
+      }
       b.setAttribute('aria-pressed', isActive ? 'true' : 'false');
       b.classList.toggle('active', isActive);
     });
+    // Show/hide sub-selector and sync sub-btn
+    if (emailScenarios.includes(activeScenario)) {
+      emailSubSelector.classList.add('visible');
+      document.querySelectorAll('.sub-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.scenario === activeScenario);
+      });
+    } else {
+      emailSubSelector.classList.remove('visible');
+    }
     loadScenario(activeScenario);
   });
 }
@@ -623,9 +672,9 @@ resetBtn.addEventListener('click',()=>{
   loadScenario(activeScenario);
 });
 
-// Auto-select the first scenario button on page load
-const firstScenario = document.querySelector('.scenario-btn');
-if (firstScenario) firstScenario.click();
+// Auto-select the Live call tab on page load
+const livecallBtn = document.querySelector('.scenario-btn[data-category="livecall"]');
+if (livecallBtn) livecallBtn.click();
 
 runBtn.addEventListener('click', async ()=>{
   if (running) return;
