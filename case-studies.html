@@ -6,11 +6,25 @@
 <title>Client Results — Ramped AI</title>
 <meta name="description" content="Real results from real businesses. See how Ramped AI deploys production AI agents into dental practices, real estate teams, and more." />
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="canonical" href="https://www.30dayramp.com/case-studies" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.30dayramp.com/case-studies" />
+<meta property="og:title" content="Case Studies — Ramped AI" />
+<meta property="og:description" content="Real results from real clients. See how Ramped AI helps businesses automate and grow." />
+<meta property="og:image" content="https://www.30dayramp.com/og-image.png" />
+<meta property="og:site_name" content="Ramped AI" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Case Studies — Ramped AI" />
+<meta name="twitter:description" content="Real results from real clients. See how Ramped AI helps businesses automate and grow." />
+<meta name="twitter:image" content="https://www.30dayramp.com/og-image.png" />
 <script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{--ink:#0B1220;--paper:#FAFAF7;--line:#E6E4DC;--muted:#5B6272;--accent:#1F4FFF;--good:#0F7A4B;}
   *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;}
+  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;}
   .btn-primary{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:var(--ink);color:#fff;border-radius:8px;font-weight:600;font-size:15px;text-decoration:none;border:none;cursor:pointer;transition:opacity .15s;}
   .btn-primary:hover{opacity:.85;}
   .btn-ghost{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;background:transparent;color:var(--ink);border:1.5px solid var(--line);border-radius:8px;font-weight:500;font-size:14px;text-decoration:none;transition:border-color .15s;}
@@ -32,6 +46,10 @@
   .tag{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;letter-spacing:.05em;}
   .tag-dental{background:#ECFDF5;color:var(--good);}
   .tag-realty{background:#EEF3FF;color:var(--accent);}
+  html,body{max-width:100%;overflow-x:hidden}
+  img,svg,video,iframe{max-width:100%;height:auto}
+  .grid>*,.flex>*{min-width:0}
+  p,li,blockquote,h1,h2,h3,td,th{overflow-wrap:anywhere;word-break:break-word}
 </style>
 </head>
 <body>
@@ -39,15 +57,18 @@
 <!-- ─── NAV ─────────────────────────────────────────────────────────────────── -->
 <header style="border-bottom:1px solid var(--line);background:rgba(250,250,247,.95);backdrop-filter:blur(8px);position:sticky;top:0;z-index:50;">
   <div class="max-w-5xl mx-auto px-5 py-4 flex items-center justify-between">
-    <a href="/" style="font-weight:800;font-size:17px;color:var(--ink);text-decoration:none;letter-spacing:-.02em;">Ramped AI</a>
-    <nav class="hidden sm:flex items-center gap-6" style="font-size:14px;font-weight:500;">
-      <a href="/#how-it-works" style="color:var(--muted);text-decoration:none;">How it works</a>
-      <a href="/#proof" style="color:var(--ink);text-decoration:none;">Results</a>
-      <a href="/#pricing" style="color:var(--muted);text-decoration:none;">Pricing</a>
-      <a href="/demo" class="btn-ghost" style="padding:8px 16px;font-size:13px;">See demo</a>
-      <a href="/#get-started" class="btn-primary" style="padding:8px 16px;font-size:13px;">Get started →</a>
+    <a href="/" style="display:flex;align-items:center;gap:8px;text-decoration:none;"><svg width="26" height="22" viewBox="0 0 26 22" fill="none" aria-hidden="true">
+        <rect x="0" y="14" width="5" height="8" rx="1.5" fill="var(--accent)"/>
+        <rect x="7" y="9" width="5" height="13" rx="1.5" fill="var(--accent)" opacity=".75"/>
+        <rect x="14" y="4" width="5" height="18" rx="1.5" fill="var(--accent)" opacity=".55"/>
+        <rect x="21" y="0" width="5" height="22" rx="1.5" fill="var(--accent)" opacity=".35"/>
+      </svg><span style="font-weight:800;font-size:17px;color:var(--ink);letter-spacing:-.02em;">Ramped AI</span></a>
+    <nav class="hidden md:flex items-center gap-3">
+      <a href="/demo" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Demo</a>
+      <a href="/#get-started" class="btn-primary whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Get started →</a>
     </nav>
-    <div class="sm:hidden">
+    <div class="md:hidden flex items-center gap-2">
+      <a href="/demo" class="btn-ghost" style="padding:8px 12px;font-size:13px;">Demo</a>
       <a href="/#get-started" class="btn-primary" style="padding:8px 14px;font-size:13px;">Get started →</a>
     </div>
   </div>
@@ -99,16 +120,16 @@
     <p style="color:var(--muted);font-size:15px;margin-bottom:32px;">2 locations · Gilbert, Arizona · ~$1.8M annual revenue · 11 staff · Deployed Oct–Nov 2024</p>
 
     <!-- Stats bar -->
-    <div class="grid grid-cols-3 gap-4 mb-10 p-6 card" style="background:#FAFAF7;">
-      <div style="text-align:center;border-right:1px solid var(--line);padding-right:16px;">
+    <div class="grid grid-cols-3 mb-10 p-6 card" style="background:#FAFAF7;gap:0;">
+      <div style="text-align:center;border-right:1px solid var(--line);padding:0 20px;min-width:0;">
         <div class="stat-num good">+128%</div>
         <div style="font-size:12px;color:var(--muted);margin-top:4px;font-weight:500;">Monthly recall bookings</div>
       </div>
-      <div style="text-align:center;border-right:1px solid var(--line);padding:0 16px;">
+      <div style="text-align:center;border-right:1px solid var(--line);padding:0 20px;min-width:0;">
         <div class="stat-num good">&lt;90s</div>
         <div style="font-size:12px;color:var(--muted);margin-top:4px;font-weight:500;">New patient response time</div>
       </div>
-      <div style="text-align:center;padding-left:16px;">
+      <div style="text-align:center;padding:0 20px;min-width:0;">
         <div class="stat-num good">$52K</div>
         <div style="font-size:12px;color:var(--muted);margin-top:4px;font-weight:500;">Headcount avoided / yr</div>
       </div>
@@ -218,16 +239,16 @@
     <p style="color:var(--muted);font-size:15px;margin-bottom:32px;">6-agent team · Chula Vista, California · ~$4.2M GCI · Deployed Jan–Feb 2025</p>
 
     <!-- Stats bar -->
-    <div class="grid grid-cols-3 gap-4 mb-10 p-6 card" style="background:#FAFAF7;">
-      <div style="text-align:center;border-right:1px solid var(--line);padding-right:16px;">
+    <div class="grid grid-cols-3 mb-10 p-6 card" style="background:#FAFAF7;gap:0;">
+      <div style="text-align:center;border-right:1px solid var(--line);padding:0 20px;min-width:0;">
         <div class="stat-num good">+73%</div>
         <div style="font-size:12px;color:var(--muted);margin-top:4px;font-weight:500;">Lead-to-appt conversion</div>
       </div>
-      <div style="text-align:center;border-right:1px solid var(--line);padding:0 16px;">
+      <div style="text-align:center;border-right:1px solid var(--line);padding:0 20px;min-width:0;">
         <div class="stat-num good">&lt;90s</div>
         <div style="font-size:12px;color:var(--muted);margin-top:4px;font-weight:500;">Inbound lead response</div>
       </div>
-      <div style="text-align:center;padding-left:16px;">
+      <div style="text-align:center;padding:0 20px;min-width:0;">
         <div class="stat-num good">$72K</div>
         <div style="font-size:12px;color:var(--muted);margin-top:4px;font-weight:500;">ISA headcount avoided</div>
       </div>
@@ -343,8 +364,9 @@
 
 <!-- ─── FOOTER ───────────────────────────────────────────────────────────────── -->
 <footer style="padding:32px 20px;border-top:1px solid var(--line);text-align:center;">
-  <p style="font-size:13px;color:var(--muted);">© 2025 Ramped AI · <a href="/" style="color:var(--muted);">Home</a> · <a href="/demo" style="color:var(--muted);">Demo</a> · <a href="/comparison" style="color:var(--muted);">vs. Hiring a VA</a></p>
+  <p style="font-size:13px;color:var(--muted);">© 2026 Ramped AI · <a href="/" style="color:var(--muted);">Home</a> · <a href="/demo" style="color:var(--muted);">Demo</a> · <a href="/comparison" style="color:var(--muted);">vs. Hiring a VA</a></p>
 </footer>
 
 </body>
 </html>
+
