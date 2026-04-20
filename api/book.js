@@ -49,17 +49,17 @@ async function sendEmail(to, subject, html) {
   });
 }
 
-// ── Format datetime for display ───────────────────────────────────────────────
-function formatDateTime(datetime) {
-  // datetime is stored as "YYYY-MM-DDTHH:MM:00" in America/Chicago local time
-  const [datePart, timePart] = datetime.split('T');
-  const [y, m, d] = datePart.split('-').map(Number);
-  const [h, min] = timePart.split(':').map(Number);
-  const date = new Date(y, m - 1, d);
-  const dateStr = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-  const ampm = h < 12 ? 'AM' : 'PM';
-  const hour12 = h % 12 || 12;
-  const timeStr = `${hour12}:${String(min).padStart(2, '0')} ${ampm} CST`;
+// Format a UTC ISO datetime string for a specific timezone
+function formatForTz(isoString, tz) {
+  const d = new Date(isoString);
+  const dateStr = d.toLocaleDateString('en-US', {
+    timeZone: tz,
+    weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+  });
+  const timeStr = d.toLocaleTimeString('en-US', {
+    timeZone: tz,
+    hour: 'numeric', minute: '2-digit', hour12: true, timeZoneName: 'short'
+  });
   return { dateStr, timeStr, full: `${dateStr} at ${timeStr}` };
 }
 
@@ -113,15 +113,19 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Failed to create booking. Please try again.' });
     }
 
-    const dt = formatDateTime(datetime);
+    const guestTz  = timezone || 'America/Chicago';
+    const dtGuest  = formatForTz(datetime, guestTz);          // for guest email
+    const dtHost   = formatForTz(datetime, 'America/Chicago'); // for host email
+    const dtUtc    = new Date(datetime).toUTCString();         // UTC reference for host
 
     // ── Confirmation email to guest ───────────────────────────────────────────
-    await sendEmail(email, `Confirmed: Discovery call with Ramped AI — ${dt.dateStr}`, `
+    await sendEmail(email, `Confirmed: Discovery call with Ramped AI — ${dtGuest.dateStr}`, `
       <div style="font-family:-apple-system,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;">
         <p style="font-size:24px;font-weight:800;color:#0B1220;margin-bottom:4px;">You're booked. ✓</p>
         <p style="color:#5B6272;margin-bottom:28px;font-size:15px;">We're looking forward to talking with you, ${name.split(' ')[0]}.</p>
         <div style="background:#F5F8FF;border:1px solid #E6E4DC;border-radius:12px;padding:20px 24px;margin-bottom:28px;">
-          <p style="font-weight:700;font-size:16px;color:#0B1220;margin-bottom:8px;">${dt.full}</p>
+          <p style="font-weight:700;font-size:16px;color:#0B1220;margin-bottom:4px;">${dtGuest.dateStr}</p>
+          <p style="font-size:15px;color:#1F4FFF;font-weight:600;margin-bottom:8px;">${dtGuest.timeStr}</p>
           <p style="color:#5B6272;font-size:14px;">30 minutes · Google Meet</p>
           <p style="color:#5B6272;font-size:13px;margin-top:8px;">A Google Meet link will be sent separately before your call.</p>
         </div>
@@ -132,14 +136,15 @@ export default async function handler(req, res) {
     `);
 
     // ── Notification email to owner ───────────────────────────────────────────
-    await sendEmail(OWNER_EMAIL, `New booking: ${name} — ${dt.full}`, `
+    await sendEmail(OWNER_EMAIL, `New booking: ${name} — ${dtHost.full}`, `
       <div style="font-family:-apple-system,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;">
         <p style="font-size:20px;font-weight:800;color:#0B1220;margin-bottom:20px;">New discovery call booked</p>
         <table style="width:100%;border-collapse:collapse;font-size:14px;">
           <tr><td style="padding:8px 0;color:#5B6272;width:100px;">Name</td><td style="font-weight:600;color:#0B1220;">${name}</td></tr>
           <tr><td style="padding:8px 0;color:#5B6272;">Email</td><td><a href="mailto:${email}" style="color:#1F4FFF;">${email}</a></td></tr>
           ${company ? `<tr><td style="padding:8px 0;color:#5B6272;">Company</td><td style="color:#0B1220;">${company}</td></tr>` : ''}
-          <tr><td style="padding:8px 0;color:#5B6272;">Time</td><td style="font-weight:600;color:#0B1220;">${dt.full}</td></tr>
+          <tr><td style="padding:8px 0;color:#5B6272;">Time (Chicago)</td><td style="font-weight:600;color:#0B1220;">${dtHost.timeStr} · ${dtHost.dateStr}</td></tr>
+          <tr><td style="padding:8px 0;color:#5B6272;">Time (UTC)</td><td style="color:#5B6272;">${dtUtc}</td></tr>
           ${notes ? `<tr><td style="padding:8px 0;color:#5B6272;vertical-align:top;">Notes</td><td style="color:#0B1220;">${notes}</td></tr>` : ''}
           ${timezone ? `<tr><td style="padding:8px 0;color:#5B6272;">Timezone</td><td style="color:#5B6272;">${timezone}</td></tr>` : ''}
         </table>
