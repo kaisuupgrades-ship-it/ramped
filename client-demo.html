@@ -7,6 +7,10 @@
 <meta name="description" content="Watch live AI agents handle real business workflows. Pick your industry and see exactly what gets deployed into your operation." />
 <meta property="og:title" content="See It In Action — Ramped AI" />
 <meta property="og:url" content="https://www.30dayramp.com/demo" />
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Live Demo — Ramped AI Agent">
+<meta name="twitter:description" content="Watch a Ramped AI agent handle real business workflows live — scheduling, intake, financial ops, CRM, and more.">
+<meta name="twitter:image" content="https://www.30dayramp.com/og-image.png">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="canonical" href="https://www.30dayramp.com/demo" />
 <script defer src="/_vercel/insights/script.js"></script>
@@ -48,7 +52,7 @@
   /* Prevent grid cells from blowing out their container */
   .grid > * { min-width: 0; }
   /* Tab buttons: never shrink, never wrap */
-  .scenario-btn { white-space: nowrap; flex-shrink: 0; }
+  .scenario-btn { flex-shrink: 0; }
   /* All card content wraps instead of overflowing */
   .card { overflow: hidden; }
   /* Email content fields */
@@ -82,6 +86,8 @@
   .sub-btn { padding:5px 12px; border-radius:999px; border:1px solid var(--line); background:#fff; font-size:12px; font-weight:500; cursor:pointer; color:var(--muted); }
   .sub-btn:hover { border-color:var(--accent); color:var(--accent); }
   .sub-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); font-weight:600; }
+  .scenario-tabs { flex-wrap: wrap; }
+  @media (min-width: 640px) { .scenario-tabs { flex-wrap: nowrap; } }
 </style>
 </head>
 <body>
@@ -99,23 +105,25 @@
 </a>
     <nav class="hidden sm:flex items-center gap-3">
       <a href="/demo" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Demo</a>
+      <a href="/case-studies" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Case studies</a>
       <a href="/comparison" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">VA vs. AI</a>
-      <a href="/#get-started" class="btn-primary whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Get started →</a>
+      <a href="/book" class="btn-primary whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Get started →</a>
     </nav>
     <div class="sm:hidden flex items-center gap-2">
       <a href="/demo" class="btn-ghost" style="padding:8px 12px;font-size:13px;">Demo</a>
+      <a href="/case-studies" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Case studies</a>
       <a href="/comparison" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">VA vs. AI</a>
-      <a href="/#get-started" class="btn-primary" style="padding:8px 14px;font-size:13px;">Get started →</a>
+      <a href="/book" class="btn-primary" style="padding:8px 14px;font-size:13px;">Get started →</a>
     </div>
   </div>
 </header>
 
 
 <section style="border-bottom:1px solid var(--line);" class="grid-bg">
-  <div class="max-w-3xl mx-auto px-6 py-14 text-center">
-    <div class="pill" style="margin:0 auto 16px;width:fit-content;"><span class="dot"></span> Live agent demos</div>
-    <h1 style="font-size:clamp(2rem,5vw,2.8rem);font-weight:800;letter-spacing:-0.03em;line-height:1.1;margin-bottom:16px;">Your next hire doesn't sleep,<br>forget, or drop the ball.</h1>
-    <p style="font-size:16px;color:var(--muted);max-width:500px;margin:0 auto;line-height:1.6;">Pick your industry. Watch a live AI agent handle a real inbound workflow — exactly how it runs from day one of your Sprint.</p>
+  <div class="max-w-3xl mx-auto px-6 py-14 text-start">
+    <div class="pill" style="margin:0 0 16px;width:fit-content;"><span class="dot"></span> Live agent demos</div>
+    <h1 style="font-size:clamp(2rem,5vw,2.8rem);font-weight:800;letter-spacing:-0.03em;line-height:1.1;margin-bottom:16px;text-align:start;">Your next hire doesn't sleep,<br>forget, or drop the ball.</h1>
+    <p style="font-size:16px;color:var(--muted);max-width:500px;margin:0;line-height:1.6;text-align:start;">Pick your industry. Watch a live AI agent handle a real inbound workflow — exactly how it runs from day one of your Sprint.</p>
   </div>
 </section>
 
@@ -159,7 +167,7 @@
       </div>
     </div>
     <!-- Desktop: category tabs -->
-    <div class="hidden sm:flex gap-2 mb-3 flex-wrap" role="tablist" aria-label="Demo capability">
+    <div class="hidden sm:flex gap-2 mb-3 flex-wrap scenario-tabs" role="tablist" aria-label="Demo capability">
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-category="livecall" data-scenario="livecall" aria-pressed="false">📞 Live call <span class="chip ml-1" style="background:#FFEDD5;color:#7A4F00;font-size:10px;padding:1px 6px;">FEATURED</span></button>
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-category="email" data-scenario="healthcare" aria-pressed="false">📥 Email intake</button>
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-category="financial" data-scenario="financial" aria-pressed="false">📊 Financial</button>
