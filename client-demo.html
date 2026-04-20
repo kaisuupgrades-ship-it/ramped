@@ -651,11 +651,11 @@ const SCENARIOS = {
     steps: [
       "\ud83c\udfaf Orchestrator received trigger \u00b7 deal #HS-8821 \u00b7 Meridian Logistics \u00b7 $42K ARR",
       "Spawning 3 parallel agents simultaneously \u2193",
-      "\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501",
+      "__divider__",
       "\ud83e\udd16 Agent A (Research) \u00b7 pulling Meridian Logistics firmographic data \u00b7 LinkedIn \u00b7 Clearbit \u00b7 10-K",
       "\ud83e\udd16 Agent B (Competitive intel) \u00b7 checking if Meridian has evaluated competitors in last 90 days",
       "\ud83e\udd16 Agent C (Timing) \u00b7 analyzing Sandra Okeke's email open pattern + calendar availability",
-      "\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501",
+      "__divider__",
       "Agent A complete \u00b7 Meridian: 340 employees \u00b7 $28M revenue \u00b7 logistics ops in 4 states \u00b7 pain: manual dispatch reporting",
       "Agent B complete \u00b7 no competitor evals detected \u00b7 clean window \u00b7 0 objection signals in CRM history",
       "Agent C complete \u00b7 Sandra opens email 7\u20139 AM Tue/Thu \u00b7 calendar shows open slots Thu Apr 24",
@@ -940,6 +940,13 @@ runBtn.addEventListener('click', async ()=>{
 
   for (let i=0; i<s.steps.length; i++){
     const row = document.createElement('div');
+    if (s.steps[i] === '__divider__') {
+      row.className = 'reasoning-row';
+      row.innerHTML = '<hr style="border:none;border-top:1px solid var(--line);margin:8px 0 4px;">';
+      reasoningList.appendChild(row);
+      requestAnimationFrame(()=> row.classList.add('show'));
+      await wait(200);
+    } else {
     row.className = 'step-line flex items-start gap-3 reasoning-row';
     row.innerHTML =
       '<div class="mt-[2px] w-[24px] h-[24px] rounded-full bg-[var(--paper)] border border-[var(--line)] flex items-center justify-center mono text-[10px] text-[var(--muted)]">' + String(i+1).padStart(2,'0') + '</div>' +
@@ -950,6 +957,7 @@ runBtn.addEventListener('click', async ()=>{
     await wait(650 + Math.random()*350);
     const tag = row.querySelector('.thinking-tag');
     tag.innerHTML = '<span style="color:var(--good)">\u2713 done</span>';
+    }
   }
 
   await wait(350);
