@@ -34,7 +34,7 @@
   a{color:inherit;text-decoration:none;}
 
   /* ── Layout ── */
-  .page{max-width:72rem;margin:0 auto;padding:0 24px 60px;}
+  .page{max-width:72rem;margin:0 auto;padding:0 24px 48px;}
   header{padding:20px 0 0;display:flex;align-items:center;justify-content:space-between;margin-bottom:48px;}
   .logo{font-weight:800;font-size:17px;letter-spacing:-.02em;color:var(--ink);}
   .back{font-size:13px;color:var(--muted);font-weight:500;display:flex;align-items:center;gap:5px;}
@@ -99,7 +99,7 @@
   .confirm-box .check{font-size:48px;margin-bottom:12px;}
   .btn-primary {
     display:inline-flex;align-items:center;gap:6px;
-    background:var(--accent);color:#fff;
+    background:var(--ink);color:#fff;
     padding:10px 20px;border-radius:6px;
     font-size:14px;font-weight:600;text-decoration:none;
     transition:opacity .15s;
@@ -115,8 +115,7 @@
 </style>
 </head>
 <body>
-<div class="page">
-  <header class="border-b border-[var(--line)] bg-[var(--paper)]/85 backdrop-blur sticky top-0 z-40">
+<header class="w-full border-b border-[var(--line)] bg-[var(--paper)]/85 backdrop-blur sticky top-0 z-50">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
     <!-- Logo -->
     <a href="/" class="flex items-center gap-2 shrink-0">
@@ -132,18 +131,17 @@
     <nav class="hidden sm:flex items-center gap-3">
       <a href="/demo" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Demo</a>
       <a href="/comparison" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">VA vs. AI</a>
-      <a href="/book" class="btn-primary whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Get started →</a>
+      <a href="/#get-started" class="btn-primary whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Get started →</a>
     </nav>
     <!-- Mobile CTA -->
     <div class="sm:hidden flex items-center gap-2">
       <a href="/demo" class="btn-ghost" style="padding:8px 12px;font-size:13px;">Demo</a>
       <a href="/comparison" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">VA vs. AI</a>
-      <a href="/book" class="btn-primary" style="padding:8px 14px;font-size:13px;">Get started →</a>
+      <a href="/#get-started" class="btn-primary" style="padding:8px 14px;font-size:13px;">Get started →</a>
     </div>
   </div>
 </header>
-
-
+<div class="page">
   <div class="booking-shell" id="booking-shell">
     <!-- Left panel -->
     <div class="left-panel">
