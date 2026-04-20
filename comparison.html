@@ -82,6 +82,8 @@
   @media (max-width:640px){
     .cmp-table th,.cmp-table td{padding:12px 12px;font-size:13px;}
   }
+  .section-wrap{max-width:1120px;margin-left:auto;margin-right:auto;padding-left:24px;padding-right:24px;}
+  @media(min-width:768px){.section-wrap{padding-left:32px;padding-right:32px;}}
 </style>
 </head>
 <body>
@@ -115,8 +117,8 @@
 <!-- HERO -->
 <section class="relative overflow-hidden">
   <div class="absolute inset-0 grid-bg opacity-60 pointer-events-none"></div>
-  <div class="max-w-6xl mx-auto px-6 pt-20 pb-16 relative">
-    <div class="max-w-3xl mx-auto text-center">
+  <div class="section-wrap pt-20 pb-16 relative">
+    <div class="max-w-[640px]">
       <div class="pill mb-6">
         <span class="dot"></span>
         <span>AI vs. VA — A breakdown founders actually need</span>
@@ -129,7 +131,7 @@
       <p class="mt-6 text-lg text-[var(--muted)]">
         A VA is a person — with a timezone, a sick day, and a learning curve. An AI agent is infrastructure. Here's the honest comparison, line by line.
       </p>
-      <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+      <div class="mt-8 flex flex-wrap items-center gap-3">
         <a href="/book" class="btn-primary">Get started with Ramped →</a>
         <a href="/demo" class="btn-ghost">See a live agent demo</a>
       </div>
@@ -139,7 +141,7 @@
 
 <!-- COMPARISON TABLE -->
 <section id="comparison" class="border-t border-[var(--line)] bg-white">
-  <div class="max-w-6xl mx-auto px-6 py-16">
+  <div class="section-wrap py-16">
     <div class="mb-10">
       <div class="sectionnum mb-2">01 — Head to head</div>
       <h2 class="text-3xl md:text-4xl font-bold tracking-tight">The full comparison</h2>
@@ -251,7 +253,7 @@
 
 <!-- THE MATH -->
 <section id="math" class="border-t border-[var(--line)]">
-  <div class="max-w-6xl mx-auto px-6 py-16">
+  <div class="section-wrap py-16">
     <div class="mb-10">
       <div class="sectionnum mb-2">02 — The math</div>
       <h2 class="text-3xl md:text-4xl font-bold tracking-tight">What it actually costs over 3 years</h2>
@@ -312,7 +314,7 @@
 
 <!-- 3 REASONS -->
 <section id="reasons" class="border-t border-[var(--line)] bg-white">
-  <div class="max-w-6xl mx-auto px-6 py-16">
+  <div class="section-wrap py-16">
     <div class="mb-10">
       <div class="sectionnum mb-2">03 — Why it works</div>
       <h2 class="text-3xl md:text-4xl font-bold tracking-tight">Three things a VA can't do</h2>
@@ -395,7 +397,7 @@
 
 <!-- OBJECTION SECTION -->
 <section class="border-t border-[var(--line)]">
-  <div class="max-w-6xl mx-auto px-6 py-16">
+  <div class="section-wrap py-16">
     <div class="mb-10">
       <div class="sectionnum mb-2">04 — Fair questions</div>
       <h2 class="text-3xl md:text-4xl font-bold tracking-tight">Things we hear from founders</h2>
@@ -423,18 +425,18 @@
 
 <!-- CTA -->
 <section id="get-started" class="border-t border-[var(--line)] bg-[var(--ink)]">
-  <div class="max-w-6xl mx-auto px-6 py-20 text-center">
-    <div class="pill mb-6 mx-auto" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.12);color:rgba(255,255,255,0.5);">
+  <div class="section-wrap py-20">
+    <div class="pill mb-6" style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.12);color:rgba(255,255,255,0.5);">
       <span class="dot"></span>
       <span>Now booking Q2 2026 design partners</span>
     </div>
-    <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight text-white max-w-3xl mx-auto">
+    <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight text-white max-w-3xl">
       Ready to retire your VA<br/>and build something that scales?
     </h2>
-    <p class="mt-5 text-[rgba(255,255,255,0.55)] max-w-3xl mx-auto text-lg">
+    <p class="mt-5 text-[rgba(255,255,255,0.55)] max-w-3xl text-lg">
       Book a free 30-minute discovery call. We'll map your biggest operational bottleneck and show you what an agent would do with it.
     </p>
-    <div class="mt-10 flex flex-wrap justify-center gap-4">
+    <div class="mt-10 flex flex-wrap gap-4">
       <a href="/book" class="inline-flex items-center gap-2 px-7 py-4 rounded-xl font-bold text-[var(--ink)] bg-[var(--paper)] hover:opacity-90 transition-opacity text-base">Book a free discovery call →</a>
       <a href="/demo" class="inline-flex items-center gap-2 px-7 py-4 rounded-xl font-bold text-white border border-[rgba(255,255,255,0.18)] hover:bg-[rgba(255,255,255,0.06)] transition-colors text-base">See the agent demo</a>
     </div>
@@ -444,7 +446,7 @@
 
 <!-- FOOTER -->
 <footer class="border-t border-[var(--line)] bg-white">
-  <div class="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[var(--muted)]">
+  <div class="section-wrap py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[var(--muted)]">
     <div class="flex items-center gap-2">
       <svg width="22" height="18" viewBox="0 0 26 22" fill="none" aria-hidden="true">
         <rect x="0" y="14" width="5" height="8" rx="1.5" fill="var(--accent)"/>
