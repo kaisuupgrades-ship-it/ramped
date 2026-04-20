@@ -99,19 +99,17 @@
 </a>
     <nav class="hidden sm:flex items-center gap-3">
       <a href="/demo" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Demo</a>
+      <a href="/comparison" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">VA vs. AI</a>
       <a href="/#get-started" class="btn-primary whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Get started →</a>
     </nav>
     <div class="sm:hidden flex items-center gap-2">
       <a href="/demo" class="btn-ghost" style="padding:8px 12px;font-size:13px;">Demo</a>
+      <a href="/comparison" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">VA vs. AI</a>
       <a href="/#get-started" class="btn-primary" style="padding:8px 14px;font-size:13px;">Get started →</a>
     </div>
   </div>
 </header>
 
-<div style="text-align:center;padding:12px 24px;background:var(--paper);border-bottom:1px solid var(--line);">
-  <span style="font-size:14px;color:var(--muted);">Wondering how this compares to hiring a VA? </span>
-  <a href="/comparison" style="font-size:14px;font-weight:600;color:var(--ink);text-decoration:underline;">See the full breakdown →</a>
-</div>
 
 <section style="border-bottom:1px solid var(--line);" class="grid-bg">
   <div class="max-w-3xl mx-auto px-6 py-14 text-center">
@@ -320,19 +318,22 @@
   </div>
 </section>
 
-<footer style="border-top:1px solid var(--line);">
-  <div class="max-w-6xl mx-auto px-6 py-6 flex flex-wrap items-center justify-between gap-3 text-xs" style="color:var(--muted);">
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-<svg width="22" height="18" viewBox="0 0 26 22" fill="none" aria-hidden="true">
+<footer class="border-t border-[var(--line)]">
+  <div class="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-2">
+      <svg width="22" height="18" viewBox="0 0 26 22" fill="none" aria-hidden="true">
         <rect x="0" y="14" width="5" height="8" rx="1.5" fill="var(--accent)"/>
         <rect x="7" y="9" width="5" height="13" rx="1.5" fill="var(--accent)" opacity=".75"/>
         <rect x="14" y="4" width="5" height="18" rx="1.5" fill="var(--accent)" opacity=".55"/>
         <rect x="21" y="0" width="5" height="22" rx="1.5" fill="var(--accent)" opacity=".35"/>
       </svg>
-      <span style="font-weight:600;color:var(--ink);">Ramped AI</span>
-      <span>· AI implementation for operating businesses</span>
+      <span style="font-size:14px;font-weight:600;color:var(--ink);">Ramped AI</span>
     </div>
-    <div>© 2026 Ramped AI · All rights reserved</div>
+    <p style="font-size:13px;color:var(--muted);text-align:center;">AI implementation for operating businesses</p>
+    <div class="flex flex-col items-center sm:items-end gap-1.5">
+      <a href="mailto:jon@30dayramp.com" style="font-size:13px;color:var(--muted);">jon@30dayramp.com</a>
+      <p style="font-size:12px;color:var(--muted);">© 2026 Ramped AI. All rights reserved.</p>
+    </div>
   </div>
 </footer>
 
@@ -426,7 +427,7 @@ const SCENARIOS = {
     channelDetail: "intake@harrisonlawgroup.com",
     from: "mike.deluca@gmail.com",
     subject: "Need a lawyer — rear-ended on I-90, other driver at fault",
-    body: "Hi,\n\nI was rear-ended on I-90 last Thursday (04/10) by a driver who ran a red. Police report was filed, I have the report number. My car is totaled and I've been having neck pain — saw a doctor yesterday.\n\nThe other driver's insurance has already called me twice asking for a recorded statement. I don't want to say the wrong thing.\n\nI'm in Cook County. Is this something you handle? How does this work?\n\n— Mike DeLuca\n(312) 555-0174",
+    body: "Hi,\n\nI was rear-ended on I-90 last Thursday (04/16) by a driver who ran a red. Police report was filed, I have the report number. My car is totaled and I've been having neck pain — saw a doctor yesterday.\n\nThe other driver's insurance has already called me twice asking for a recorded statement. I don't want to say the wrong thing.\n\nI'm in Cook County. Is this something you handle? How does this work?\n\n— Mike DeLuca\n(312) 555-0174",
     steps: [
       "Classifying intent \u00b7 personal injury \u2192 auto accident, liability appears clear",
       "Jurisdiction check \u00b7 Cook County, IL \u00b7 2-year SOL for PI \u00b7 10 months remaining",
@@ -587,7 +588,7 @@ const SCENARIOS = {
     channelDetail: "claims@brightshieldinsurance.com",
     from: "rachel.morgan@outlook.com",
     subject: "Fender bender claim \u2014 policy #AUTO-88211",
-    body: "Hi,\n\nI was in a minor accident on Saturday 04/12. I was rear-ended at a stoplight on Oak Street. The other driver exchanged info. My bumper has a crack and the trunk won't open smoothly.\n\nMy policy number is AUTO-88211. I have photos but I'm not sure what you need. The police weren't called since it was minor. Do I need a police report?\n\n\u2014 Rachel Morgan\n(847) 555-0167",
+    body: "Hi,\n\nI was in a minor accident on Saturday 04/11. I was rear-ended at a stoplight on Oak Street. The other driver exchanged info. My bumper has a crack and the trunk won't open smoothly.\n\nMy policy number is AUTO-88211. I have photos but I'm not sure what you need. The police weren't called since it was minor. Do I need a police report?\n\n\u2014 Rachel Morgan\n(847) 555-0167",
     steps: [
       "Looking up policy AUTO-88211 \u00b7 Rachel Morgan \u00b7 active \u00b7 comprehensive + collision \u00b7 $500 deductible",
       "Verifying coverage \u00b7 rear-end collision \u2714 \u00b7 no lapse in coverage \u2714 \u00b7 claim window open (within 30 days) \u2714",
