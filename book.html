@@ -112,12 +112,25 @@
   .meeting-info{margin-bottom:28px;display:flex;flex-direction:column;gap:10px;}
   .info-row{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted);}
   .info-row svg{flex-shrink:0;color:var(--muted);}
+
+  /* ── Mobile fixes ── */
+  /* FIX 1: Prevent header nav from wrapping */
+  .site-header-inner{flex-wrap:nowrap;}
+  @media(max-width:400px){.book-logo-text{display:none}}
+
+  /* FIX 2: Hide left panel on mobile, show only booking widget */
+  @media(max-width:640px){
+    .left-panel{display:none;}
+    .booking-shell{grid-template-columns:1fr;}
+    .right-panel{border-radius:12px;}
+    .mobile-booking-header{display:block!important;}
+  }
 </style>
 </head>
 <body>
 <div class="page">
   <header class="border-b border-[var(--line)] bg-[var(--paper)]/85 backdrop-blur sticky top-0 z-40">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3 site-header-inner" style="flex-wrap:nowrap;">
     <a href="/" class="flex items-center gap-2 shrink-0">
   <svg width="26" height="22" viewBox="0 0 26 22" fill="none" aria-hidden="true">
     <rect x="0" y="14" width="5" height="8" rx="1.5" fill="var(--accent)"/>
@@ -125,11 +138,11 @@
     <rect x="14" y="4" width="5" height="18" rx="1.5" fill="var(--accent)" opacity=".55"/>
     <rect x="21" y="0" width="5" height="22" rx="1.5" fill="var(--accent)" opacity=".35"/>
   </svg>
-  <span class="font-bold text-lg tracking-tight ml-2">Ramped AI</span>
+  <span class="book-logo-text font-bold text-lg tracking-tight ml-2">Ramped AI</span>
 </a>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <a href="/demo" style="padding:8px 16px;font-size:13px;font-weight:500;color:inherit;text-decoration:none;border:1.5px solid #ddd;border-radius:8px;white-space:nowrap;">Demo</a>
-      <a href="/#get-started" style="padding:8px 16px;font-size:13px;font-weight:600;background:#0B1220;color:#fff;border-radius:8px;text-decoration:none;white-space:nowrap;">Get started →</a>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:nowrap;">
+      <a href="/demo" style="padding:6px 12px;font-size:12px;font-weight:500;color:inherit;text-decoration:none;border:1.5px solid #ddd;border-radius:8px;white-space:nowrap;">Demo</a>
+      <a href="/#get-started" style="padding:6px 12px;font-size:12px;font-weight:600;background:#0B1220;color:#fff;border-radius:8px;text-decoration:none;white-space:nowrap;">Get started →</a>
     </div>
   </div>
 </header>
@@ -202,7 +215,11 @@
 
     <!-- Right panel -->
     <div class="right-panel" id="right-panel">
-      <!-- Success state (spans full shell) -->
+      <!-- Mobile-only booking header (hidden on desktop via CSS) -->
+      <div class="mobile-booking-header" style="display:none;padding:16px 20px 0;border-bottom:1px solid var(--line);margin-bottom:16px;">
+        <p style="font-size:13px;font-weight:600;margin:0 0 2px;">Book a free 30-min call</p>
+        <p style="font-size:12px;color:var(--muted);margin:0;">No pressure · We'll find what AI can do for your business</p>
+      </div>
 
       <!-- Selected summary -->
       <div class="selected-summary" id="selected-summary">
@@ -267,7 +284,7 @@ let bookedSlots  = [];     // loaded from API
 
 // ── Timezone ─────────────────────────────────────────────────────────────────
 const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-document.getElementById('user-timezone').textContent = userTz.replace(/_/g,' ');
+document.getElementById('user-timezone').textContent = 'Times shown in your local timezone';
 
 // ── Date strip ───────────────────────────────────────────────────────────────
 function buildDateStrip() {
@@ -398,7 +415,7 @@ function selectSlot(slot) {
   // Show summary
   const [y, m, d] = selectedDate.split('-').map(Number);
   const dateLabel = new Date(y, m-1, d).toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric'});
-  document.getElementById('sum-date').textContent = `${dateLabel} · ${slot.display} CST`;
+  document.getElementById('sum-date').textContent = `${dateLabel} · ${slot.display}`;
   document.getElementById('selected-summary').classList.add('visible');
 
   // Show form
