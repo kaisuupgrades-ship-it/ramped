@@ -20,6 +20,7 @@
   :root{
     --ink:#0B1220;--paper:#FAFAF7;--line:#E6E4DC;
     --muted:#5B6272;--accent:#1F4FFF;--good:#0F7A4B;
+    --surface:#F5F5F3;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;}
@@ -39,92 +40,56 @@
   .booking-shell{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0;background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:4px 4px 0 var(--ink);}
   @media(max-width:640px){.booking-shell{grid-template-columns:1fr;}}
 
-  /* ── Left panel: date + time ── */
+  /* ── Left panel: info ── */
   .left-panel{padding:28px 24px;border-right:1px solid var(--line);min-width:0;overflow:hidden;}
   @media(max-width:640px){.left-panel{border-right:none;border-bottom:1px solid var(--line);}}
 
   .panel-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
 
-  /* Date strip */
-  .date-strip{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:24px;scrollbar-width:none;}
-  .date-strip::-webkit-scrollbar{display:none;}
-  .date-chip{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--paper);cursor:pointer;transition:all .15s;}
-  .date-chip:hover{border-color:var(--ink);}
-  .date-chip.selected{background:var(--ink);border-color:var(--ink);color:#fff;}
-  .date-chip.no-slots{opacity:.35;cursor:not-allowed;}
-  .day-name{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;opacity:.6;}
-  .day-num{font-size:20px;font-weight:800;letter-spacing:-.02em;}
-  .date-chip.selected .day-name{opacity:.7;}
-
-  /* Time slots */
-  .slots-grid{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto;padding-right:4px;}
-  .slots-grid::-webkit-scrollbar{width:4px;}
-  .slots-grid::-webkit-scrollbar-track{background:transparent;}
-  .slots-grid::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px;}
-  .slot{padding:10px 14px;border-radius:8px;border:1.5px solid var(--line);font-size:14px;font-weight:500;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:space-between;}
-  .slot:hover{border-color:var(--accent);color:var(--accent);}
-  .slot.selected{background:var(--accent);border-color:var(--accent);color:#fff;}
-  .slot.booked{opacity:.3;cursor:not-allowed;text-decoration:line-through;}
-  .slot-tz{font-size:11px;opacity:.6;font-weight:400;}
-  .no-slots-msg{font-size:14px;color:var(--muted);padding:20px 0;text-align:center;}
-
-  /* ── Right panel: details form ── */
+  /* ── Right panel: booking steps ── */
   .right-panel{padding:28px 24px;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
   .form-input{width:100%;}
-  .selected-summary{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:24px;display:none;}
-  .selected-summary.visible{display:block;}
-  .selected-summary .sum-date{font-weight:700;font-size:15px;color:var(--ink);margin-bottom:2px;}
-  .selected-summary .sum-dur{font-size:13px;color:var(--muted);}
-
-  .form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
-  label{font-size:13px;font-weight:600;color:var(--ink);}
-  .form-input{padding:11px 14px;border:1.5px solid var(--line);border-radius:8px;font-size:14px;font-family:inherit;color:var(--ink);background:#fff;transition:border-color .15s;outline:none;}
-  .form-input:focus{border-color:var(--accent);}
-  textarea.form-input{resize:vertical;min-height:80px;}
-
-  .btn-book{width:100%;padding:13px;background:var(--ink);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .15s;margin-top:auto;font-family:inherit;}
-  .btn-book:hover{opacity:.85;}
-  .btn-book:disabled{opacity:.4;cursor:not-allowed;}
-
-  .form-note{font-size:12px;color:var(--muted);margin-top:10px;text-align:center;line-height:1.5;}
-
-  /* ── Step 2: empty state ── */
-  .pick-prompt{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;gap:12px;color:var(--muted);}
-  .pick-prompt svg{opacity:.3;}
-  .pick-prompt p{font-size:14px;line-height:1.5;}
-
-  /* ── Success state ── */
-  #success-state{display:none;padding:48px 24px;text-align:center;flex-direction:column;align-items:center;gap:16px;}
-  #success-state.visible{display:flex;}
-  .check-circle{width:60px;height:60px;border-radius:50%;background:#ECFDF5;border:2px solid #D1FAE5;display:flex;align-items:center;justify-content:center;margin:0 auto;}
-  #success-state h2{font-size:22px;font-weight:800;color:var(--ink);}
-  #success-state p{font-size:15px;color:var(--muted);max-width:320px;line-height:1.6;}
 
   /* ── Loading spinner ── */
-  .spinner{width:20px;height:20px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;margin-right:8px;}
+  .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px;}
   @keyframes spin{to{transform:rotate(360deg)}}
 
-  /* ── Error banner ── */
-  .error-banner{background:#FEF2F2;border:1px solid #FCA5A5;border-radius:8px;padding:10px 14px;font-size:13px;color:#991B1B;margin-bottom:16px;display:none;}
-  .error-banner.visible{display:block;}
-
-  /* ── Meeting info sidebar ── */
-  .meeting-info{margin-bottom:28px;display:flex;flex-direction:column;gap:10px;}
-  .info-row{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted);}
-  .info-row svg{flex-shrink:0;color:var(--muted);}
-
   /* ── Mobile fixes ── */
-  /* FIX 1: Prevent header nav from wrapping */
   .site-header-inner{flex-wrap:nowrap;}
   @media(max-width:400px){.book-logo-text{display:none}}
-
-  /* FIX 2: Hide left panel on mobile, show only booking widget */
   @media(max-width:640px){
     .left-panel{display:none;}
     .booking-shell{grid-template-columns:1fr;}
     .right-panel{border-radius:12px;}
     .mobile-booking-header{display:block!important;}
   }
+
+  /* ── Calendar ── */
+  .calendar-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .calendar-nav button{background:none;border:1px solid var(--line);border-radius:6px;width:32px;height:32px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
+  .calendar-nav button:hover{background:var(--surface);}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+  .cal-header{text-align:center;font-size:11px;font-weight:600;color:var(--muted);padding:4px 0;text-transform:uppercase;}
+  .cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:8px;font-size:14px;cursor:pointer;border:none;background:none;}
+  .cal-day:hover:not(:disabled){background:var(--accent);color:#fff;}
+  .cal-day.today{box-shadow:0 0 0 2px var(--accent);}
+  .cal-day.selected{background:var(--accent);color:#fff;font-weight:600;}
+  .cal-day:disabled{color:#ccc;cursor:default;}
+  .cal-day.other-month{color:#ddd;}
+
+  /* ── Slots ── */
+  .slot-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .slot-btn{padding:10px;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;font-size:13px;font-weight:500;text-align:center;}
+  .slot-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+  .slot-btn:disabled{color:#bbb;text-decoration:line-through;cursor:default;background:#fafafa;}
+
+  /* ── Back button ── */
+  .back-btn{background:none;border:none;cursor:pointer;font-size:13px;color:var(--muted);padding:0 0 16px;display:flex;align-items:center;gap:4px;}
+  .back-btn:hover{color:var(--ink);}
+
+  /* ── Confirmation ── */
+  .confirm-box{text-align:center;padding:32px 16px;}
+  .confirm-box .check{font-size:48px;margin-bottom:12px;}
 </style>
 </head>
 <body>
@@ -142,7 +107,7 @@
 </a>
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:nowrap;">
       <a href="/demo" style="padding:6px 12px;font-size:12px;font-weight:500;color:inherit;text-decoration:none;border:1.5px solid #ddd;border-radius:8px;white-space:nowrap;">Demo</a>
-      <a href="/#get-started" style="padding:6px 12px;font-size:12px;font-weight:600;background:#0B1220;color:#fff;border-radius:8px;text-decoration:none;white-space:nowrap;">Get started →</a>
+      <a href="/#get-started" style="padding:6px 12px;font-size:12px;font-weight:600;background:#0B1220;color:#fff;border-radius:8px;text-decoration:none;white-space:nowrap;">Get started &rarr;</a>
     </div>
   </div>
 </header>
@@ -152,26 +117,26 @@
     <!-- Left panel -->
     <div class="left-panel">
       <h1 style="font-size:22px;font-weight:700;line-height:1.3;margin-bottom:8px;">Book a free 30-min discovery call</h1>
-      <p style="font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:24px;">We'll map out exactly what AI can automate in your business — no pitch, just a real conversation.</p>
+      <p style="font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:24px;">We'll map out exactly what AI can automate in your business &mdash; no pitch, just a real conversation.</p>
 
       <div style="margin-bottom:24px;">
         <p style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">What we'll cover</p>
         <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
           <li style="display:flex;align-items:flex-start;gap:10px;font-size:14px;">
-            <span style="color:var(--accent);font-size:16px;line-height:1.4;">✓</span>
+            <span style="color:var(--accent);font-size:16px;line-height:1.4;">&#10003;</span>
             <span>Where AI can save you 10+ hours/week right now</span>
           </li>
           <li style="display:flex;align-items:flex-start;gap:10px;font-size:14px;">
-            <span style="color:var(--accent);font-size:16px;line-height:1.4;">✓</span>
+            <span style="color:var(--accent);font-size:16px;line-height:1.4;">&#10003;</span>
             <span>Which workflows to automate first for fastest ROI</span>
           </li>
           <li style="display:flex;align-items:flex-start;gap:10px;font-size:14px;">
-            <span style="color:var(--accent);font-size:16px;line-height:1.4;">✓</span>
+            <span style="color:var(--accent);font-size:16px;line-height:1.4;">&#10003;</span>
             <span>What a 30-day implementation looks like for your business</span>
           </li>
           <li style="display:flex;align-items:flex-start;gap:10px;font-size:14px;">
-            <span style="color:var(--accent);font-size:16px;line-height:1.4;">✓</span>
-            <span>Honest assessment — if it's not a fit, we'll tell you</span>
+            <span style="color:var(--accent);font-size:16px;line-height:1.4;">&#10003;</span>
+            <span>Honest assessment &mdash; if it's not a fit, we'll tell you</span>
           </li>
         </ul>
       </div>
@@ -183,261 +148,176 @@
       <!-- Mobile-only booking header (hidden on desktop via CSS) -->
       <div class="mobile-booking-header" style="display:none;padding:16px 20px 0;border-bottom:1px solid var(--line);margin-bottom:16px;">
         <p style="font-size:13px;font-weight:600;margin:0 0 2px;">Book a free 30-min call</p>
-        <p style="font-size:12px;color:var(--muted);margin:0;">No pressure · We'll find what AI can do for your business</p>
+        <p style="font-size:12px;color:var(--muted);margin:0;">No pressure &middot; We'll find what AI can do for your business</p>
       </div>
 
-      <!-- Selected summary -->
-      <div class="selected-summary" id="selected-summary">
-        <div class="sum-date" id="sum-date">—</div>
-        <div class="sum-dur">30-minute discovery call · Google Meet</div>
-      </div>
-
-      <!-- Pick prompt (before slot selected) -->
-      <div class="pick-prompt" id="pick-prompt">
-        <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect x="5" y="7" width="30" height="28" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M5 15h30M13 5v4M27 5v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-        <p>Select a date and time<br>on the left to continue</p>
-      </div>
-
-      <!-- Details form -->
-      <form id="booking-form" style="display:none;flex-direction:column;flex:1;" onsubmit="submitBooking(event)">
-        <div class="error-banner" id="error-banner"></div>
-        <div class="form-group">
-          <label for="name">Your name</label>
-          <input class="form-input" type="text" id="name" name="name" placeholder="Jane Smith" required autocomplete="name" />
-        </div>
-        <div class="form-group">
-          <label for="email">Work email</label>
-          <input class="form-input" type="email" id="email" name="email" placeholder="jane@company.com" required autocomplete="email" />
-        </div>
-        <div class="form-group">
-          <label for="company">Company</label>
-          <input class="form-input" type="text" id="company" name="company" placeholder="Acme Inc." autocomplete="organization" />
-        </div>
-        <div class="form-group">
-          <label for="notes">What do you want to automate? <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
-          <textarea class="form-input" id="notes" name="notes" placeholder="E.g. lead follow-up, intake forms, scheduling…"></textarea>
-        </div>
-        <button type="submit" class="btn-book" id="submit-btn">Confirm booking →</button>
-        <p class="form-note">You'll receive a confirmation email with a Google Meet link.</p>
-      </form>
+      <div id="booking-step" style="padding:8px 0;"></div>
     </div>
   </div>
 
-  <!-- Success state (outside shell, full width) -->
-  <div id="success-state">
-    <div class="check-circle">
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M6 14.5l6 6L22 9" stroke="var(--good)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </div>
-    <h2>You're booked.</h2>
-    <p id="success-detail">Check your inbox for a confirmation with the Google Meet link.</p>
-    <a href="/" style="font-size:14px;color:var(--accent);font-weight:600;margin-top:8px;">← Back to site</a>
-  </div>
 </div>
 
 <script>
-// ── Config ──────────────────────────────────────────────────────────────────
-const AVAILABLE_HOURS_START = 9;   // 9 AM host timezone
-const AVAILABLE_HOURS_END   = 17;  // 5 PM host timezone
-const SLOT_DURATION         = 30;  // minutes
-const DAYS_AHEAD            = 14;  // how many days to show
-const HOST_TIMEZONE         = 'America/Chicago';
+const HOST_TZ = 'America/Chicago';
+const SLOT_HOURS = [9,9.5,10,10.5,11,11.5,12,12.5,13,13.5,14,14.5,15,15.5,16,16.5];
 
-// ── State ────────────────────────────────────────────────────────────────────
-let selectedDate = null;   // YYYY-MM-DD string
-let selectedSlot = null;   // ISO datetime string
-let bookedSlots  = [];     // loaded from API
+let currentMonth, currentYear, selectedDate, selectedSlot;
 
-// ── Timezone ─────────────────────────────────────────────────────────────────
-const userTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-document.getElementById('user-timezone').textContent = 'Times shown in your local timezone';
+function init() {
+  const now = new Date();
+  currentMonth = now.getMonth();
+  currentYear = now.getFullYear();
+  renderCalendar();
+}
 
-// ── Date strip ───────────────────────────────────────────────────────────────
-function buildDateStrip() {
-  const strip = document.getElementById('date-strip');
-  strip.innerHTML = '';
+function renderCalendar() {
+  const stepDiv = document.getElementById('booking-step');
+  stepDiv.innerHTML = buildCalendarHTML(currentYear, currentMonth);
+  attachCalendarEvents();
+}
+
+function buildCalendarHTML(year, month) {
+  const monthName = new Date(year, month, 1).toLocaleString('default', {month:'long'});
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
   const today = new Date();
 
-  for (let i = 0; i < DAYS_AHEAD; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() + i);
-    const dow = d.getDay();
-    if (dow === 0 || dow === 6) continue; // skip weekends
+  let html = '<div class="calendar-nav">' +
+    '<button id="prev-month" aria-label="Previous month">\u2039</button>' +
+    '<span style="font-weight:600;font-size:15px;">' + monthName + ' ' + year + '</span>' +
+    '<button id="next-month" aria-label="Next month">\u203a</button>' +
+    '</div>' +
+    '<div class="cal-grid">' +
+    ['Su','Mo','Tu','We','Th','Fr','Sa'].map(function(d){return '<div class="cal-header">'+d+'</div>';}).join('');
 
-    const dateStr = localDateStr(d);
-    const chip = document.createElement('div');
-    chip.className = 'date-chip';
-    chip.dataset.date = dateStr;
-    chip.innerHTML = `
-      <span class="day-name">${d.toLocaleDateString('en-US',{weekday:'short'})}</span>
-      <span class="day-num">${d.getDate()}</span>
-    `;
-    chip.addEventListener('click', () => selectDate(dateStr));
-    strip.appendChild(chip);
+  for(var i=0;i<firstDay;i++) html += '<button class="cal-day other-month" disabled></button>';
+
+  for(var d=1;d<=daysInMonth;d++){
+    var date = new Date(year, month, d);
+    var isToday = date.toDateString()===today.toDateString();
+    var isPast = date < new Date(today.getFullYear(),today.getMonth(),today.getDate());
+    var isWeekend = date.getDay()===0||date.getDay()===6;
+    var disabled = isPast||isWeekend;
+    var cls = ['cal-day', isToday?'today':'', disabled?'':'available'].filter(Boolean).join(' ');
+    var dateStr = year+'-'+String(month+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    html += '<button class="'+cls+'" '+(disabled?'disabled':'')+' data-date="'+dateStr+'">'+d+'</button>';
   }
+
+  html += '</div><p style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px;">Times in your local timezone</p>';
+  return html;
 }
 
-function localDateStr(d) {
-  return d.toLocaleDateString('en-CA'); // YYYY-MM-DD in local time
-}
-
-// ── Select date ───────────────────────────────────────────────────────────────
-async function selectDate(dateStr) {
-  selectedDate = dateStr;
-  selectedSlot = null;
-
-  document.querySelectorAll('.date-chip').forEach(c => {
-    c.classList.toggle('selected', c.dataset.date === dateStr);
+function attachCalendarEvents(){
+  var prevBtn = document.getElementById('prev-month');
+  var nextBtn = document.getElementById('next-month');
+  if(prevBtn) prevBtn.addEventListener('click', function(){
+    var now=new Date();
+    if(currentYear===now.getFullYear()&&currentMonth===now.getMonth()) return;
+    currentMonth--; if(currentMonth<0){currentMonth=11;currentYear--;}
+    renderCalendar();
   });
-
-  document.getElementById('booking-form').style.display = 'none';
-  document.getElementById('pick-prompt').style.display = 'flex';
-  document.getElementById('selected-summary').classList.remove('visible');
-
-  await loadSlots(dateStr);
-}
-
-// ── Load slots ────────────────────────────────────────────────────────────────
-async function loadSlots(dateStr) {
-  const grid = document.getElementById('slots-grid');
-  grid.innerHTML = '<div class="no-slots-msg">Loading…</div>';
-
-  try {
-    const res = await fetch(`/api/book?date=${dateStr}`);
-    const data = await res.json();
-    bookedSlots = data.booked || [];
-    renderSlots(dateStr);
-  } catch(e) {
-    grid.innerHTML = '<div class="no-slots-msg">Could not load slots. Try refreshing.</div>';
-  }
-}
-
-// ── Render slots ──────────────────────────────────────────────────────────────
-function renderSlots(dateStr) {
-  const grid = document.getElementById('slots-grid');
-  grid.innerHTML = '';
-
-  const slots = generateSlots(dateStr);
-  if (slots.length === 0) {
-    grid.innerHTML = '<div class="no-slots-msg">No availability today.</div>';
-    return;
-  }
-
-  slots.forEach(slot => {
-    const isBooked = bookedSlots.includes(slot.iso);
-    const div = document.createElement('div');
-    div.className = 'slot' + (isBooked ? ' booked' : '');
-    div.innerHTML = `
-      <span>${slot.display}</span>
-      <span class="slot-tz">${slot.userDisplay}</span>
-    `;
-    if (!isBooked) {
-      div.addEventListener('click', () => selectSlot(slot));
-    }
-    grid.appendChild(div);
+  if(nextBtn) nextBtn.addEventListener('click', function(){
+    currentMonth++; if(currentMonth>11){currentMonth=0;currentYear++;}
+    renderCalendar();
+  });
+  document.querySelectorAll('.cal-day.available').forEach(function(btn){
+    btn.addEventListener('click', function(){ selectedDate=btn.dataset.date; showSlots(); });
   });
 }
 
-// ── Generate slots ─────────────────────────────────────────────────────────────
-function generateSlots(dateStr) {
-  const slots = [];
-  const [y, m, d] = dateStr.split('-').map(Number);
+async function showSlots(){
+  var stepDiv = document.getElementById('booking-step');
+  var d = new Date(selectedDate+'T12:00:00');
+  var label = d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  stepDiv.innerHTML = '<button class="back-btn" id="back-to-cal">\u2190 '+label+'</button><div id="slots-container"><p style="color:var(--muted);font-size:14px;">Loading available times\u2026</p></div>';
+  document.getElementById('back-to-cal').addEventListener('click', renderCalendar);
 
-  for (let h = AVAILABLE_HOURS_START; h < AVAILABLE_HOURS_END; h++) {
-    for (let min = 0; min < 60; min += SLOT_DURATION) {
-      // Build the slot time in host timezone
-      const hostDateStr = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}T${String(h).padStart(2,'0')}:${String(min).padStart(2,'0')}:00`;
-      // Convert to UTC ISO string via the host timezone
-      const dt = new Date(new Date(hostDateStr).toLocaleString('en-US', {timeZone: HOST_TIMEZONE}).replace(',',''));
+  var booked=[];
+  try{ var r=await fetch('/api/book?date='+selectedDate); var j=await r.json(); booked=j.booked||[]; }catch(e){}
 
-      // Skip past slots
-      if (dt < new Date()) continue;
+  var slotsHTML = SLOT_HOURS.map(function(h){
+    var hour=Math.floor(h), min=h%1?'30':'00';
+    var dateTimeStr = selectedDate+'T'+String(hour).padStart(2,'0')+':'+min+':00';
+    // Compute the UTC ISO for this Chicago-local time
+    var tempDate = new Date(dateTimeStr);
+    var chicagoStr = tempDate.toLocaleString('en-US',{timeZone:HOST_TZ,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+    var m2 = chicagoStr.match(/(\d+)\/(\d+)\/(\d+),?\s+(\d+):(\d+):(\d+)/);
+    var chicagoDate = m2 ? new Date(m2[3]+'-'+m2[1]+'-'+m2[2]+'T'+m2[4]+':'+m2[5]+':'+m2[6]) : tempDate;
+    var offsetMs = chicagoDate - tempDate;
+    var utcDate = new Date(tempDate.getTime() - offsetMs);
+    var iso = utcDate.toISOString();
+    var isBooked = booked.some(function(b){return Math.abs(new Date(b)-new Date(iso))<60000;});
+    var localLabel = utcDate.toLocaleString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
+    return '<button class="slot-btn" '+(isBooked?'disabled':'')+' data-iso="'+iso+'" data-label="'+localLabel+'">'+localLabel+'</button>';
+  }).join('');
 
-      const hostDisplay = `${h % 12 || 12}:${String(min).padStart(2,'0')} ${h < 12 ? 'AM' : 'PM'}`;
-
-      // Display in user timezone
-      const userDisplay = dt.toLocaleTimeString('en-US', {
-        hour: 'numeric', minute: '2-digit', timeZone: userTz
-      });
-
-      slots.push({
-        iso: hostDateStr,   // store as naive local string for matching
-        display: hostDisplay,
-        userDisplay: userTz !== HOST_TIMEZONE ? userDisplay : '',
-        dt
-      });
-    }
-  }
-  return slots;
+  document.getElementById('slots-container').innerHTML = '<div class="slot-grid">'+slotsHTML+'</div>';
+  document.querySelectorAll('.slot-btn:not(:disabled)').forEach(function(btn){
+    btn.addEventListener('click',function(){ selectedSlot={iso:btn.dataset.iso,label:btn.dataset.label}; showForm(); });
+  });
 }
 
-// ── Select slot ───────────────────────────────────────────────────────────────
-function selectSlot(slot) {
-  selectedSlot = slot.iso;
-
-  document.querySelectorAll('.slot').forEach(s => s.classList.remove('selected'));
-  event.currentTarget.classList.add('selected');
-
-  // Show summary
-  const [y, m, d] = selectedDate.split('-').map(Number);
-  const dateLabel = new Date(y, m-1, d).toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric'});
-  document.getElementById('sum-date').textContent = `${dateLabel} · ${slot.display}`;
-  document.getElementById('selected-summary').classList.add('visible');
-
-  // Show form
-  document.getElementById('pick-prompt').style.display = 'none';
-  const form = document.getElementById('booking-form');
-  form.style.display = 'flex';
+function showForm(){
+  var stepDiv = document.getElementById('booking-step');
+  var d = new Date(selectedDate+'T12:00:00');
+  var dateLabel = d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  stepDiv.innerHTML =
+    '<button class="back-btn" id="back-to-slots">\u2190 '+dateLabel+' at '+selectedSlot.label+'</button>' +
+    '<form id="book-form" style="display:flex;flex-direction:column;gap:14px;">' +
+      '<div>' +
+        '<label style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">YOUR NAME <span style="color:var(--accent);">*</span></label>' +
+        '<input name="name" required placeholder="Jane Smith" class="form-input" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;box-sizing:border-box;">' +
+      '</div>' +
+      '<div>' +
+        '<label style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">WORK EMAIL <span style="color:var(--accent);">*</span></label>' +
+        '<input name="email" type="email" required placeholder="jane@company.com" class="form-input" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;box-sizing:border-box;">' +
+      '</div>' +
+      '<div>' +
+        '<label style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">COMPANY NAME</label>' +
+        '<input name="company" placeholder="Acme Inc." class="form-input" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;box-sizing:border-box;">' +
+      '</div>' +
+      '<div>' +
+        '<label style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">WHAT CAN WE HELP WITH?</label>' +
+        '<textarea name="notes" rows="3" placeholder="Brief context helps us prep\u2026" class="form-input" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;resize:vertical;box-sizing:border-box;font-family:inherit;"></textarea>' +
+      '</div>' +
+      '<div id="form-error" style="display:none;color:#dc2626;font-size:13px;padding:8px 12px;background:#fef2f2;border-radius:6px;"></div>' +
+      '<button type="submit" id="submit-btn" style="width:100%;padding:14px;background:var(--ink);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;">Confirm booking \u2192</button>' +
+    '</form>';
+  document.getElementById('back-to-slots').addEventListener('click', function(){ showSlots(); });
+  document.getElementById('book-form').addEventListener('submit', submitBooking);
 }
 
-// ── Submit booking ─────────────────────────────────────────────────────────────
-async function submitBooking(e) {
+async function submitBooking(e){
   e.preventDefault();
-  if (!selectedSlot) return;
-
-  const btn = document.getElementById('submit-btn');
-  const errBanner = document.getElementById('error-banner');
-  errBanner.classList.remove('visible');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>Booking…';
-
-  const payload = {
-    datetime: selectedSlot,
-    name: document.getElementById('name').value.trim(),
-    email: document.getElementById('email').value.trim(),
-    company: document.getElementById('company').value.trim(),
-    notes: document.getElementById('notes').value.trim(),
-    timezone: userTz,
-  };
-
-  try {
-    const res = await fetch('/api/book', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify(payload),
-    });
-    const data = await res.json();
-
-    if (!res.ok) throw new Error(data.error || 'Booking failed');
-
-    // Success
-    document.getElementById('booking-shell').style.display = 'none';
-    const successEl = document.getElementById('success-state');
-    successEl.classList.add('visible');
-    const [y,m,d] = selectedDate.split('-').map(Number);
-    const dateLabel = new Date(y,m-1,d).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
-    document.getElementById('success-detail').textContent =
-      `${dateLabel} · ${payload.name.split(' ')[0]}, check your inbox for the Google Meet link.`;
-
-  } catch(err) {
-    errBanner.textContent = err.message || 'Something went wrong. Please try again.';
-    errBanner.classList.add('visible');
-    btn.disabled = false;
-    btn.textContent = 'Confirm booking →';
-  }
+  var btn = document.getElementById('submit-btn');
+  var errDiv = document.getElementById('form-error');
+  errDiv.style.display='none';
+  btn.innerHTML='<span class="spinner"></span>Booking\u2026'; btn.disabled=true;
+  var fd = new FormData(e.target);
+  try{
+    var r = await fetch('/api/book',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({datetime:selectedSlot.iso,name:fd.get('name'),email:fd.get('email'),company:fd.get('company')||'',notes:fd.get('notes')||''})});
+    if(r.status===409){errDiv.textContent='That slot was just booked \u2014 please pick another time.';errDiv.style.display='block';btn.textContent='Confirm booking \u2192';btn.disabled=false;setTimeout(function(){showSlots();},2000);return;}
+    if(!r.ok) throw new Error('Server error');
+    showConfirmation(fd.get('name'),fd.get('email'));
+  }catch(err){errDiv.textContent='Something went wrong \u2014 please try again.';errDiv.style.display='block';btn.textContent='Confirm booking \u2192';btn.disabled=false;}
 }
 
-// ── Init ───────────────────────────────────────────────────────────────────────
-buildDateStrip();
+function showConfirmation(name, email){
+  var stepDiv = document.getElementById('booking-step');
+  var d = new Date(selectedDate+'T12:00:00');
+  var dateLabel = d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  stepDiv.innerHTML =
+    '<div class="confirm-box">' +
+      '<div class="check">\u2713</div>' +
+      '<h2 style="font-size:20px;font-weight:700;margin:0 0 8px;">You\'re booked!</h2>' +
+      '<p style="font-size:15px;font-weight:600;margin:0 0 4px;">'+dateLabel+' at '+selectedSlot.label+'</p>' +
+      '<p style="font-size:13px;color:var(--muted);margin:0 0 8px;">Confirmation sent to '+email+'</p>' +
+      '<p style="font-size:13px;color:var(--muted);margin:0 0 24px;">We\'ll send a Google Meet link before the call.</p>' +
+      '<a href="/" style="display:inline-block;padding:10px 24px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;color:var(--ink);">\u2190 Back to home</a>' +
+    '</div>';
+}
+
+document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
