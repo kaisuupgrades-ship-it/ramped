@@ -119,11 +119,11 @@
 </header>
 
 
-<section style="border-bottom:1px solid var(--line);" class="grid-bg">
-  <div class="max-w-3xl mx-auto px-6 py-14 text-start">
+<section class="border-b border-[var(--line)] grid-bg">
+  <div class="max-w-3xl mx-auto px-6 py-14 text-center">
     <div class="pill" style="margin:0 0 16px;width:fit-content;"><span class="dot"></span> Live agent demos</div>
-    <h1 style="font-size:clamp(2rem,5vw,2.8rem);font-weight:800;letter-spacing:-0.03em;line-height:1.1;margin-bottom:16px;text-align:start;">Your next hire doesn't sleep,<br>forget, or drop the ball.</h1>
-    <p style="font-size:16px;color:var(--muted);max-width:500px;margin:0;line-height:1.6;text-align:start;">Pick your industry. Watch a live AI agent handle a real inbound workflow — exactly how it runs from day one of your Sprint.</p>
+    <h1 style="font-size:clamp(2rem,5vw,2.8rem);font-weight:800;letter-spacing:-0.03em;line-height:1.1;margin-bottom:16px;text-align:center;">Your next hire doesn't sleep,<br>forget, or drop the ball.</h1>
+    <p style="font-size:16px;color:var(--muted);max-width:500px;margin:0;line-height:1.6;text-align:center;">Pick your industry. Watch a live AI agent handle a real inbound workflow — exactly how it runs from day one of your Sprint.</p>
   </div>
 </section>
 
@@ -640,69 +640,6 @@ const SCENARIOS = {
     escalation: "CSM Kevin L. + executive sponsor"
   },
 
-slack: {
-  channelLabel: "Slack",
-  channelDetail: "#ops · Direct message to AI agent",
-  from: "Taylor M. · Head of Operations",
-  subject: "Zendesk ticket volume by category — last 30 days",
-  body: "Hey — can you pull last month's Zendesk ticket volume broken out by category and assignee group? We're trying to figure out where the support bottleneck is. Post a summary here and flag anything that looks off.\n\n— Taylor",
-  steps: [
-    "Authenticating with Zendesk API · pulling tickets from last 30 days",
-    "Grouping by category: Billing, Technical, Onboarding, Account, Feature request",
-    "Cross-referencing assignee groups · Support Tier 1, Tier 2, Customer Success",
-    "Computing volume, avg. resolution time, and first-response SLA hit rate by category",
-    "Flagging outliers · categories with >20% SLA miss rate or resolution time spike",
-    "Composing Slack summary block · table format with flag callouts"
-  ],
-  action: "Zendesk report posted to #ops · 2 categories flagged for review",
-  actionMeta: "Pulled 847 tickets · analyzed in 3.2 seconds · posted formatted summary to Slack thread",
-  draft: "Here's the breakdown for the last 30 days (Mar 21 – Apr 20):\n\n📊 TICKET VOLUME BY CATEGORY\n\nBilling          187 tickets · 94% SLA hit · 4.1h avg resolution\nTechnical        241 tickets · 71% SLA hit · 11.8h avg resolution ⚠\nOnboarding        98 tickets · 88% SLA hit · 6.2h avg resolution\nAccount           156 tickets · 96% SLA hit · 3.7h avg resolution\nFeature request   165 tickets · N/A (async) · 18.4h avg response\n\n⚠ FLAG 1 — Technical: SLA hit rate dropped from 84% last month to 71% this month. Resolution time up 34%. Tier 1 is escalating 62% of technical tickets — suggests a knowledge base gap or routing issue.\n\n⚠ FLAG 2 — Feature requests: 165 tickets, 0 are tagged or routed to Product. These are going into a void. Recommend auto-tagging and weekly digest to the Product channel.\n\nWant me to pull the top 10 open technical tickets by age so you can triage?",
-  metrics: [["Time to pull report","Manual: 45–60 min","3.2 seconds"],["Tickets analyzed","847","847"],["Flags surfaced","Whoever noticed","2 auto-flagged"]],
-  escalation: "Head of Operations"
-},
-
-crm: {
-  channelLabel: "Web form",
-  channelDetail: "30dayramp.com/get-started",
-  from: "Priya Nair <priya.nair@vertexlogistics.com>",
-  subject: "New inbound lead — Vertex Logistics",
-  body: "Name: Priya Nair\nTitle: VP of Operations\nCompany: Vertex Logistics\nEmail: priya.nair@vertexlogistics.com\nPhone: (312) 555-0194\nEmployees: 200–500\nMessage: We're running about 12 dispatchers manually triaging inbound freight requests. Looking to see if AI can handle the classification and routing layer so our team focuses on exceptions only. Heard about you from a contact at Harbor Peak.\n\n[Submitted via web form · 11:04 AM CT]",
-  steps: [
-    "Classifying lead intent · 'freight dispatch automation, classification + routing layer'",
-    "Enriching company data · Vertex Logistics — 340 employees, $48M revenue, Chicago IL, freight brokerage",
-    "Pulling LinkedIn profile · VP Ops, 8 years at Vertex, previously at C.H. Robinson",
-    "Scoring lead · ICP match: 94/100 · logistics vertical, ops leader, 200–500 headcount, referral source",
-    "Routing decision · assigning to Enterprise rep (referral + ICP score > 90)",
-    "Creating HubSpot contact + deal · stage: Qualified Lead · estimated ARR: $4,200/mo",
-    "Notifying rep in Slack · sending personalized outreach draft for review"
-  ],
-  action: "HubSpot deal created · rep notified in Slack · outreach draft queued for review",
-  actionMeta: "ICP score 94/100 · referral source confirmed · estimated ARR $4,200/mo · response drafted in 8 seconds",
-  draft: "Hi Priya,\n\nThanks for reaching out — and good to hear from a Harbor Peak connection.\n\nWhat you're describing is exactly what we deploy in logistics operations. The classification and routing layer your dispatchers are doing manually is a strong fit for an AI agent — we've seen teams like yours reclaim 60–70% of the manual triage time within the first 30 days.\n\nI'd love to show you what this looks like in practice. I have a demo that walks through inbound freight request handling — classification, priority routing, exception flagging — all live.\n\nAre you available this week for a 30-minute call? I can show you the full workflow and give you a sense of what implementation would look like for a team your size.\n\nhttps://calendly.com/ramped/30min\n\nLooking forward to connecting.\n\nBest,\nAlex\nRamped AI\n[This draft was prepared by the Ramped intake agent and is queued for rep review before send. HubSpot deal ID: #VL-2847 · ICP score: 94 · source: referral (Harbor Peak)]",
-  metrics: [["Lead response time","Industry avg: 47 min","8 seconds"],["Data enrichment","Manual research: 20 min","Automatic"],["CRM entry","Rep manually enters","Auto-created + scored"]],
-  escalation: "Enterprise rep (referral + ICP > 90)"
-},
-
-scheduling: {
-  channelLabel: "SMS",
-  channelDetail: "+1 (312) 555-0182 · client text line",
-  from: "Client — Rachel Torres (+1 773-555-0241)",
-  subject: "Appointment reschedule request",
-  body: "Hi, this is Rachel Torres. I have an appointment with Dr. Kim on Thursday at 2pm but something came up and I need to move it. Can we do next Tuesday or Wednesday afternoon instead? Anytime after 1pm works for me.",
-  steps: [
-    "Parsing reschedule intent · current appt: Thursday 2:00 PM with Dr. Kim · patient: Rachel Torres",
-    "Looking up Rachel Torres in EHR · confirmed patient, appt ID #A-4821",
-    "Checking Dr. Kim's availability · Tuesday Apr 22 and Wednesday Apr 23, after 1:00 PM",
-    "Tuesday Apr 22: 1:00 PM booked, 1:30 PM booked, 2:00 PM OPEN, 2:30 PM OPEN, 3:00 PM booked",
-    "Wednesday Apr 23: 1:30 PM OPEN, 2:00 PM OPEN, 3:30 PM OPEN",
-    "Cancelling appt #A-4821 · rebooking slot pending patient confirmation · drafting reply with options"
-  ],
-  action: "Reschedule options sent · Thursday slot held for 15 min pending confirmation",
-  actionMeta: "Checked 6 slots across 2 days in 1.8 seconds · old slot soft-cancelled · confirmation reply drafted",
-  draft: "Hi Rachel! Got it — no problem at all.\n\nHere are the open slots with Dr. Kim that work for you:\n\n📅 Tuesday, April 22\n   • 2:00 PM\n   • 2:30 PM\n\n📅 Wednesday, April 23\n   • 1:30 PM\n   • 2:00 PM\n   • 3:30 PM\n\nJust reply with your preferred time and I'll get you confirmed right away. Your Thursday 2pm slot will be held until we hear back from you (about 15 minutes).\n\nTalk soon!\nFront Desk · Lakeside Medical",
-  metrics: [["Time to respond","Staff avg: 18 min","1.8 seconds"],["Slots checked","One at a time, manually","6 slots, 2 days, instant"],["Patient experience","Put on hold or called back","Instant text, done"]],
-  escalation: "Front desk staff"
-},
   multiagent: {
     channelLabel: "Webhook \u00b7 CRM trigger",
     channelDetail: "HubSpot \u2192 Ramped Orchestrator \u00b7 deal stage: Proposal Sent",
