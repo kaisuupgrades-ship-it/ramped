@@ -26,12 +26,12 @@
   .subtitle{font-size:15px;color:var(--muted);margin-bottom:36px;line-height:1.6;}
 
   /* ── Booking shell ── */
-  .booking-shell{display:grid;grid-template-columns:1fr 1fr;gap:0;background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:4px 4px 0 var(--ink);}
-  @media(max-width:620px){.booking-shell{grid-template-columns:1fr;}}
+  .booking-shell{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0;background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:4px 4px 0 var(--ink);}
+  @media(max-width:640px){.booking-shell{grid-template-columns:1fr;}}
 
   /* ── Left panel: date + time ── */
-  .left-panel{padding:28px 24px;border-right:1px solid var(--line);}
-  @media(max-width:620px){.left-panel{border-right:none;border-bottom:1px solid var(--line);}}
+  .left-panel{padding:28px 24px;border-right:1px solid var(--line);min-width:0;overflow:hidden;}
+  @media(max-width:640px){.left-panel{border-right:none;border-bottom:1px solid var(--line);}}
 
   .panel-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
 
@@ -59,7 +59,8 @@
   .no-slots-msg{font-size:14px;color:var(--muted);padding:20px 0;text-align:center;}
 
   /* ── Right panel: details form ── */
-  .right-panel{padding:28px 24px;display:flex;flex-direction:column;}
+  .right-panel{padding:28px 24px;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
+  .form-input{width:100%;}
   .selected-summary{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:24px;display:none;}
   .selected-summary.visible{display:block;}
   .selected-summary .sum-date{font-weight:700;font-size:15px;color:var(--ink);margin-bottom:2px;}
