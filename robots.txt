@@ -1,3 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /logo-concepts.html
+Disallow: /logo-concepts
+Disallow: /one-pager.html
+Disallow: /one-pager
 Sitemap: https://www.30dayramp.com/sitemap.xml
