@@ -30,9 +30,9 @@
   .btn-ghost{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;background:transparent;color:var(--ink);border:1.5px solid var(--line);border-radius:8px;font-weight:500;font-size:14px;text-decoration:none;transition:border-color .15s;}
   .btn-ghost:hover{border-color:var(--ink);}
   .card{background:#fff;border:1px solid var(--line);border-radius:16px;}
-  .ink-shadow{box-shadow:4px 4px 0 var(--ink);}
+  .ink-shadow{box-shadow:0 1px 0 rgba(11,18,32,0.06), 0 8px 24px -12px rgba(11,18,32,0.18);}
   .sectionnum{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
-  .mono{font-family:'SF Mono',Monaco,monospace;}
+  .mono{font-family:'JetBrains Mono',ui-monospace,monospace;}
   .stat-num{font-size:clamp(2rem,5vw,3rem);font-weight:800;letter-spacing:-.03em;color:var(--ink);}
   .good{color:var(--good);}
   table{width:100%;border-collapse:collapse;}
@@ -50,6 +50,7 @@
   img,svg,video,iframe{max-width:100%;height:auto}
   .grid>*,.flex>*{min-width:0}
   p,li,blockquote,h1,h2,h3,td,th{overflow-wrap:anywhere;word-break:break-word}
+  table td, table th { white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -66,11 +67,11 @@
   </svg>
   <span class="font-bold text-lg tracking-tight ml-2">Ramped AI</span>
 </a>
-    <nav class="hidden md:flex items-center gap-3">
+    <nav class="hidden sm:flex items-center gap-3">
       <a href="/demo" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Demo</a>
       <a href="/#get-started" class="btn-primary whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Get started →</a>
     </nav>
-    <div class="md:hidden flex items-center gap-2">
+    <div class="sm:hidden flex items-center gap-2">
       <a href="/demo" class="btn-ghost" style="padding:8px 12px;font-size:13px;">Demo</a>
       <a href="/#get-started" class="btn-primary" style="padding:8px 14px;font-size:13px;">Get started →</a>
     </div>
@@ -175,6 +176,7 @@
 
     <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;">The numbers</h3>
     <div class="card overflow-hidden mb-10">
+      <div style="overflow-x:auto;">
       <table>
         <thead>
           <tr>
@@ -206,6 +208,7 @@
           </tr>
         </tbody>
       </table>
+      </div>
     </div>
 
     <div class="card p-6 mb-10" style="background:#FAFAF7;">
@@ -295,6 +298,7 @@
 
     <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;">The numbers</h3>
     <div class="card overflow-hidden mb-10">
+      <div style="overflow-x:auto;">
       <table>
         <thead>
           <tr>
@@ -331,6 +335,7 @@
           </tr>
         </tbody>
       </table>
+      </div>
     </div>
 
     <div class="card p-6 mb-10" style="background:#FAFAF7;">
@@ -370,6 +375,7 @@
   <p style="font-size:13px;color:var(--muted);">© 2026 Ramped AI · <a href="/" style="color:var(--muted);">Home</a> · <a href="/demo" style="color:var(--muted);">Demo</a> · <a href="/comparison" style="color:var(--muted);">vs. Hiring a VA</a></p>
 </footer>
 
+<script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
 
