@@ -14,13 +14,26 @@ const VALID_STATUSES = new Set(['upcoming', 'completed', 'converted', 'no_show']
 const VALID_TIERS    = new Set(['starter', 'growth', 'enterprise', '']);
 const EDITABLE_FIELDS = [
   'status', 'admin_notes', 'name', 'email', 'company',
-  'datetime', 'notes', 'tier', 'timezone',
+  'datetime', 'notes', 'tier', 'timezone', 'meet_link', 'gcal_event_id',
 ];
 
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+const ALLOWED_ORIGINS = [
+  'https://30dayramp.com',
+  'https://www.30dayramp.com',
+  'http://localhost:3000',
+];
+function setCors(req, res, methods) {
+  const origin = req.headers.origin || '';
+  if (ALLOWED_ORIGINS.includes(origin) || /\.vercel\.app$/.test(new URL(origin || 'http://x').hostname)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+  }
+  res.setHeader('Access-Control-Allow-Methods', methods);
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+}
+
+export default async function handler(req, res) {
+  setCors(req, res, 'GET, POST, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   if (req.method !== 'POST') {

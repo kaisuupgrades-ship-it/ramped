@@ -7,10 +7,23 @@ const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const ADMIN_TOKEN  = process.env.ADMIN_TOKEN;
 
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+const ALLOWED_ORIGINS = [
+  'https://30dayramp.com',
+  'https://www.30dayramp.com',
+  'http://localhost:3000',
+];
+function setCors(req, res, methods) {
+  const origin = req.headers.origin || '';
+  if (ALLOWED_ORIGINS.includes(origin) || /\.vercel\.app$/.test(new URL(origin || 'http://x').hostname)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+  }
+  res.setHeader('Access-Control-Allow-Methods', methods);
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+}
+
+export default async function handler(req, res) {
+  setCors(req, res, 'POST, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   if (req.method !== 'POST') {

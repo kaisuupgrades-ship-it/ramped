@@ -7,4 +7,7 @@ Disallow: /logo-concepts.html
 Disallow: /logo-concepts
 Disallow: /one-pager.html
 Disallow: /one-pager
+Disallow: /pricing-onepager.html
+Disallow: /pricing-onepager
+Disallow: /client-demo.html
 Sitemap: https://www.30dayramp.com/sitemap.xml

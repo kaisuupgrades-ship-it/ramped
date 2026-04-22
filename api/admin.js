@@ -26,10 +26,23 @@ async function supabase(method, path) {
 }
 
 // ── Main handler ──────────────────────────────────────────────────────────────
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+const ALLOWED_ORIGINS = [
+  'https://30dayramp.com',
+  'https://www.30dayramp.com',
+  'http://localhost:3000',
+];
+function setCors(req, res, methods) {
+  const origin = req.headers.origin || '';
+  if (ALLOWED_ORIGINS.includes(origin) || /\.vercel\.app$/.test(new URL(origin || 'http://x').hostname)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+  }
+  res.setHeader('Access-Control-Allow-Methods', methods);
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+}
+
+export default async function handler(req, res) {
+  setCors(req, res, 'GET, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   if (req.method !== 'GET') {

@@ -11,7 +11,7 @@
 
 set -euo pipefail
 
-BASE="${BASE:-https://30dayramp.com}"
+BASE="${BASE:-https://www.30dayramp.com}"
 TOKEN="${ADMIN_TOKEN:-}"
 
 if [ -z "$TOKEN" ]; then

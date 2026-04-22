@@ -1095,7 +1095,8 @@
             >${esc(b.admin_notes || '')}</textarea>
           </td>
           <td style="white-space:nowrap;">
-            <a href="mailto:${esc(b.email)}" class="btn-action" style="margin-right:4px;">✉</a>
+            <a href="mailto:${esc(b.email)}" class="btn-action" style="margin-right:4px;" title="Email guest">✉</a>
+            ${b.meet_link ? `<a href="${esc(b.meet_link)}" target="_blank" rel="noopener" class="btn-action" style="margin-right:4px;color:var(--good);border-color:#bfe3cf;" title="Open Meet">▶ Meet</a>` : ''}
             <button class="btn-action" onclick="editBooking('${bid}')" title="Edit booking" style="margin-right:4px;">✎ Edit</button>
             <button class="btn-action" onclick="deleteBooking('${bid}')" title="Delete booking" style="color:var(--danger);border-color:#f0cfca;">Delete</button>
           </td>
