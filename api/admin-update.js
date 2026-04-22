@@ -47,6 +47,10 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
+  if (!SUPABASE_URL || !SUPABASE_KEY) {
+    return res.status(503).json({ error: 'Database not configured' });
+  }
+
   const { id, status, admin_notes } = req.body || {};
 
   if (!id) {

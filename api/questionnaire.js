@@ -43,10 +43,18 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'email is required' });
   }
 
-  // ── Find most recent booking for this email ───────────────────────────────
+  // Gracefully no-op when Supabase isn't configured — the questionnaire UX
+  // shouldn't fail for the user even if we can't persist their answers.
+  if (!SUPABASE_URL || !SUPABASE_KEY) {
+    console.warn('Supabase not configured — skipping questionnaire save');
+    return res.status(200).json({ success: true, updated: false });
+  }
+
+  // Find the booking this questionnaire belongs to: the user just submitted
+  // the booking form, so pick the most recently CREATED record for this email.
   const findResult = await supabase(
     'GET',
-    `/bookings?email=eq.${encodeURIComponent(email)}&order=datetime.desc&limit=1`
+    `/bookings?email=eq.${encodeURIComponent(email)}&order=created_at.desc&limit=1`
   );
 
   if (!findResult.ok || !findResult.data || findResult.data.length === 0) {
