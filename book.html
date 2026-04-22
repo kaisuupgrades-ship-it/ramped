@@ -337,6 +337,27 @@ function showConfirmation(name, email){
   var dateLabel = d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
   var sizeOptions = ['1\u20135','6\u201315','16\u201330','31\u2013100','100+'];
 
+  var toolGroups = [
+    ['Slack','Microsoft Teams','Google Workspace','Outlook / M365'],
+    ['HubSpot','Salesforce','Pipedrive','Zoho CRM'],
+    ['Asana','Monday.com','ClickUp','Notion'],
+    ['QuickBooks','Xero','Stripe','Shopify'],
+    ['Intercom','Zendesk','Calendly','Airtable'],
+    ['WhatsApp Business','Twilio/SMS','DocuSign','Other']
+  ];
+
+  var allTools = toolGroups.reduce(function(acc,g){return acc.concat(g);},[]);
+
+  var toolCheckboxesHTML = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;">' +
+    allTools.map(function(t){
+      var id = 'tool-'+t.replace(/[^a-zA-Z0-9]/g,'-');
+      return '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:11px;font-weight:500;padding:5px 7px;border:1px solid var(--line);border-radius:7px;background:#fff;user-select:none;" class="tool-label" data-tool="'+t+'">' +
+        '<input type="checkbox" name="tools" value="'+t+'" class="tool-check" style="margin:0;cursor:pointer;" id="'+id+'">'+t+'</label>';
+    }).join('') +
+  '</div>';
+
+  var channelOptions = ['Email','Phone','Website form','WhatsApp/SMS','Live chat'];
+
   stepDiv.innerHTML =
     '<div style="text-align:center;padding:16px 0 14px;">' +
       '<div style="font-size:36px;line-height:1;margin-bottom:8px;">\u2713</div>' +
@@ -347,21 +368,26 @@ function showConfirmation(name, email){
 
     '<div style="background:#F0FDF4;border:1.5px solid #86EFAC;border-radius:10px;padding:14px 16px;margin:14px 0 16px;">' +
       '<p style="font-size:13px;font-weight:700;color:#15803D;margin:0 0 3px;">\uD83D\uDCB0 Claim $1,000 off your onboarding fee</p>' +
-      '<p style="font-size:12px;color:#166534;line-height:1.5;margin:0;">Answer 4 quick questions so we can prep for your call. Takes 2 minutes \u2014 discount applied automatically when you sign.</p>' +
+      '<p style="font-size:12px;color:#166534;line-height:1.5;margin:0;">Answer 5 quick questions so we can prep for your call. Takes 2 minutes \u2014 discount applied automatically when you sign.</p>' +
     '</div>' +
 
-    '<form id="onboard-form" style="display:flex;flex-direction:column;gap:12px;">' +
+    '<form id="onboard-form" style="display:flex;flex-direction:column;gap:14px;">' +
       '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;letter-spacing:.06em;">1. BIGGEST BOTTLENECK RIGHT NOW? <span style="color:var(--accent);">*</span></label>' +
-        '<textarea name="bottleneck" required rows="2" placeholder="e.g. Responding to leads takes hours every day\u2026" style="width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff;resize:vertical;box-sizing:border-box;font-family:inherit;"></textarea></div>' +
-      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;letter-spacing:.06em;">2. WHAT INDUSTRY ARE YOU IN?</label>' +
+        '<textarea name="bottleneck" rows="2" placeholder="e.g. Responding to leads takes hours every day\u2026" style="width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff;resize:vertical;box-sizing:border-box;font-family:inherit;"></textarea></div>' +
+      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;letter-spacing:.06em;">2. WHAT INDUSTRY ARE YOU IN? <span style="color:var(--accent);">*</span></label>' +
         '<input name="industry" placeholder="e.g. E-commerce, Real Estate, Law\u2026" style="width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff;box-sizing:border-box;"></div>' +
-      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">3. HOW MANY PEOPLE ON YOUR TEAM?</label>' +
+      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">3. HOW MANY PEOPLE ON YOUR TEAM? <span style="color:var(--accent);">*</span></label>' +
         '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:5px;">' +
           sizeOptions.map(function(s){ return '<label style="cursor:pointer;text-align:center;display:block;"><input type="radio" name="team_size" value="'+s+'" class="size-radio" style="position:absolute;opacity:0;width:0;height:0;"><span class="size-label" style="display:block;padding:7px 2px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;user-select:none;cursor:pointer;">'+s+'</span></label>'; }).join('') +
         '</div></div>' +
-      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;letter-spacing:.06em;">4. WHAT TOOLS DO YOU USE TODAY?</label>' +
-        '<input name="tools" placeholder="e.g. HubSpot, QuickBooks, Gmail, Slack\u2026" style="width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff;box-sizing:border-box;"></div>' +
-      '<div id="onboard-error" style="display:none;color:#dc2626;font-size:13px;padding:8px 12px;background:#fef2f2;border-radius:6px;"></div>' +
+      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">4. TOOLS YOU USE <span style="color:var(--accent);">*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;">(check all that apply)</span></label>' +
+        toolCheckboxesHTML +
+      '</div>' +
+      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">5. HOW DO CUSTOMERS PRIMARILY REACH YOU? <span style="color:var(--accent);">*</span></label>' +
+        '<div style="display:flex;flex-wrap:wrap;gap:5px;">' +
+          channelOptions.map(function(c){ return '<label style="cursor:pointer;text-align:center;display:block;"><input type="radio" name="customer_channel" value="'+c+'" class="channel-radio" style="position:absolute;opacity:0;width:0;height:0;"><span class="channel-label" style="display:block;padding:7px 11px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;user-select:none;cursor:pointer;white-space:nowrap;">'+c+'</span></label>'; }).join('') +
+        '</div></div>' +
+      '<div id="onboard-error" style="display:none;color:#dc2626;font-size:13px;padding:8px 12px;background:#fef2f2;border-radius:6px;">Please complete all fields.</div>' +
       '<button type="submit" id="onboard-btn" style="width:100%;padding:13px;background:#15803D;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;">Submit &amp; claim $1,000 off \u2192</button>' +
       '<button type="button" id="skip-btn" style="width:100%;padding:6px;background:none;border:none;font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;">Skip for now</button>' +
     '</form>';
@@ -376,20 +402,55 @@ function showConfirmation(name, email){
     });
   });
 
+  // Channel pill toggle
+  document.querySelectorAll('.channel-radio').forEach(function(radio){
+    radio.addEventListener('change', function(){
+      document.querySelectorAll('.channel-label').forEach(function(l){ l.style.background=''; l.style.color=''; l.style.borderColor=''; });
+      this.nextElementSibling.style.background='var(--accent)';
+      this.nextElementSibling.style.color='#fff';
+      this.nextElementSibling.style.borderColor='var(--accent)';
+    });
+  });
+
+  // Tool checkbox visual highlight
+  document.querySelectorAll('.tool-check').forEach(function(cb){
+    cb.addEventListener('change', function(){
+      var lbl = this.closest('.tool-label');
+      if(this.checked){ lbl.style.background='#E8EEFF'; lbl.style.borderColor='var(--accent)'; lbl.style.color='var(--accent)'; }
+      else { lbl.style.background=''; lbl.style.borderColor=''; lbl.style.color=''; }
+    });
+  });
+
   document.getElementById('skip-btn').addEventListener('click', function(){ showBooked(false); });
 
   document.getElementById('onboard-form').addEventListener('submit', async function(e){
     e.preventDefault();
+    var errDiv = document.getElementById('onboard-error');
+    errDiv.style.display='none';
+
+    var fd = new FormData(e.target);
+    var bottleneck = (fd.get('bottleneck')||'').trim();
+    var industry = (fd.get('industry')||'').trim();
+    var team_size = fd.get('team_size')||'';
+    var checkedTools = fd.getAll('tools');
+    var customer_channel = fd.get('customer_channel')||'';
+
+    // Manual validation
+    if(!bottleneck || !industry || !team_size || checkedTools.length===0 || !customer_channel){
+      errDiv.style.display='block';
+      return;
+    }
+
     var btn = document.getElementById('onboard-btn');
     btn.innerHTML='<span class="spinner"></span>Submitting\u2026'; btn.disabled=true;
-    var fd = new FormData(e.target);
     try{
       await fetch('/api/questionnaire',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
         email:email,
-        bottleneck:fd.get('bottleneck')||'',
-        industry:fd.get('industry')||'',
-        team_size:fd.get('team_size')||'',
-        tools:fd.get('tools')||'',
+        bottleneck:bottleneck,
+        industry:industry,
+        team_size:team_size,
+        tools:checkedTools,
+        customer_channel:customer_channel,
         tier:selectedTier||''
       })});
     }catch(err){}
