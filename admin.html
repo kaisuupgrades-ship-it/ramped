@@ -475,6 +475,105 @@
     /* ── SVG logo ─────────────────────────────────────────────────────────── */
     .logo-svg { flex-shrink: 0; }
 
+    /* ── Tool badge ───────────────────────────────────────────────────────── */
+    .tool-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #E8EEFF;
+      color: #1F4FFF;
+      margin: 2px;
+    }
+
+    /* ── Search/filter bar ────────────────────────────────────────────────── */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+      align-items: center;
+    }
+
+    .filter-bar input[type="text"],
+    .filter-bar select {
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--ink);
+      background: #fff;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .filter-bar input[type="text"]:focus,
+    .filter-bar select:focus { border-color: var(--accent); }
+
+    .filter-bar input[type="text"] { min-width: 200px; }
+
+    /* ── Add Booking modal ────────────────────────────────────────────────── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 28px 28px 24px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      position: relative;
+    }
+
+    .modal-card h2 { font-size: 18px; font-weight: 700; margin-bottom: 18px; }
+
+    .modal-field { margin-bottom: 12px; }
+    .modal-field label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+    .modal-field input, .modal-field select, .modal-field textarea {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--ink);
+      background: #fff;
+      outline: none;
+    }
+    .modal-field input:focus, .modal-field select:focus, .modal-field textarea:focus { border-color: var(--accent); }
+
+    .modal-actions { display: flex; gap: 8px; margin-top: 16px; }
+    .btn-close-modal {
+      position: absolute;
+      top: 14px; right: 16px;
+      background: none; border: none;
+      font-size: 20px; cursor: pointer; color: var(--muted);
+      line-height: 1;
+    }
+    .btn-close-modal:hover { color: var(--ink); }
+
+    /* ── Sortable headers ─────────────────────────────────────────────────── */
+    thead th.sortable {
+      cursor: pointer;
+      user-select: none;
+    }
+    thead th.sortable:hover { color: var(--accent); }
+    thead th .sort-icon { margin-left: 4px; font-size: 10px; opacity: 0.5; }
+    thead th.sort-asc .sort-icon::after  { content: '▲'; opacity: 1; }
+    thead th.sort-desc .sort-icon::after { content: '▼'; opacity: 1; }
+    thead th:not(.sort-asc):not(.sort-desc) .sort-icon::after { content: '⇅'; }
+
     @media (max-width: 640px) {
       .dash-header { padding: 12px 16px; }
       .pipeline-bar { padding: 16px; gap: 12px; }
@@ -523,9 +622,39 @@
     </div>
     <div class="dash-nav">
       <a href="/">← Back to site</a>
+      <button class="btn-signout" onclick="fetchData(_token)" title="Refresh data" style="margin-right:0;">↻ Refresh</button>
+      <button class="btn-signout" onclick="openAddBookingModal()" style="background:var(--accent);color:#fff;border-color:var(--accent);">+ Add Booking</button>
       <button class="btn-signout" onclick="signOut()">Sign out</button>
     </div>
   </header>
+
+  <!-- ── Add Booking Modal ───────────────────────────────────────────────── -->
+  <div class="modal-overlay" id="add-booking-modal" onclick="if(event.target===this)closeAddBookingModal()">
+    <div class="modal-card">
+      <button class="btn-close-modal" onclick="closeAddBookingModal()">&times;</button>
+      <h2>Add Booking</h2>
+      <form id="add-booking-form">
+        <div class="modal-field"><label>Name *</label><input name="name" required placeholder="Jane Smith"></div>
+        <div class="modal-field"><label>Email *</label><input name="email" type="email" required placeholder="jane@company.com"></div>
+        <div class="modal-field"><label>Company</label><input name="company" placeholder="Acme Inc."></div>
+        <div class="modal-field"><label>Date &amp; Time *</label><input name="datetime" type="datetime-local" required></div>
+        <div class="modal-field"><label>Tier</label>
+          <select name="tier">
+            <option value="">— Select tier —</option>
+            <option value="starter">Starter</option>
+            <option value="growth">Growth</option>
+            <option value="enterprise">Enterprise</option>
+          </select>
+        </div>
+        <div class="modal-field"><label>Notes</label><textarea name="notes" rows="2" placeholder="Any notes…"></textarea></div>
+        <div id="add-booking-error" style="display:none;color:#dc2626;font-size:13px;margin-top:8px;"></div>
+        <div class="modal-actions">
+          <button type="submit" class="btn-primary" style="margin-top:0;flex:1;">Add Booking</button>
+          <button type="button" class="btn-signout" onclick="closeAddBookingModal()" style="margin-top:0;">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <div id="config-warning">
     ⚠️ Supabase not configured — set SUPABASE_URL and SUPABASE_SERVICE_KEY in Vercel Environment Variables, then redeploy.
@@ -559,20 +688,37 @@
 
     <!-- Bookings panel -->
     <div class="tab-panel active" id="panel-bookings">
+      <div class="filter-bar">
+        <input type="text" id="search-input" placeholder="Search name, company, email…" oninput="applyFilters()">
+        <select id="status-filter" onchange="applyFilters()">
+          <option value="">All Statuses</option>
+          <option value="upcoming">Upcoming</option>
+          <option value="completed">Completed</option>
+          <option value="converted">Converted</option>
+          <option value="no_show">No Show</option>
+        </select>
+        <select id="tier-filter" onchange="applyFilters()">
+          <option value="">All Tiers</option>
+          <option value="starter">Starter</option>
+          <option value="growth">Growth</option>
+          <option value="enterprise">Enterprise</option>
+        </select>
+      </div>
       <div class="table-wrap">
         <table id="bookings-table">
           <thead>
             <tr>
-              <th>Status</th>
-              <th>Date &amp; Time</th>
-              <th>Name &amp; Company</th>
-              <th>Plan</th>
+              <th class="sortable" data-col="status" onclick="sortBookings('status')">Status<span class="sort-icon"></span></th>
+              <th class="sortable" data-col="datetime" onclick="sortBookings('datetime')">Date &amp; Time<span class="sort-icon"></span></th>
+              <th class="sortable" data-col="name" onclick="sortBookings('name')">Name &amp; Company<span class="sort-icon"></span></th>
+              <th class="sortable" data-col="tier" onclick="sortBookings('tier')">Plan<span class="sort-icon"></span></th>
               <th>Questionnaire</th>
+              <th>Notes</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody id="bookings-body">
-            <tr><td colspan="6"><div class="empty-state">Loading…</div></td></tr>
+            <tr><td colspan="7"><div class="empty-state">Loading…</div></td></tr>
           </tbody>
         </table>
       </div>
@@ -609,6 +755,9 @@
   const STATUS_LABELS = { upcoming: 'Upcoming', completed: 'Completed', converted: 'Converted', no_show: 'No Show' };
 
   let _token = null;
+  let _allBookings = [];
+  let _sortCol = 'datetime';
+  let _sortDir = 'asc'; // future first by default
 
   // ── Initialise ───────────────────────────────────────────────────────────────
   (function init() {
@@ -749,7 +898,8 @@
   // ── Update pipeline stats ────────────────────────────────────────────────────
   function updateStats(bookings, leads) {
     const now = new Date();
-    const upcoming  = bookings.filter(b => new Date(b.datetime) > now && (b.status === 'upcoming' || !b.status)).length;
+    // Upcoming: status='upcoming' OR (no status AND datetime in future)
+    const upcoming  = bookings.filter(b => b.status === 'upcoming' || (!b.status && new Date(b.datetime) > now)).length;
     const completed = bookings.filter(b => b.status === 'completed').length;
     const converted = bookings.filter(b => b.status === 'converted').length;
 
@@ -802,34 +952,94 @@
     if (btn) btn.textContent = panel.classList.contains('open') ? '📋 Hide' : '📋 View';
   }
 
+  // ── Sort bookings ─────────────────────────────────────────────────────────────
+  function sortBookings(col) {
+    if (_sortCol === col) {
+      _sortDir = _sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      _sortCol = col;
+      _sortDir = 'asc';
+    }
+    // Update header classes
+    document.querySelectorAll('thead th.sortable').forEach(th => {
+      th.classList.remove('sort-asc', 'sort-desc');
+      if (th.dataset.col === col) th.classList.add(_sortDir === 'asc' ? 'sort-asc' : 'sort-desc');
+    });
+    applyFilters();
+  }
+
+  // ── Apply search/filter/sort and re-render ────────────────────────────────────
+  function applyFilters() {
+    const search = (document.getElementById('search-input').value || '').toLowerCase();
+    const statusF = document.getElementById('status-filter').value;
+    const tierF   = document.getElementById('tier-filter').value;
+
+    let filtered = _allBookings.filter(b => {
+      if (search) {
+        const hay = [b.name, b.company, b.email].filter(Boolean).join(' ').toLowerCase();
+        if (!hay.includes(search)) return false;
+      }
+      if (statusF) {
+        const bStatus = b.status || (new Date(b.datetime) > new Date() ? 'upcoming' : '');
+        if (bStatus !== statusF) return false;
+      }
+      if (tierF && (b.tier || '') !== tierF) return false;
+      return true;
+    });
+
+    // Sort
+    filtered.sort((a, b) => {
+      let va, vb;
+      if (_sortCol === 'datetime') {
+        va = new Date(a.datetime).getTime();
+        vb = new Date(b.datetime).getTime();
+      } else if (_sortCol === 'name') {
+        va = (a.name || '').toLowerCase();
+        vb = (b.name || '').toLowerCase();
+      } else if (_sortCol === 'status') {
+        va = a.status || '';
+        vb = b.status || '';
+      } else if (_sortCol === 'tier') {
+        va = a.tier || '';
+        vb = b.tier || '';
+      } else {
+        va = 0; vb = 0;
+      }
+      if (va < vb) return _sortDir === 'asc' ? -1 : 1;
+      if (va > vb) return _sortDir === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    renderBookingsRows(filtered);
+  }
+
   // ── Render bookings ───────────────────────────────────────────────────────────
   function renderBookings(bookings) {
+    _allBookings = bookings;
     document.getElementById('tab-bookings').textContent = `Bookings (${bookings.length})`;
-
     updateStats(bookings, []);
-    // stats for leads will be filled by renderLeads
 
+    // Set default sort header indicator
+    document.querySelectorAll('thead th.sortable').forEach(th => {
+      th.classList.remove('sort-asc', 'sort-desc');
+      if (th.dataset.col === _sortCol) th.classList.add(_sortDir === 'asc' ? 'sort-asc' : 'sort-desc');
+    });
+
+    applyFilters();
+  }
+
+  function renderBookingsRows(bookings) {
     const body = document.getElementById('bookings-body');
 
     if (!bookings.length) {
-      body.innerHTML = '<tr><td colspan="6"><div class="empty-state">No bookings yet</div></td></tr>';
+      body.innerHTML = '<tr><td colspan="7"><div class="empty-state">No bookings found</div></td></tr>';
       return;
     }
 
     const now = new Date();
-
-    const future = bookings
-      .filter(b => new Date(b.datetime) >= now)
-      .sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
-    const past = bookings
-      .filter(b => new Date(b.datetime) < now)
-      .sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
-
-    const sorted = [...future, ...past];
-
     const rows = [];
 
-    for (const b of sorted) {
+    for (const b of bookings) {
       const isPast   = new Date(b.datetime) < now;
       const rowClass = isPast ? 'past-booking' : '';
       const status   = b.status || 'upcoming';
@@ -864,10 +1074,7 @@
           </td>
           <td>${tierBadgeHtml(b.tier)}</td>
           <td>${qCell}</td>
-          <td><a href="mailto:${esc(b.email)}" class="btn-action">✉ Email</a></td>
-        </tr>
-        <tr class="${rowClass}">
-          <td colspan="6" style="padding:0 14px 10px;background:inherit">
+          <td style="padding:8px 14px;">
             <textarea
               class="notes-textarea"
               placeholder="Add call notes…"
@@ -875,17 +1082,23 @@
               onblur="saveNotes(this, '${bid}')"
             >${esc(b.admin_notes || '')}</textarea>
           </td>
+          <td><a href="mailto:${esc(b.email)}" class="btn-action">✉ Email</a></td>
         </tr>
       `);
 
       // Questionnaire panel row (hidden until toggled)
       if (hasQ) {
         const q = b.questionnaire;
+        const toolsArr = Array.isArray(q.tools) ? q.tools : (q.tools ? [q.tools] : []);
+        const toolsBadges = toolsArr.length
+          ? toolsArr.map(t => `<span class="tool-badge">${esc(t)}</span>`).join('')
+          : '<span style="color:var(--muted)">—</span>';
+
         rows.push(`
           <tr class="q-panel" id="q-panel-${bid}">
-            <td colspan="6" style="padding:0">
+            <td colspan="7" style="padding:0">
               <div class="q-inner">
-                <div class="q-row">
+                <div class="q-row" style="grid-column:1/-1">
                   <span class="q-label">Biggest Bottleneck</span>
                   <span class="q-val">${esc(q.bottleneck || '—')}</span>
                 </div>
@@ -898,8 +1111,12 @@
                   <span class="q-val">${esc(q.team_size || '—')}</span>
                 </div>
                 <div class="q-row">
-                  <span class="q-label">Tools Used</span>
-                  <span class="q-val">${esc(q.tools || '—')}</span>
+                  <span class="q-label">Customer Channel</span>
+                  <span class="q-val">${esc(q.customer_channel || '—')}</span>
+                </div>
+                <div class="q-row" style="grid-column:1/-1">
+                  <span class="q-label">Tools</span>
+                  <span class="q-val">${toolsBadges}</span>
                 </div>
               </div>
             </td>
@@ -910,6 +1127,52 @@
 
     body.innerHTML = rows.join('');
   }
+
+  // ── Add Booking modal ─────────────────────────────────────────────────────────
+  function openAddBookingModal() {
+    document.getElementById('add-booking-modal').classList.add('open');
+    document.getElementById('add-booking-form').reset();
+    document.getElementById('add-booking-error').style.display = 'none';
+  }
+
+  function closeAddBookingModal() {
+    document.getElementById('add-booking-modal').classList.remove('open');
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('add-booking-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const errEl = document.getElementById('add-booking-error');
+      errEl.style.display = 'none';
+      const fd = new FormData(e.target);
+      const submitBtn = e.target.querySelector('[type=submit]');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Adding…';
+      try {
+        const res = await fetch('/api/book', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: fd.get('name'),
+            email: fd.get('email'),
+            company: fd.get('company') || '',
+            datetime: fd.get('datetime') ? new Date(fd.get('datetime')).toISOString() : '',
+            tier: fd.get('tier') || '',
+            notes: fd.get('notes') || '',
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          }),
+        });
+        if (!res.ok) throw new Error('Server error ' + res.status);
+        closeAddBookingModal();
+        await fetchData(_token);
+      } catch (err) {
+        errEl.textContent = 'Error adding booking — ' + err.message;
+        errEl.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Add Booking';
+      }
+    });
+  });
 
   // ── Render leads ─────────────────────────────────────────────────────────────
   function renderLeads(leads) {
