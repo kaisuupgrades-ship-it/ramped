@@ -1,4 +1,8 @@
 {
+  "redirects": [
+    { "source": "/pricing-onepager", "destination": "/", "permanent": false },
+    { "source": "/pricing-onepager.html", "destination": "/", "permanent": false }
+  ],
   "rewrites": [
     { "source": "/demo", "destination": "/client-demo.html" },
     { "source": "/logo-concepts", "destination": "/logo-concepts.html" },
