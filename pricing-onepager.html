@@ -357,6 +357,92 @@
     line-height: 1.6;
   }
 
+  /* ── Unit economics ── */
+  .economics {
+    margin-bottom: 28px;
+  }
+
+  .econ-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .econ-card {
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+
+  .econ-card-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .cost-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--surface);
+  }
+
+  .cost-row:last-child { border-bottom: none; }
+
+  .cost-label { color: var(--muted); }
+  .cost-value { font-weight: 600; color: var(--ink); }
+  .cost-total { color: var(--ink); font-weight: 700; }
+  .cost-total-val { font-weight: 800; color: var(--ink); }
+
+  .margin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11.5px;
+  }
+
+  .margin-table th {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    padding: 6px 10px;
+    background: var(--surface);
+    border-bottom: 1.5px solid var(--line);
+  }
+
+  .margin-table th:not(:first-child) { text-align: right; }
+
+  .margin-table td {
+    padding: 7px 10px;
+    border-bottom: 1px solid var(--surface);
+    color: var(--muted);
+  }
+
+  .margin-table td:first-child { font-weight: 600; color: var(--ink); }
+  .margin-table td:not(:first-child) { text-align: right; }
+
+  .margin-table tr:last-child td { border-bottom: none; }
+
+  .margin-highlight {
+    font-weight: 700;
+    color: var(--green);
+  }
+
+  .econ-note {
+    font-size: 10.5px;
+    color: var(--muted);
+    margin-top: 8px;
+    font-style: italic;
+  }
+
   /* ── Footer ── */
   .footer {
     border-top: 1px solid var(--line);
@@ -579,6 +665,79 @@
       </div>
     </div>
 
+  </div>
+
+  <!-- Unit Economics -->
+  <div class="economics">
+    <div class="section-label">Unit economics</div>
+    <div class="econ-grid">
+
+      <div class="econ-card">
+        <div class="econ-card-title">Your cost structure (per client)</div>
+        <div class="cost-row">
+          <span class="cost-label">Claude Max Pro (AI compute)</span>
+          <span class="cost-value">$200/mo</span>
+        </div>
+        <div class="cost-row">
+          <span class="cost-label">Linux VPS (dedicated hosting)</span>
+          <span class="cost-value">$12/mo</span>
+        </div>
+        <div class="cost-row">
+          <span class="cost-label">Misc. (email, integrations)</span>
+          <span class="cost-value">$8/mo</span>
+        </div>
+        <div class="cost-row" style="margin-top:4px; border-top: 1.5px solid var(--line); padding-top:8px;">
+          <span class="cost-total">Variable cost per client</span>
+          <span class="cost-total-val">$220/mo</span>
+        </div>
+        <div class="cost-row">
+          <span class="cost-label" style="font-size:11px;">+ Fixed overhead (Nanoclaw + infra)</span>
+          <span class="cost-value" style="font-size:11px;">$250/mo</span>
+        </div>
+      </div>
+
+      <div class="econ-card">
+        <div class="econ-card-title">Gross margin by client count</div>
+        <table class="margin-table">
+          <thead>
+            <tr>
+              <th>Clients</th>
+              <th>Starter ($2.5k)</th>
+              <th>Growth ($5k)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1 client</td>
+              <td>81%</td>
+              <td>91%</td>
+            </tr>
+            <tr>
+              <td>3 clients</td>
+              <td>84%</td>
+              <td>93%</td>
+            </tr>
+            <tr>
+              <td>5 clients</td>
+              <td class="margin-highlight">88%</td>
+              <td class="margin-highlight">95%</td>
+            </tr>
+            <tr>
+              <td>10 clients</td>
+              <td class="margin-highlight">90%</td>
+              <td class="margin-highlight">96%</td>
+            </tr>
+            <tr>
+              <td>20 clients</td>
+              <td class="margin-highlight">91%</td>
+              <td class="margin-highlight">97%</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="econ-note">Fixed overhead amortizes across clients. At 5+ clients, margins are software-company levels.</div>
+      </div>
+
+    </div>
   </div>
 
   <!-- Footer -->
