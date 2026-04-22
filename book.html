@@ -383,15 +383,15 @@ function showConfirmation(name, email){
     var btn = document.getElementById('onboard-btn');
     btn.innerHTML='<span class="spinner"></span>Submitting\u2026'; btn.disabled=true;
     var fd = new FormData(e.target);
-    var notes = [
-      'Tier interested in: '+(selectedTier||'not specified'),
-      'Biggest bottleneck: '+(fd.get('bottleneck')||'\u2014'),
-      'Industry: '+(fd.get('industry')||'\u2014'),
-      'Team size: '+(fd.get('team_size')||'\u2014'),
-      'Tools used: '+(fd.get('tools')||'\u2014')
-    ].join('\n');
     try{
-      await fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,email:email,company:'[Onboarding Questionnaire]',notes:notes})});
+      await fetch('/api/questionnaire',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+        email:email,
+        bottleneck:fd.get('bottleneck')||'',
+        industry:fd.get('industry')||'',
+        team_size:fd.get('team_size')||'',
+        tools:fd.get('tools')||'',
+        tier:selectedTier||''
+      })});
     }catch(err){}
     showBooked(true);
   });
