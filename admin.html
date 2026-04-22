@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin — Ramped AI</title>
+  <title>Admin · Ramped AI</title>
   <meta name="robots" content="noindex, nofollow" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,6 +18,7 @@
       --accent:  #1F4FFF;
       --good:    #0F7A4B;
       --surface: #F5F5F3;
+      --danger:  #c0392b;
       --warn-bg: #FFFBEA;
       --warn-border: #F5C842;
     }
@@ -54,25 +55,32 @@
       max-width: 380px;
     }
 
+    .auth-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
     .auth-card h1 {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 800;
       letter-spacing: -0.03em;
       color: var(--ink);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
-    .auth-card p {
-      font-size: 14px;
+    .auth-card .auth-sub {
+      font-size: 13px;
       color: var(--muted);
       margin-bottom: 28px;
     }
 
     .auth-card label {
       display: block;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.06em;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
       text-transform: uppercase;
       color: var(--muted);
       margin-bottom: 8px;
@@ -91,14 +99,12 @@
       transition: border-color 0.15s;
     }
 
-    .auth-card input[type="password"]:focus {
-      border-color: var(--accent);
-    }
+    .auth-card input[type="password"]:focus { border-color: var(--accent); }
 
     .auth-error {
       margin-top: 10px;
       font-size: 13px;
-      color: #c0392b;
+      color: var(--danger);
       min-height: 18px;
     }
 
@@ -131,6 +137,7 @@
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
       margin-right: 8px;
+      flex-shrink: 0;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -141,54 +148,122 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 18px 28px;
+      padding: 16px 28px;
       border-bottom: 1px solid var(--line);
       background: #fff;
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 50;
     }
 
     .dash-logo {
-      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 15px;
       font-weight: 800;
       letter-spacing: -0.03em;
       color: var(--ink);
     }
 
-    .dash-back {
+    .dash-nav {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .dash-nav a {
       font-size: 13px;
       color: var(--muted);
       font-weight: 500;
       transition: color 0.15s;
     }
 
-    .dash-back:hover { color: var(--accent); }
+    .dash-nav a:hover { color: var(--accent); }
 
-    /* ── Config warning banner ────────────────────────────────────────────── */
+    .btn-signout {
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      color: var(--muted);
+      background: none;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 5px 12px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .btn-signout:hover { color: var(--ink); border-color: var(--ink); }
+
+    /* ── Config warning ───────────────────────────────────────────────────── */
     #config-warning {
       display: none;
       background: var(--warn-bg);
       border-bottom: 1px solid var(--warn-border);
-      padding: 14px 28px;
+      padding: 12px 28px;
       font-size: 13px;
       color: #7a5c00;
       font-weight: 500;
     }
 
-    /* ── Tabs ─────────────────────────────────────────────────────────────── */
-    .dash-body {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 28px 24px 64px;
+    /* ── Pipeline summary bar ─────────────────────────────────────────────── */
+    .pipeline-bar {
+      display: flex;
+      gap: 16px;
+      padding: 20px 28px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+      overflow-x: auto;
     }
 
+    .stat-card {
+      flex: 1;
+      min-width: 120px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 14px 18px;
+    }
+
+    .stat-card.good {
+      background: #EBF7F2;
+      border-color: #A8DABC;
+    }
+
+    .stat-card .stat-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .stat-card.good .stat-label { color: var(--good); }
+
+    .stat-card .stat-value {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+    }
+
+    .stat-card.good .stat-value { color: var(--good); }
+
+    /* ── Body ─────────────────────────────────────────────────────────────── */
+    .dash-body {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px 24px 64px;
+    }
+
+    /* ── Tabs ─────────────────────────────────────────────────────────────── */
     .tab-bar {
       display: flex;
       gap: 4px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       border-bottom: 1px solid var(--line);
-      padding-bottom: 0;
     }
 
     .tab-btn {
@@ -212,6 +287,9 @@
       border-bottom-color: var(--accent);
     }
 
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
     /* ── Table wrapper ────────────────────────────────────────────────────── */
     .table-wrap {
       overflow-x: auto;
@@ -223,7 +301,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 600px;
+      min-width: 700px;
     }
 
     thead th {
@@ -239,10 +317,7 @@
       white-space: nowrap;
     }
 
-    tbody tr {
-      border-bottom: 1px solid var(--line);
-    }
-
+    tbody tr { border-bottom: 1px solid var(--line); }
     tbody tr:last-child { border-bottom: none; }
 
     tbody tr:nth-child(even) td { background: var(--paper); }
@@ -255,9 +330,30 @@
       vertical-align: top;
     }
 
-    tbody tr.past-booking td {
-      opacity: 0.6;
+    tbody tr.past-booking { opacity: 0.55; }
+
+    /* ── Status badge / dropdown ──────────────────────────────────────────── */
+    .status-select {
+      appearance: none;
+      -webkit-appearance: none;
+      border: none;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: inherit;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      outline: none;
     }
+
+    .status-select:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .status-upcoming   { background: #E8EEFF; color: var(--accent); }
+    .status-completed  { background: #EDEDEC; color: #555; }
+    .status-converted  { background: #EBF7F2; color: var(--good); }
+    .status-no_show    { background: #FDECEA; color: var(--danger); }
+    .status-unknown    { background: #EDEDEC; color: var(--muted); }
 
     /* ── Tier badge ───────────────────────────────────────────────────────── */
     .tier-badge {
@@ -274,6 +370,100 @@
     .tier-growth     { background: #E8EEFF; color: var(--accent); }
     .tier-enterprise { background: #1a2038; color: #fff; }
 
+    /* ── Questionnaire expand ─────────────────────────────────────────────── */
+    .btn-q {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
+      color: var(--accent);
+      background: #E8EEFF;
+      border: none;
+      border-radius: 6px;
+      padding: 3px 9px;
+      cursor: pointer;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn-q:hover { background: #d0daff; }
+
+    .q-panel {
+      display: none;
+      background: var(--surface);
+      border-top: 1px solid var(--line);
+    }
+
+    .q-panel.open { display: table-row; }
+
+    .q-inner {
+      padding: 14px 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 20px;
+    }
+
+    .q-row { display: flex; flex-direction: column; gap: 2px; }
+    .q-label { font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); }
+    .q-val   { font-size: 13px; color: var(--ink); }
+
+    /* ── Admin notes textarea ─────────────────────────────────────────────── */
+    .notes-row { display: table-row; }
+
+    .notes-textarea {
+      width: 100%;
+      min-height: 52px;
+      font-size: 12px;
+      font-family: inherit;
+      color: var(--ink);
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 7px 10px;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.15s;
+      line-height: 1.5;
+    }
+
+    .notes-textarea:focus { border-color: var(--accent); }
+    .notes-textarea::placeholder { color: var(--muted); }
+
+    /* ── Action buttons ───────────────────────────────────────────────────── */
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 4px 10px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn-action:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* ── Lead message expand ──────────────────────────────────────────────── */
+    .msg-short { display: inline; }
+    .msg-full  { display: none; }
+    .msg-toggle {
+      font-size: 11px;
+      color: var(--accent);
+      cursor: pointer;
+      margin-left: 4px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
     /* ── Empty state ──────────────────────────────────────────────────────── */
     .empty-state {
       padding: 48px 24px;
@@ -282,294 +472,495 @@
       font-size: 14px;
     }
 
-    /* ── Notes cell ───────────────────────────────────────────────────────── */
-    .notes-cell {
-      max-width: 260px;
-      white-space: pre-wrap;
-      word-break: break-word;
-      color: var(--muted);
-    }
-
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
+    /* ── SVG logo ─────────────────────────────────────────────────────────── */
+    .logo-svg { flex-shrink: 0; }
 
     @media (max-width: 640px) {
-      .dash-header { padding: 14px 16px; }
-      .dash-body   { padding: 20px 12px 48px; }
-      .tab-btn     { padding: 10px 12px; font-size: 13px; }
+      .dash-header { padding: 12px 16px; }
+      .pipeline-bar { padding: 16px; gap: 12px; }
+      .stat-card { min-width: 100px; padding: 12px 14px; }
+      .stat-card .stat-value { font-size: 22px; }
+      .dash-body { padding: 16px 12px 48px; }
+      .tab-btn { padding: 9px 12px; font-size: 13px; }
+      .q-inner { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ── Auth Screen ──────────────────────────────────────────────────────── -->
-  <div id="auth-screen">
-    <div class="auth-card">
-      <h1>Admin Access</h1>
-      <p>Enter your admin password to view bookings and leads.</p>
-      <label for="password-input">Password</label>
-      <input type="password" id="password-input" placeholder="••••••••••••" autocomplete="current-password" />
-      <div class="auth-error" id="auth-error"></div>
-      <button class="btn-primary" id="auth-btn" onclick="doAuth()">Enter</button>
+<!-- ── Auth Screen ─────────────────────────────────────────────────────────── -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <svg class="logo-svg" width="28" height="22" viewBox="0 0 28 22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="0"  y="10" width="5" height="12" rx="2" fill="#0B1220"/>
+        <rect x="7"  y="5"  width="5" height="17" rx="2" fill="#0B1220"/>
+        <rect x="14" y="0"  width="5" height="22" rx="2" fill="#1F4FFF"/>
+        <rect x="21" y="4"  width="5" height="18" rx="2" fill="#0B1220"/>
+      </svg>
+      <span style="font-size:16px;font-weight:800;letter-spacing:-0.03em">Admin · Ramped AI</span>
+    </div>
+    <p class="auth-sub">Enter your admin password to access the dashboard.</p>
+    <label for="password-input">Password</label>
+    <input type="password" id="password-input" placeholder="••••••••••••" autocomplete="current-password" />
+    <div class="auth-error" id="auth-error"></div>
+    <button class="btn-primary" id="auth-btn" onclick="doAuth()">Enter</button>
+  </div>
+</div>
+
+<!-- ── Dashboard ───────────────────────────────────────────────────────────── -->
+<div id="dashboard">
+
+  <header class="dash-header">
+    <div class="dash-logo">
+      <svg class="logo-svg" width="24" height="19" viewBox="0 0 28 22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="0"  y="10" width="5" height="12" rx="2" fill="#0B1220"/>
+        <rect x="7"  y="5"  width="5" height="17" rx="2" fill="#0B1220"/>
+        <rect x="14" y="0"  width="5" height="22" rx="2" fill="#1F4FFF"/>
+        <rect x="21" y="4"  width="5" height="18" rx="2" fill="#0B1220"/>
+      </svg>
+      Admin
+    </div>
+    <div class="dash-nav">
+      <a href="/">← Back to site</a>
+      <button class="btn-signout" onclick="signOut()">Sign out</button>
+    </div>
+  </header>
+
+  <div id="config-warning">
+    ⚠️ Supabase not configured — set SUPABASE_URL and SUPABASE_SERVICE_KEY in Vercel Environment Variables, then redeploy.
+  </div>
+
+  <!-- Pipeline summary bar -->
+  <div class="pipeline-bar">
+    <div class="stat-card">
+      <div class="stat-label">Upcoming</div>
+      <div class="stat-value" id="stat-upcoming">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Completed</div>
+      <div class="stat-value" id="stat-completed">—</div>
+    </div>
+    <div class="stat-card good">
+      <div class="stat-label">Converted</div>
+      <div class="stat-value" id="stat-converted">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Leads</div>
+      <div class="stat-value" id="stat-leads">—</div>
     </div>
   </div>
 
-  <!-- ── Dashboard ────────────────────────────────────────────────────────── -->
-  <div id="dashboard">
-    <header class="dash-header">
-      <span class="dash-logo">Ramped AI — Admin</span>
-      <a href="/" class="dash-back">← Back to site</a>
-    </header>
-
-    <div id="config-warning">
-      ⚠️ Supabase not configured — set SUPABASE_URL and SUPABASE_SERVICE_KEY in Vercel environment variables.
+  <div class="dash-body">
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tab-bookings" onclick="switchTab('bookings')">Bookings (0)</button>
+      <button class="tab-btn"        id="tab-leads"    onclick="switchTab('leads')">Leads (0)</button>
     </div>
 
-    <div class="dash-body">
-      <div class="tab-bar">
-        <button class="tab-btn active" id="tab-bookings" onclick="switchTab('bookings')">Bookings (0)</button>
-        <button class="tab-btn" id="tab-leads" onclick="switchTab('leads')">Leads (0)</button>
+    <!-- Bookings panel -->
+    <div class="tab-panel active" id="panel-bookings">
+      <div class="table-wrap">
+        <table id="bookings-table">
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Date &amp; Time</th>
+              <th>Name &amp; Company</th>
+              <th>Plan</th>
+              <th>Questionnaire</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="bookings-body">
+            <tr><td colspan="6"><div class="empty-state">Loading…</div></td></tr>
+          </tbody>
+        </table>
       </div>
+    </div>
 
-      <!-- Bookings panel -->
-      <div class="tab-panel active" id="panel-bookings">
-        <div class="table-wrap">
-          <table id="bookings-table">
-            <thead>
-              <tr>
-                <th>Date &amp; Time</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Company</th>
-                <th>Plan Interest</th>
-                <th>Notes</th>
-                <th>Timezone</th>
-              </tr>
-            </thead>
-            <tbody id="bookings-body">
-              <tr><td colspan="7"><div class="empty-state">No bookings yet</div></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Leads panel -->
-      <div class="tab-panel" id="panel-leads">
-        <div class="table-wrap">
-          <table id="leads-table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Company</th>
-                <th>Message / Notes</th>
-              </tr>
-            </thead>
-            <tbody id="leads-body">
-              <tr><td colspan="5"><div class="empty-state">No leads yet</div></td></tr>
-            </tbody>
-          </table>
-        </div>
+    <!-- Leads panel -->
+    <div class="tab-panel" id="panel-leads">
+      <div class="table-wrap">
+        <table id="leads-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Name &amp; Email</th>
+              <th>Company</th>
+              <th>Message</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="leads-body">
+            <tr><td colspan="5"><div class="empty-state">Loading…</div></td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
+</div>
 
-  <script>
-    // ── Session token storage ────────────────────────────────────────────────
-    const SESSION_KEY = 'admin_token';
+<script>
+  'use strict';
 
-    // On page load, try saved token
-    (function init() {
-      const saved = sessionStorage.getItem(SESSION_KEY);
-      if (saved) {
-        fetchData(saved);
-      }
-      // Allow Enter key on password field
-      document.getElementById('password-input').addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') doAuth();
-      });
-    })();
+  // ── Constants ────────────────────────────────────────────────────────────────
+  const SESSION_KEY = 'ramped_admin_token';
+  const STATUSES = ['upcoming', 'completed', 'converted', 'no_show'];
+  const STATUS_LABELS = { upcoming: 'Upcoming', completed: 'Completed', converted: 'Converted', no_show: 'No Show' };
 
-    // ── Auth flow ────────────────────────────────────────────────────────────
-    async function doAuth() {
-      const input = document.getElementById('password-input');
-      const btn   = document.getElementById('auth-btn');
-      const errEl = document.getElementById('auth-error');
-      const token = input.value.trim();
+  let _token = null;
 
-      if (!token) {
-        errEl.textContent = 'Please enter a password.';
-        return;
-      }
-
-      errEl.textContent = '';
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span> Checking...';
-
-      const result = await fetchData(token);
-
-      if (!result) {
-        btn.disabled = false;
-        btn.textContent = 'Enter';
-      }
+  // ── Initialise ───────────────────────────────────────────────────────────────
+  (function init() {
+    const saved = sessionStorage.getItem(SESSION_KEY);
+    if (saved) {
+      _token = saved;
+      fetchData(saved);
     }
+    document.getElementById('password-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') doAuth();
+    });
+  })();
 
-    // ── Fetch data from API ──────────────────────────────────────────────────
-    async function fetchData(token) {
-      try {
-        const res = await fetch(`/api/admin?token=${encodeURIComponent(token)}`);
+  // ── Auth ─────────────────────────────────────────────────────────────────────
+  async function doAuth() {
+    const input  = document.getElementById('password-input');
+    const btn    = document.getElementById('auth-btn');
+    const errEl  = document.getElementById('auth-error');
+    const token  = input.value.trim();
 
-        if (res.status === 401) {
-          document.getElementById('auth-error').textContent = 'Incorrect password.';
-          sessionStorage.removeItem(SESSION_KEY);
-          return false;
-        }
+    if (!token) { errEl.textContent = 'Please enter a password.'; return; }
 
-        const data = await res.json();
+    errEl.textContent = '';
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Checking…';
 
-        // Store token on success
-        sessionStorage.setItem(SESSION_KEY, token);
+    const ok = await fetchData(token);
+    if (!ok) {
+      btn.disabled = false;
+      btn.textContent = 'Enter';
+    }
+  }
 
-        // Show dashboard
-        document.getElementById('auth-screen').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'block';
+  function signOut() {
+    sessionStorage.removeItem(SESSION_KEY);
+    location.reload();
+  }
 
-        if (data.configured === false) {
-          document.getElementById('config-warning').style.display = 'block';
-        }
+  // ── Fetch data ───────────────────────────────────────────────────────────────
+  async function fetchData(token) {
+    try {
+      const res = await fetch(`/api/admin?token=${encodeURIComponent(token)}`);
 
-        renderBookings(data.bookings || []);
-        renderLeads(data.leads || []);
-        return true;
-
-      } catch (err) {
-        document.getElementById('auth-error').textContent = 'Network error — try again.';
+      if (res.status === 401) {
+        document.getElementById('auth-error').textContent = 'Incorrect password.';
+        sessionStorage.removeItem(SESSION_KEY);
+        _token = null;
         return false;
       }
+
+      const data = await res.json();
+      _token = token;
+      sessionStorage.setItem(SESSION_KEY, token);
+
+      document.getElementById('auth-screen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+
+      if (data.configured === false) {
+        document.getElementById('config-warning').style.display = 'block';
+      }
+
+      renderBookings(data.bookings || []);
+      renderLeads(data.leads || []);
+      return true;
+
+    } catch (err) {
+      document.getElementById('auth-error').textContent = 'Network error — try again.';
+      return false;
+    }
+  }
+
+  // ── Tab switching ────────────────────────────────────────────────────────────
+  function switchTab(name) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    document.getElementById('panel-' + name).classList.add('active');
+  }
+
+  // ── Helpers ──────────────────────────────────────────────────────────────────
+  function esc(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function formatBookingDate(isoStr, timezone) {
+    if (!isoStr) return '—';
+    try {
+      // datetime stored as "YYYY-MM-DDTHH:MM:00" local time — treat as-is in its timezone
+      const tz = timezone || 'America/Chicago';
+      // If the string has no offset indicator, append nothing — parse as-is then display in tz
+      const d = new Date(isoStr.includes('T') && !isoStr.includes('Z') && !isoStr.includes('+') && !isoStr.includes('-', 10)
+        ? isoStr + 'Z'  // treat as UTC if truly bare
+        : isoStr);
+
+      // Format each part separately for clean output
+      const weekday = d.toLocaleDateString('en-US', { timeZone: tz, weekday: 'short' });
+      const month   = d.toLocaleDateString('en-US', { timeZone: tz, month: 'short' });
+      const day     = d.toLocaleDateString('en-US', { timeZone: tz, day: 'numeric' });
+      const time    = d.toLocaleTimeString('en-US', {
+        timeZone: tz,
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+        timeZoneName: 'short',
+      });
+
+      return `${weekday} ${month} ${day} · ${time}`;
+    } catch {
+      return isoStr;
+    }
+  }
+
+  function formatLeadDate(isoStr) {
+    if (!isoStr) return '—';
+    try {
+      const d = new Date(isoStr);
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    } catch { return isoStr; }
+  }
+
+  function tierBadgeHtml(tier) {
+    if (!tier) return '<span style="color:var(--muted)">—</span>';
+    const cls = tier === 'enterprise' ? 'tier-enterprise'
+              : tier === 'growth'     ? 'tier-growth'
+              : 'tier-starter';
+    return `<span class="tier-badge ${cls}">${esc(tier)}</span>`;
+  }
+
+  function statusClass(status) {
+    return `status-${status || 'unknown'}`;
+  }
+
+  // ── Update pipeline stats ────────────────────────────────────────────────────
+  function updateStats(bookings, leads) {
+    const now = new Date();
+    const upcoming  = bookings.filter(b => new Date(b.datetime) > now && (b.status === 'upcoming' || !b.status)).length;
+    const completed = bookings.filter(b => b.status === 'completed').length;
+    const converted = bookings.filter(b => b.status === 'converted').length;
+
+    document.getElementById('stat-upcoming').textContent  = upcoming;
+    document.getElementById('stat-completed').textContent = completed;
+    document.getElementById('stat-converted').textContent = converted;
+    document.getElementById('stat-leads').textContent     = leads.length;
+  }
+
+  // ── Status change handler ────────────────────────────────────────────────────
+  async function onStatusChange(selectEl, id) {
+    const newStatus = selectEl.value;
+    // Update visual class immediately
+    selectEl.className = `status-select ${statusClass(newStatus)}`;
+
+    try {
+      const res = await fetch(`/api/admin-update?token=${encodeURIComponent(_token)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status: newStatus }),
+      });
+      if (!res.ok) {
+        console.error('Status update failed:', res.status);
+      }
+    } catch (err) {
+      console.error('Status update error:', err);
+    }
+  }
+
+  // ── Admin notes auto-save ─────────────────────────────────────────────────────
+  async function saveNotes(textarea, id) {
+    const admin_notes = textarea.value;
+    try {
+      await fetch(`/api/admin-update?token=${encodeURIComponent(_token)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, admin_notes }),
+      });
+    } catch (err) {
+      console.error('Notes save error:', err);
+    }
+  }
+
+  // ── Questionnaire toggle ──────────────────────────────────────────────────────
+  function toggleQ(bookingId) {
+    const panel = document.getElementById(`q-panel-${bookingId}`);
+    if (!panel) return;
+    panel.classList.toggle('open');
+    const btn = document.getElementById(`q-btn-${bookingId}`);
+    if (btn) btn.textContent = panel.classList.contains('open') ? '📋 Hide' : '📋 View';
+  }
+
+  // ── Render bookings ───────────────────────────────────────────────────────────
+  function renderBookings(bookings) {
+    document.getElementById('tab-bookings').textContent = `Bookings (${bookings.length})`;
+
+    updateStats(bookings, []);
+    // stats for leads will be filled by renderLeads
+
+    const body = document.getElementById('bookings-body');
+
+    if (!bookings.length) {
+      body.innerHTML = '<tr><td colspan="6"><div class="empty-state">No bookings yet</div></td></tr>';
+      return;
     }
 
-    // ── Tab switching ────────────────────────────────────────────────────────
-    function switchTab(name) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-      document.getElementById('tab-' + name).classList.add('active');
-      document.getElementById('panel-' + name).classList.add('active');
-    }
+    const now = new Date();
 
-    // ── Format booking datetime ──────────────────────────────────────────────
-    // e.g. "Wed Apr 23 · 10:00 AM CDT"
-    function formatBookingDate(isoStr, timezone) {
-      if (!isoStr) return '—';
-      try {
-        const d = new Date(isoStr);
-        const tz = timezone || 'America/Chicago';
+    const future = bookings
+      .filter(b => new Date(b.datetime) >= now)
+      .sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+    const past = bookings
+      .filter(b => new Date(b.datetime) < now)
+      .sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
 
-        const weekday = d.toLocaleDateString('en-US', { timeZone: tz, weekday: 'short' });
-        const month   = d.toLocaleDateString('en-US', { timeZone: tz, month: 'short' });
-        const day     = d.toLocaleDateString('en-US', { timeZone: tz, day: 'numeric' });
-        const time    = d.toLocaleTimeString('en-US', {
-          timeZone: tz,
-          hour: 'numeric',
-          minute: '2-digit',
-          hour12: true,
-          timeZoneName: 'short',
-        });
+    const sorted = [...future, ...past];
 
-        return `${weekday} ${month} ${day} · ${time}`;
-      } catch {
-        return isoStr;
+    const rows = [];
+
+    for (const b of sorted) {
+      const isPast   = new Date(b.datetime) < now;
+      const rowClass = isPast ? 'past-booking' : '';
+      const status   = b.status || 'upcoming';
+      const hasQ     = b.questionnaire && typeof b.questionnaire === 'object';
+      const bid      = esc(b.id);
+
+      // Build status options
+      const statusOptions = STATUSES.map(s =>
+        `<option value="${s}" ${s === status ? 'selected' : ''}>${STATUS_LABELS[s]}</option>`
+      ).join('');
+
+      // Questionnaire cell
+      const qCell = hasQ
+        ? `<button class="btn-q" id="q-btn-${bid}" onclick="toggleQ('${bid}')">📋 View</button>`
+        : `<span style="color:var(--muted)">—</span>`;
+
+      // Main data row
+      rows.push(`
+        <tr class="${rowClass}" id="row-${bid}">
+          <td>
+            <select
+              class="status-select ${statusClass(status)}"
+              onchange="onStatusChange(this, '${bid}')"
+              title="Change status"
+            >${statusOptions}</select>
+          </td>
+          <td style="white-space:nowrap;font-size:12px">${esc(formatBookingDate(b.datetime, b.timezone))}</td>
+          <td>
+            <div style="font-weight:600">${esc(b.name || '—')}</div>
+            ${b.company ? `<div style="color:var(--muted);font-size:12px">${esc(b.company)}</div>` : ''}
+            <div style="margin-top:2px"><a href="mailto:${esc(b.email)}" style="color:var(--accent);font-size:12px">${esc(b.email || '')}</a></div>
+          </td>
+          <td>${tierBadgeHtml(b.tier)}</td>
+          <td>${qCell}</td>
+          <td><a href="mailto:${esc(b.email)}" class="btn-action">✉ Email</a></td>
+        </tr>
+        <tr class="${rowClass}">
+          <td colspan="6" style="padding:0 14px 10px;background:inherit">
+            <textarea
+              class="notes-textarea"
+              placeholder="Add call notes…"
+              data-id="${bid}"
+              onblur="saveNotes(this, '${bid}')"
+            >${esc(b.admin_notes || '')}</textarea>
+          </td>
+        </tr>
+      `);
+
+      // Questionnaire panel row (hidden until toggled)
+      if (hasQ) {
+        const q = b.questionnaire;
+        rows.push(`
+          <tr class="q-panel" id="q-panel-${bid}">
+            <td colspan="6" style="padding:0">
+              <div class="q-inner">
+                <div class="q-row">
+                  <span class="q-label">Biggest Bottleneck</span>
+                  <span class="q-val">${esc(q.bottleneck || '—')}</span>
+                </div>
+                <div class="q-row">
+                  <span class="q-label">Industry</span>
+                  <span class="q-val">${esc(q.industry || '—')}</span>
+                </div>
+                <div class="q-row">
+                  <span class="q-label">Team Size</span>
+                  <span class="q-val">${esc(q.team_size || '—')}</span>
+                </div>
+                <div class="q-row">
+                  <span class="q-label">Tools Used</span>
+                  <span class="q-val">${esc(q.tools || '—')}</span>
+                </div>
+              </div>
+            </td>
+          </tr>
+        `);
       }
     }
 
-    // ── Format lead date ─────────────────────────────────────────────────────
-    // e.g. "Apr 22, 2026"
-    function formatLeadDate(isoStr) {
-      if (!isoStr) return '—';
-      try {
-        const d = new Date(isoStr);
-        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-      } catch {
-        return isoStr;
-      }
+    body.innerHTML = rows.join('');
+  }
+
+  // ── Render leads ─────────────────────────────────────────────────────────────
+  function renderLeads(leads) {
+    document.getElementById('tab-leads').textContent = `Leads (${leads.length})`;
+    document.getElementById('stat-leads').textContent = leads.length;
+
+    const body = document.getElementById('leads-body');
+
+    if (!leads.length) {
+      body.innerHTML = '<tr><td colspan="5"><div class="empty-state">No leads yet</div></td></tr>';
+      return;
     }
 
-    // ── Tier badge HTML ──────────────────────────────────────────────────────
-    function tierBadge(tier) {
-      if (!tier) return '<span style="color:var(--muted)">—</span>';
-      const cls = tier === 'enterprise' ? 'tier-enterprise'
-                : tier === 'growth'     ? 'tier-growth'
-                : 'tier-starter';
-      return `<span class="tier-badge ${cls}">${escHtml(tier)}</span>`;
-    }
+    body.innerHTML = leads.map((l, i) => {
+      const msg     = l.message || l.notes || '';
+      const short   = msg.length > 100 ? msg.slice(0, 100) + '…' : msg;
+      const hasMore = msg.length > 100;
+      const lid     = `lead-${i}`;
 
-    // ── Escape HTML ──────────────────────────────────────────────────────────
-    function escHtml(str) {
-      if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    }
+      const msgCell = hasMore
+        ? `<span class="msg-short" id="${lid}-short">${esc(short)}
+            <span class="msg-toggle" onclick="expandMsg('${lid}')">more</span>
+           </span>
+           <span class="msg-full" id="${lid}-full">${esc(msg)}
+            <span class="msg-toggle" onclick="collapseMsg('${lid}')">less</span>
+           </span>`
+        : esc(msg || '—');
 
-    // ── Render bookings ──────────────────────────────────────────────────────
-    function renderBookings(bookings) {
-      const btn  = document.getElementById('tab-bookings');
-      const body = document.getElementById('bookings-body');
+      return `<tr>
+        <td style="white-space:nowrap;color:var(--muted);font-size:12px">${esc(formatLeadDate(l.created_at))}</td>
+        <td>
+          <div style="font-weight:600">${esc(l.name || '—')}</div>
+          <a href="mailto:${esc(l.email)}" style="color:var(--accent);font-size:12px">${esc(l.email || '')}</a>
+        </td>
+        <td>${esc(l.company || '—')}</td>
+        <td style="max-width:320px;word-break:break-word">${msgCell}</td>
+        <td><a href="mailto:${esc(l.email)}" class="btn-action">✉ Email</a></td>
+      </tr>`;
+    }).join('');
+  }
 
-      btn.textContent = `Bookings (${bookings.length})`;
+  // ── Message expand/collapse ───────────────────────────────────────────────────
+  function expandMsg(id) {
+    document.getElementById(id + '-short').style.display = 'none';
+    document.getElementById(id + '-full').style.display  = 'inline';
+  }
 
-      if (!bookings.length) {
-        body.innerHTML = '<tr><td colspan="7"><div class="empty-state">No bookings yet</div></td></tr>';
-        return;
-      }
-
-      const now = new Date();
-
-      // Sort: future first (ascending), then past (descending by recency)
-      const future = bookings.filter(b => new Date(b.datetime) >= now)
-                              .sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
-      const past   = bookings.filter(b => new Date(b.datetime) < now)
-                              .sort((a, b) => new Date(b.datetime) - new Date(a.datetime));
-
-      const sorted = [...future, ...past];
-
-      body.innerHTML = sorted.map(b => {
-        const isPast = new Date(b.datetime) < now;
-        const rowClass = isPast ? 'past-booking' : '';
-        return `<tr class="${rowClass}">
-          <td style="white-space:nowrap">${escHtml(formatBookingDate(b.datetime, b.timezone))}</td>
-          <td style="font-weight:600">${escHtml(b.name || '—')}</td>
-          <td><a href="mailto:${escHtml(b.email)}" style="color:var(--accent)">${escHtml(b.email || '—')}</a></td>
-          <td>${escHtml(b.company || '—')}</td>
-          <td>${tierBadge(b.tier)}</td>
-          <td class="notes-cell">${escHtml(b.notes || '—')}</td>
-          <td style="color:var(--muted);white-space:nowrap">${escHtml(b.timezone || '—')}</td>
-        </tr>`;
-      }).join('');
-    }
-
-    // ── Render leads ─────────────────────────────────────────────────────────
-    function renderLeads(leads) {
-      const btn  = document.getElementById('tab-leads');
-      const body = document.getElementById('leads-body');
-
-      btn.textContent = `Leads (${leads.length})`;
-
-      if (!leads.length) {
-        body.innerHTML = '<tr><td colspan="5"><div class="empty-state">No leads yet</div></td></tr>';
-        return;
-      }
-
-      body.innerHTML = leads.map((l, i) => `<tr>
-        <td style="white-space:nowrap;color:var(--muted)">${escHtml(formatLeadDate(l.created_at))}</td>
-        <td style="font-weight:600">${escHtml(l.name || '—')}</td>
-        <td><a href="mailto:${escHtml(l.email)}" style="color:var(--accent)">${escHtml(l.email || '—')}</a></td>
-        <td>${escHtml(l.company || '—')}</td>
-        <td class="notes-cell">${escHtml(l.message || l.notes || '—')}</td>
-      </tr>`).join('');
-    }
-  </script>
+  function collapseMsg(id) {
+    document.getElementById(id + '-short').style.display = 'inline';
+    document.getElementById(id + '-full').style.display  = 'none';
+  }
+</script>
 </body>
 </html>
