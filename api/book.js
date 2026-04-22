@@ -7,9 +7,6 @@
 //   SUPABASE_SERVICE_KEY  — Supabase service role key
 //   RESEND_API_KEY        — Resend API key
 //   OWNER_EMAIL           — Where to send booking notifications (e.g. jon@rampedai.co)
-//   GOOGLE_CLIENT_ID      — (when ready) Google Calendar OAuth client ID
-//   GOOGLE_CLIENT_SECRET  — (when ready) Google Calendar OAuth client secret
-//   GOOGLE_REFRESH_TOKEN  — (when ready) Google Calendar refresh token
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -77,6 +74,12 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'date param required (YYYY-MM-DD)' });
     }
 
+    // Gracefully handle unconfigured Supabase — show all slots as available
+    if (!SUPABASE_URL || !SUPABASE_KEY) {
+      console.warn('Supabase not configured — returning empty booked list');
+      return res.status(200).json({ booked: [] });
+    }
+
     const { ok, data } = await supabase(
       'GET',
       `/bookings?select=datetime&datetime=gte.${date}T00:00:00&datetime=lte.${date}T23:59:59&order=datetime`
@@ -96,27 +99,34 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'datetime, name, and email are required' });
     }
 
-    // Insert into Supabase (unique constraint on datetime prevents double-booking)
-    const { ok, status, data } = await supabase('POST', '/bookings', {
-      datetime,
-      name,
-      email,
-      company: company || null,
-      notes: notes || null,
-      timezone: timezone || null,
-    });
-
-    if (!ok) {
-      if (status === 409) {
-        return res.status(409).json({ error: 'That time slot was just booked. Please choose another.' });
-      }
-      return res.status(500).json({ error: 'Failed to create booking. Please try again.' });
-    }
-
     const guestTz  = timezone || 'America/Chicago';
-    const dtGuest  = formatForTz(datetime, guestTz);          // for guest email
-    const dtHost   = formatForTz(datetime, 'America/Chicago'); // for host email
-    const dtUtc    = new Date(datetime).toUTCString();         // UTC reference for host
+    const dtGuest  = formatForTz(datetime, guestTz);
+    const dtHost   = formatForTz(datetime, 'America/Chicago');
+    const dtUtc    = new Date(datetime).toUTCString();
+
+    // ── Save to Supabase (if configured) ─────────────────────────────────────
+    if (SUPABASE_URL && SUPABASE_KEY) {
+      const { ok, status } = await supabase('POST', '/bookings', {
+        datetime,
+        name,
+        email,
+        company:  company  || null,
+        notes:    notes    || null,
+        timezone: timezone || null,
+        tier:     tier     || null,
+        status:   'upcoming',
+      });
+
+      if (!ok) {
+        if (status === 409) {
+          return res.status(409).json({ error: 'That time slot was just booked. Please choose another.' });
+        }
+        console.error('Supabase insert failed:', status);
+        return res.status(500).json({ error: 'Failed to create booking. Please try again.' });
+      }
+    } else {
+      console.warn('Supabase not configured — booking not stored in database');
+    }
 
     // ── Confirmation email to guest ───────────────────────────────────────────
     await sendEmail(email, `Confirmed: Discovery call with Ramped AI — ${dtGuest.dateStr}`, `
@@ -151,9 +161,6 @@ export default async function handler(req, res) {
         </table>
       </div>
     `);
-
-    // ── Google Calendar (stubbed — add when credentials are ready) ────────────
-    // await createCalendarEvent({ datetime, name, email, notes });
 
     return res.status(200).json({ success: true });
   }
