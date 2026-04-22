@@ -1,24 +1,50 @@
 {
-  "redirects": [
-    { "source": "/pricing-onepager", "destination": "/", "permanent": false },
-    { "source": "/pricing-onepager.html", "destination": "/", "permanent": false }
-  ],
   "rewrites": [
-    { "source": "/demo", "destination": "/client-demo.html" },
-    { "source": "/logo-concepts", "destination": "/logo-concepts.html" },
-    { "source": "/one-pager", "destination": "/one-pager.html" },
-    { "source": "/comparison", "destination": "/comparison.html" },
-    { "source": "/book", "destination": "/book.html" },
-    { "source": "/privacy", "destination": "/privacy.html" }
+    {
+      "source": "/demo",
+      "destination": "/client-demo.html"
+    },
+    {
+      "source": "/logo-concepts",
+      "destination": "/logo-concepts.html"
+    },
+    {
+      "source": "/one-pager",
+      "destination": "/one-pager.html"
+    },
+    {
+      "source": "/comparison",
+      "destination": "/comparison.html"
+    },
+    {
+      "source": "/book",
+      "destination": "/book.html"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/privacy.html"
+    }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        }
       ]
     }
   ]
