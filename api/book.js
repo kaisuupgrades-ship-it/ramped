@@ -90,7 +90,7 @@ export default async function handler(req, res) {
 
   // ── POST: create a booking ──────────────────────────────────────────────────
   if (req.method === 'POST') {
-    const { datetime, name, email, company, notes, timezone } = req.body || {};
+    const { datetime, name, email, company, notes, timezone, tier } = req.body || {};
 
     if (!datetime || !name || !email) {
       return res.status(400).json({ error: 'datetime, name, and email are required' });
@@ -145,6 +145,7 @@ export default async function handler(req, res) {
           ${company ? `<tr><td style="padding:8px 0;color:#5B6272;">Company</td><td style="color:#0B1220;">${company}</td></tr>` : ''}
           <tr><td style="padding:8px 0;color:#5B6272;">Time (Chicago)</td><td style="font-weight:600;color:#0B1220;">${dtHost.timeStr} · ${dtHost.dateStr}</td></tr>
           <tr><td style="padding:8px 0;color:#5B6272;">Time (UTC)</td><td style="color:#5B6272;">${dtUtc}</td></tr>
+          ${tier ? `<tr><td style="padding:8px 0;color:#5B6272;">Plan interest</td><td style="font-weight:700;color:#1F4FFF;text-transform:capitalize;">${tier}</td></tr>` : ''}
           ${notes ? `<tr><td style="padding:8px 0;color:#5B6272;vertical-align:top;">Notes</td><td style="color:#0B1220;">${notes}</td></tr>` : ''}
           ${timezone ? `<tr><td style="padding:8px 0;color:#5B6272;">Timezone</td><td style="color:#5B6272;">${timezone}</td></tr>` : ''}
         </table>
