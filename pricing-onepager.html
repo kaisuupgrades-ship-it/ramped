@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ramped AI — Pricing & Implementation Proposal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0B1220;
+    --accent: #1F4FFF;
+    --surface: #F7F8FA;
+    --muted: #5B6272;
+    --line: #E5E8EF;
+    --green: #16A34A;
+    --green-bg: #F0FDF4;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--ink);
+    background: #fff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .page {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 48px 48px 40px;
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 24px;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: 32px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-icon {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 22px;
+  }
+
+  .logo-bar {
+    width: 5px;
+    border-radius: 2px;
+    background: var(--accent);
+  }
+
+  .logo-name {
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .header-right {
+    text-align: right;
+  }
+
+  .doc-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .doc-date {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* ── Positioning headline ── */
+  .positioning {
+    margin-bottom: 32px;
+  }
+
+  .positioning h2 {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .positioning p {
+    font-size: 13px;
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.6;
+  }
+
+  /* ── Pricing tiers ── */
+  .tiers {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .tier {
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+  }
+
+  .tier.featured {
+    border-color: var(--accent);
+    background: #F5F7FF;
+  }
+
+  .tier-badge {
+    position: absolute;
+    top: -1px;
+    right: 16px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 0 0 6px 6px;
+  }
+
+  .tier-name {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .tier-price {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+
+  .tier-price span {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0;
+  }
+
+  .tier-setup {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .tier-target {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+
+  .tier-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .tier-features li {
+    font-size: 11.5px;
+    color: var(--muted);
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    line-height: 1.4;
+  }
+
+  .tier-features li::before {
+    content: "✓";
+    color: var(--green);
+    font-weight: 700;
+    font-size: 11px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ── Key terms bar ── */
+  .terms-bar {
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+
+  .term {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .term-icon {
+    width: 28px;
+    height: 28px;
+    background: #fff;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 13px;
+  }
+
+  .term-label {
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .term-value {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  /* ── Implementation scenarios ── */
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .scenarios {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .scenario {
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+
+  .scenario-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+
+  .scenario-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .scenario-tier {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: var(--surface);
+    color: var(--muted);
+  }
+
+  .scenario-tier.growth {
+    background: #EEF2FF;
+    color: var(--accent);
+  }
+
+  .scenario-desc {
+    font-size: 11.5px;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+
+  .scenario-examples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .scenario-tag {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: var(--surface);
+    color: var(--ink);
+  }
+
+  /* ── The model callout ── */
+  .model-callout {
+    background: var(--ink);
+    color: #fff;
+    border-radius: 12px;
+    padding: 18px 22px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .model-callout-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .model-callout h3 {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: #fff;
+  }
+
+  .model-callout p {
+    font-size: 12px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.6;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .footer-left {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .footer-right {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  .footer-right a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  /* ── Print ── */
+  @media print {
+    body { font-size: 12px; }
+    .page { padding: 32px 40px; }
+    .tier, .scenario, .model-callout, .terms-bar { break-inside: avoid; }
+  }
+
+  @page {
+    size: letter;
+    margin: 0;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">
+        <div class="logo-bar" style="height:8px; opacity:0.35;"></div>
+        <div class="logo-bar" style="height:13px; opacity:0.55;"></div>
+        <div class="logo-bar" style="height:18px; opacity:0.75;"></div>
+        <div class="logo-bar" style="height:22px;"></div>
+      </div>
+      <span class="logo-name">Ramped AI</span>
+    </div>
+    <div class="header-right">
+      <div class="doc-title">Pricing &amp; Implementation Overview</div>
+      <div class="doc-date">April 2026 · Confidential</div>
+    </div>
+  </div>
+
+  <!-- Positioning -->
+  <div class="positioning">
+    <h2>Your business, running 24/7 —<br>without adding headcount.</h2>
+    <p>Ramped builds and deploys a custom AI agent trained to operate exactly like you do. It handles your inbound, your follow-ups, your reporting, your ops — so you can focus on what only you can do. Live in 30 days, or your money back.</p>
+  </div>
+
+  <!-- Pricing Tiers -->
+  <div class="tiers">
+
+    <!-- Starter -->
+    <div class="tier">
+      <div class="tier-name">Starter</div>
+      <div class="tier-price">$2,500<span>/mo</span></div>
+      <div class="tier-setup">+ $2,500 one-time onboarding</div>
+      <div class="tier-target">Best for: 5–30 employees</div>
+      <ul class="tier-features">
+        <li>Custom AI agent trained to your business</li>
+        <li>Up to 5 workflow automations</li>
+        <li>3–5 software integrations</li>
+        <li>Monthly check-in call</li>
+        <li>Email support</li>
+        <li>All compute &amp; hosting included</li>
+      </ul>
+    </div>
+
+    <!-- Growth (featured) -->
+    <div class="tier featured">
+      <div class="tier-badge">Most Popular</div>
+      <div class="tier-name">Growth</div>
+      <div class="tier-price">$5,000<span>/mo</span></div>
+      <div class="tier-setup">+ $3,500 one-time onboarding</div>
+      <div class="tier-target">Best for: 30–100 employees</div>
+      <ul class="tier-features">
+        <li>Custom AI agent — expanded scope</li>
+        <li>Up to 15 workflow automations</li>
+        <li>10+ software integrations</li>
+        <li>Weekly check-ins + monthly strategy call</li>
+        <li>Priority support</li>
+        <li>All compute &amp; hosting included</li>
+      </ul>
+    </div>
+
+    <!-- Enterprise -->
+    <div class="tier">
+      <div class="tier-name">Enterprise</div>
+      <div class="tier-price" style="font-size:22px;padding-top:4px;">Custom</div>
+      <div class="tier-setup">Scoped per engagement</div>
+      <div class="tier-target">Best for: 100+ employees</div>
+      <ul class="tier-features">
+        <li>Full AI operations buildout</li>
+        <li>Unlimited workflow automations</li>
+        <li>Custom development &amp; integrations</li>
+        <li>Dedicated support + QBRs</li>
+        <li>White-label option available</li>
+        <li>All compute &amp; hosting included</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Terms bar -->
+  <div class="terms-bar">
+    <div class="term">
+      <div class="term-icon">📋</div>
+      <div>
+        <div class="term-label">Contract</div>
+        <div class="term-value">12-month service agreement</div>
+      </div>
+    </div>
+    <div class="term">
+      <div class="term-icon">🛡️</div>
+      <div>
+        <div class="term-label">Guarantee</div>
+        <div class="term-value">Full refund if not live in 30 days</div>
+      </div>
+    </div>
+    <div class="term">
+      <div class="term-icon">⚡</div>
+      <div>
+        <div class="term-label">Included</div>
+        <div class="term-value">AI compute, hosting &amp; maintenance</div>
+      </div>
+    </div>
+    <div class="term">
+      <div class="term-icon">🔄</div>
+      <div>
+        <div class="term-label">Updates</div>
+        <div class="term-value">Ongoing improvements, no extra cost</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- The model callout -->
+  <div class="model-callout">
+    <div class="model-callout-icon">🧠</div>
+    <div>
+      <h3>How it works: a perfect clone of the business owner</h3>
+      <p>We don't deploy generic bots. We train your agent on how you think, how you communicate, and how you make decisions — then deploy it across your highest-value workflows. It responds like you, follows up like you, and escalates the right things to you. One agent, fully customized, live in 30 days.</p>
+    </div>
+  </div>
+
+  <!-- Implementation scenarios -->
+  <div class="section-label">Implementation scenarios</div>
+  <div class="scenarios">
+
+    <div class="scenario">
+      <div class="scenario-header">
+        <div class="scenario-title">📥 Inbound lead &amp; inquiry handling</div>
+        <div class="scenario-tier">Starter</div>
+      </div>
+      <div class="scenario-desc">Agent monitors your inbox, qualifies inbound leads the way you would, drafts responses in your voice, books discovery calls, and updates your CRM — all before you've had your morning coffee.</div>
+      <div class="scenario-examples">
+        <span class="scenario-tag">Email triage</span>
+        <span class="scenario-tag">Lead qualification</span>
+        <span class="scenario-tag">CRM sync</span>
+        <span class="scenario-tag">Auto-booking</span>
+      </div>
+    </div>
+
+    <div class="scenario">
+      <div class="scenario-header">
+        <div class="scenario-title">📞 Live call intake &amp; follow-up</div>
+        <div class="scenario-tier">Starter</div>
+      </div>
+      <div class="scenario-desc">Agent handles inbound calls, qualifies the caller, captures key details, sends a follow-up email, books the next step, and fans out action items — all on hangup, with no human in the loop.</div>
+      <div class="scenario-examples">
+        <span class="scenario-tag">Voice intake</span>
+        <span class="scenario-tag">Auto-scheduling</span>
+        <span class="scenario-tag">Follow-up email</span>
+        <span class="scenario-tag">Task creation</span>
+      </div>
+    </div>
+
+    <div class="scenario">
+      <div class="scenario-header">
+        <div class="scenario-title">📊 Financial reporting &amp; alerts</div>
+        <div class="scenario-tier growth">Growth</div>
+      </div>
+      <div class="scenario-desc">Agent pulls your P&amp;L from your accounting system, runs margin analysis, flags anomalies, and delivers a plain-English weekly summary with red flags highlighted — no spreadsheet required.</div>
+      <div class="scenario-examples">
+        <span class="scenario-tag">P&amp;L analysis</span>
+        <span class="scenario-tag">Margin alerts</span>
+        <span class="scenario-tag">Weekly digest</span>
+        <span class="scenario-tag">ERP integration</span>
+      </div>
+    </div>
+
+    <div class="scenario">
+      <div class="scenario-header">
+        <div class="scenario-title">⚙️ Internal ops &amp; team management</div>
+        <div class="scenario-tier growth">Growth</div>
+      </div>
+      <div class="scenario-desc">Agent sits in your Slack or team chat, handles scheduling, answers operational questions, routes requests, tracks open items, and keeps your team moving — like a chief of staff that never clocks out.</div>
+      <div class="scenario-examples">
+        <span class="scenario-tag">Slack ops bot</span>
+        <span class="scenario-tag">Task routing</span>
+        <span class="scenario-tag">Scheduling</span>
+        <span class="scenario-tag">Status tracking</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-left">
+      Ramped AI · <strong>30dayramp.com</strong> · All pricing in USD · 12-month agreements · Prices valid through Q2 2026
+    </div>
+    <div class="footer-right">
+      Ready to move forward? <a href="https://30dayramp.com/book">Book a discovery call →</a>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
