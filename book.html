@@ -184,9 +184,10 @@ const HOST_TZ = 'America/Chicago';
 const VISITOR_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const SLOT_HOURS = [9,9.5,10,10.5,11,11.5,12,12.5,13,13.5,14,14.5,15,15.5,16,16.5];
 
-let currentMonth, currentYear, selectedDate, selectedSlot;
+let currentMonth, currentYear, selectedDate, selectedSlot, selectedTier;
 
 function init() {
+  selectedTier = new URLSearchParams(window.location.search).get('tier') || '';
   const now = new Date();
   currentMonth = now.getMonth();
   currentYear = now.getFullYear();
@@ -286,8 +287,11 @@ function showForm(){
   var stepDiv = document.getElementById('booking-step');
   var d = new Date(selectedDate+'T12:00:00');
   var dateLabel = d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  var tierLabels = {starter:'Starter · $2,500/mo', growth:'Growth · $5,000/mo', enterprise:'Enterprise · Custom'};
+  var tierBadge = selectedTier ? '<div style="background:#EEF3FF;border:1px solid #c7d2fe;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:13px;color:var(--accent);font-weight:600;">📋 Plan interest: '+(tierLabels[selectedTier.toLowerCase()]||selectedTier)+'</div>' : '';
   stepDiv.innerHTML =
     '<button class="back-btn" id="back-to-slots">\u2190 '+dateLabel+' at '+selectedSlot.label+'</button>' +
+    tierBadge +
     '<form id="book-form" style="display:flex;flex-direction:column;gap:14px;">' +
       '<div>' +
         '<label style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">YOUR NAME <span style="color:var(--accent);">*</span></label>' +
@@ -320,7 +324,7 @@ async function submitBooking(e){
   btn.innerHTML='<span class="spinner"></span>Booking\u2026'; btn.disabled=true;
   var fd = new FormData(e.target);
   try{
-    var r = await fetch('/api/book',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({datetime:selectedSlot.iso,name:fd.get('name'),email:fd.get('email'),company:fd.get('company')||'',notes:fd.get('notes')||'',timezone:VISITOR_TZ})});
+    var r = await fetch('/api/book',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({datetime:selectedSlot.iso,name:fd.get('name'),email:fd.get('email'),company:fd.get('company')||'',notes:fd.get('notes')||'',timezone:VISITOR_TZ,tier:selectedTier||''})});
     if(r.status===409){errDiv.textContent='That slot was just booked \u2014 please pick another time.';errDiv.style.display='block';btn.textContent='Confirm booking \u2192';btn.disabled=false;setTimeout(function(){showSlots();},2000);return;}
     if(!r.ok) throw new Error('Server error');
     showConfirmation(fd.get('name'),fd.get('email'));
@@ -331,13 +335,83 @@ function showConfirmation(name, email){
   var stepDiv = document.getElementById('booking-step');
   var d = new Date(selectedDate+'T12:00:00');
   var dateLabel = d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  var sizeOptions = ['1\u20135','6\u201315','16\u201330','31\u2013100','100+'];
+
   stepDiv.innerHTML =
+    '<div style="text-align:center;padding:16px 0 14px;">' +
+      '<div style="font-size:36px;line-height:1;margin-bottom:8px;">\u2713</div>' +
+      '<h2 style="font-size:20px;font-weight:700;margin:0 0 4px;">You\'re booked!</h2>' +
+      '<p style="font-size:14px;font-weight:600;color:var(--ink);margin:0 0 3px;">'+dateLabel+' at '+selectedSlot.label+'</p>' +
+      '<p style="font-size:12px;color:var(--muted);margin:0;">Confirmation sent to '+email+' &middot; Google Meet link coming before the call.</p>' +
+    '</div>' +
+
+    '<div style="background:#F0FDF4;border:1.5px solid #86EFAC;border-radius:10px;padding:14px 16px;margin:14px 0 16px;">' +
+      '<p style="font-size:13px;font-weight:700;color:#15803D;margin:0 0 3px;">\uD83D\uDCB0 Claim $1,000 off your onboarding fee</p>' +
+      '<p style="font-size:12px;color:#166534;line-height:1.5;margin:0;">Answer 4 quick questions so we can prep for your call. Takes 2 minutes \u2014 discount applied automatically when you sign.</p>' +
+    '</div>' +
+
+    '<form id="onboard-form" style="display:flex;flex-direction:column;gap:12px;">' +
+      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;letter-spacing:.06em;">1. BIGGEST BOTTLENECK RIGHT NOW? <span style="color:var(--accent);">*</span></label>' +
+        '<textarea name="bottleneck" required rows="2" placeholder="e.g. Responding to leads takes hours every day\u2026" style="width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff;resize:vertical;box-sizing:border-box;font-family:inherit;"></textarea></div>' +
+      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;letter-spacing:.06em;">2. WHAT INDUSTRY ARE YOU IN?</label>' +
+        '<input name="industry" placeholder="e.g. E-commerce, Real Estate, Law\u2026" style="width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff;box-sizing:border-box;"></div>' +
+      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">3. HOW MANY PEOPLE ON YOUR TEAM?</label>' +
+        '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:5px;">' +
+          sizeOptions.map(function(s){ return '<label style="cursor:pointer;text-align:center;display:block;"><input type="radio" name="team_size" value="'+s+'" class="size-radio" style="position:absolute;opacity:0;width:0;height:0;"><span class="size-label" style="display:block;padding:7px 2px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;user-select:none;cursor:pointer;">'+s+'</span></label>'; }).join('') +
+        '</div></div>' +
+      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;letter-spacing:.06em;">4. WHAT TOOLS DO YOU USE TODAY?</label>' +
+        '<input name="tools" placeholder="e.g. HubSpot, QuickBooks, Gmail, Slack\u2026" style="width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff;box-sizing:border-box;"></div>' +
+      '<div id="onboard-error" style="display:none;color:#dc2626;font-size:13px;padding:8px 12px;background:#fef2f2;border-radius:6px;"></div>' +
+      '<button type="submit" id="onboard-btn" style="width:100%;padding:13px;background:#15803D;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;">Submit &amp; claim $1,000 off \u2192</button>' +
+      '<button type="button" id="skip-btn" style="width:100%;padding:6px;background:none;border:none;font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;">Skip for now</button>' +
+    '</form>';
+
+  // Team size pill toggle
+  document.querySelectorAll('.size-radio').forEach(function(radio){
+    radio.addEventListener('change', function(){
+      document.querySelectorAll('.size-label').forEach(function(l){ l.style.background=''; l.style.color=''; l.style.borderColor=''; });
+      this.nextElementSibling.style.background='var(--accent)';
+      this.nextElementSibling.style.color='#fff';
+      this.nextElementSibling.style.borderColor='var(--accent)';
+    });
+  });
+
+  document.getElementById('skip-btn').addEventListener('click', function(){ showBooked(false); });
+
+  document.getElementById('onboard-form').addEventListener('submit', async function(e){
+    e.preventDefault();
+    var btn = document.getElementById('onboard-btn');
+    btn.innerHTML='<span class="spinner"></span>Submitting\u2026'; btn.disabled=true;
+    var fd = new FormData(e.target);
+    var notes = [
+      'Tier interested in: '+(selectedTier||'not specified'),
+      'Biggest bottleneck: '+(fd.get('bottleneck')||'\u2014'),
+      'Industry: '+(fd.get('industry')||'\u2014'),
+      'Team size: '+(fd.get('team_size')||'\u2014'),
+      'Tools used: '+(fd.get('tools')||'\u2014')
+    ].join('\n');
+    try{
+      await fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:name,email:email,company:'[Onboarding Questionnaire]',notes:notes})});
+    }catch(err){}
+    showBooked(true);
+  });
+}
+
+function showBooked(claimedDiscount){
+  var stepDiv = document.getElementById('booking-step');
+  stepDiv.innerHTML = claimedDiscount ?
+    '<div class="confirm-box">' +
+      '<div style="font-size:36px;margin-bottom:8px;">\uD83C\uDF89</div>' +
+      '<h2 style="font-size:20px;font-weight:700;margin:0 0 8px;">All set!</h2>' +
+      '<p style="font-size:14px;color:var(--muted);line-height:1.6;margin:0 0 8px;">Your $1,000 discount is confirmed. We\'ll apply it to your onboarding fee when you sign.</p>' +
+      '<p style="font-size:14px;color:var(--muted);margin:0 0 24px;">See you on the call!</p>' +
+      '<a href="/" style="display:inline-block;padding:10px 24px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;color:var(--ink);">\u2190 Back to home</a>' +
+    '</div>'
+  :
     '<div class="confirm-box">' +
       '<div class="check">\u2713</div>' +
-      '<h2 style="font-size:20px;font-weight:700;margin:0 0 8px;">You\'re booked!</h2>' +
-      '<p style="font-size:15px;font-weight:600;margin:0 0 4px;">'+dateLabel+' at '+selectedSlot.label+'</p>' +
-      '<p style="font-size:13px;color:var(--muted);margin:0 0 8px;">Confirmation sent to '+email+'</p>' +
-      '<p style="font-size:13px;color:var(--muted);margin:0 0 24px;">We\'ll send a Google Meet link before the call.</p>' +
+      '<h2 style="font-size:20px;font-weight:700;margin:0 0 8px;">You\'re all set!</h2>' +
+      '<p style="font-size:14px;color:var(--muted);margin:0 0 24px;">We\'ll send a Google Meet link before the call. See you soon!</p>' +
       '<a href="/" style="display:inline-block;padding:10px 24px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;color:var(--ink);">\u2190 Back to home</a>' +
     '</div>';
 }
