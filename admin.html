@@ -623,21 +623,25 @@
     <div class="dash-nav">
       <a href="/">← Back to site</a>
       <button class="btn-signout" onclick="fetchData(_token)" title="Refresh data" style="margin-right:0;">↻ Refresh</button>
-      <button class="btn-signout" onclick="openAddBookingModal()" style="background:var(--accent);color:#fff;border-color:var(--accent);">+ Add Booking</button>
+      <button class="btn-signout" onclick="openBookingModal()" style="background:var(--accent);color:#fff;border-color:var(--accent);">+ Add Booking</button>
       <button class="btn-signout" onclick="signOut()">Sign out</button>
     </div>
   </header>
 
-  <!-- ── Add Booking Modal ───────────────────────────────────────────────── -->
-  <div class="modal-overlay" id="add-booking-modal" onclick="if(event.target===this)closeAddBookingModal()">
+  <!-- ── Add / Edit Booking Modal ────────────────────────────────────────── -->
+  <div class="modal-overlay" id="booking-modal" onclick="if(event.target===this)closeBookingModal()">
     <div class="modal-card">
-      <button class="btn-close-modal" onclick="closeAddBookingModal()">&times;</button>
-      <h2>Add Booking</h2>
-      <form id="add-booking-form">
+      <button class="btn-close-modal" onclick="closeBookingModal()">&times;</button>
+      <h2 id="booking-modal-title">Add Booking</h2>
+      <form id="booking-form">
+        <input type="hidden" name="id" id="booking-id">
         <div class="modal-field"><label>Name *</label><input name="name" required placeholder="Jane Smith"></div>
         <div class="modal-field"><label>Email *</label><input name="email" type="email" required placeholder="jane@company.com"></div>
         <div class="modal-field"><label>Company</label><input name="company" placeholder="Acme Inc."></div>
-        <div class="modal-field"><label>Date &amp; Time *</label><input name="datetime" type="datetime-local" required></div>
+        <div class="modal-field">
+          <label>Date &amp; Time * <span id="booking-tz-note" style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:10px;"></span></label>
+          <input name="datetime" type="datetime-local" required>
+        </div>
         <div class="modal-field"><label>Tier</label>
           <select name="tier">
             <option value="">— Select tier —</option>
@@ -646,11 +650,19 @@
             <option value="enterprise">Enterprise</option>
           </select>
         </div>
-        <div class="modal-field"><label>Notes</label><textarea name="notes" rows="2" placeholder="Any notes…"></textarea></div>
-        <div id="add-booking-error" style="display:none;color:#dc2626;font-size:13px;margin-top:8px;"></div>
+        <div class="modal-field"><label>Status</label>
+          <select name="status" id="booking-status-field" style="display:none;">
+            <option value="upcoming">Upcoming</option>
+            <option value="completed">Completed</option>
+            <option value="converted">Converted</option>
+            <option value="no_show">No Show</option>
+          </select>
+        </div>
+        <div class="modal-field"><label>Client notes</label><textarea name="notes" rows="2" placeholder="Any notes the client shared…"></textarea></div>
+        <div id="booking-form-error" style="display:none;color:#dc2626;font-size:13px;margin-top:8px;"></div>
         <div class="modal-actions">
-          <button type="submit" class="btn-primary" style="margin-top:0;flex:1;">Add Booking</button>
-          <button type="button" class="btn-signout" onclick="closeAddBookingModal()" style="margin-top:0;">Cancel</button>
+          <button type="submit" class="btn-primary" id="booking-submit" style="margin-top:0;flex:1;">Add Booking</button>
+          <button type="button" class="btn-signout" onclick="closeBookingModal()" style="margin-top:0;">Cancel</button>
         </div>
       </form>
     </div>
@@ -1082,7 +1094,11 @@
               onblur="saveNotes(this, '${bid}')"
             >${esc(b.admin_notes || '')}</textarea>
           </td>
-          <td><a href="mailto:${esc(b.email)}" class="btn-action">✉ Email</a></td>
+          <td style="white-space:nowrap;">
+            <a href="mailto:${esc(b.email)}" class="btn-action" style="margin-right:4px;">✉</a>
+            <button class="btn-action" onclick="editBooking('${bid}')" title="Edit booking" style="margin-right:4px;">✎ Edit</button>
+            <button class="btn-action" onclick="deleteBooking('${bid}')" title="Delete booking" style="color:var(--danger);border-color:#f0cfca;">Delete</button>
+          </td>
         </tr>
       `);
 
@@ -1128,50 +1144,142 @@
     body.innerHTML = rows.join('');
   }
 
-  // ── Add Booking modal ─────────────────────────────────────────────────────────
-  function openAddBookingModal() {
-    document.getElementById('add-booking-modal').classList.add('open');
-    document.getElementById('add-booking-form').reset();
-    document.getElementById('add-booking-error').style.display = 'none';
+  // ── Add / Edit / Delete booking ──────────────────────────────────────────────
+  const LOCAL_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  // Convert a UTC ISO string to the value a <input type="datetime-local"> expects
+  // in the browser's local timezone: "YYYY-MM-DDTHH:MM".
+  function isoToLocalInputValue(iso) {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d)) return '';
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+         + `T${pad(d.getHours())}:${pad(d.getMinutes())}`;
   }
 
-  function closeAddBookingModal() {
-    document.getElementById('add-booking-modal').classList.remove('open');
+  function resetBookingModal() {
+    const form = document.getElementById('booking-form');
+    form.reset();
+    document.getElementById('booking-id').value = '';
+    document.getElementById('booking-form-error').style.display = 'none';
+    document.getElementById('booking-tz-note').textContent = `(interpreted as ${LOCAL_TZ})`;
   }
 
-  document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('add-booking-form').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const errEl = document.getElementById('add-booking-error');
-      errEl.style.display = 'none';
-      const fd = new FormData(e.target);
-      const submitBtn = e.target.querySelector('[type=submit]');
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Adding…';
-      try {
-        const res = await fetch('/api/book', {
+  function openBookingModal() {
+    resetBookingModal();
+    document.getElementById('booking-modal-title').textContent = 'Add Booking';
+    document.getElementById('booking-submit').textContent = 'Add Booking';
+    document.getElementById('booking-status-field').style.display = 'none';
+    document.getElementById('booking-modal').classList.add('open');
+  }
+
+  function editBooking(id) {
+    const b = _allBookings.find(x => String(x.id) === String(id));
+    if (!b) { alert('Booking not found — refresh and try again.'); return; }
+    resetBookingModal();
+    document.getElementById('booking-modal-title').textContent = 'Edit Booking';
+    document.getElementById('booking-submit').textContent = 'Save changes';
+    document.getElementById('booking-id').value = b.id;
+
+    const form = document.getElementById('booking-form');
+    form.elements.name.value     = b.name     || '';
+    form.elements.email.value    = b.email    || '';
+    form.elements.company.value  = b.company  || '';
+    form.elements.datetime.value = isoToLocalInputValue(b.datetime);
+    form.elements.tier.value     = b.tier     || '';
+    form.elements.notes.value    = b.notes    || '';
+
+    const statusField = document.getElementById('booking-status-field');
+    statusField.style.display = '';
+    statusField.value = b.status || 'upcoming';
+
+    document.getElementById('booking-modal').classList.add('open');
+  }
+
+  function closeBookingModal() {
+    document.getElementById('booking-modal').classList.remove('open');
+  }
+
+  async function deleteBooking(id) {
+    const b = _allBookings.find(x => String(x.id) === String(id));
+    const label = b ? (b.name || b.email || 'this booking') : 'this booking';
+    if (!confirm(`Delete booking for ${label}?\n\nThis can't be undone.`)) return;
+    try {
+      const res = await fetch(`/api/admin-delete?token=${encodeURIComponent(_token)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      if (!res.ok) throw new Error('Server error ' + res.status);
+      await fetchData(_token);
+    } catch (err) {
+      alert('Error deleting booking: ' + err.message);
+    }
+  }
+
+  document.getElementById('booking-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const errEl = document.getElementById('booking-form-error');
+    errEl.style.display = 'none';
+    const fd = new FormData(e.target);
+    const id = fd.get('id') || '';
+    const submitBtn = document.getElementById('booking-submit');
+    const originalLabel = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = id ? 'Saving…' : 'Adding…';
+
+    const datetimeIso = fd.get('datetime')
+      ? new Date(fd.get('datetime')).toISOString()
+      : '';
+
+    try {
+      let res;
+      if (id) {
+        // Edit existing booking via admin-update (accepts all editable fields).
+        res = await fetch(`/api/admin-update?token=${encodeURIComponent(_token)}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            name: fd.get('name'),
-            email: fd.get('email'),
-            company: fd.get('company') || '',
-            datetime: fd.get('datetime') ? new Date(fd.get('datetime')).toISOString() : '',
-            tier: fd.get('tier') || '',
-            notes: fd.get('notes') || '',
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            id,
+            name:     fd.get('name'),
+            email:    fd.get('email'),
+            company:  fd.get('company') || '',
+            datetime: datetimeIso,
+            tier:     fd.get('tier') || '',
+            notes:    fd.get('notes') || '',
+            status:   fd.get('status') || 'upcoming',
+            timezone: LOCAL_TZ,
           }),
         });
-        if (!res.ok) throw new Error('Server error ' + res.status);
-        closeAddBookingModal();
-        await fetchData(_token);
-      } catch (err) {
-        errEl.textContent = 'Error adding booking — ' + err.message;
-        errEl.style.display = 'block';
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Add Booking';
+      } else {
+        // Create via /api/book — same path the public site uses.
+        res = await fetch('/api/book', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name:     fd.get('name'),
+            email:    fd.get('email'),
+            company:  fd.get('company') || '',
+            datetime: datetimeIso,
+            tier:     fd.get('tier') || '',
+            notes:    fd.get('notes') || '',
+            timezone: LOCAL_TZ,
+          }),
+        });
       }
-    });
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        throw new Error(j.error || ('Server error ' + res.status));
+      }
+      closeBookingModal();
+      await fetchData(_token);
+    } catch (err) {
+      errEl.textContent = (id ? 'Error saving changes — ' : 'Error adding booking — ') + err.message;
+      errEl.style.display = 'block';
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalLabel;
+    }
   });
 
   // ── Render leads ─────────────────────────────────────────────────────────────

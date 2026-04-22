@@ -1,36 +1,22 @@
-// api/admin-update.js — Update booking status or admin notes
+// api/admin-update.js — Update a booking
 // POST /api/admin-update?token=VALUE
 //
-// Body: { id, status?, admin_notes? }
+// Body: { id, status?, admin_notes?, name?, email?, company?, datetime?,
+//         notes?, tier?, timezone? }
 //
-// Env vars needed:
-//   SUPABASE_URL         — Supabase project URL
-//   SUPABASE_SERVICE_KEY — Supabase service role key
-//   ADMIN_TOKEN          — Secret token for admin access
+// Only fields present in the body are patched. `id` + token are required.
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const ADMIN_TOKEN  = process.env.ADMIN_TOKEN;
 
 const VALID_STATUSES = new Set(['upcoming', 'completed', 'converted', 'no_show']);
+const VALID_TIERS    = new Set(['starter', 'growth', 'enterprise', '']);
+const EDITABLE_FIELDS = [
+  'status', 'admin_notes', 'name', 'email', 'company',
+  'datetime', 'notes', 'tier', 'timezone',
+];
 
-// ── Supabase helper ───────────────────────────────────────────────────────────
-async function supabase(method, path, body) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1${path}`, {
-    method,
-    headers: {
-      'apikey': SUPABASE_KEY,
-      'Authorization': `Bearer ${SUPABASE_KEY}`,
-      'Content-Type': 'application/json',
-      'Prefer': method === 'POST' ? 'return=representation' : '',
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  const text = await res.text();
-  return { ok: res.ok, status: res.status, data: text ? JSON.parse(text) : null };
-}
-
-// ── Main handler ──────────────────────────────────────────────────────────────
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -41,7 +27,6 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // ── Auth: require matching token ──────────────────────────────────────────
   const { token } = req.query;
   if (!token || !ADMIN_TOKEN || token !== ADMIN_TOKEN) {
     return res.status(401).json({ error: 'Unauthorized' });
@@ -51,30 +36,35 @@ export default async function handler(req, res) {
     return res.status(503).json({ error: 'Database not configured' });
   }
 
-  const { id, status, admin_notes } = req.body || {};
+  const body = req.body || {};
+  const { id } = body;
 
   if (!id) {
     return res.status(400).json({ error: 'id is required' });
   }
 
-  // Must have at least one field to update
-  if (status === undefined && admin_notes === undefined) {
-    return res.status(400).json({ error: 'At least one of status or admin_notes is required' });
+  const patch = {};
+  for (const field of EDITABLE_FIELDS) {
+    if (body[field] !== undefined) patch[field] = body[field];
   }
 
-  // ── Validate status if provided ───────────────────────────────────────────
-  if (status !== undefined && !VALID_STATUSES.has(status)) {
+  if (Object.keys(patch).length === 0) {
+    return res.status(400).json({ error: 'No editable fields provided' });
+  }
+
+  if (patch.status !== undefined && !VALID_STATUSES.has(patch.status)) {
     return res.status(400).json({
       error: `Invalid status. Must be one of: ${[...VALID_STATUSES].join(', ')}`,
     });
   }
+  if (patch.tier !== undefined && patch.tier !== null && !VALID_TIERS.has(patch.tier)) {
+    return res.status(400).json({ error: 'Invalid tier' });
+  }
+  // Normalize empty strings on optional fields to null so they clear cleanly.
+  for (const f of ['company', 'notes', 'tier', 'timezone', 'admin_notes']) {
+    if (patch[f] === '') patch[f] = null;
+  }
 
-  // ── Build patch payload ───────────────────────────────────────────────────
-  const patch = {};
-  if (status !== undefined) patch.status = status;
-  if (admin_notes !== undefined) patch.admin_notes = admin_notes;
-
-  // ── PATCH the booking ─────────────────────────────────────────────────────
   const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/bookings?id=eq.${encodeURIComponent(id)}`, {
     method: 'PATCH',
     headers: {
