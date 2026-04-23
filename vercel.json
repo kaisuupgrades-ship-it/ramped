@@ -1,13 +1,14 @@
 {
   "rewrites": [
-    { "source": "/demo",              "destination": "/client-demo.html" },
-    { "source": "/logo-concepts",     "destination": "/logo-concepts.html" },
-    { "source": "/one-pager",         "destination": "/one-pager.html" },
-    { "source": "/pricing-onepager",  "destination": "/pricing-onepager.html" },
-    { "source": "/comparison",        "destination": "/comparison.html" },
-    { "source": "/book",              "destination": "/book.html" },
-    { "source": "/privacy",           "destination": "/privacy.html" },
-    { "source": "/admin",             "destination": "/admin.html" }
+    { "source": "/demo",                    "destination": "/client-demo.html" },
+    { "source": "/logo-concepts",           "destination": "/logo-concepts.html" },
+    { "source": "/one-pager",               "destination": "/one-pager.html" },
+    { "source": "/pricing-onepager",        "destination": "/pricing-onepager.html" },
+    { "source": "/comparison",              "destination": "/comparison.html" },
+    { "source": "/book",                    "destination": "/book.html" },
+    { "source": "/privacy",                 "destination": "/privacy.html" },
+    { "source": "/admin",                   "destination": "/admin.html" },
+    { "source": "/questionnaire-preview",   "destination": "/questionnaire-preview.html" }
   ],
   "headers": [
     {
