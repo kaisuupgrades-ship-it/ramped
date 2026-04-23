@@ -1,44 +1,24 @@
 // api/admin-update.js — Update a booking
 // POST /api/admin-update?token=VALUE
-//
-// Body: { id, status?, admin_notes?, name?, email?, company?, datetime?,
-//         notes?, tier?, timezone? }
-//
-// Only fields present in the body are patched. `id` + token are required.
+// Body: { id, status?, admin_notes?, name?, email?, company?, datetime?, notes?, tier?, timezone? }
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const ADMIN_TOKEN  = process.env.ADMIN_TOKEN;
 
-const VALID_STATUSES = new Set(['upcoming', 'completed', 'converted', 'no_show']);
-const VALID_TIERS    = new Set(['starter', 'growth', 'enterprise', '']);
+const VALID_STATUSES  = new Set(['upcoming', 'completed', 'converted', 'no_show']);
+const VALID_TIERS     = new Set(['starter', 'growth', 'enterprise', '']);
 const EDITABLE_FIELDS = [
   'status', 'admin_notes', 'name', 'email', 'company',
   'datetime', 'notes', 'tier', 'timezone', 'meet_link', 'gcal_event_id',
 ];
 
-const ALLOWED_ORIGINS = [
-  'https://30dayramp.com',
-  'https://www.30dayramp.com',
-  'http://localhost:3000',
-];
-function setCors(req, res, methods) {
-  const origin = req.headers.origin || '';
-  if (ALLOWED_ORIGINS.includes(origin) || /\.vercel\.app$/.test(new URL(origin || 'http://x').hostname)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Vary', 'Origin');
-  }
-  res.setHeader('Access-Control-Allow-Methods', methods);
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-}
-
 export default async function handler(req, res) {
-  setCors(req, res, 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const { token } = req.query;
   if (!token || !ADMIN_TOKEN || token !== ADMIN_TOKEN) {
@@ -51,29 +31,21 @@ export default async function handler(req, res) {
 
   const body = req.body || {};
   const { id } = body;
-
-  if (!id) {
-    return res.status(400).json({ error: 'id is required' });
-  }
+  if (!id) return res.status(400).json({ error: 'id is required' });
 
   const patch = {};
   for (const field of EDITABLE_FIELDS) {
     if (body[field] !== undefined) patch[field] = body[field];
   }
-
   if (Object.keys(patch).length === 0) {
     return res.status(400).json({ error: 'No editable fields provided' });
   }
-
   if (patch.status !== undefined && !VALID_STATUSES.has(patch.status)) {
-    return res.status(400).json({
-      error: `Invalid status. Must be one of: ${[...VALID_STATUSES].join(', ')}`,
-    });
+    return res.status(400).json({ error: `Invalid status. Must be one of: ${[...VALID_STATUSES].join(', ')}` });
   }
   if (patch.tier !== undefined && patch.tier !== null && !VALID_TIERS.has(patch.tier)) {
     return res.status(400).json({ error: 'Invalid tier' });
   }
-  // Normalize empty strings on optional fields to null so they clear cleanly.
   for (const f of ['company', 'notes', 'tier', 'timezone', 'admin_notes']) {
     if (patch[f] === '') patch[f] = null;
   }
@@ -90,8 +62,7 @@ export default async function handler(req, res) {
   });
 
   if (!patchRes.ok) {
-    const errText = await patchRes.text();
-    console.error('Supabase PATCH error:', patchRes.status, errText);
+    console.error('Supabase PATCH error:', patchRes.status, await patchRes.text());
     return res.status(500).json({ error: 'Failed to update booking' });
   }
 
