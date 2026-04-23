@@ -289,6 +289,11 @@
 
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
+    .avail-day-lbl { display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--line);border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;user-select:none;background:#fff;transition:background .12s,border-color .12s; }
+    .avail-day-lbl:has(input:checked) { background:var(--ink);color:#fff;border-color:var(--ink); }
+    .avail-day-lbl input { display:none; }
+    .avail-blocked-chip { display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:#F2F0E8;border:1px solid var(--line);border-radius:6px;font-size:13px;font-family:'JetBrains Mono',monospace; }
+    .avail-blocked-chip button { background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;padding:0;line-height:1; }
 
     /* ── Table wrapper ────────────────────────────────────────────────────── */
     .table-wrap {
@@ -714,8 +719,9 @@
 
   <div class="dash-body">
     <div class="tab-bar">
-      <button class="tab-btn active" id="tab-bookings" onclick="switchTab('bookings')">Bookings (0)</button>
-      <button class="tab-btn"        id="tab-leads"    onclick="switchTab('leads')">Leads (0)</button>
+      <button class="tab-btn active" id="tab-bookings"     onclick="switchTab('bookings')">Bookings (0)</button>
+      <button class="tab-btn"        id="tab-leads"        onclick="switchTab('leads')">Leads (0)</button>
+      <button class="tab-btn"        id="tab-availability" onclick="switchTab('availability')">Availability</button>
     </div>
 
     <!-- Bookings panel -->
@@ -757,6 +763,63 @@
             <tr><td colspan="7"><div class="empty-state">Loading…</div></td></tr>
           </tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- Availability panel -->
+    <div class="tab-panel" id="panel-availability">
+      <div style="max-width:600px;padding:8px 0 32px;">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:24px;">Control when clients can book discovery calls. Changes take effect immediately.</p>
+
+        <!-- Days -->
+        <div style="margin-bottom:24px;">
+          <p style="font-weight:600;font-size:14px;margin-bottom:10px;">Available days</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;" id="avail-days">
+            <label class="avail-day-lbl"><input type="checkbox" value="Mon"> Mon</label>
+            <label class="avail-day-lbl"><input type="checkbox" value="Tue"> Tue</label>
+            <label class="avail-day-lbl"><input type="checkbox" value="Wed"> Wed</label>
+            <label class="avail-day-lbl"><input type="checkbox" value="Thu"> Thu</label>
+            <label class="avail-day-lbl"><input type="checkbox" value="Fri"> Fri</label>
+            <label class="avail-day-lbl"><input type="checkbox" value="Sat"> Sat</label>
+            <label class="avail-day-lbl"><input type="checkbox" value="Sun"> Sun</label>
+          </div>
+        </div>
+
+        <!-- Hours -->
+        <div style="margin-bottom:24px;display:flex;gap:16px;flex-wrap:wrap;">
+          <div>
+            <p style="font-weight:600;font-size:14px;margin-bottom:8px;">Start time</p>
+            <select id="avail-start" style="padding:8px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;"></select>
+          </div>
+          <div>
+            <p style="font-weight:600;font-size:14px;margin-bottom:8px;">End time</p>
+            <select id="avail-end" style="padding:8px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;"></select>
+          </div>
+          <div>
+            <p style="font-weight:600;font-size:14px;margin-bottom:8px;">Slot length</p>
+            <select id="avail-slot" style="padding:8px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;">
+              <option value="15">15 min</option>
+              <option value="30" selected>30 min</option>
+              <option value="60">60 min</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Blocked dates -->
+        <div style="margin-bottom:24px;">
+          <p style="font-weight:600;font-size:14px;margin-bottom:8px;">Blocked dates <span style="font-weight:400;color:var(--muted);font-size:13px;">(vacations, holidays)</span></p>
+          <div style="display:flex;gap:8px;margin-bottom:10px;">
+            <input type="date" id="avail-block-input" style="padding:8px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;">
+            <button onclick="addBlockedDate()" style="padding:8px 16px;background:var(--ink);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">Add</button>
+          </div>
+          <div id="avail-blocked-list" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+        </div>
+
+        <!-- Save -->
+        <div style="display:flex;align-items:center;gap:16px;">
+          <button onclick="saveAvailability()" style="padding:11px 24px;background:var(--ink);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;">Save changes</button>
+          <span id="avail-status" style="font-size:13px;color:var(--muted);"></span>
+        </div>
       </div>
     </div>
 
@@ -892,6 +955,7 @@
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     document.getElementById('tab-' + name).classList.add('active');
     document.getElementById('panel-' + name).classList.add('active');
+    if (name === 'availability') loadAvailability();
   }
 
   // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -1405,6 +1469,130 @@
   function collapseMsg(id) {
     document.getElementById(id + '-short').style.display = 'inline';
     document.getElementById(id + '-full').style.display  = 'none';
+  }
+
+  // ── Availability settings ─────────────────────────────────────────────────────
+  let _blockedDates = [];
+
+  function populateTimeDropdowns() {
+    const labels = [
+      '12:00 am','1:00 am','2:00 am','3:00 am','4:00 am','5:00 am',
+      '6:00 am','7:00 am','8:00 am','9:00 am','10:00 am','11:00 am',
+      '12:00 pm','1:00 pm','2:00 pm','3:00 pm','4:00 pm','5:00 pm',
+      '6:00 pm','7:00 pm','8:00 pm','9:00 pm','10:00 pm','11:00 pm',
+    ];
+    const startSel = document.getElementById('avail-start');
+    const endSel   = document.getElementById('avail-end');
+    if (!startSel || startSel.options.length > 0) return; // already populated
+    labels.forEach((label, h) => {
+      startSel.add(new Option(label, h));
+      endSel.add(new Option(label, h));
+    });
+  }
+
+  async function loadAvailability() {
+    populateTimeDropdowns();
+    try {
+      const res  = await fetch('/api/availability');
+      if (!res.ok) return;
+      const data = await res.json();
+
+      // Days
+      document.querySelectorAll('#avail-days input[type=checkbox]').forEach(cb => {
+        cb.checked = (data.days_available || []).includes(cb.value);
+      });
+
+      // Start / end hour
+      const startSel = document.getElementById('avail-start');
+      const endSel   = document.getElementById('avail-end');
+      if (startSel) startSel.value = data.start_hour ?? 8;
+      if (endSel)   endSel.value   = data.end_hour   ?? 18;
+
+      // Slot duration
+      const slotSel = document.getElementById('avail-slot');
+      if (slotSel) slotSel.value = data.slot_duration_min ?? 30;
+
+      // Blocked dates
+      _blockedDates = Array.isArray(data.blocked_dates) ? [...data.blocked_dates] : [];
+      renderBlockedDates(_blockedDates);
+    } catch (err) {
+      console.error('loadAvailability error:', err);
+    }
+  }
+
+  function renderBlockedDates(dates) {
+    const list = document.getElementById('avail-blocked-list');
+    if (!list) return;
+    if (!dates.length) {
+      list.innerHTML = '<span style="font-size:13px;color:var(--muted);">None added</span>';
+      return;
+    }
+    list.innerHTML = dates.map(d =>
+      `<span class="avail-blocked-chip">${esc(d)}<button onclick="removeBlockedDate('${esc(d)}')" title="Remove">✕</button></span>`
+    ).join('');
+  }
+
+  function addBlockedDate() {
+    const input = document.getElementById('avail-block-input');
+    const val   = (input?.value || '').trim();
+    if (!val || _blockedDates.includes(val)) { input.value = ''; return; }
+    _blockedDates = [..._blockedDates, val].sort();
+    renderBlockedDates(_blockedDates);
+    input.value = '';
+  }
+
+  function removeBlockedDate(date) {
+    _blockedDates = _blockedDates.filter(d => d !== date);
+    renderBlockedDates(_blockedDates);
+  }
+
+  async function saveAvailability() {
+    const statusEl = document.getElementById('avail-status');
+    const btn = document.querySelector('#panel-availability button[onclick="saveAvailability()"]');
+    if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+    if (statusEl) statusEl.textContent = '';
+
+    const days = [];
+    document.querySelectorAll('#avail-days input[type=checkbox]:checked').forEach(cb => days.push(cb.value));
+
+    const startHour = parseInt(document.getElementById('avail-start')?.value ?? 8, 10);
+    const endHour   = parseInt(document.getElementById('avail-end')?.value   ?? 18, 10);
+    const slotMin   = parseInt(document.getElementById('avail-slot')?.value  ?? 30, 10);
+
+    if (!days.length) {
+      if (statusEl) { statusEl.textContent = 'Select at least one day.'; statusEl.style.color = '#E53935'; }
+      if (btn) { btn.disabled = false; btn.textContent = 'Save changes'; }
+      return;
+    }
+    if (startHour >= endHour) {
+      if (statusEl) { statusEl.textContent = 'Start time must be before end time.'; statusEl.style.color = '#E53935'; }
+      if (btn) { btn.disabled = false; btn.textContent = 'Save changes'; }
+      return;
+    }
+
+    try {
+      const res = await adminFetch('/api/availability', {
+        method: 'PUT',
+        body: JSON.stringify({
+          days_available:   days,
+          start_hour:       startHour,
+          end_hour:         endHour,
+          slot_duration_min: slotMin,
+          blocked_dates:    _blockedDates,
+          timezone:         'America/Chicago',
+        }),
+      });
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        throw new Error(j.error || ('Server error ' + res.status));
+      }
+      if (statusEl) { statusEl.textContent = '✓ Saved'; statusEl.style.color = '#16a34a'; }
+      setTimeout(() => { if (statusEl) statusEl.textContent = ''; }, 3000);
+    } catch (err) {
+      if (statusEl) { statusEl.textContent = 'Error: ' + err.message; statusEl.style.color = '#E53935'; }
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Save changes'; }
+    }
   }
 </script>
 </main>
