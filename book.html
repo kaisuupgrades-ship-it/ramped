@@ -341,8 +341,10 @@ function showConfirmation(name, email){
   var integrationOptions = ['WhatsApp Business','Instagram / Facebook DM','SMS / Text (Twilio)','Telegram','Slack','Discord','Email (Gmail / Outlook)','Website chat','Shopify','Google Calendar','Airtable','Make / Zapier','HubSpot','Salesforce / Other CRM'];
   var revenueOptions = ['Under $25K/mo','$25K\u2013$100K/mo','$100K\u2013$500K/mo','$500K+/mo'];
   var crmOptions = ['HubSpot','Salesforce','Pipedrive','Other CRM','No CRM yet'];
-  var osOptions = ['Mac','Windows','Mixed'];
+  var osOptions = ['Mac','Windows','Linux / Server','Not sure yet'];
   var emailOptions = ['Google Workspace / Gmail','Outlook / M365','Both','Other'];
+  var apiKeyOptions = ['Yes, I already have one','Yes, I\u2019ll get one before the call','Not yet \u2014 happy for you to walk me through it','Not sure what that is'];
+  var hostingOptions = ['My laptop / local computer','Dedicated server or VPS (DigitalOcean, AWS, etc.)','Not sure \u2014 need a recommendation','Other'];
 
   var painCheckboxesHTML = '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:5px;">' +
     painOptions.map(function(p){
@@ -368,13 +370,14 @@ function showConfirmation(name, email){
 
     '<div style="background:#EEF2FF;border:1.5px solid #A5B4FC;border-radius:10px;padding:14px 16px;margin:14px 0 16px;">' +
       '<p style="font-size:13px;font-weight:700;color:#1F4FFF;margin:0 0 3px;">\uD83D\uDDFA\uFE0F Get a custom automation map before your call</p>' +
-      '<p style="font-size:12px;color:#3730A3;line-height:1.5;margin:0;">Answer 9 quick questions and we\u2019ll build a tailored automation plan before you join \u2014 so your call is 10x more productive. Takes 2 minutes.</p>' +
+      '<p style="font-size:12px;color:#3730A3;line-height:1.5;margin:0;">Answer 11 quick questions and we\u2019ll build a tailored automation plan before you join \u2014 so your call is 10x more productive. Takes ~2 minutes.</p>' +
     '</div>' +
 
     '<form id="onboard-form" style="display:flex;flex-direction:column;gap:14px;">' +
       '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">1. WHAT\u2019S EATING YOUR TEAM\u2019S TIME? <span style="color:var(--accent);">*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;">(check all that apply)</span></label>' +
         painCheckboxesHTML +
-        '<input name="pain_other" placeholder="Other (describe)\u2026" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:7px;font-size:12px;background:#fff;box-sizing:border-box;margin-top:5px;"></div>' +
+        '<input name="pain_other" placeholder="Other (describe)\u2026" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:7px;font-size:12px;background:#fff;box-sizing:border-box;margin-top:5px;">' +
+        '<input name="automation_goal" placeholder="Biggest automation goal right now? (optional)\u2026" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:7px;font-size:12px;background:#fff;box-sizing:border-box;margin-top:5px;color:var(--ink);"></div>' +
       '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;letter-spacing:.06em;">2. WHAT INDUSTRY ARE YOU IN? <span style="color:var(--accent);">*</span></label>' +
         '<input name="industry" placeholder="e.g. Cannabis, Real Estate, E-commerce, Law\u2026" style="width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff;box-sizing:border-box;"></div>' +
       '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">3. HOW MANY PEOPLE ON YOUR TEAM? <span style="color:var(--accent);">*</span></label>' +
@@ -392,9 +395,9 @@ function showConfirmation(name, email){
       '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">6. WHICH PLATFORMS DOES YOUR BUSINESS ALREADY USE? <span style="color:var(--accent);">*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;">(check all \u2014 nanoclaw connects to all of these)</span></label>' +
         integCheckboxesHTML +
       '</div>' +
-      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">7. WHAT DOES YOUR TEAM PRIMARILY USE? <span style="color:var(--accent);">*</span></label>' +
-        '<div style="display:flex;gap:5px;">' +
-          osOptions.map(function(o){ return '<label style="cursor:pointer;text-align:center;display:block;flex:1;"><input type="radio" name="device_os" value="'+o+'" class="os-radio" style="position:absolute;opacity:0;width:0;height:0;"><span class="os-label" style="display:block;padding:7px 4px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;user-select:none;cursor:pointer;">'+o+'</span></label>'; }).join('') +
+      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">7. WHAT OS WILL YOU RUN THE AI ON? <span style="color:var(--accent);">*</span></label>' +
+        '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:5px;">' +
+          osOptions.map(function(o){ return '<label style="cursor:pointer;text-align:center;display:block;"><input type="radio" name="device_os" value="'+o+'" class="os-radio" style="position:absolute;opacity:0;width:0;height:0;"><span class="os-label" style="display:block;padding:7px 4px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;user-select:none;cursor:pointer;">'+o+'</span></label>'; }).join('') +
         '</div></div>' +
       '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">8. CURRENT CRM? <span style="color:var(--accent);">*</span></label>' +
         '<div style="display:flex;flex-wrap:wrap;gap:5px;">' +
@@ -403,6 +406,14 @@ function showConfirmation(name, email){
       '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">9. EMAIL PROVIDER? <span style="color:var(--accent);">*</span></label>' +
         '<div style="display:flex;flex-wrap:wrap;gap:5px;">' +
           emailOptions.map(function(e){ return '<label style="cursor:pointer;text-align:center;display:block;"><input type="radio" name="email_provider" value="'+e+'" class="email-radio" style="position:absolute;opacity:0;width:0;height:0;"><span class="email-label" style="display:block;padding:7px 11px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;user-select:none;cursor:pointer;white-space:nowrap;">'+e+'</span></label>'; }).join('') +
+        '</div></div>' +
+      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">10. DO YOU HAVE AN ANTHROPIC / CLAUDE API KEY? <span style="color:var(--accent);">*</span></label>' +
+        '<div style="display:flex;flex-direction:column;gap:5px;">' +
+          apiKeyOptions.map(function(a){ return '<label style="cursor:pointer;display:block;"><input type="radio" name="api_key" value="'+a+'" class="apikey-radio" style="position:absolute;opacity:0;width:0;height:0;"><span class="apikey-label" style="display:block;padding:8px 12px;border:1px solid var(--line);border-radius:8px;font-size:12px;font-weight:500;user-select:none;cursor:pointer;">'+a+'</span></label>'; }).join('') +
+        '</div></div>' +
+      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">11. WHERE DO YOU PLAN TO RUN THE AI? <span style="color:var(--accent);">*</span></label>' +
+        '<div style="display:flex;flex-direction:column;gap:5px;">' +
+          hostingOptions.map(function(h){ return '<label style="cursor:pointer;display:block;"><input type="radio" name="hosting" value="'+h+'" class="hosting-radio" style="position:absolute;opacity:0;width:0;height:0;"><span class="hosting-label" style="display:block;padding:8px 12px;border:1px solid var(--line);border-radius:8px;font-size:12px;font-weight:500;user-select:none;cursor:pointer;">'+h+'</span></label>'; }).join('') +
         '</div></div>' +
       '<div id="onboard-error" style="display:none;color:#dc2626;font-size:13px;padding:8px 12px;background:#fef2f2;border-radius:6px;">Please complete all fields.</div>' +
       '<button type="submit" id="onboard-btn" style="width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;">Submit &amp; get my automation map \u2192</button>' +
@@ -487,6 +498,26 @@ function showConfirmation(name, email){
     });
   });
 
+  // API key toggle
+  document.querySelectorAll('.apikey-radio').forEach(function(radio){
+    radio.addEventListener('change', function(){
+      document.querySelectorAll('.apikey-label').forEach(function(l){ l.style.background=''; l.style.color=''; l.style.borderColor=''; });
+      this.nextElementSibling.style.background='var(--accent)';
+      this.nextElementSibling.style.color='#fff';
+      this.nextElementSibling.style.borderColor='var(--accent)';
+    });
+  });
+
+  // Hosting toggle
+  document.querySelectorAll('.hosting-radio').forEach(function(radio){
+    radio.addEventListener('change', function(){
+      document.querySelectorAll('.hosting-label').forEach(function(l){ l.style.background=''; l.style.color=''; l.style.borderColor=''; });
+      this.nextElementSibling.style.background='var(--accent)';
+      this.nextElementSibling.style.color='#fff';
+      this.nextElementSibling.style.borderColor='var(--accent)';
+    });
+  });
+
   document.getElementById('skip-btn').addEventListener('click', function(){ showBooked(false); });
 
   document.getElementById('onboard-form').addEventListener('submit', async function(e){
@@ -505,11 +536,14 @@ function showConfirmation(name, email){
     var device_os = fd.get('device_os')||'';
     var crm = fd.get('crm')||'';
     var email_provider = fd.get('email_provider')||'';
+    var api_key = fd.get('api_key')||'';
+    var hosting = fd.get('hosting')||'';
+    var automation_goal = (fd.get('automation_goal')||'').trim();
 
     var all_pain = pain_points.concat(pain_other ? [pain_other] : []);
 
     // Manual validation
-    if(all_pain.length===0 || !industry || !team_size || !revenue || !inbound || integrations.length===0 || !device_os || !crm || !email_provider){
+    if(all_pain.length===0 || !industry || !team_size || !revenue || !inbound || integrations.length===0 || !device_os || !crm || !email_provider || !api_key || !hosting){
       errDiv.style.display='block';
       return;
     }
@@ -520,6 +554,7 @@ function showConfirmation(name, email){
       await fetch('/api/questionnaire',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
         email:email,
         pain_points:all_pain,
+        automation_goal:automation_goal,
         industry:industry,
         team_size:team_size,
         revenue:revenue,
@@ -528,6 +563,8 @@ function showConfirmation(name, email){
         device_os:device_os,
         crm:crm,
         email_provider:email_provider,
+        api_key:api_key,
+        hosting:hosting,
         tier:selectedTier||''
       })});
     }catch(err){}
