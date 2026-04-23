@@ -82,10 +82,23 @@
   .form-error{display:none;font-size:13px;color:#b91c1c;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:10px 14px;margin-top:8px;}
   .sr-only { position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0; }
   .section-wrap{max-width:1120px;margin-left:auto;margin-right:auto;padding-left:24px;padding-right:24px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 14px;border-radius:0 0 8px 0;font-size:13px;font-weight:600;z-index:100;}
+  .skip-link:focus{left:0;}
+  a:focus-visible, button:focus-visible, select:focus-visible, textarea:focus-visible, input:focus-visible, [role="button"]:focus-visible, details:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
   @media(min-width:768px){.section-wrap{padding-left:32px;padding-right:32px;}}
 </style>
 </head>
 <body>
+<noscript>
+  <div style="background:#FFFBEB;border-bottom:1px solid #F59E0B;padding:12px 20px;text-align:center;font-size:14px;color:#92400E;">
+    This page works best with JavaScript enabled. You can still email us at <a href="mailto:jon@30dayramp.com" style="color:#92400E;text-decoration:underline;">jon@30dayramp.com</a> to get started.
+  </div>
+</noscript>
+<a href="#main" class="skip-link">Skip to main content</a>
 
 <!-- ─── NAV ─────────────────────────────────────────────────────────────── -->
 <header class="border-b border-[var(--line)] bg-[var(--paper)]/85 backdrop-blur sticky top-0 z-40">
@@ -101,19 +114,51 @@
   <span class="font-bold text-lg tracking-tight ml-2">Ramped AI</span>
 </a>
     <!-- Nav links -->
-    <nav class="hidden sm:flex items-center gap-3">
+    <nav class="hidden sm:flex items-center gap-3" aria-label="Primary">
       <a href="/demo" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Demo</a>
       <a href="/comparison" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">VA vs. AI</a>
       <a href="/book" class="btn-primary whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Get started →</a>
     </nav>
     <!-- Mobile CTA -->
-    <div class="sm:hidden">
-      <a href="/book" class="btn-primary" style="padding:8px 16px;font-size:13px;">Get started →</a>
+    <div class="sm:hidden flex items-center gap-2">
+      <a href="/book" class="btn-primary" style="padding:8px 14px;font-size:13px;">Get started →</a>
+      <button type="button" id="mobile-nav-toggle" aria-expanded="false" aria-controls="mobile-nav-drawer" aria-label="Open menu"
+        style="width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;">
+        <svg width="18" height="14" viewBox="0 0 18 14" aria-hidden="true" focusable="false">
+          <rect y="0"  width="18" height="2" rx="1" fill="currentColor"/>
+          <rect y="6"  width="18" height="2" rx="1" fill="currentColor"/>
+          <rect y="12" width="18" height="2" rx="1" fill="currentColor"/>
+        </svg>
+      </button>
     </div>
   </div>
+  <nav id="mobile-nav-drawer" aria-label="Mobile" hidden class="sm:hidden"
+    style="border-top:1px solid var(--line);background:var(--paper);">
+    <ul style="list-style:none;margin:0;padding:8px 16px 16px;display:flex;flex-direction:column;gap:4px;">
+      <li><a href="/demo"       style="display:block;padding:12px 8px;font-size:15px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);">Demo</a></li>
+      <li><a href="/comparison" style="display:block;padding:12px 8px;font-size:15px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);">VA vs. AI</a></li>
+      <li><a href="/book"       style="display:block;padding:12px 8px;font-size:15px;font-weight:700;color:var(--accent);">Get started →</a></li>
+    </ul>
+  </nav>
 </header>
+<script>
+  (function(){
+    var btn = document.getElementById('mobile-nav-toggle');
+    var drawer = document.getElementById('mobile-nav-drawer');
+    if(!btn || !drawer) return;
+    function setOpen(open){
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      if(open){ drawer.removeAttribute('hidden'); } else { drawer.setAttribute('hidden', ''); }
+    }
+    btn.addEventListener('click', function(){ setOpen(btn.getAttribute('aria-expanded') !== 'true'); });
+    drawer.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ setOpen(false); }); });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape') setOpen(false); });
+  })();
+</script>
 
 <!-- ─── HERO ──────────────────────────────────────────────────────────────── -->
+<main id="main">
 <section class="grid-bg relative pt-16 pb-20" id="hero">
   <div class="section-wrap">
     <div class="max-w-[640px]">
@@ -144,23 +189,23 @@
               <div class="form-error"></div>
             </form>
             <p style="font-size:12px;color:var(--muted);margin-top:12px;text-align:center;">
-              Or <a href="/book" target="_blank" rel="noopener" style="color:var(--accent);font-weight:500;">book a free 30-min call</a> first — no commitment.
+              Or <a href="/book" style="color:var(--accent);font-weight:500;">book a free 30-min call</a> first — no commitment.
             </p>
           </div>
           <!-- Success state -->
           <div id="hero-form-success" class="success-state flex-col items-center text-center py-4">
             <div style="width:48px;height:48px;border-radius:999px;background:#ECFDF5;border:2px solid #D1FAE5;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
-              <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 11.5l5 5 9-10" stroke="var(--good)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><path d="M4 11.5l5 5 9-10" stroke="var(--good)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
-            <p style="font-weight:700;font-size:17px;color:var(--ink);margin-bottom:6px;">You're on the list.</p>
-            <p style="font-size:14px;color:var(--muted);line-height:1.5;">We'll be in touch within one business day. In the meantime, feel free to <a href="/book" target="_blank" rel="noopener" style="color:var(--accent);font-weight:500;">book a discovery call</a>.</p>
+            <p style="font-weight:700;font-size:17px;color:var(--ink);margin-bottom:6px;">Got it — we'll reach out within one business day.</p>
+            <p style="font-size:14px;color:var(--muted);line-height:1.5;">In the meantime, feel free to <a href="/book" style="color:var(--accent);font-weight:500;">book a free 30-min call</a>.</p>
           </div>
         </div>
 
         <!-- Trust signals -->
         <div class="flex flex-wrap items-center justify-center gap-4 mt-4" style="text-align:center;">
           <span class="escrow-badge">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1L2 3.5v4C2 10.1 4.2 12.6 7 13.5c2.8-.9 5-3.4 5-6V3.5L7 1z" fill="#F59E0B" opacity=".3" stroke="#F59E0B" stroke-width="1.2"/></svg>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M7 1L2 3.5v4C2 10.1 4.2 12.6 7 13.5c2.8-.9 5-3.4 5-6V3.5L7 1z" fill="#F59E0B" opacity=".3" stroke="#F59E0B" stroke-width="1.2"/></svg>
             30-day money-back guarantee
           </span>
           <span class="sectionnum">No lock-in · Cancel anytime</span>
@@ -297,7 +342,7 @@
     <div class="mb-12">
       <p class="sectionnum mb-3">Client results</p>
       <h2 style="font-size:clamp(1.75rem,4vw,2.5rem);font-weight:800;letter-spacing:-.02em;color:var(--ink);">
-        Real businesses. Real results.
+        Real business. Real results.
       </h2>
     </div>
 
@@ -466,7 +511,7 @@
     <!-- Guarantee banner -->
     <div style="margin-top:28px;padding:18px 24px;border-radius:14px;border:2px solid var(--ink);background:#FFFBEB;display:flex;align-items:center;gap:16px;">
       <div style="flex-shrink:0;width:44px;height:44px;border-radius:50%;background:#FEF3C7;border:2px solid #F59E0B;display:flex;align-items:center;justify-content:center;">
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2L3 6v6c0 5 3.6 9.1 8 10.5C15.4 21.1 19 17 19 12V6L11 2z" fill="#F59E0B" opacity=".25" stroke="#F59E0B" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><path d="M11 2L3 6v6c0 5 3.6 9.1 8 10.5C15.4 21.1 19 17 19 12V6L11 2z" fill="#F59E0B" opacity=".25" stroke="#F59E0B" stroke-width="1.5" stroke-linejoin="round"/></svg>
       </div>
       <div>
         <p style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:2px;">30-day guaranteed satisfaction or your money back.</p>
@@ -475,7 +520,7 @@
     </div>
 
     <p style="font-size:14px;color:var(--muted);margin-top:16px;padding-left:2px;">
-      Not ready to commit? <a href="/book" target="_blank" rel="noopener" style="color:var(--accent);font-weight:500;">Book a free 30-minute discovery call first.</a>
+      Not ready to commit? <a href="/book" style="color:var(--accent);font-weight:500;">Book a free 30-minute discovery call first.</a>
     </p>
   </div>
 </section>
@@ -588,14 +633,16 @@
       <!-- Success state -->
       <div id="final-form-success" class="success-state flex-col items-center text-center py-4">
         <div style="width:48px;height:48px;border-radius:999px;background:#ECFDF5;border:2px solid #D1FAE5;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 11.5l5 5 9-10" stroke="var(--good)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><path d="M4 11.5l5 5 9-10" stroke="var(--good)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
-        <p style="font-weight:700;font-size:17px;color:var(--ink);margin-bottom:6px;">You're on the list.</p>
-        <p style="font-size:14px;color:var(--muted);line-height:1.5;">We'll be in touch within one business day. In the meantime, feel free to <a href="/book" target="_blank" rel="noopener" style="color:var(--accent);font-weight:500;">book a discovery call</a>.</p>
+        <p style="font-weight:700;font-size:17px;color:var(--ink);margin-bottom:6px;">Got it — we'll reach out within one business day.</p>
+        <p style="font-size:14px;color:var(--muted);line-height:1.5;">In the meantime, feel free to <a href="/book" style="color:var(--accent);font-weight:500;">book a free 30-min call</a>.</p>
       </div>
     </div>
   </div>
 </section>
+
+</main>
 
 <!-- ─── FOOTER ────────────────────────────────────────────────────────────── -->
 <footer class="border-t border-[var(--line)] px-5 py-10">

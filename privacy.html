@@ -17,8 +17,12 @@
 <style>
   :root{--ink:#0B1220;--paper:#FAFAF7;--line:#E6E4DC;--muted:#5B6272;--accent:#1F4FFF;--surface:#F5F5F3;}
   body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;}
-  a{color:var(--accent);text-decoration:none;}
-  a:hover{text-decoration:underline;}
+  .prose a{color:var(--accent);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px;}
+  .prose a:hover{text-decoration-thickness:2px;}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 14px;border-radius:0 0 8px 0;font-size:13px;font-weight:600;z-index:100;}
+  .skip-link:focus{left:0;}
+  header a,footer a{color:inherit;}
   .prose{max-width:720px;margin:0 auto;padding:48px 24px 80px;}
   .prose h1{font-size:clamp(1.5rem,3vw,2rem);font-weight:800;letter-spacing:-.02em;margin-bottom:8px;}
   .prose .updated{font-size:13px;color:var(--muted);margin-bottom:40px;}
@@ -31,6 +35,7 @@
 </style>
 </head>
 <body>
+<a href="#main" class="skip-link">Skip to main content</a>
 
 <header class="border-b border-[var(--line)] bg-[var(--paper)]/85 backdrop-blur sticky top-0 z-40">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
@@ -54,7 +59,7 @@
   </div>
 </header>
 
-<div class="prose">
+<main id="main" class="prose">
   <h1>Privacy Policy</h1>
   <p class="updated">Last updated: April 20, 2026</p>
 
@@ -95,7 +100,10 @@
 
   <h2>9. Contact</h2>
   <p>Questions about this policy? Email us at <a href="mailto:jon@30dayramp.com">jon@30dayramp.com</a>.</p>
-</div>
+
+  <h2>10. Data Processing for Questionnaire Submissions</h2>
+  <p>When you submit your business questionnaire via our contact form, the information you provide (business description, goals, time drains, tools, and availability) is stored in Supabase and sent by email to our team at <a href="mailto:jon@30dayramp.com">jon@30dayramp.com</a>. We use this information solely to prepare for and conduct your discovery call. We do not use it for advertising, training AI models, or share it with any third party outside of the subprocessors listed in Section 4.</p>
+</main>
 
 <footer class="border-t border-[var(--line)] px-5 py-10">
   <div class="max-w-6xl mx-auto px-4 sm:px-6" style="display:flex;flex-direction:column;gap:20px;">

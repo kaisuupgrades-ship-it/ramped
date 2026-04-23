@@ -92,9 +92,13 @@
   @media (min-width: 640px) { .scenario-tabs { flex-wrap: nowrap; } }
   .section-wrap{max-width:1120px;margin-left:auto;margin-right:auto;padding-left:24px;padding-right:24px;}
   @media(min-width:768px){.section-wrap{padding-left:32px;padding-right:32px;}}
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+  .skip-link { position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 14px;border-radius:0 0 8px 0;font-size:13px;font-weight:600;z-index:100; }
+  .skip-link:focus { left: 0; }
 </style>
 </head>
 <body>
+<a href="#main" class="skip-link">Skip to main content</a>
 
 <header class="border-b border-[var(--line)] bg-[var(--paper)]/85 backdrop-blur sticky top-0 z-40">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
@@ -118,6 +122,7 @@
   </div>
 </header>
 
+<main id="main">
 
 <section class="border-b border-[var(--line)] grid-bg">
   <div class="section-wrap py-14">
@@ -170,7 +175,7 @@
       </div>
     </div>
     <!-- Desktop: category tabs -->
-    <div class="hidden sm:flex gap-2 mb-3 flex-wrap scenario-tabs" role="tablist" aria-label="Demo capability">
+    <div class="hidden sm:flex gap-2 mb-3 flex-wrap scenario-tabs" aria-label="Demo capability">
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-category="livecall" data-scenario="livecall" aria-pressed="false">📞 Live call <span class="chip ml-1" style="background:#FFEDD5;color:#7A4F00;font-size:10px;padding:1px 6px;">FEATURED</span></button>
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-category="email" data-scenario="healthcare" aria-pressed="false">📥 Email intake</button>
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-category="financial" data-scenario="financial" aria-pressed="false">📊 Financial</button>
@@ -328,9 +333,11 @@
       <a href="/book" style="display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--ink);padding:14px 24px;border-radius:10px;font-weight:700;font-size:15px;text-decoration:none;transition:opacity .12s ease;" onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">Book a call →</a>
       <a href="/#get-started" style="display:inline-flex;align-items:center;gap:8px;color:#fff;padding:14px 24px;border-radius:10px;font-weight:600;font-size:15px;text-decoration:none;border:1px solid rgba(255,255,255,0.25);background:transparent;transition:background .12s ease;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='transparent'">Get started online →</a>
     </div>
-    <p style="margin-top:20px;font-size:12px;color:rgba(255,255,255,0.35);">30-day go-live guarantee · Flat monthly fee · No consultants, no decks</p>
+    <p style="margin-top:20px;font-size:12px;color:rgba(255,255,255,0.75);">30-day go-live guarantee · Flat monthly fee · No consultants, no decks</p>
   </div>
 </section>
+
+</main>
 
 <footer class="border-t border-[var(--line)] px-5 py-10">
   <div class="section-wrap" style="display:flex;flex-direction:column;gap:20px;">

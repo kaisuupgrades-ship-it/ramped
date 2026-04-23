@@ -1,21 +1,17 @@
 // api/admin-delete.js — Delete a booking
-// POST /api/admin-delete?token=VALUE   Body: { id }
+// POST /api/admin-delete   Body: { id }
+
+import { setAdminCors, isAuthorized } from './_lib/admin-auth.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
-const ADMIN_TOKEN  = process.env.ADMIN_TOKEN;
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  setAdminCors(req, res, 'POST, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { token } = req.query;
-  if (!token || !ADMIN_TOKEN || token !== ADMIN_TOKEN) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
+  if (!isAuthorized(req)) return res.status(401).json({ error: 'Unauthorized' });
 
   if (!SUPABASE_URL || !SUPABASE_KEY) {
     return res.status(503).json({ error: 'Database not configured' });
