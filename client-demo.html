@@ -7,6 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>See It In Action — Ramped AI</title>
 <meta name="description" content="Watch live AI agents handle real business workflows. Pick your industry and see exactly what gets deployed into your operation." />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Ramped AI" />
+<meta property="og:description" content="Watch live AI agents handle real business workflows. Pick your industry and see exactly what gets deployed into your operation." />
+<meta property="og:image" content="https://www.30dayramp.com/og-image.png" />
 <meta property="og:title" content="See It In Action — Ramped AI" />
 <meta property="og:url" content="https://www.30dayramp.com/demo" />
 <meta name="twitter:card" content="summary_large_image">
@@ -89,14 +93,16 @@
   .sub-btn:hover { border-color:var(--accent); color:var(--accent); }
   .sub-btn.active { background:var(--accent); color:#fff; border-color:var(--accent); font-weight:600; }
   .scenario-tabs { flex-wrap: wrap; }
+  @media (min-width: 640px) { .scenario-tabs { flex-wrap: nowrap; } }
   .section-wrap{max-width:1120px;margin-left:auto;margin-right:auto;padding-left:24px;padding-right:24px;}
   @media(min-width:768px){.section-wrap{padding-left:32px;padding-right:32px;}}
-  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
-  .skip-link { position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 14px;border-radius:0 0 8px 0;font-size:13px;font-weight:600;z-index:100; }
-  .skip-link:focus { left: 0; }
+  a:focus-visible, button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 14px;border-radius:0 0 8px 0;font-size:13px;font-weight:600;z-index:100;}
+  .skip-link:focus{left:0;}
 </style>
 </head>
 <body>
+
 <a href="#main" class="skip-link">Skip to main content</a>
 
 <header class="border-b border-[var(--line)] bg-[var(--paper)]/85 backdrop-blur sticky top-0 z-40">
@@ -111,12 +117,12 @@
   <span class="font-bold text-lg tracking-tight ml-2">Ramped AI</span>
 </a>
     <nav class="hidden sm:flex items-center gap-3">
-      <a href="/demo" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Demo</a>
-      <a href="/comparison" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">VA vs. AI</a>
-      <a href="/book" class="btn-primary whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Get started →</a>
+      <a href="/demo" class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">Demo</a>
+      <a href="/comparison" class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">VA vs. AI</a>
+      <a href="/book" class="btn-primary whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">Get started →</a>
     </nav>
     <div class="sm:hidden">
-      <a href="/book" class="btn-primary" style="padding:8px 16px;font-size:13px;">Get started →</a>
+      <a href="/book" class="btn-primary" style="padding:11px 16px;font-size:13px;min-height:44px;">Get started →</a>
     </div>
   </div>
 </header>
@@ -127,7 +133,7 @@
   <div class="section-wrap py-14">
     <div class="pill" style="margin:0 0 16px;width:fit-content;"><span class="dot"></span> Live agent demos</div>
     <h1 style="font-size:clamp(2rem,5vw,2.8rem);font-weight:800;letter-spacing:-0.03em;line-height:1.1;margin-bottom:16px;text-align:left;">Your next hire doesn't sleep,<br>forget, or drop the ball.</h1>
-    <p style="font-size:16px;color:var(--muted);max-width:500px;margin:0;line-height:1.6;text-align:left;">Pick your industry. Watch a live AI agent handle a real inbound workflow — exactly how it runs from day one of your Sprint.</p>
+    <p style="font-size:16px;color:var(--muted);max-width:500px;margin:0;line-height:1.6;text-align:left;">Pick your industry. Watch a live AI agent handle a real inbound workflow — exactly how it runs from day one of your 30-day ramp.</p>
   </div>
 </section>
 
@@ -169,11 +175,15 @@
         </select>
         <!-- Visible chevron icon -->
         <div style="pointer-events:none;position:absolute;right:14px;top:50%;transform:translateY(-50%);width:28px;height:28px;background:var(--ink);border-radius:6px;display:flex;align-items:center;justify-content:center;">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5l4 4 4-4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M3 5l4 4 4-4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
       </div>
     </div>
-    <!-- Desktop: category tabs -->
+    <!-- Desktop: category tabs.
+         Dropped role="tablist" — children use aria-pressed (toggle-button pattern),
+         not aria-selected/role="tab". Having the parent claim tablist without the
+         matching child roles fails axe `aria-required-children`. If we want the
+         full tablist pattern later, add role="tab" + aria-selected + arrow-key nav. -->
     <div class="hidden sm:flex gap-2 mb-3 flex-wrap scenario-tabs" aria-label="Demo capability">
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-category="livecall" data-scenario="livecall" aria-pressed="false">📞 Live call <span class="chip ml-1" style="background:#FFEDD5;color:#7A4F00;font-size:10px;padding:1px 6px;">FEATURED</span></button>
       <button class="scenario-btn px-4 py-2 rounded-lg border border-[var(--line)] bg-white text-sm font-semibold" data-category="email" data-scenario="healthcare" aria-pressed="false">📥 Email intake</button>
@@ -327,7 +337,7 @@
       <span style="width:6px;height:6px;border-radius:999px;background:#7CFFB7;display:inline-block;"></span> Free · No commitment
     </div>
     <h2 style="font-size:clamp(1.8rem,4.5vw,2.6rem);font-weight:800;letter-spacing:-0.03em;line-height:1.1;margin-bottom:16px;">Ready to see what's possible<br>for your business?</h2>
-    <p style="color:rgba(255,255,255,0.65);font-size:17px;max-width:520px;margin:0 0 32px;line-height:1.6;">Book a free 30-minute call. We'll map your highest-value workflow and show you what an agent would look like inside it.</p>
+    <p style="color:rgba(255,255,255,0.75);font-size:17px;max-width:520px;margin:0 0 32px;line-height:1.6;">Book a free 30-min call. We'll map your highest-value workflow and show you what an agent would look like inside it.</p>
     <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;">
       <a href="/book" style="display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--ink);padding:14px 24px;border-radius:10px;font-weight:700;font-size:15px;text-decoration:none;transition:opacity .12s ease;" onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">Book a call →</a>
       <a href="/#get-started" style="display:inline-flex;align-items:center;gap:8px;color:#fff;padding:14px 24px;border-radius:10px;font-weight:600;font-size:15px;text-decoration:none;border:1px solid rgba(255,255,255,0.25);background:transparent;transition:background .12s ease;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='transparent'">Get started online →</a>
@@ -1394,24 +1404,3 @@ function initScheduler(){
     if (e.key === 'Enter'){ e.preventDefault(); handleSubmit(chatInput.value); }
   });
   chatReset.addEventListener('click', function(){
-    state.appts = JSON.parse(JSON.stringify(SEED));
-    state.nextId = 7;
-    chatLog.innerHTML = '';
-    renderCalendar();
-    addChat('system', 'Schedule reset to Monday morning.');
-    addChat('agent', 'Morning. I can book, move, cancel, or check openings against the schedule. What do you need?');
-  });
-  document.querySelectorAll('.prompt-chip').forEach(function(btn){
-    btn.addEventListener('click', function(){ handleSubmit(btn.textContent); });
-  });
-
-  function escapeAttr(s){ return String(s).replace(/"/g,'&quot;'); }
-
-  // initial render
-  renderCalendar();
-  addChat('agent', 'Morning. I can book, move, cancel, or check openings against the schedule. What do you need?');
-}
-
-</script>
-</body>
-</html>
