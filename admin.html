@@ -349,11 +349,15 @@
 
     .status-select:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-    .status-upcoming   { background: #E8EEFF; color: var(--accent); }
-    .status-completed  { background: #EDEDEC; color: #555; }
-    .status-converted  { background: #EBF7F2; color: var(--good); }
-    .status-no_show    { background: #FDECEA; color: var(--danger); }
-    .status-unknown    { background: #EDEDEC; color: var(--muted); }
+    .status-new         { background: #E8EEFF; color: var(--accent); }
+    .status-discovery   { background: #EDE8FF; color: #5B2FCC; }
+    .status-proposal    { background: #FEF3E2; color: #B45309; }
+    .status-negotiation { background: #FFFBE6; color: #92400E; }
+    .status-won         { background: #EBF7F2; color: var(--good); }
+    .status-lost        { background: #FDECEA; color: var(--danger); }
+    .status-post_won    { background: #D1FAE5; color: #065F46; }
+    .status-no_show     { background: #FEE2E2; color: #991B1B; }
+    .status-unknown     { background: #EDEDEC; color: var(--muted); }
 
     /* ── Tier badge ───────────────────────────────────────────────────────── */
     .tier-badge {
@@ -652,9 +656,13 @@
         </div>
         <div class="modal-field"><label>Status</label>
           <select name="status" id="booking-status-field" style="display:none;">
-            <option value="upcoming">Upcoming</option>
-            <option value="completed">Completed</option>
-            <option value="converted">Converted</option>
+            <option value="new">New</option>
+            <option value="discovery">Discovery</option>
+            <option value="proposal">Proposal</option>
+            <option value="negotiation">Negotiation</option>
+            <option value="won">Won</option>
+            <option value="lost">Lost</option>
+            <option value="post_won">Post-Won</option>
             <option value="no_show">No Show</option>
           </select>
         </div>
@@ -675,16 +683,16 @@
   <!-- Pipeline summary bar -->
   <div class="pipeline-bar">
     <div class="stat-card">
-      <div class="stat-label">Upcoming</div>
-      <div class="stat-value" id="stat-upcoming">—</div>
+      <div class="stat-label">New</div>
+      <div class="stat-value" id="stat-new">—</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">Completed</div>
-      <div class="stat-value" id="stat-completed">—</div>
+      <div class="stat-label">In Progress</div>
+      <div class="stat-value" id="stat-inprogress">—</div>
     </div>
     <div class="stat-card good">
-      <div class="stat-label">Converted</div>
-      <div class="stat-value" id="stat-converted">—</div>
+      <div class="stat-label">Won</div>
+      <div class="stat-value" id="stat-won">—</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Leads</div>
@@ -704,9 +712,13 @@
         <input type="text" id="search-input" placeholder="Search name, company, email…" oninput="applyFilters()">
         <select id="status-filter" onchange="applyFilters()">
           <option value="">All Statuses</option>
-          <option value="upcoming">Upcoming</option>
-          <option value="completed">Completed</option>
-          <option value="converted">Converted</option>
+          <option value="new">New</option>
+          <option value="discovery">Discovery</option>
+          <option value="proposal">Proposal</option>
+          <option value="negotiation">Negotiation</option>
+          <option value="won">Won</option>
+          <option value="lost">Lost</option>
+          <option value="post_won">Post-Won</option>
           <option value="no_show">No Show</option>
         </select>
         <select id="tier-filter" onchange="applyFilters()">
@@ -763,8 +775,8 @@
 
   // ── Constants ────────────────────────────────────────────────────────────────
   const SESSION_KEY = 'ramped_admin_token';
-  const STATUSES = ['upcoming', 'completed', 'converted', 'no_show'];
-  const STATUS_LABELS = { upcoming: 'Upcoming', completed: 'Completed', converted: 'Converted', no_show: 'No Show' };
+  const STATUSES = ['new', 'discovery', 'proposal', 'negotiation', 'won', 'lost', 'post_won', 'no_show'];
+  const STATUS_LABELS = { new: 'New', discovery: 'Discovery', proposal: 'Proposal', negotiation: 'Negotiation', won: 'Won', lost: 'Lost', post_won: 'Post-Won', no_show: 'No Show' };
 
   let _token = null;
   let _allBookings = [];
@@ -910,14 +922,14 @@
   // ── Update pipeline stats ────────────────────────────────────────────────────
   function updateStats(bookings, leads) {
     const now = new Date();
-    // Upcoming: status='upcoming' OR (no status AND datetime in future)
-    const upcoming  = bookings.filter(b => b.status === 'upcoming' || (!b.status && new Date(b.datetime) > now)).length;
-    const completed = bookings.filter(b => b.status === 'completed').length;
-    const converted = bookings.filter(b => b.status === 'converted').length;
+    // New: status='new' OR (no status AND datetime in future)
+    const newCount  = bookings.filter(b => b.status === 'new' || (!b.status && new Date(b.datetime) > now)).length;
+    const inprogress = bookings.filter(b => ['discovery','proposal','negotiation'].includes(b.status)).length;
+    const wonCount  = bookings.filter(b => b.status === 'won' || b.status === 'post_won').length;
 
-    document.getElementById('stat-upcoming').textContent  = upcoming;
-    document.getElementById('stat-completed').textContent = completed;
-    document.getElementById('stat-converted').textContent = converted;
+    document.getElementById('stat-new').textContent        = newCount;
+    document.getElementById('stat-inprogress').textContent = inprogress;
+    document.getElementById('stat-won').textContent        = wonCount;
     document.getElementById('stat-leads').textContent     = leads.length;
   }
 
@@ -992,7 +1004,7 @@
         if (!hay.includes(search)) return false;
       }
       if (statusF) {
-        const bStatus = b.status || (new Date(b.datetime) > new Date() ? 'upcoming' : '');
+        const bStatus = b.status || (new Date(b.datetime) > new Date() ? 'new' : '');
         if (bStatus !== statusF) return false;
       }
       if (tierF && (b.tier || '') !== tierF) return false;
@@ -1054,7 +1066,7 @@
     for (const b of bookings) {
       const isPast   = new Date(b.datetime) < now;
       const rowClass = isPast ? 'past-booking' : '';
-      const status   = b.status || 'upcoming';
+      const status   = b.status || 'new';
       const hasQ     = b.questionnaire && typeof b.questionnaire === 'object';
       const bid      = esc(b.id);
 
@@ -1249,7 +1261,7 @@
             datetime: datetimeIso,
             tier:     fd.get('tier') || '',
             notes:    fd.get('notes') || '',
-            status:   fd.get('status') || 'upcoming',
+            status:   fd.get('status') || 'new',
             timezone: LOCAL_TZ,
           }),
         });
