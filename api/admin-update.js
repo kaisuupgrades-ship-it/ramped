@@ -6,7 +6,7 @@ const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const ADMIN_TOKEN  = process.env.ADMIN_TOKEN;
 
-const VALID_STATUSES  = new Set(['upcoming', 'completed', 'converted', 'no_show']);
+const VALID_STATUSES  = new Set(['new', 'discovery', 'proposal', 'negotiation', 'won', 'lost', 'post_won', 'no_show']);
 const VALID_TIERS     = new Set(['starter', 'growth', 'enterprise', '']);
 const EDITABLE_FIELDS = [
   'status', 'admin_notes', 'name', 'email', 'company',
