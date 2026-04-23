@@ -106,7 +106,7 @@ export default async function handler(req, res) {
         notes:    notes    || null,
         timezone: timezone || null,
         tier:     tier     || null,
-        status:   'upcoming',
+        status:   'new',
       });
       if (!ok) {
         if (status === 409) return res.status(409).json({ error: 'That time slot was just booked. Please choose another.' });
