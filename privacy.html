@@ -17,8 +17,8 @@
 <style>
   :root{--ink:#0B1220;--paper:#FAFAF7;--line:#E6E4DC;--muted:#5B6272;--accent:#1F4FFF;--surface:#F5F5F3;}
   body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;}
-  .prose a{color:var(--accent);text-decoration:none;}
-  .prose a:hover{text-decoration:underline;}
+  .prose a{color:var(--accent);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px;}
+  .prose a:hover{text-decoration-thickness:2px;}
   a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px;}
   .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 14px;border-radius:0 0 8px 0;font-size:13px;font-weight:600;z-index:100;}
   .skip-link:focus{left:0;}
@@ -101,8 +101,8 @@
   <h2>9. Contact</h2>
   <p>Questions about this policy? Email us at <a href="mailto:jon@30dayramp.com">jon@30dayramp.com</a>.</p>
 
-  <h2>10. Questionnaire Data</h2>
-  <p>When you complete our onboarding questionnaire after booking a call, we collect additional business information (such as your industry, team size, current tools, and goals). This data is used solely to prepare for your scheduled call and to tailor our service recommendations. It is stored in our secure database alongside your booking record and is subject to the same retention and deletion rights described above.</p>
+  <h2>10. Data Processing for Questionnaire Submissions</h2>
+  <p>When you submit your business questionnaire via our contact form, the information you provide (business description, goals, time drains, tools, and availability) is stored in Supabase and sent by email to our team at <a href="mailto:jon@30dayramp.com">jon@30dayramp.com</a>. We use this information solely to prepare for and conduct your discovery call. We do not use it for advertising, training AI models, or share it with any third party outside of the subprocessors listed in Section 4.</p>
 </main>
 
 <footer class="border-t border-[var(--line)] px-5 py-10">
