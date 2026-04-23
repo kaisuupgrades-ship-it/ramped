@@ -1118,19 +1118,31 @@
       // Questionnaire panel row (hidden until toggled)
       if (hasQ) {
         const q = b.questionnaire;
-        const toolsArr = Array.isArray(q.tools) ? q.tools : (q.tools ? [q.tools] : []);
-        const toolsBadges = toolsArr.length
-          ? toolsArr.map(t => `<span class="tool-badge">${esc(t)}</span>`).join('')
-          : '<span style="color:var(--muted)">—</span>';
+        function badges(val) {
+          const arr = Array.isArray(val) ? val : (val ? [val] : []);
+          return arr.length
+            ? arr.map(t => `<span class="tool-badge">${esc(t)}</span>`).join('')
+            : '<span style="color:var(--muted)">—</span>';
+        }
+        // Support both old field names and new
+        const painArr   = q.pain_points   || (q.bottleneck ? [q.bottleneck] : []);
+        const integArr  = q.integrations  || q.tools || [];
+        const aiArr     = q.ai_tools      || [];
+        const inbound   = q.inbound       || q.customer_channel || '—';
 
         rows.push(`
           <tr class="q-panel" id="q-panel-${bid}">
             <td colspan="7" style="padding:0">
               <div class="q-inner">
                 <div class="q-row" style="grid-column:1/-1">
-                  <span class="q-label">Biggest Bottleneck</span>
-                  <span class="q-val">${esc(q.bottleneck || '—')}</span>
+                  <span class="q-label">Pain Points</span>
+                  <span class="q-val">${badges(painArr)}</span>
                 </div>
+                ${q.automation_goal ? `
+                <div class="q-row" style="grid-column:1/-1">
+                  <span class="q-label">Automation Goal</span>
+                  <span class="q-val">${esc(q.automation_goal)}</span>
+                </div>` : ''}
                 <div class="q-row">
                   <span class="q-label">Industry</span>
                   <span class="q-val">${esc(q.industry || '—')}</span>
@@ -1140,12 +1152,32 @@
                   <span class="q-val">${esc(q.team_size || '—')}</span>
                 </div>
                 <div class="q-row">
-                  <span class="q-label">Customer Channel</span>
-                  <span class="q-val">${esc(q.customer_channel || '—')}</span>
+                  <span class="q-label">Annual Revenue</span>
+                  <span class="q-val">${esc(q.revenue || '—')}</span>
+                </div>
+                <div class="q-row">
+                  <span class="q-label">Inbound Channel</span>
+                  <span class="q-val">${esc(inbound)}</span>
+                </div>
+                <div class="q-row">
+                  <span class="q-label">OS</span>
+                  <span class="q-val">${esc(q.device_os || '—')}</span>
+                </div>
+                <div class="q-row">
+                  <span class="q-label">CRM</span>
+                  <span class="q-val">${esc(q.crm || '—')}</span>
+                </div>
+                <div class="q-row">
+                  <span class="q-label">Email Provider</span>
+                  <span class="q-val">${esc(q.email_provider || '—')}</span>
                 </div>
                 <div class="q-row" style="grid-column:1/-1">
-                  <span class="q-label">Tools</span>
-                  <span class="q-val">${toolsBadges}</span>
+                  <span class="q-label">Platforms / Integrations</span>
+                  <span class="q-val">${badges(integArr)}</span>
+                </div>
+                <div class="q-row" style="grid-column:1/-1">
+                  <span class="q-label">AI Tools</span>
+                  <span class="q-val">${badges(aiArr)}</span>
                 </div>
               </div>
             </td>
