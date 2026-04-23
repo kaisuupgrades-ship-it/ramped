@@ -9,6 +9,7 @@
     { "source": "/privacy",                 "destination": "/privacy.html" },
     { "source": "/thanks",                  "destination": "/thanks.html" },
     { "source": "/admin",                   "destination": "/admin.html" },
+    { "source": "/dashboard",               "destination": "/dashboard.html" },
     { "source": "/questionnaire-preview",   "destination": "/questionnaire-preview.html" }
   ],
   "headers": [
@@ -30,7 +31,7 @@
       ]
     },
     {
-      "source": "/:page(index|book|comparison|client-demo|privacy|thanks|admin).html",
+      "source": "/:page(index|book|comparison|client-demo|privacy|thanks|admin|dashboard).html",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
       ]
