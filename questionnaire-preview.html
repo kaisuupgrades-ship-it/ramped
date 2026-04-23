@@ -7,60 +7,52 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 <style>
-:root{
-  --ink:#0B1220;--paper:#FAFAF7;--line:#E6E4DC;
-  --muted:#5B6272;--accent:#1F4FFF;--good:#0F7A4B;
-  --surface:#F5F5F3;
-}
+:root{--ink:#0B1220;--paper:#FAFAF7;--line:#E6E4DC;--muted:#5B6272;--accent:#1F4FFF;--good:#0F7A4B;}
 *{box-sizing:border-box;}
 body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;margin:0;padding:32px 16px 64px;}
-a{color:inherit;text-decoration:none;}
 .wrap{max-width:560px;margin:0 auto;}
 .back{font-size:13px;color:var(--muted);display:inline-flex;align-items:center;gap:4px;margin-bottom:20px;cursor:pointer;background:none;border:none;padding:0;font-family:inherit;}
 .back:hover{color:var(--ink);}
 h1{font-size:20px;font-weight:700;margin:0 0 4px;}
-.subtitle{font-size:13px;color:var(--muted);margin-bottom:20px;}
+.subtitle{font-size:13px;color:var(--muted);margin-bottom:16px;}
 .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:3px 3px 0 var(--ink);}
-.banner{background:#EEF2FF;border:1.5px solid #A5B4FC;border-radius:10px;padding:14px 16px;margin-bottom:20px;}
-.banner p:first-child{font-size:13px;font-weight:700;color:#1F4FFF;margin:0 0 3px;}
-.banner p:last-child{font-size:12px;color:#3730A3;line-height:1.5;margin:0;}
-label.qlabel{font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;text-transform:uppercase;}
+.banner{background:#EEF2FF;border:1.5px solid #A5B4FC;border-radius:10px;padding:14px 16px;margin-bottom:16px;}
+.banner-title{font-size:13px;font-weight:700;color:#1F4FFF;margin:0 0 3px;}
+.banner-sub{font-size:12px;color:#3730A3;line-height:1.5;margin:0;}
+.admin-note{background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:10px 14px;font-size:12px;color:#92400E;margin-bottom:16px;}
+.qlabel{font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;text-transform:uppercase;}
 .qblock{display:flex;flex-direction:column;gap:14px;}
-input[type=text],input[type=email],textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff;font-family:inherit;box-sizing:border-box;}
-textarea{resize:vertical;}
+input[type=text]{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff;font-family:inherit;}
+input.small{padding:7px 10px;font-size:12px;border-radius:7px;margin-top:5px;}
 .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:5px;}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;}
 .grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;}
 .flex-wrap{display:flex;flex-wrap:wrap;gap:5px;}
-.flex3{display:flex;gap:5px;}
-.chip-radio,.chip-check{display:none;}
-.chip-label{display:block;padding:7px 11px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;user-select:none;cursor:pointer;text-align:center;white-space:nowrap;}
-.chip-label-sm{display:block;padding:7px 4px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;user-select:none;cursor:pointer;text-align:center;}
-.chip-label-check{display:flex;align-items:center;gap:5px;padding:6px 8px;border:1px solid var(--line);border-radius:7px;font-size:11px;font-weight:500;user-select:none;cursor:pointer;background:#fff;}
-.chip-label-check input{margin:0;}
-.selected{background:var(--accent)!important;color:#fff!important;border-color:var(--accent)!important;}
-.selected-box{background:#E8EEFF!important;color:var(--accent)!important;border-color:var(--accent)!important;}
+.col{display:flex;flex-direction:column;gap:5px;}
+.chip-check-label{display:flex;align-items:center;gap:5px;padding:6px 8px;border:1px solid var(--line);border-radius:7px;font-size:11px;font-weight:500;cursor:pointer;background:#fff;user-select:none;}
+.chip-check-label input{margin:0;}
+.chip-radio-label{display:block;padding:7px 4px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;text-align:center;user-select:none;}
+.chip-radio-label-lg{display:block;padding:8px 12px;border:1px solid var(--line);border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;user-select:none;}
+.chip-radio-label-pill{display:block;padding:7px 11px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;text-align:center;white-space:nowrap;user-select:none;}
 .err{display:none;color:#dc2626;font-size:13px;padding:8px 12px;background:#fef2f2;border-radius:6px;}
-.submit-btn{width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-top:4px;}
+.submit-btn{width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;}
 .submit-btn:hover{opacity:.9;}
-.skip-btn{width:100%;padding:6px;background:none;border:none;font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;font-family:inherit;}
-.admin-note{background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:10px 14px;font-size:12px;color:#92400E;margin-bottom:16px;}
+.skip-btn{width:100%;padding:6px;background:none;border:none;font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;font-family:inherit;margin-top:4px;}
+.selected-box{background:#E8EEFF!important;color:var(--accent)!important;border-color:var(--accent)!important;}
+.selected-pill{background:var(--accent)!important;color:#fff!important;border-color:var(--accent)!important;}
 </style>
 </head>
 <body>
 <div class="wrap">
   <button class="back" onclick="history.back()">← Back</button>
-
   <h1>Questionnaire Preview</h1>
-  <p class="subtitle">Admin view — this is what prospects see after booking. Submissions go to <code>/api/questionnaire</code>.</p>
+  <p class="subtitle">Admin view — submitting sends a real POST tagged <code>preview@30dayramp.com</code>. Check admin panel for results.</p>
 
-  <div class="admin-note">
-    🛠️ <strong>Preview mode</strong> — submitting this form will POST to the real API with <code>email: "preview@30dayramp.com"</code>. Responses will appear in the admin panel.
-  </div>
+  <div class="admin-note">🛠️ <strong>Preview mode</strong> — no booking required. All 11 questions, live validation, real submission.</div>
 
   <div class="banner">
-    <p>🗺️ Get a custom automation map before your call</p>
-    <p>Answer 9 quick questions and we'll build a tailored automation plan before you join — so your call is 10x more productive. Takes 2 minutes.</p>
+    <p class="banner-title">🗺️ Get a custom automation map before your call</p>
+    <p class="banner-sub">Answer 11 quick questions and we'll build a tailored automation plan before you join — so your call is 10x more productive. Takes ~2 minutes.</p>
   </div>
 
   <div class="card">
@@ -68,63 +60,76 @@ textarea{resize:vertical;}
 
       <!-- Q1 -->
       <div>
-        <label class="qlabel">1. What's eating your team's time? <span style="color:var(--accent);">*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;">(check all that apply)</span></label>
+        <label class="qlabel">1. What's eating your team's time? <span style="color:var(--accent)">*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;">(check all that apply)</span></label>
         <div class="grid2" id="pain-grid"></div>
-        <input type="text" name="pain_other" placeholder="Other (describe)…" style="margin-top:5px;padding:7px 10px;font-size:12px;">
+        <input type="text" class="small" name="pain_other" placeholder="Other (describe)…">
+        <input type="text" class="small" name="automation_goal" placeholder="Biggest automation goal right now? (optional)…">
       </div>
 
       <!-- Q2 -->
       <div>
-        <label class="qlabel">2. What industry are you in? <span style="color:var(--accent);">*</span></label>
+        <label class="qlabel">2. What industry are you in? <span style="color:var(--accent)">*</span></label>
         <input type="text" name="industry" placeholder="e.g. Cannabis, Real Estate, E-commerce, Law…">
       </div>
 
       <!-- Q3 -->
       <div>
-        <label class="qlabel">3. How many people on your team? <span style="color:var(--accent);">*</span></label>
+        <label class="qlabel">3. How many people on your team? <span style="color:var(--accent)">*</span></label>
         <div class="grid5" id="size-grid"></div>
       </div>
 
       <!-- Q4 -->
       <div>
-        <label class="qlabel">4. Monthly revenue range? <span style="color:var(--accent);">*</span></label>
+        <label class="qlabel">4. Monthly revenue range? <span style="color:var(--accent)">*</span></label>
         <div class="grid2" id="revenue-grid"></div>
       </div>
 
       <!-- Q5 -->
       <div>
-        <label class="qlabel">5. How do customers primarily contact you? <span style="color:var(--accent);">*</span></label>
+        <label class="qlabel">5. How do customers primarily contact you? <span style="color:var(--accent)">*</span></label>
         <div class="grid3" id="inbound-grid"></div>
       </div>
 
       <!-- Q6 -->
       <div>
-        <label class="qlabel">6. Which platforms does your business already use? <span style="color:var(--accent);">*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;">(check all — nanoclaw connects to all of these)</span></label>
+        <label class="qlabel">6. Which platforms does your business already use? <span style="color:var(--accent)">*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;">(check all — nanoclaw connects to all of these)</span></label>
         <div class="grid2" id="integ-grid"></div>
       </div>
 
       <!-- Q7 -->
       <div>
-        <label class="qlabel">7. What does your team primarily use? <span style="color:var(--accent);">*</span></label>
-        <div class="flex3" id="os-grid"></div>
+        <label class="qlabel">7. What OS will you run the AI on? <span style="color:var(--accent)">*</span></label>
+        <div class="grid2" id="os-grid"></div>
       </div>
 
       <!-- Q8 -->
       <div>
-        <label class="qlabel">8. Current CRM? <span style="color:var(--accent);">*</span></label>
+        <label class="qlabel">8. Current CRM? <span style="color:var(--accent)">*</span></label>
         <div class="flex-wrap" id="crm-grid"></div>
       </div>
 
       <!-- Q9 -->
       <div>
-        <label class="qlabel">9. Email provider? <span style="color:var(--accent);">*</span></label>
+        <label class="qlabel">9. Email provider? <span style="color:var(--accent)">*</span></label>
         <div class="flex-wrap" id="email-grid"></div>
+      </div>
+
+      <!-- Q10 -->
+      <div>
+        <label class="qlabel">10. Do you have an Anthropic / Claude API key? <span style="color:var(--accent)">*</span></label>
+        <div class="col" id="apikey-grid"></div>
+      </div>
+
+      <!-- Q11 -->
+      <div>
+        <label class="qlabel">11. Where do you plan to run the AI? <span style="color:var(--accent)">*</span></label>
+        <div class="col" id="hosting-grid"></div>
       </div>
 
       <div class="err" id="form-err">Please complete all required fields.</div>
       <div>
         <button type="submit" class="submit-btn">Submit & get my automation map →</button>
-        <button type="button" class="skip-btn" onclick="alert('Skip would go to confirmation in real flow.')">Skip for now</button>
+        <button type="button" class="skip-btn" onclick="alert('Skip goes to confirmation in the real booking flow.')">Skip for now</button>
       </div>
     </form>
   </div>
@@ -139,49 +144,56 @@ textarea{resize:vertical;}
 
 <script>
 var painOptions = ['Lead follow-up & nurturing','Scheduling & calendar management','Answering repetitive questions','Quotes & proposal sending','Order / invoice processing','Appointment reminders & no-shows','Customer support tickets','Social media posting','Data entry & reporting','Employee onboarding'];
-var sizeOptions = ['1\u20135','6\u201315','16\u201330','31\u2013100','100+'];
-var revenueOptions = ['Under $25K/mo','$25K\u2013$100K/mo','$100K\u2013$500K/mo','$500K+/mo'];
+var sizeOptions = ['1–5','6–15','16–30','31–100','100+'];
+var revenueOptions = ['Under $25K/mo','$25K–$100K/mo','$100K–$500K/mo','$500K+/mo'];
 var inboundOptions = ['Phone / Voice','Email','Website / Form','Walk-in','Social media DM','Multiple channels'];
 var integrationOptions = ['WhatsApp Business','Instagram / Facebook DM','SMS / Text (Twilio)','Telegram','Slack','Discord','Email (Gmail / Outlook)','Website chat','Shopify','Google Calendar','Airtable','Make / Zapier','HubSpot','Salesforce / Other CRM'];
-var osOptions = ['Mac','Windows','Mixed'];
+var osOptions = ['Mac','Windows','Linux / Server','Not sure yet'];
 var crmOptions = ['HubSpot','Salesforce','Pipedrive','Other CRM','No CRM yet'];
 var emailOptions = ['Google Workspace / Gmail','Outlook / M365','Both','Other'];
+var apiKeyOptions = ['Yes, I already have one','Yes, I\'ll get one before the call','Not yet — happy for you to walk me through it','Not sure what that is'];
+var hostingOptions = ['My laptop / local computer','Dedicated server or VPS (DigitalOcean, AWS, etc.)','Not sure — need a recommendation','Other'];
 
-function buildCheckboxes(container, opts, name, cls) {
-  container.innerHTML = opts.map(function(o) {
-    return '<label class="chip-label-check '+cls+'-label"><input type="checkbox" name="'+name+'" value="'+o+'" class="'+cls+'-check">'+o+'</label>';
+function buildCheckboxes(id, opts, name) {
+  var el = document.getElementById(id);
+  el.innerHTML = opts.map(function(o) {
+    return '<label class="chip-check-label"><input type="checkbox" name="'+name+'" value="'+o+'"> '+o+'</label>';
   }).join('');
-  container.querySelectorAll('.'+cls+'-check').forEach(function(cb) {
+  el.querySelectorAll('input[type=checkbox]').forEach(function(cb) {
     cb.addEventListener('change', function() {
-      var lbl = this.closest('.'+cls+'-label');
-      if(this.checked){ lbl.style.background='#E8EEFF'; lbl.style.borderColor='var(--accent)'; lbl.style.color='var(--accent)'; }
-      else { lbl.style.background=''; lbl.style.borderColor=''; lbl.style.color=''; }
+      var lbl = this.closest('.chip-check-label');
+      lbl.style.background = this.checked ? '#E8EEFF' : '';
+      lbl.style.borderColor = this.checked ? 'var(--accent)' : '';
+      lbl.style.color = this.checked ? 'var(--accent)' : '';
     });
   });
 }
 
-function buildRadios(container, opts, name, cls, wrapClass) {
-  container.innerHTML = opts.map(function(o) {
-    return '<label style="cursor:pointer;text-align:center;display:block;'+(wrapClass==='flex3'?'flex:1;':'')+'"><input type="radio" name="'+name+'" value="'+o+'" class="'+cls+'-radio" style="position:absolute;opacity:0;width:0;height:0;"><span class="'+cls+'-label chip-label-sm">'+o+'</span></label>';
+function buildRadioGrid(id, opts, name, labelClass) {
+  var el = document.getElementById(id);
+  el.innerHTML = opts.map(function(o) {
+    return '<label style="cursor:pointer;display:block;"><input type="radio" name="'+name+'" value="'+o+'" style="position:absolute;opacity:0;width:0;height:0;"><span class="'+labelClass+' r-'+name+'">'+o+'</span></label>';
   }).join('');
-  container.querySelectorAll('.'+cls+'-radio').forEach(function(r) {
+  el.querySelectorAll('input[type=radio]').forEach(function(r) {
     r.addEventListener('change', function() {
-      container.querySelectorAll('.'+cls+'-label').forEach(function(l){ l.style.background=''; l.style.color=''; l.style.borderColor=''; });
-      this.nextElementSibling.style.background='var(--accent)';
-      this.nextElementSibling.style.color='#fff';
-      this.nextElementSibling.style.borderColor='var(--accent)';
+      document.querySelectorAll('.r-'+name).forEach(function(l){ l.style.background=''; l.style.color=''; l.style.borderColor=''; });
+      this.nextElementSibling.style.background = 'var(--accent)';
+      this.nextElementSibling.style.color = '#fff';
+      this.nextElementSibling.style.borderColor = 'var(--accent)';
     });
   });
 }
 
-buildCheckboxes(document.getElementById('pain-grid'), painOptions, 'pain_points', 'pain');
-buildRadios(document.getElementById('size-grid'), sizeOptions, 'team_size', 'size', 'grid5');
-buildRadios(document.getElementById('revenue-grid'), revenueOptions, 'revenue', 'rev', 'grid2');
-buildRadios(document.getElementById('inbound-grid'), inboundOptions, 'inbound', 'inbound', 'grid3');
-buildCheckboxes(document.getElementById('integ-grid'), integrationOptions, 'integrations', 'integ');
-buildRadios(document.getElementById('os-grid'), osOptions, 'device_os', 'os', 'flex3');
-buildRadios(document.getElementById('crm-grid'), crmOptions, 'crm', 'crm', 'flex-wrap');
-buildRadios(document.getElementById('email-grid'), emailOptions, 'email_provider', 'email', 'flex-wrap');
+buildCheckboxes('pain-grid', painOptions, 'pain_points');
+buildRadioGrid('size-grid', sizeOptions, 'team_size', 'chip-radio-label');
+buildRadioGrid('revenue-grid', revenueOptions, 'revenue', 'chip-radio-label');
+buildRadioGrid('inbound-grid', inboundOptions, 'inbound', 'chip-radio-label');
+buildCheckboxes('integ-grid', integrationOptions, 'integrations');
+buildRadioGrid('os-grid', osOptions, 'device_os', 'chip-radio-label');
+buildRadioGrid('crm-grid', crmOptions, 'crm', 'chip-radio-label-pill');
+buildRadioGrid('email-grid', emailOptions, 'email_provider', 'chip-radio-label-pill');
+buildRadioGrid('apikey-grid', apiKeyOptions, 'api_key', 'chip-radio-label-lg');
+buildRadioGrid('hosting-grid', hostingOptions, 'hosting', 'chip-radio-label-lg');
 
 document.getElementById('q-form').addEventListener('submit', async function(e) {
   e.preventDefault();
@@ -190,6 +202,7 @@ document.getElementById('q-form').addEventListener('submit', async function(e) {
   var fd = new FormData(e.target);
   var pain_points = fd.getAll('pain_points');
   var pain_other = (fd.get('pain_other')||'').trim();
+  var all_pain = pain_points.concat(pain_other ? [pain_other] : []);
   var industry = (fd.get('industry')||'').trim();
   var team_size = fd.get('team_size')||'';
   var revenue = fd.get('revenue')||'';
@@ -198,10 +211,13 @@ document.getElementById('q-form').addEventListener('submit', async function(e) {
   var device_os = fd.get('device_os')||'';
   var crm = fd.get('crm')||'';
   var email_provider = fd.get('email_provider')||'';
-  var all_pain = pain_points.concat(pain_other ? [pain_other] : []);
+  var api_key = fd.get('api_key')||'';
+  var hosting = fd.get('hosting')||'';
+  var automation_goal = (fd.get('automation_goal')||'').trim();
 
-  if(all_pain.length===0 || !industry || !team_size || !revenue || !inbound || integrations.length===0 || !device_os || !crm || !email_provider) {
+  if(all_pain.length===0 || !industry || !team_size || !revenue || !inbound || integrations.length===0 || !device_os || !crm || !email_provider || !api_key || !hosting) {
     errDiv.style.display='block';
+    errDiv.scrollIntoView({behavior:'smooth',block:'center'});
     return;
   }
 
@@ -211,13 +227,7 @@ document.getElementById('q-form').addEventListener('submit', async function(e) {
     await fetch('/api/questionnaire', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        email:'preview@30dayramp.com',
-        pain_points: all_pain,
-        industry, team_size, revenue, inbound, integrations,
-        device_os, crm, email_provider,
-        tier:'preview'
-      })
+      body: JSON.stringify({ email:'preview@30dayramp.com', pain_points:all_pain, automation_goal, industry, team_size, revenue, inbound, integrations, device_os, crm, email_provider, api_key, hosting, tier:'preview' })
     });
   } catch(err) {}
   document.querySelector('.card').style.display='none';
