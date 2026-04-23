@@ -348,15 +348,24 @@
       </h2>
       <p style="font-size:16px;color:var(--muted);margin-top:10px;max-width:520px;line-height:1.6;">We guarantee your AI agent goes live within 30 days — or you get a full refund. No partial payments, no fine print.</p>
       <p style="margin-top:10px;font-size:14px;color:var(--muted);">Wondering how this compares to hiring a VA? <a href="/comparison" style="color:var(--accent);font-weight:600;text-decoration:none;">See the full breakdown →</a></p>
+
+      <!-- Billing toggle -->
+      <div style="display:flex;align-items:center;gap:12px;margin-top:20px;">
+        <div style="display:flex;background:#F1F1EF;border-radius:10px;padding:3px;gap:2px;">
+          <button id="btn-monthly" onclick="setBilling(false)" style="padding:7px 18px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;background:transparent;color:var(--muted);">Monthly</button>
+          <button id="btn-annual" onclick="setBilling(true)" style="padding:7px 18px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.1);">Annual</button>
+        </div>
+        <span id="annual-badge" style="font-size:12px;font-weight:700;color:#0F7A4B;background:#ECFDF5;padding:4px 10px;border-radius:20px;">🎁 1 month free</span>
+      </div>
     </div>
 
-    <div class="grid sm:grid-cols-3 gap-6" style="grid-auto-rows:1fr;">
+    <div class="grid sm:grid-cols-3 gap-6" style="grid-auto-rows:1fr;margin-top:24px;">
       <!-- Starter -->
       <div class="card p-7 hover-lift flex flex-col">
         <div class="mb-5">
           <p class="mono" style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">Starter</p>
-          <p style="font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.02em;">$2,500<span style="font-size:15px;font-weight:500;color:var(--muted);">/mo</span></p>
-          <p style="font-size:13px;color:var(--muted);margin-top:3px;">+ $2,500 one-time onboarding</p>
+          <p style="font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.02em;"><span id="starter-price">$27,500</span><span id="starter-period" style="font-size:15px;font-weight:500;color:var(--muted);">/yr</span></p>
+          <p id="starter-note" style="font-size:13px;color:var(--muted);margin-top:3px;">12 months for the price of 11 · + $2,500 onboarding</p>
         </div>
         <p style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:12px;">Best for: 5–30 employees</p>
         <ul style="list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:11px;flex:1;">
@@ -391,8 +400,8 @@
         </div>
         <div class="mb-5">
           <p class="mono" style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">Growth</p>
-          <p style="font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.02em;">$5,000<span style="font-size:15px;font-weight:500;color:var(--muted);">/mo</span></p>
-          <p style="font-size:13px;color:var(--muted);margin-top:3px;">+ $3,500 one-time onboarding</p>
+          <p style="font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.02em;"><span id="growth-price">$55,000</span><span id="growth-period" style="font-size:15px;font-weight:500;color:var(--muted);">/yr</span></p>
+          <p id="growth-note" style="font-size:13px;color:var(--muted);margin-top:3px;">12 months for the price of 11 · + $3,500 onboarding</p>
         </div>
         <p style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:12px;">Best for: 30–100 employees</p>
         <ul style="list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:11px;flex:1;">
@@ -675,6 +684,22 @@
 
   handleFormSubmit('hero-form', 'hero-form-inner', 'hero-form-success');
   handleFormSubmit('final-form', 'final-form-inner', 'final-form-success');
+
+  // Billing toggle
+  function setBilling(isAnnual) {
+    document.getElementById('starter-price').textContent = isAnnual ? '$27,500' : '$2,500';
+    document.getElementById('starter-period').textContent = isAnnual ? '/yr' : '/mo';
+    document.getElementById('starter-note').textContent = isAnnual ? '12 months for the price of 11 \u00b7 + $2,500 onboarding' : '+ $2,500 one-time onboarding';
+    document.getElementById('growth-price').textContent = isAnnual ? '$55,000' : '$5,000';
+    document.getElementById('growth-period').textContent = isAnnual ? '/yr' : '/mo';
+    document.getElementById('growth-note').textContent = isAnnual ? '12 months for the price of 11 \u00b7 + $3,500 onboarding' : '+ $3,500 one-time onboarding';
+    var badge = document.getElementById('annual-badge');
+    badge.style.display = isAnnual ? 'inline' : 'none';
+    var ma = document.getElementById('btn-monthly'), aa = document.getElementById('btn-annual');
+    if(isAnnual){ aa.style.background='#fff'; aa.style.color='var(--ink)'; aa.style.boxShadow='0 1px 4px rgba(0,0,0,.1)'; ma.style.background='transparent'; ma.style.color='var(--muted)'; ma.style.boxShadow='none'; }
+    else { ma.style.background='#fff'; ma.style.color='var(--ink)'; ma.style.boxShadow='0 1px 4px rgba(0,0,0,.1)'; aa.style.background='transparent'; aa.style.color='var(--muted)'; aa.style.boxShadow='none'; }
+  }
+  setBilling(true); // default to annual
 </script>
 
 <script>
