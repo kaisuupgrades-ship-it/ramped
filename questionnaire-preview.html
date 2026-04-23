@@ -26,13 +26,12 @@ input[type=text]{width:100%;padding:9px 11px;border:1px solid var(--line);border
 input.small{padding:7px 10px;font-size:12px;border-radius:7px;margin-top:5px;}
 .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:5px;}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;}
-.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;}
 .flex-wrap{display:flex;flex-wrap:wrap;gap:5px;}
 .col{display:flex;flex-direction:column;gap:5px;}
 .chip-check-label{display:flex;align-items:center;gap:5px;padding:6px 8px;border:1px solid var(--line);border-radius:7px;font-size:11px;font-weight:500;cursor:pointer;background:#fff;user-select:none;}
 .chip-check-label input{margin:0;}
 .chip-radio-label{display:block;padding:7px 4px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;text-align:center;user-select:none;}
-.chip-radio-label-lg{display:block;padding:8px 12px;border:1px solid var(--line);border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;user-select:none;}
 .chip-radio-label-pill{display:block;padding:7px 11px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;cursor:pointer;text-align:center;white-space:nowrap;user-select:none;}
 .err{display:none;color:#dc2626;font-size:13px;padding:8px 12px;background:#fef2f2;border-radius:6px;}
 .submit-btn{width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;}
@@ -48,11 +47,11 @@ input.small{padding:7px 10px;font-size:12px;border-radius:7px;margin-top:5px;}
   <h1>Questionnaire Preview</h1>
   <p class="subtitle">Admin view — submitting sends a real POST tagged <code>preview@30dayramp.com</code>. Check admin panel for results.</p>
 
-  <div class="admin-note">🛠️ <strong>Preview mode</strong> — no booking required. All 11 questions, live validation, real submission.</div>
+  <div class="admin-note">🛠️ <strong>Preview mode</strong> — no booking required. All 10 questions, live validation, real submission.</div>
 
   <div class="banner">
     <p class="banner-title">🗺️ Get a custom automation map before your call</p>
-    <p class="banner-sub">Answer 11 quick questions and we'll build a tailored automation plan before you join — so your call is 10x more productive. Takes ~2 minutes.</p>
+    <p class="banner-sub">Answer 10 quick questions and we'll build a tailored automation plan before you join — so your call is 10x more productive. Takes ~2 minutes.</p>
   </div>
 
   <div class="card">
@@ -60,7 +59,7 @@ input.small{padding:7px 10px;font-size:12px;border-radius:7px;margin-top:5px;}
 
       <!-- Q1 -->
       <div>
-        <label class="qlabel">1. What's eating your team's time? <span style="color:var(--accent)">*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;">(check all that apply)</span></label>
+        <label class="qlabel">1. What's eating your team's time?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;">(check all that apply)</span></label>
         <div class="grid2" id="pain-grid"></div>
         <input type="text" class="small" name="pain_other" placeholder="Other (describe)…">
         <input type="text" class="small" name="automation_goal" placeholder="Biggest automation goal right now? (optional)…">
@@ -68,67 +67,62 @@ input.small{padding:7px 10px;font-size:12px;border-radius:7px;margin-top:5px;}
 
       <!-- Q2 -->
       <div>
-        <label class="qlabel">2. What industry are you in? <span style="color:var(--accent)">*</span></label>
+        <label class="qlabel">2. What industry are you in?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span></label>
         <input type="text" name="industry" placeholder="e.g. Cannabis, Real Estate, E-commerce, Law…">
       </div>
 
       <!-- Q3 -->
       <div>
-        <label class="qlabel">3. How many people on your team? <span style="color:var(--accent)">*</span></label>
-        <div class="grid5" id="size-grid"></div>
+        <label class="qlabel">3. How many people on your team?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span></label>
+        <div class="grid4" id="size-grid"></div>
       </div>
 
       <!-- Q4 -->
       <div>
-        <label class="qlabel">4. Monthly revenue range? <span style="color:var(--accent)">*</span></label>
+        <label class="qlabel">4. Annual revenue?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span></label>
         <div class="grid2" id="revenue-grid"></div>
       </div>
 
       <!-- Q5 -->
       <div>
-        <label class="qlabel">5. How do customers primarily contact you? <span style="color:var(--accent)">*</span></label>
+        <label class="qlabel">5. How do customers primarily contact you?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span></label>
         <div class="grid3" id="inbound-grid"></div>
       </div>
 
       <!-- Q6 -->
       <div>
-        <label class="qlabel">6. Which platforms does your business already use? <span style="color:var(--accent)">*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;">(check all — nanoclaw connects to all of these)</span></label>
+        <label class="qlabel">6. Which platforms does your business use?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;">(check all that apply)</span></label>
         <div class="grid2" id="integ-grid"></div>
       </div>
 
       <!-- Q7 -->
       <div>
-        <label class="qlabel">7. What OS will you run the AI on? <span style="color:var(--accent)">*</span></label>
+        <label class="qlabel">7. What OS does your team use?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span></label>
         <div class="grid2" id="os-grid"></div>
       </div>
 
       <!-- Q8 -->
       <div>
-        <label class="qlabel">8. Current CRM? <span style="color:var(--accent)">*</span></label>
+        <label class="qlabel">8. Current CRM?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span></label>
         <div class="flex-wrap" id="crm-grid"></div>
       </div>
 
       <!-- Q9 -->
       <div>
-        <label class="qlabel">9. Email provider? <span style="color:var(--accent)">*</span></label>
+        <label class="qlabel">9. Email provider?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span></label>
         <div class="flex-wrap" id="email-grid"></div>
       </div>
 
       <!-- Q10 -->
       <div>
-        <label class="qlabel">10. Do you have an Anthropic / Claude API key? <span style="color:var(--accent)">*</span></label>
-        <div class="col" id="apikey-grid"></div>
-      </div>
-
-      <!-- Q11 -->
-      <div>
-        <label class="qlabel">11. Where do you plan to run the AI? <span style="color:var(--accent)">*</span></label>
-        <div class="col" id="hosting-grid"></div>
+        <label class="qlabel">10. Are you currently using AI in your business?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;">(check all that apply)</span></label>
+        <div class="grid2" id="ai-grid"></div>
+        <input type="text" class="small" name="ai_other" placeholder="Other AI tools…">
       </div>
 
       <div class="err" id="form-err">Please complete all required fields.</div>
       <div>
-        <button type="submit" class="submit-btn">Submit & get my automation map →</button>
+        <button type="submit" class="submit-btn">Submit &amp; get my automation map →</button>
         <button type="button" class="skip-btn" onclick="alert('Skip goes to confirmation in the real booking flow.')">Skip for now</button>
       </div>
     </form>
@@ -144,15 +138,14 @@ input.small{padding:7px 10px;font-size:12px;border-radius:7px;margin-top:5px;}
 
 <script>
 var painOptions = ['Lead follow-up & nurturing','Scheduling & calendar management','Answering repetitive questions','Quotes & proposal sending','Order / invoice processing','Appointment reminders & no-shows','Customer support tickets','Social media posting','Data entry & reporting','Employee onboarding'];
-var sizeOptions = ['1–5','6–15','16–30','31–100','100+'];
-var revenueOptions = ['Under $25K/mo','$25K–$100K/mo','$100K–$500K/mo','$500K+/mo'];
+var sizeOptions = ['1\u201325','26\u201350','51\u2013100','100+'];
+var revenueOptions = ['Under $300K/yr','$300K\u2013$1M/yr','$1M\u2013$5M/yr','$5M+/yr'];
 var inboundOptions = ['Phone / Voice','Email','Website / Form','Walk-in','Social media DM','Multiple channels'];
 var integrationOptions = ['WhatsApp Business','Instagram / Facebook DM','SMS / Text (Twilio)','Telegram','Slack','Discord','Email (Gmail / Outlook)','Website chat','Shopify','Google Calendar','Airtable','Make / Zapier','HubSpot','Salesforce / Other CRM'];
-var osOptions = ['Mac','Windows','Linux / Server','Not sure yet'];
+var osOptions = ['Mac','Windows','Linux / Server','Not sure'];
 var crmOptions = ['HubSpot','Salesforce','Pipedrive','Other CRM','No CRM yet'];
 var emailOptions = ['Google Workspace / Gmail','Outlook / M365','Both','Other'];
-var apiKeyOptions = ['Yes, I already have one','Yes, I\'ll get one before the call','Not yet — happy for you to walk me through it','Not sure what that is'];
-var hostingOptions = ['My laptop / local computer','Dedicated server or VPS (DigitalOcean, AWS, etc.)','Not sure — need a recommendation','Other'];
+var aiToolOptions = ['ChatGPT / OpenAI','Claude / Anthropic','Google Gemini','Microsoft Copilot','Make AI / Zapier AI','Not using AI yet'];
 
 function buildCheckboxes(id, opts, name) {
   var el = document.getElementById(id);
@@ -192,8 +185,7 @@ buildCheckboxes('integ-grid', integrationOptions, 'integrations');
 buildRadioGrid('os-grid', osOptions, 'device_os', 'chip-radio-label');
 buildRadioGrid('crm-grid', crmOptions, 'crm', 'chip-radio-label-pill');
 buildRadioGrid('email-grid', emailOptions, 'email_provider', 'chip-radio-label-pill');
-buildRadioGrid('apikey-grid', apiKeyOptions, 'api_key', 'chip-radio-label-lg');
-buildRadioGrid('hosting-grid', hostingOptions, 'hosting', 'chip-radio-label-lg');
+buildCheckboxes('ai-grid', aiToolOptions, 'ai_tools');
 
 document.getElementById('q-form').addEventListener('submit', async function(e) {
   e.preventDefault();
@@ -211,11 +203,12 @@ document.getElementById('q-form').addEventListener('submit', async function(e) {
   var device_os = fd.get('device_os')||'';
   var crm = fd.get('crm')||'';
   var email_provider = fd.get('email_provider')||'';
-  var api_key = fd.get('api_key')||'';
-  var hosting = fd.get('hosting')||'';
+  var ai_tools = fd.getAll('ai_tools');
+  var ai_other = (fd.get('ai_other')||'').trim();
+  var all_ai = ai_tools.concat(ai_other ? [ai_other] : []);
   var automation_goal = (fd.get('automation_goal')||'').trim();
 
-  if(all_pain.length===0 || !industry || !team_size || !revenue || !inbound || integrations.length===0 || !device_os || !crm || !email_provider || !api_key || !hosting) {
+  if(all_pain.length===0 || !industry || !team_size || !revenue || !inbound || integrations.length===0 || !device_os || !crm || !email_provider || all_ai.length===0) {
     errDiv.style.display='block';
     errDiv.scrollIntoView({behavior:'smooth',block:'center'});
     return;
@@ -227,7 +220,7 @@ document.getElementById('q-form').addEventListener('submit', async function(e) {
     await fetch('/api/questionnaire', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ email:'preview@30dayramp.com', pain_points:all_pain, automation_goal, industry, team_size, revenue, inbound, integrations, device_os, crm, email_provider, api_key, hosting, tier:'preview' })
+      body: JSON.stringify({ email:'preview@30dayramp.com', pain_points:all_pain, automation_goal, industry, team_size, revenue, inbound, integrations, device_os, crm, email_provider, ai_tools:all_ai, tier:'preview' })
     });
   } catch(err) {}
   document.querySelector('.card').style.display='none';
