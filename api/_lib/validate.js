@@ -1,10 +1,5 @@
-// api/_lib/validate.js — Shared input validation & output escaping helpers.
-// Centralises defences against: HTML injection in email templates, past-time
-// bookings, garbage emails, over-long free-text, and per-IP flood.
+// api/_lib/validate.js - Shared input validation & output escaping helpers.
 
-// ── HTML escape ──────────────────────────────────────────────────────────────
-// Use for every piece of user-supplied content interpolated into HTML (emails,
-// admin UI, etc.). Returns '' for nullish.
 export function esc(s) {
   if (s === null || s === undefined) return '';
   return String(s)
@@ -15,9 +10,6 @@ export function esc(s) {
     .replace(/'/g, '&#39;');
 }
 
-// ── Email validation ─────────────────────────────────────────────────────────
-// Conservative regex + reject common "throwaway" TLDs that exist only to fail
-// delivery (example.invalid, .test, .example per RFC 2606, plus "localhost").
 const EMAIL_RE = /^[A-Z0-9._%+\-]+@[A-Z0-9.\-]+\.[A-Z]{2,}$/i;
 const BAD_TLDS = new Set(['invalid', 'test', 'example', 'localhost', 'local']);
 export function isValidEmail(email) {
@@ -32,25 +24,46 @@ export function isValidEmail(email) {
   return true;
 }
 
-// ── Future-time validation ───────────────────────────────────────────────────
-// Require bookings to be at least `minLeadMs` in the future (default 15 min).
 export function isFuture(datetime, minLeadMs = 15 * 60_000) {
   const t = new Date(datetime).getTime();
   if (!Number.isFinite(t)) return false;
   return t > Date.now() + minLeadMs;
 }
 
-// ── Truncate free-text ───────────────────────────────────────────────────────
+export function isWithinBookingWindow(datetime, maxAheadDays = 90) {
+  const t = new Date(datetime).getTime();
+  if (!Number.isFinite(t)) return false;
+  const maxMs = maxAheadDays * 24 * 60 * 60 * 1000;
+  return t <= Date.now() + maxMs;
+}
+
+export function isBusinessHours(datetime, tz = 'America/Chicago') {
+  const d = new Date(datetime);
+  if (!Number.isFinite(d.getTime())) return { ok: false, reason: 'Invalid date.' };
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: tz,
+    weekday: 'short',
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: false,
+  }).formatToParts(d);
+  const wd = parts.find(p => p.type === 'weekday')?.value;
+  const hour = parseInt(parts.find(p => p.type === 'hour')?.value, 10);
+  const isWeekday = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].includes(wd);
+  if (!isWeekday) return { ok: false, reason: 'Please choose a weekday.' };
+  if (!(hour >= 8 && hour < 18)) {
+    return { ok: false, reason: 'Please choose a time between 8am and 6pm Central.' };
+  }
+  return { ok: true };
+}
+
 export function truncate(s, max = 2000) {
   if (s === null || s === undefined) return '';
   const str = String(s);
   return str.length > max ? str.slice(0, max) : str;
 }
 
-// ── Per-IP rate limit (in-memory, best-effort) ───────────────────────────────
-// Not durable across serverless cold starts, but blocks same-instance floods.
-// For production multi-region, pair with an edge rate-limit rule or KV store.
-const buckets = new Map(); // ip → { count, resetAt }
+const buckets = new Map();
 export function checkRateLimit(ip, { max = 5, windowMs = 60_000 } = {}) {
   if (!ip) return { ok: true, remaining: max };
   const now = Date.now();
@@ -60,7 +73,6 @@ export function checkRateLimit(ip, { max = 5, windowMs = 60_000 } = {}) {
     buckets.set(ip, b);
   }
   b.count += 1;
-  // Opportunistic cleanup — prevents unbounded growth
   if (buckets.size > 1000) {
     for (const [k, v] of buckets) if (v.resetAt < now) buckets.delete(k);
   }
@@ -72,3 +84,4 @@ export function getClientIp(req) {
   if (xff) return String(xff).split(',')[0].trim();
   return req.headers['x-real-ip'] || req.socket?.remoteAddress || '';
 }
+
