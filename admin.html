@@ -226,10 +226,9 @@
       padding: 14px 18px;
     }
 
-    .stat-card.good {
-      background: #EBF7F2;
-      border-color: #A8DABC;
-    }
+    .stat-card.good { background: #EBF7F2; border-color: #A8DABC; }
+    .stat-card.bad  { background: #FDECEA; border-color: #f5b8b8; }
+    .stat-card.info { background: #EEF1FF; border-color: #c5cffe; }
 
     .stat-card .stat-label {
       font-size: 11px;
@@ -241,6 +240,8 @@
     }
 
     .stat-card.good .stat-label { color: var(--good); }
+    .stat-card.bad  .stat-label { color: var(--danger); }
+    .stat-card.info .stat-label { color: var(--accent); }
 
     .stat-card .stat-value {
       font-size: 28px;
@@ -250,6 +251,39 @@
     }
 
     .stat-card.good .stat-value { color: var(--good); }
+    .stat-card.bad  .stat-value { color: var(--danger); }
+    .stat-card.info .stat-value { color: var(--accent); }
+
+    /* ── Activity log badges ──────────────────────────────────────────────── */
+    .badge {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .badge-running { background: #EEF1FF; color: var(--accent); }
+    .badge-success { background: #EBF7F2; color: var(--good); }
+    .badge-error   { background: #FDECEA; color: var(--danger); }
+    .badge-info    { background: #F5F5F3; color: var(--muted); }
+    .badge-warn    { background: #FEF3E2; color: #B45309; }
+
+    /* ── Log drawer ───────────────────────────────────────────────────────── */
+    .log-drawer-row { display: none; }
+    .log-drawer-row.open { display: table-row; }
+    .log-drawer { background: #f8f9ff; border-top: 1px solid #d0d7ff; }
+    .log-drawer-inner { padding: 12px 16px; max-height: 340px; overflow-y: auto; }
+    .log-entry { display: flex; gap: 10px; padding: 6px 0; border-bottom: 1px solid #e8eaff; font-size: 12px; align-items: flex-start; }
+    .log-entry:last-child { border-bottom: none; }
+    .log-ts { color: var(--muted); white-space: nowrap; font-size: 11px; flex-shrink: 0; padding-top: 1px; }
+    .log-msg { color: var(--ink); flex: 1; word-break: break-word; }
+    .log-meta { background: var(--surface); border-radius: 4px; padding: 4px 8px; font-size: 11px; color: var(--muted); margin-top: 4px; font-family: 'Courier New', monospace; white-space: pre-wrap; word-break: break-all; }
+    .drawer-empty { padding: 16px; text-align: center; color: var(--muted); font-size: 13px; }
+    tbody tr.run-row { cursor: pointer; }
+    tbody tr.run-row:hover td { background: #f0f3ff; }
+    tbody tr.run-row.expanded td { background: #eef1ff; }
 
     /* ── Body ─────────────────────────────────────────────────────────────── */
     .dash-body {
@@ -722,6 +756,7 @@
       <button class="tab-btn active" id="tab-bookings"     onclick="switchTab('bookings')">Bookings (0)</button>
       <button class="tab-btn"        id="tab-leads"        onclick="switchTab('leads')">Leads (0)</button>
       <button class="tab-btn"        id="tab-availability" onclick="switchTab('availability')">Availability</button>
+      <button class="tab-btn"        id="tab-activity"     onclick="switchTab('activity')">Activity</button>
     </div>
 
     <!-- Bookings panel -->
@@ -820,6 +855,59 @@
           <button onclick="saveAvailability()" style="padding:11px 24px;background:var(--ink);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;">Save changes</button>
           <span id="avail-status" style="font-size:13px;color:var(--muted);"></span>
         </div>
+      </div>
+    </div>
+
+    <!-- Activity panel -->
+    <div class="tab-panel" id="panel-activity">
+      <!-- Stats strip -->
+      <div style="display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap;">
+        <div class="stat-card">
+          <div class="stat-label">Runs (24h)</div>
+          <div class="stat-value" id="act-stat-total">—</div>
+        </div>
+        <div class="stat-card good">
+          <div class="stat-label">Success rate</div>
+          <div class="stat-value" id="act-stat-success">—</div>
+        </div>
+        <div class="stat-card bad">
+          <div class="stat-label">Error rate</div>
+          <div class="stat-value" id="act-stat-error">—</div>
+        </div>
+        <div class="stat-card info">
+          <div class="stat-label">Avg duration</div>
+          <div class="stat-value" id="act-stat-avg">—</div>
+        </div>
+      </div>
+      <!-- Filters -->
+      <div class="filter-bar" style="margin-bottom:14px;">
+        <input type="text" id="act-filter-client" placeholder="Filter by client ID…" onkeydown="if(event.key==='Enter')loadActivityData()">
+        <select id="act-filter-status">
+          <option value="">All statuses</option>
+          <option value="running">Running</option>
+          <option value="success">Success</option>
+          <option value="error">Error</option>
+        </select>
+        <button onclick="loadActivityData()" style="padding:7px 16px;font-size:13px;font-weight:600;font-family:inherit;background:var(--ink);color:#fff;border:none;border-radius:7px;cursor:pointer;" id="act-refresh-btn">↻ Refresh</button>
+        <span id="act-last-updated" style="font-size:12px;color:var(--muted);margin-left:4px;"></span>
+      </div>
+      <!-- Runs table -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Client</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Duration</th>
+              <th>Error</th>
+            </tr>
+          </thead>
+          <tbody id="act-runs-body">
+            <tr><td colspan="6"><div class="empty-state">Click the Activity tab to load.</div></td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -956,6 +1044,7 @@
     document.getElementById('tab-' + name).classList.add('active');
     document.getElementById('panel-' + name).classList.add('active');
     if (name === 'availability') loadAvailability();
+    if (name === 'activity') loadActivityData();
   }
 
   // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -1469,6 +1558,128 @@
   function collapseMsg(id) {
     document.getElementById(id + '-short').style.display = 'inline';
     document.getElementById(id + '-full').style.display  = 'none';
+  }
+
+  // ── Activity log ─────────────────────────────────────────────────────────────
+  let _actLoaded = false;
+
+  async function loadActivityData() {
+    const btn      = document.getElementById('act-refresh-btn');
+    const clientId = (document.getElementById('act-filter-client')?.value || '').trim();
+    const status   = document.getElementById('act-filter-status')?.value || '';
+
+    if (btn) { btn.disabled = true; btn.textContent = 'Loading…'; }
+
+    let url = '/api/agent-logs?limit=50';
+    if (clientId) url += '&client_id=' + encodeURIComponent(clientId);
+    if (status)   url += '&status='    + encodeURIComponent(status);
+
+    try {
+      const res = await adminFetch(url);
+      if (res.status === 401) { signOut(); return; }
+      const data = await res.json();
+
+      renderActivityStats(data.stats || {});
+      renderActivityRuns(data.runs  || []);
+
+      const el = document.getElementById('act-last-updated');
+      if (el) el.textContent = 'Updated ' + new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+      _actLoaded = true;
+    } catch (err) {
+      const body = document.getElementById('act-runs-body');
+      if (body) body.innerHTML = `<tr><td colspan="6"><div class="empty-state">Error: ${esc(err.message)}</div></td></tr>`;
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = '↻ Refresh'; }
+    }
+  }
+
+  function renderActivityStats(stats) {
+    const total = stats.total || 0;
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    set('act-stat-total',   total);
+    set('act-stat-success', total ? Math.round((stats.success || 0) / total * 100) + '%' : '—');
+    set('act-stat-error',   total ? Math.round((stats.error   || 0) / total * 100) + '%' : '—');
+    set('act-stat-avg',     stats.avg_duration_ms != null ? fmtActDuration(stats.avg_duration_ms) : '—');
+  }
+
+  function fmtActDuration(ms) {
+    if (ms == null) return '—';
+    if (ms < 1000)  return ms + 'ms';
+    return (ms / 1000).toFixed(1) + 's';
+  }
+
+  function fmtActTime(iso) {
+    if (!iso) return '—';
+    try {
+      const d = new Date(iso);
+      return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true })
+        + ' · ' + d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    } catch { return iso; }
+  }
+
+  function actStatusBadge(status) {
+    const cls = status === 'success' ? 'badge-success'
+              : status === 'error'   ? 'badge-error'
+              : status === 'running' ? 'badge-running'
+              : 'badge-info';
+    return `<span class="badge ${cls}">${esc(status || '—')}</span>`;
+  }
+
+  function actLevelBadge(level) {
+    const cls = level === 'error' ? 'badge-error'
+              : level === 'warn'  ? 'badge-warn'
+              : 'badge-info';
+    return `<span class="badge ${cls}" style="font-size:10px;padding:1px 6px;">${esc(level)}</span>`;
+  }
+
+  function renderActivityRuns(runs) {
+    const body = document.getElementById('act-runs-body');
+    if (!body) return;
+    if (!runs.length) {
+      body.innerHTML = '<tr><td colspan="6"><div class="empty-state">No runs found in the last 24 hours.</div></td></tr>';
+      return;
+    }
+    const rows = runs.map(run => {
+      const rid      = esc(run.id);
+      const errShort = run.error_message
+        ? (run.error_message.length > 60 ? run.error_message.slice(0, 60) + '…' : run.error_message)
+        : '';
+      return `
+        <tr class="run-row" id="act-run-${rid}" onclick="toggleActDrawer('${rid}')">
+          <td style="white-space:nowrap;font-size:12px;color:var(--muted)">${fmtActTime(run.started_at)}</td>
+          <td style="font-weight:600;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(run.client_id || '—')}</td>
+          <td style="color:var(--muted)">${esc(run.agent_type || '—')}</td>
+          <td>${actStatusBadge(run.status)}</td>
+          <td style="white-space:nowrap;color:var(--muted)">${fmtActDuration(run.duration_ms)}</td>
+          <td style="color:var(--danger);font-size:12px;max-width:200px;word-break:break-word">${esc(errShort)}</td>
+        </tr>
+        <tr class="log-drawer-row" id="act-drawer-${rid}">
+          <td colspan="6" style="padding:0">
+            <div class="log-drawer">${renderActLogDrawer(run.logs || [])}</div>
+          </td>
+        </tr>`;
+    }).join('');
+    body.innerHTML = rows;
+  }
+
+  function renderActLogDrawer(logs) {
+    if (!logs.length) return '<div class="drawer-empty">No log entries for this run.</div>';
+    return '<div class="log-drawer-inner">' + logs.map(l => {
+      const hasMeta = l.metadata && Object.keys(l.metadata).length > 0;
+      return `<div class="log-entry">
+        <span class="log-ts">${fmtActTime(l.created_at)}</span>
+        ${actLevelBadge(l.level)}
+        <div class="log-msg">${esc(l.message)}${hasMeta ? `<div class="log-meta">${esc(JSON.stringify(l.metadata, null, 2))}</div>` : ''}</div>
+      </div>`;
+    }).join('') + '</div>';
+  }
+
+  function toggleActDrawer(runId) {
+    const drawer = document.getElementById('act-drawer-' + runId);
+    const row    = document.getElementById('act-run-'    + runId);
+    if (!drawer) return;
+    const isOpen = drawer.classList.toggle('open');
+    if (row) row.classList.toggle('expanded', isOpen);
   }
 
   // ── Availability settings ─────────────────────────────────────────────────────
