@@ -337,26 +337,17 @@ function showConfirmation(name, email){
   var dateLabel = d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
   var sizeOptions = ['1\u20135','6\u201315','16\u201330','31\u2013100','100+'];
 
-  var toolGroups = [
-    ['Slack','Microsoft Teams','Google Workspace','Outlook / M365'],
-    ['HubSpot','Salesforce','Pipedrive','Zoho CRM'],
-    ['Asana','Monday.com','ClickUp','Notion'],
-    ['QuickBooks','Xero','Stripe','Shopify'],
-    ['Intercom','Zendesk','Calendly','Airtable'],
-    ['WhatsApp Business','Twilio/SMS','DocuSign','Other']
-  ];
+  var channelOptions = ['WhatsApp','Instagram DM','Facebook Messenger','SMS / Text','Email','Phone / Voice','Website chat','Telegram','Slack'];
+  var crmOptions = ['HubSpot','Salesforce','Pipedrive','Other CRM','No CRM yet'];
+  var osOptions = ['Mac','Windows','Mixed'];
 
-  var allTools = toolGroups.reduce(function(acc,g){return acc.concat(g);},[]);
-
-  var toolCheckboxesHTML = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;">' +
-    allTools.map(function(t){
-      var id = 'tool-'+t.replace(/[^a-zA-Z0-9]/g,'-');
-      return '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:11px;font-weight:500;padding:5px 7px;border:1px solid var(--line);border-radius:7px;background:#fff;user-select:none;" class="tool-label" data-tool="'+t+'">' +
-        '<input type="checkbox" name="tools" value="'+t+'" class="tool-check" style="margin:0;cursor:pointer;" id="'+id+'">'+t+'</label>';
+  var channelCheckboxesHTML = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;">' +
+    channelOptions.map(function(c){
+      var id = 'ch-'+c.replace(/[^a-zA-Z0-9]/g,'-');
+      return '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:11px;font-weight:500;padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:#fff;user-select:none;" class="ch-label" data-ch="'+c+'">' +
+        '<input type="checkbox" name="channels" value="'+c+'" class="ch-check" style="margin:0;cursor:pointer;" id="'+id+'">'+c+'</label>';
     }).join('') +
   '</div>';
-
-  var channelOptions = ['Email','Phone','Website form','WhatsApp/SMS','Live chat'];
 
   stepDiv.innerHTML =
     '<div style="text-align:center;padding:16px 0 14px;">' +
@@ -366,29 +357,33 @@ function showConfirmation(name, email){
       '<p style="font-size:12px;color:var(--muted);margin:0;">Confirmation sent to '+email+' &middot; Google Meet link coming before the call.</p>' +
     '</div>' +
 
-    '<div style="background:#F0FDF4;border:1.5px solid #86EFAC;border-radius:10px;padding:14px 16px;margin:14px 0 16px;">' +
-      '<p style="font-size:13px;font-weight:700;color:#15803D;margin:0 0 3px;">\uD83D\uDCB0 Claim $1,000 off your onboarding fee</p>' +
-      '<p style="font-size:12px;color:#166534;line-height:1.5;margin:0;">Answer 5 quick questions so we can prep for your call. Takes 2 minutes \u2014 discount applied automatically when you sign.</p>' +
+    '<div style="background:#EEF2FF;border:1.5px solid #A5B4FC;border-radius:10px;padding:14px 16px;margin:14px 0 16px;">' +
+      '<p style="font-size:13px;font-weight:700;color:#1F4FFF;margin:0 0 3px;">\uD83D\uDDFA\uFE0F Get a custom automation map before your call</p>' +
+      '<p style="font-size:12px;color:#3730A3;line-height:1.5;margin:0;">Answer 6 quick questions and we\u2019ll build a tailored automation plan before you join \u2014 so your call is 10x more productive. Takes 2 minutes.</p>' +
     '</div>' +
 
     '<form id="onboard-form" style="display:flex;flex-direction:column;gap:14px;">' +
-      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;letter-spacing:.06em;">1. BIGGEST BOTTLENECK RIGHT NOW? <span style="color:var(--accent);">*</span></label>' +
-        '<textarea name="bottleneck" rows="2" placeholder="e.g. Responding to leads takes hours every day\u2026" style="width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff;resize:vertical;box-sizing:border-box;font-family:inherit;"></textarea></div>' +
+      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;letter-spacing:.06em;">1. WHAT\u2019S YOUR BIGGEST OPERATIONAL TIME SINK? <span style="color:var(--accent);">*</span></label>' +
+        '<textarea name="bottleneck" rows="2" placeholder="e.g. Manually following up with leads, scheduling, answering the same questions over and over\u2026" style="width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff;resize:vertical;box-sizing:border-box;font-family:inherit;"></textarea></div>' +
       '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;letter-spacing:.06em;">2. WHAT INDUSTRY ARE YOU IN? <span style="color:var(--accent);">*</span></label>' +
-        '<input name="industry" placeholder="e.g. E-commerce, Real Estate, Law\u2026" style="width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff;box-sizing:border-box;"></div>' +
+        '<input name="industry" placeholder="e.g. Cannabis, Real Estate, E-commerce, Law\u2026" style="width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff;box-sizing:border-box;"></div>' +
       '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">3. HOW MANY PEOPLE ON YOUR TEAM? <span style="color:var(--accent);">*</span></label>' +
         '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:5px;">' +
           sizeOptions.map(function(s){ return '<label style="cursor:pointer;text-align:center;display:block;"><input type="radio" name="team_size" value="'+s+'" class="size-radio" style="position:absolute;opacity:0;width:0;height:0;"><span class="size-label" style="display:block;padding:7px 2px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;user-select:none;cursor:pointer;">'+s+'</span></label>'; }).join('') +
         '</div></div>' +
-      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">4. TOOLS YOU USE <span style="color:var(--accent);">*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;">(check all that apply)</span></label>' +
-        toolCheckboxesHTML +
+      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">4. WHERE DO CUSTOMERS CONTACT YOU? <span style="color:var(--accent);">*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;">(check all \u2014 this tells us where to deploy your bots)</span></label>' +
+        channelCheckboxesHTML +
       '</div>' +
-      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">5. HOW DO CUSTOMERS PRIMARILY REACH YOU? <span style="color:var(--accent);">*</span></label>' +
+      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">5. WHAT DOES YOUR TEAM PRIMARILY USE? <span style="color:var(--accent);">*</span></label>' +
+        '<div style="display:flex;gap:5px;">' +
+          osOptions.map(function(o){ return '<label style="cursor:pointer;text-align:center;display:block;flex:1;"><input type="radio" name="device_os" value="'+o+'" class="os-radio" style="position:absolute;opacity:0;width:0;height:0;"><span class="os-label" style="display:block;padding:7px 4px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;user-select:none;cursor:pointer;">'+o+'</span></label>'; }).join('') +
+        '</div></div>' +
+      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">6. CURRENT CRM? <span style="color:var(--accent);">*</span></label>' +
         '<div style="display:flex;flex-wrap:wrap;gap:5px;">' +
-          channelOptions.map(function(c){ return '<label style="cursor:pointer;text-align:center;display:block;"><input type="radio" name="customer_channel" value="'+c+'" class="channel-radio" style="position:absolute;opacity:0;width:0;height:0;"><span class="channel-label" style="display:block;padding:7px 11px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;user-select:none;cursor:pointer;white-space:nowrap;">'+c+'</span></label>'; }).join('') +
+          crmOptions.map(function(c){ return '<label style="cursor:pointer;text-align:center;display:block;"><input type="radio" name="crm" value="'+c+'" class="crm-radio" style="position:absolute;opacity:0;width:0;height:0;"><span class="crm-label" style="display:block;padding:7px 11px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;user-select:none;cursor:pointer;white-space:nowrap;">'+c+'</span></label>'; }).join('') +
         '</div></div>' +
       '<div id="onboard-error" style="display:none;color:#dc2626;font-size:13px;padding:8px 12px;background:#fef2f2;border-radius:6px;">Please complete all fields.</div>' +
-      '<button type="submit" id="onboard-btn" style="width:100%;padding:13px;background:#15803D;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;">Submit &amp; claim $1,000 off \u2192</button>' +
+      '<button type="submit" id="onboard-btn" style="width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;">Submit &amp; get my automation map \u2192</button>' +
       '<button type="button" id="skip-btn" style="width:100%;padding:6px;background:none;border:none;font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;">Skip for now</button>' +
     '</form>';
 
@@ -402,22 +397,32 @@ function showConfirmation(name, email){
     });
   });
 
-  // Channel pill toggle
-  document.querySelectorAll('.channel-radio').forEach(function(radio){
+  // Channel checkbox visual highlight
+  document.querySelectorAll('.ch-check').forEach(function(cb){
+    cb.addEventListener('change', function(){
+      var lbl = this.closest('.ch-label');
+      if(this.checked){ lbl.style.background='#E8EEFF'; lbl.style.borderColor='var(--accent)'; lbl.style.color='var(--accent)'; }
+      else { lbl.style.background=''; lbl.style.borderColor=''; lbl.style.color=''; }
+    });
+  });
+
+  // OS pill toggle
+  document.querySelectorAll('.os-radio').forEach(function(radio){
     radio.addEventListener('change', function(){
-      document.querySelectorAll('.channel-label').forEach(function(l){ l.style.background=''; l.style.color=''; l.style.borderColor=''; });
+      document.querySelectorAll('.os-label').forEach(function(l){ l.style.background=''; l.style.color=''; l.style.borderColor=''; });
       this.nextElementSibling.style.background='var(--accent)';
       this.nextElementSibling.style.color='#fff';
       this.nextElementSibling.style.borderColor='var(--accent)';
     });
   });
 
-  // Tool checkbox visual highlight
-  document.querySelectorAll('.tool-check').forEach(function(cb){
-    cb.addEventListener('change', function(){
-      var lbl = this.closest('.tool-label');
-      if(this.checked){ lbl.style.background='#E8EEFF'; lbl.style.borderColor='var(--accent)'; lbl.style.color='var(--accent)'; }
-      else { lbl.style.background=''; lbl.style.borderColor=''; lbl.style.color=''; }
+  // CRM pill toggle
+  document.querySelectorAll('.crm-radio').forEach(function(radio){
+    radio.addEventListener('change', function(){
+      document.querySelectorAll('.crm-label').forEach(function(l){ l.style.background=''; l.style.color=''; l.style.borderColor=''; });
+      this.nextElementSibling.style.background='var(--accent)';
+      this.nextElementSibling.style.color='#fff';
+      this.nextElementSibling.style.borderColor='var(--accent)';
     });
   });
 
@@ -432,11 +437,12 @@ function showConfirmation(name, email){
     var bottleneck = (fd.get('bottleneck')||'').trim();
     var industry = (fd.get('industry')||'').trim();
     var team_size = fd.get('team_size')||'';
-    var checkedTools = fd.getAll('tools');
-    var customer_channel = fd.get('customer_channel')||'';
+    var channels = fd.getAll('channels');
+    var device_os = fd.get('device_os')||'';
+    var crm = fd.get('crm')||'';
 
     // Manual validation
-    if(!bottleneck || !industry || !team_size || checkedTools.length===0 || !customer_channel){
+    if(!bottleneck || !industry || !team_size || channels.length===0 || !device_os || !crm){
       errDiv.style.display='block';
       return;
     }
@@ -449,8 +455,9 @@ function showConfirmation(name, email){
         bottleneck:bottleneck,
         industry:industry,
         team_size:team_size,
-        tools:checkedTools,
-        customer_channel:customer_channel,
+        channels:channels,
+        device_os:device_os,
+        crm:crm,
         tier:selectedTier||''
       })});
     }catch(err){}
@@ -458,21 +465,21 @@ function showConfirmation(name, email){
   });
 }
 
-function showBooked(claimedDiscount){
+function showBooked(completedMap){
   var stepDiv = document.getElementById('booking-step');
-  stepDiv.innerHTML = claimedDiscount ?
+  stepDiv.innerHTML = completedMap ?
     '<div class="confirm-box">' +
-      '<div style="font-size:36px;margin-bottom:8px;">\uD83C\uDF89</div>' +
-      '<h2 style="font-size:20px;font-weight:700;margin:0 0 8px;">All set!</h2>' +
-      '<p style="font-size:14px;color:var(--muted);line-height:1.6;margin:0 0 8px;">Your $1,000 discount is confirmed. We\'ll apply it to your onboarding fee when you sign.</p>' +
+      '<div style="font-size:36px;margin-bottom:8px;">\uD83D\uDDFA\uFE0F</div>' +
+      '<h2 style="font-size:20px;font-weight:700;margin:0 0 8px;">You\u2019re all set!</h2>' +
+      '<p style="font-size:14px;color:var(--muted);line-height:1.6;margin:0 0 8px;">We\u2019re building your custom automation map now. You\u2019ll receive it before the call so we can hit the ground running.</p>' +
       '<p style="font-size:14px;color:var(--muted);margin:0 0 24px;">See you on the call!</p>' +
       '<a href="/" style="display:inline-block;padding:10px 24px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;color:var(--ink);">\u2190 Back to home</a>' +
     '</div>'
   :
     '<div class="confirm-box">' +
       '<div class="check">\u2713</div>' +
-      '<h2 style="font-size:20px;font-weight:700;margin:0 0 8px;">You\'re all set!</h2>' +
-      '<p style="font-size:14px;color:var(--muted);margin:0 0 24px;">We\'ll send a Google Meet link before the call. See you soon!</p>' +
+      '<h2 style="font-size:20px;font-weight:700;margin:0 0 8px;">You\u2019re all set!</h2>' +
+      '<p style="font-size:14px;color:var(--muted);margin:0 0 24px;">We\u2019ll send a Google Meet link before the call. See you soon!</p>' +
       '<a href="/" style="display:inline-block;padding:10px 24px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;color:var(--ink);">\u2190 Back to home</a>' +
     '</div>';
 }
