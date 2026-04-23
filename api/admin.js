@@ -1,9 +1,10 @@
 // api/admin.js — Admin data endpoint
-// GET /api/admin?token=VALUE → returns bookings and leads from Supabase
+// GET /api/admin → returns bookings and leads from Supabase
+
+import { setAdminCors, isAuthorized } from './_lib/admin-auth.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
-const ADMIN_TOKEN  = process.env.ADMIN_TOKEN;
 
 async function supabase(method, path) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1${path}`, {
@@ -20,16 +21,11 @@ async function supabase(method, path) {
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  setAdminCors(req, res, 'GET, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { token } = req.query;
-  if (!token || !ADMIN_TOKEN || token !== ADMIN_TOKEN) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
+  if (!isAuthorized(req)) return res.status(401).json({ error: 'Unauthorized' });
 
   if (!SUPABASE_URL || !SUPABASE_KEY) {
     return res.status(200).json({ configured: false, bookings: [], leads: [] });

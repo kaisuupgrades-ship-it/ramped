@@ -2,6 +2,7 @@
 // GET  /api/book?date=YYYY-MM-DD  → returns booked slots for that date
 // POST /api/book                  → creates a booking, creates Meet event, emails guest + owner
 
+import { esc, isValidEmail, isFuture, truncate, checkRateLimit, getClientIp } from './_lib/validate.js';
 import { isConfigured as gcalConfigured, getBusyRanges, createMeetEvent } from './_lib/google-calendar.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -9,6 +10,23 @@ const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const RESEND_KEY   = process.env.RESEND_API_KEY;
 const OWNER_EMAIL  = process.env.OWNER_EMAIL || 'jon@30dayramp.com';
 const FROM_EMAIL   = 'bookings@30dayramp.com';
+
+const ALLOWED_ORIGINS = [
+  'https://30dayramp.com',
+  'https://www.30dayramp.com',
+  'https://ramped-git-main-kaisuupgrades-ship-its-projects.vercel.app',
+  'http://localhost:3000',
+];
+
+function setCors(req, res, methods) {
+  const origin = req.headers.origin || '';
+  if (ALLOWED_ORIGINS.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+  }
+  res.setHeader('Access-Control-Allow-Methods', methods);
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+}
 
 async function supabase(method, path, body) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1${path}`, {
@@ -43,10 +61,13 @@ function formatForTz(isoString, tz) {
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  setCors(req, res, 'GET, POST, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(200).end();
+
+  // Rate limit: 5 req/min per IP
+  const ip = getClientIp(req);
+  const rl = checkRateLimit(ip, { max: 5, windowMs: 60_000 });
+  if (!rl.ok) return res.status(429).json({ error: 'Too many requests.' });
 
   // ── GET: return booked slots for a date ──────────────────────────────────
   if (req.method === 'GET') {
@@ -89,7 +110,18 @@ export default async function handler(req, res) {
 
   // ── POST: create a booking ───────────────────────────────────────────────
   if (req.method === 'POST') {
-    const { datetime, name, email, company, notes, timezone, tier } = req.body || {};
+    let { datetime, name, email, company, notes, timezone, tier } = req.body || {};
+
+    name     = truncate(String(name     || '').trim(), 120);
+    email    = truncate(String(email    || '').trim(), 254);
+    company  = company  ? truncate(String(company).trim(),  200) : '';
+    notes    = notes    ? truncate(String(notes).trim(),    2000) : '';
+    timezone = timezone ? truncate(String(timezone).trim(), 64)  : '';
+    tier     = tier     ? truncate(String(tier).trim(),     32)  : '';
+
+    if (!isValidEmail(email)) return res.status(400).json({ error: 'Please enter a valid email.' });
+    if (!isFuture(datetime, 15 * 60_000)) return res.status(400).json({ error: 'Choose a future time (at least 15 min from now).' });
+
     if (!datetime || !name || !email) {
       return res.status(400).json({ error: 'datetime, name, and email are required' });
     }
@@ -146,16 +178,16 @@ export default async function handler(req, res) {
     }
 
     const meetBlock = meetLink
-      ? `<p style="font-size:15px;color:#0F7A4B;font-weight:600;margin:12px 0 0;"><a href="${meetLink}" style="color:#1F4FFF;text-decoration:none;">▶ Join Google Meet</a></p><p style="color:#5B6272;font-size:13px;margin-top:4px;word-break:break-all;">${meetLink}</p>`
+      ? `<p style="font-size:15px;color:#0F7A4B;font-weight:600;margin:12px 0 0;"><a href="${esc(meetLink)}" style="color:#1F4FFF;text-decoration:none;">▶ Join Google Meet</a></p><p style="color:#5B6272;font-size:13px;margin-top:4px;word-break:break-all;">${esc(meetLink)}</p>`
       : `<p style="color:#5B6272;font-size:13px;margin-top:8px;">A Google Meet link will be sent separately before your call.</p>`;
 
     await sendEmail(email, `Confirmed: Discovery call with Ramped AI — ${dtGuest.dateStr}`, `
       <div style="font-family:-apple-system,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;">
         <p style="font-size:24px;font-weight:800;color:#0B1220;margin-bottom:4px;">You're booked. ✓</p>
-        <p style="color:#5B6272;margin-bottom:28px;font-size:15px;">We're looking forward to talking with you, ${name.split(' ')[0]}.</p>
+        <p style="color:#5B6272;margin-bottom:28px;font-size:15px;">We're looking forward to talking with you, ${esc(name.split(' ')[0])}.</p>
         <div style="background:#F5F8FF;border:1px solid #E6E4DC;border-radius:12px;padding:20px 24px;margin-bottom:28px;">
-          <p style="font-weight:700;font-size:16px;color:#0B1220;margin-bottom:4px;">${dtGuest.dateStr}</p>
-          <p style="font-size:15px;color:#1F4FFF;font-weight:600;margin-bottom:8px;">${dtGuest.timeStr}</p>
+          <p style="font-weight:700;font-size:16px;color:#0B1220;margin-bottom:4px;">${esc(dtGuest.dateStr)}</p>
+          <p style="font-size:15px;color:#1F4FFF;font-weight:600;margin-bottom:8px;">${esc(dtGuest.timeStr)}</p>
           <p style="color:#5B6272;font-size:14px;">30 minutes · Google Meet</p>
           ${meetBlock}
         </div>
@@ -168,13 +200,13 @@ export default async function handler(req, res) {
       <div style="font-family:-apple-system,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;">
         <p style="font-size:20px;font-weight:800;color:#0B1220;margin-bottom:20px;">New discovery call booked</p>
         <table style="width:100%;border-collapse:collapse;font-size:14px;">
-          <tr><td style="padding:8px 0;color:#5B6272;width:100px;">Name</td><td style="font-weight:600;color:#0B1220;">${name}</td></tr>
-          <tr><td style="padding:8px 0;color:#5B6272;">Email</td><td><a href="mailto:${email}" style="color:#1F4FFF;">${email}</a></td></tr>
-          ${company ? `<tr><td style="padding:8px 0;color:#5B6272;">Company</td><td style="color:#0B1220;">${company}</td></tr>` : ''}
-          <tr><td style="padding:8px 0;color:#5B6272;">Time (Chicago)</td><td style="font-weight:600;color:#0B1220;">${dtHost.full}</td></tr>
-          ${tier ? `<tr><td style="padding:8px 0;color:#5B6272;">Plan interest</td><td style="font-weight:700;color:#1F4FFF;text-transform:capitalize;">${tier}</td></tr>` : ''}
-          ${notes ? `<tr><td style="padding:8px 0;color:#5B6272;vertical-align:top;">Notes</td><td style="color:#0B1220;">${notes}</td></tr>` : ''}
-          ${meetLink ? `<tr><td style="padding:8px 0;color:#5B6272;">Meet</td><td><a href="${meetLink}" style="color:#1F4FFF;">${meetLink}</a></td></tr>` : ''}
+          <tr><td style="padding:8px 0;color:#5B6272;width:100px;">Name</td><td style="font-weight:600;color:#0B1220;">${esc(name)}</td></tr>
+          <tr><td style="padding:8px 0;color:#5B6272;">Email</td><td><a href="mailto:${esc(email)}" style="color:#1F4FFF;">${esc(email)}</a></td></tr>
+          ${company ? `<tr><td style="padding:8px 0;color:#5B6272;">Company</td><td style="color:#0B1220;">${esc(company)}</td></tr>` : ''}
+          <tr><td style="padding:8px 0;color:#5B6272;">Time (Chicago)</td><td style="font-weight:600;color:#0B1220;">${esc(dtHost.full)}</td></tr>
+          ${tier ? `<tr><td style="padding:8px 0;color:#5B6272;">Plan interest</td><td style="font-weight:700;color:#1F4FFF;text-transform:capitalize;">${esc(tier)}</td></tr>` : ''}
+          ${notes ? `<tr><td style="padding:8px 0;color:#5B6272;vertical-align:top;">Notes</td><td style="color:#0B1220;">${esc(notes)}</td></tr>` : ''}
+          ${meetLink ? `<tr><td style="padding:8px 0;color:#5B6272;">Meet</td><td><a href="${esc(meetLink)}" style="color:#1F4FFF;">${esc(meetLink)}</a></td></tr>` : ''}
         </table>
       </div>
     `);

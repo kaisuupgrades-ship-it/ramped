@@ -3,6 +3,23 @@
 // Body: { email, pain_points, automation_goal, industry, team_size, revenue,
 //         inbound, integrations, device_os, crm, email_provider, ai_tools, tier }
 
+const ALLOWED_ORIGINS = [
+  'https://30dayramp.com',
+  'https://www.30dayramp.com',
+  'https://ramped-git-main-kaisuupgrades-ship-its-projects.vercel.app',
+  'http://localhost:3000',
+];
+
+function setCors(req, res, methods) {
+  const origin = req.headers.origin || '';
+  if (ALLOWED_ORIGINS.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+  }
+  res.setHeader('Access-Control-Allow-Methods', methods);
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+}
+
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
@@ -22,9 +39,7 @@ async function sbFetch(method, path, body) {
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  setCors(req, res, 'POST, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
