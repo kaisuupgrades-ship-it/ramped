@@ -1074,7 +1074,8 @@
 
   // ── Initialise ───────────────────────────────────────────────────────────────
   (function init() {
-    const saved = sessionStorage.getItem(SESSION_KEY);
+    // Check sessionStorage first (current tab), fall back to localStorage (persisted across sessions)
+    const saved = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem('adminToken');
     if (saved) {
       _token = saved;
       fetchData(saved);
