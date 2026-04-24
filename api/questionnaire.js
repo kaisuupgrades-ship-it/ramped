@@ -122,15 +122,21 @@ Rules:
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-opus-4-5',
+        model: 'claude-3-5-sonnet-20241022',
         max_tokens: 1500,
         messages: [{ role: 'user', content: prompt }],
       }),
     });
-    if (!r.ok) { console.error('Claude analysis failed:', r.status); return { grade: null, gradeSummary: null, roadmap: null }; }
+    if (!r.ok) {
+      const errBody = await r.text();
+      console.error('Claude analysis failed:', r.status, errBody);
+      return { grade: null, gradeSummary: null, roadmap: null };
+    }
     const json = await r.json();
     const raw  = json.content?.[0]?.text || '';
-    const parsed = JSON.parse(raw.trim());
+    // Strip markdown code fences if Claude wraps the JSON
+    const cleaned = raw.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
+    const parsed = JSON.parse(cleaned);
     const grade  = String(parsed.grade || '').toUpperCase().charAt(0) || null;
     return {
       grade: ['A','B','C','D'].includes(grade) ? grade : null,
@@ -360,4 +366,5 @@ export default async function handler(req, res) {
 
   return res.status(200).json({ success: true, updated: true, grade: grade || null });
 }
+
 
