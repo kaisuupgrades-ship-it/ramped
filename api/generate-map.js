@@ -96,6 +96,22 @@ Sprint build budget = 20 days. Select top 3–5 skills that fit.
 
 Fully-loaded cost: $45/hr blended. Expected Sprint outcome: 58–65% reduction.
 
+## PROSPECT GRADING
+
+Grade each prospect A–D for sales qualification. Be honest — this is internal-only, the prospect never sees it.
+
+### Grade A — Strong fit, fast close
+All of: revenue $1M+, 3+ clear time sinks, motivated founder/ops lead, realistic timeline, stack is integrable, no legal/compliance blockers. Projected savings justify Growth or Enterprise tier easily.
+
+### Grade B — Good fit, needs qualifying
+Revenue $300K–$1M OR 2 clear time sinks OR mild compliance concern. Solid ROI story but may need education on budget or timeline. Worth a focused discovery call.
+
+### Grade C — Borderline, high effort
+Revenue under $300K OR only 1 time sink OR stack is too fragmented OR answers are vague. Could convert with the right pitch but deal size may not justify full Sprint. Consider a lighter package.
+
+### Grade D — Poor fit, deprioritize
+Revenue under $100K, no clear pain, or significant red flags (legal blockers, unrealistic expectations, no budget signal, or just kicking tires). Not worth investing a full Map Call slot.
+
 ## OUTPUT
 
 Return ONLY valid JSON (no markdown fences, no explanation):
@@ -133,7 +149,9 @@ Return ONLY valid JSON (no markdown fences, no explanation):
     "anthropic_monthly": "string"
   },
   "red_flags": ["string"],
-  "next_step": "string"
+  "next_step": "string",
+  "grade": "A"|"B"|"C"|"D",
+  "grade_summary": "string (2–3 sentences internal analyst note: why this grade, key signals that drove it, what to watch for on the call)"
 }`;
 
 async function generateMap(answers) {
@@ -167,6 +185,9 @@ Be specific and concrete. Invent realistic workflow details. Make time sink desc
   let text = result.content[0].text.trim().replace(/^```json\n?/, '').replace(/\n?```$/, '').trim();
   return JSON.parse(text);
 }
+
+const GRADE_COLORS = { A: '#15803d', B: '#1a56db', C: '#b45309', D: '#dc2626' };
+const GRADE_BG     = { A: '#f0fdf4', B: '#eff6ff', C: '#fffbeb', D: '#fef2f2' };
 
 export default async function handler(req, res) {
   setCors(req, res);
@@ -214,6 +235,9 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Map generation failed. Please try again.' });
   }
 
+  const grade        = mapData.grade        || 'C';
+  const gradeSummary = mapData.grade_summary || '';
+
   let mapId = null;
   if (SUPABASE_URL && SUPABASE_KEY) {
     const { ok, data } = await supabaseInsert('automation_maps', {
@@ -224,6 +248,8 @@ export default async function handler(req, res) {
       time_sinks: [time_sinks].flat().filter(Boolean),
       notes: notes || null,
       map_data: mapData,
+      grade,
+      grade_summary: gradeSummary,
       status: 'generated',
     });
     if (ok && data?.[0]) mapId = data[0].id;
@@ -252,9 +278,18 @@ export default async function handler(req, res) {
       </div>
     `);
 
-    await sendEmail(OWNER_EMAIL, `New map: ${company} (${name}) — ${mapData.pricing?.tier || '?'}`, `
+    const gradeColor = GRADE_COLORS[grade] || '#5B6272';
+    const gradeBg    = GRADE_BG[grade]    || '#f9fafb';
+    await sendEmail(OWNER_EMAIL, `[${grade}] New map: ${company} (${name}) — ${mapData.pricing?.tier || '?'}`, `
       <div style="font-family:-apple-system,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;">
-        <p style="font-size:20px;font-weight:800;color:#0B1220;margin-bottom:20px;">New automation map generated</p>
+        <p style="font-size:20px;font-weight:800;color:#0B1220;margin-bottom:16px;">New automation map generated</p>
+        <div style="background:${gradeBg};border:2px solid ${gradeColor};border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:16px;">
+          <span style="font-size:36px;font-weight:900;color:${gradeColor};line-height:1;">${grade}</span>
+          <div>
+            <p style="font-weight:700;font-size:14px;color:#0B1220;margin:0 0 4px;">Prospect Grade</p>
+            <p style="font-size:13px;color:#5B6272;margin:0;">${esc(gradeSummary)}</p>
+          </div>
+        </div>
         <table style="width:100%;border-collapse:collapse;font-size:14px;">
           <tr><td style="padding:6px 0;color:#5B6272;width:110px;">Company</td><td style="font-weight:600;">${esc(company)}</td></tr>
           <tr><td style="padding:6px 0;color:#5B6272;">Name</td><td>${esc(name)}</td></tr>
