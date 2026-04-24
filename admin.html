@@ -625,13 +625,120 @@
     .cdialog-confirm{padding:10px 18px;border:none;border-radius:8px;background:#0B1220;color:#fff;cursor:pointer;font-size:14px;font-weight:600;}
 
     @media (max-width: 640px) {
-      .dash-header { padding: 12px 16px; }
-      .pipeline-bar { padding: 16px; gap: 12px; }
-      .stat-card { min-width: 100px; padding: 12px 14px; }
+      /* ── Header ──────────────────────────────────────────────────────────── */
+      .dash-header {
+        padding: 10px 14px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .dash-logo { font-size: 13px; gap: 8px; }
+      .dash-logo svg { width: 20px; height: 16px; }
+      .dash-nav { gap: 8px; }
+      /* Hide "← Back to site" link on mobile — use browser back */
+      .dash-nav > a { display: none; }
+      .btn-signout { padding: 5px 10px; font-size: 12px; }
+
+      /* ── Config warning ───────────────────────────────────────────────────── */
+      #config-warning { padding: 10px 14px; }
+
+      /* ── Pipeline stats — 2×2 grid ───────────────────────────────────────── */
+      .pipeline-bar {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        padding: 12px 14px;
+        gap: 10px;
+      }
+      .stat-card { min-width: 0; padding: 10px 12px; }
       .stat-card .stat-value { font-size: 22px; }
-      .dash-body { padding: 16px 12px 48px; }
-      .tab-btn { padding: 9px 12px; font-size: 13px; }
+      .stat-card .stat-label { font-size: 10px; }
+
+      /* ── Body ─────────────────────────────────────────────────────────────── */
+      .dash-body { padding: 14px 12px 48px; }
+
+      /* ── Tabs — horizontal scroll, no wrap ───────────────────────────────── */
+      .tab-bar {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        flex-wrap: nowrap;
+        gap: 0;
+        margin-left: -12px;
+        margin-right: -12px;
+        padding: 0 12px;
+      }
+      .tab-bar::-webkit-scrollbar { display: none; }
+      .tab-btn {
+        padding: 9px 14px;
+        font-size: 13px;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      /* ── Filter bar — stack vertically ───────────────────────────────────── */
+      .filter-bar { flex-direction: column; align-items: stretch; }
+      .filter-bar input[type="text"],
+      .filter-bar select { width: 100%; min-width: 0; font-size: 15px; }
+
+      /* ── Tables — reduce min-width now that columns are hidden ──────────── */
+      #bookings-table { min-width: 380px; }
+      #leads-table { min-width: 320px; }
+      #panel-activity table { min-width: 360px; }
+
+      /* ── Bookings table — hide less-critical columns ─────────────────────── */
+      /* Keep: Status(1), Date(2), Name(3), Actions(7) */
+      /* Hide: Plan(4), Questionnaire(5), Notes(6) */
+      #bookings-table thead th:nth-child(4),
+      #bookings-table thead th:nth-child(5),
+      #bookings-table thead th:nth-child(6),
+      #bookings-table tbody td:nth-child(4),
+      #bookings-table tbody td:nth-child(5),
+      #bookings-table tbody td:nth-child(6) { display: none; }
+
+      /* Questionnaire panel still spans all cols — use colspan trick via width */
+      #bookings-table tbody tr.q-panel td,
+      #bookings-table tbody tr.notes-row td { display: table-cell; }
+
+      /* Compact the action buttons */
+      #bookings-table td:last-child .btn-action { padding: 5px 8px; font-size: 11px; }
+
+      /* ── Leads table — hide Company column ───────────────────────────────── */
+      #leads-table thead th:nth-child(3),
+      #leads-table tbody td:nth-child(3) { display: none; }
+
+      /* ── Activity table — hide Type(3) and Duration(5) ───────────────────── */
+      #panel-activity table thead th:nth-child(3),
+      #panel-activity table thead th:nth-child(5),
+      #panel-activity table tbody td:nth-child(3),
+      #panel-activity table tbody td:nth-child(5) { display: none; }
+
+      /* ── Add/Edit booking modal ───────────────────────────────────────────── */
+      .modal-overlay { align-items: flex-end; }
+      .modal-card {
+        border-radius: 16px 16px 0 0;
+        max-width: 100%;
+        max-height: 92vh;
+        overflow-y: auto;
+        padding: 20px 18px 28px;
+      }
+
+      /* ── Questionnaire grid ───────────────────────────────────────────────── */
       .q-inner { grid-template-columns: 1fr; }
+
+      /* ── Availability — time dropdowns stack ─────────────────────────────── */
+      #panel-availability > div > div:nth-child(3) {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      /* ── Availability table ───────────────────────────────────────────────── */
+      .avail-day-lbl { padding: 8px 10px; font-size: 13px; }
+
+      /* ── Activity stat mini-grid ──────────────────────────────────────────── */
+      #panel-activity > div:first-child {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
     }
   </style>
 </head>
