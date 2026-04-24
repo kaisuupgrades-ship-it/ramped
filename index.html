@@ -70,6 +70,7 @@
   .btn-ghost:hover{background:#F2F0E8;}
   .card{background:#fff;border:1px solid var(--line);border-radius:14px;}
   .sectionnum{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;}
+  @media(max-width:768px){.faq-col{padding-top:40px!important;}}
   .step-num{width:26px;height:26px;border-radius:999px;background:var(--ink);color:#fff;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
   .hover-lift{transition:transform .15s ease, box-shadow .15s ease;}
   .hover-lift:hover{transform:translateY(-2px);box-shadow:0 12px 32px -16px rgba(11,18,32,.2);}
@@ -279,7 +280,7 @@
       </div>
 
       <!-- Right col: FAQ -->
-      <div>
+      <div style="padding-top:0;" class="faq-col">
         <div class="mb-3"><span class="sectionnum">FAQ</span></div>
         <p style="font-size:1rem;color:var(--muted);line-height:1.7;margin-bottom:20px;">We deploy AI agents into your operating business — answering calls, routing leads, and automating your highest-friction workflows. Flat monthly fee. Go-live guarantee.</p>
         <h2 class="text-2xl font-bold tracking-tight mb-6" style="letter-spacing:-.02em;">Common questions</h2>
