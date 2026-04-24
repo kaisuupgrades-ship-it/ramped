@@ -103,10 +103,11 @@
   @keyframes ticker-scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
   .ticker-bar:hover .ticker-items{animation-play-state:paused;}
   /* ── Hero stats strip ── */
-  .hero-stats{display:flex;flex-wrap:wrap;gap:16px 24px;margin-bottom:32px;}
+  .hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 20px;margin-bottom:32px;}
   .hero-stat{border-left:2px solid var(--accent);padding-left:10px;}
   .hero-stat-val{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:700;color:var(--ink);line-height:1;display:block;margin-bottom:4px;}
   .hero-stat-label{font-size:11px;color:var(--muted);letter-spacing:.03em;white-space:nowrap;display:block;}
+  @media(max-width:480px){.hero-stats{grid-template-columns:repeat(2,1fr);}}
 </style>
 </head>
 <body>
@@ -178,18 +179,18 @@
 <div class="ticker-bar" role="marquee" aria-label="Key stats">
   <div class="ticker-track">
     <span class="ticker-items" aria-hidden="true">
-      <span class="ticker-item"><span class="ticker-dot">●</span>Save 10+ hours per week</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>Save 40+ hours per week</span>
       <span class="ticker-item"><span class="ticker-dot">●</span>30-day go-live guarantee</span>
       <span class="ticker-item"><span class="ticker-dot">●</span>3× faster lead response time</span>
-      <span class="ticker-item"><span class="ticker-dot">●</span>Avg. $2,400 / mo saved vs. hiring</span>
-      <span class="ticker-item"><span class="ticker-dot">●</span>Flat monthly fee — no surprises</span>
-      <span class="ticker-item"><span class="ticker-dot">●</span>Live AI agents in production</span>
-      <span class="ticker-item"><span class="ticker-dot">●</span>Save 10+ hours per week</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>Avg. $12,000+ / mo saved vs. staffing</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>5× avg. ROI in year 1</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>24/7 AI coverage — no sick days</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>Save 40+ hours per week</span>
       <span class="ticker-item"><span class="ticker-dot">●</span>30-day go-live guarantee</span>
       <span class="ticker-item"><span class="ticker-dot">●</span>3× faster lead response time</span>
-      <span class="ticker-item"><span class="ticker-dot">●</span>Avg. $2,400 / mo saved vs. hiring</span>
-      <span class="ticker-item"><span class="ticker-dot">●</span>Flat monthly fee — no surprises</span>
-      <span class="ticker-item"><span class="ticker-dot">●</span>Live AI agents in production</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>Avg. $12,000+ / mo saved vs. staffing</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>5× avg. ROI in year 1</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>24/7 AI coverage — no sick days</span>
     </span>
   </div>
 </div>
@@ -211,20 +212,28 @@
         <!-- Hero stats strip -->
         <div class="hero-stats mb-10">
           <div class="hero-stat">
-            <span class="hero-stat-val">10+ hrs</span>
+            <span class="hero-stat-val">40+ hrs</span>
             <span class="hero-stat-label">saved per week</span>
           </div>
           <div class="hero-stat">
-            <span class="hero-stat-val">3×</span>
-            <span class="hero-stat-label">faster leads</span>
+            <span class="hero-stat-val">$12,000+</span>
+            <span class="hero-stat-label">avg. saved / mo</span>
           </div>
           <div class="hero-stat">
-            <span class="hero-stat-val">$2,400</span>
-            <span class="hero-stat-label">avg. saved / mo</span>
+            <span class="hero-stat-val">3×</span>
+            <span class="hero-stat-label">faster lead response</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-val">5×</span>
+            <span class="hero-stat-label">avg. ROI year 1</span>
           </div>
           <div class="hero-stat">
             <span class="hero-stat-val">30 days</span>
             <span class="hero-stat-label">go-live guarantee</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-val">24/7</span>
+            <span class="hero-stat-label">AI coverage</span>
           </div>
         </div>
 
