@@ -151,13 +151,19 @@ Rules:
 
 // ── Email helper ─────────────────────────────────────────────────────────────
 async function sendEmail(to, subject, html) {
-  if (!RESEND_KEY) return;
+  if (!RESEND_KEY) { console.warn('RESEND_API_KEY not set — skipping email to', to); return { ok: false, error: 'no_key' }; }
   const r = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${RESEND_KEY}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ from: `Ramped AI <${FROM_EMAIL}>`, to, subject, html }),
   });
-  if (!r.ok) console.error('Resend error:', r.status, await r.text());
+  const body = await r.text();
+  if (!r.ok) {
+    console.error('Resend error sending to', to, ':', r.status, body);
+    return { ok: false, status: r.status, error: body };
+  }
+  console.log('Email sent to', to, ':', r.status, body);
+  return { ok: true };
 }
 
 // ── CORS ─────────────────────────────────────────────────────────────────────
@@ -497,7 +503,7 @@ export default async function handler(req, res) {
     );
   }
 
-  return res.status(200).json({ success: true, updated: true, grade: grade || null });
+  return res.status(200).json({ success: true, updated: true, grade: grade || null, emails_sent: !!RESEND_KEY });
 }
 
 
