@@ -1021,18 +1021,19 @@
     <!-- Leads panel -->
     <div class="tab-panel" id="panel-leads">
       <div class="table-wrap">
-        <table id="leads-table">
+        <table id="leads-table" class="data-table">
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Name &amp; Email</th>
-              <th>Company</th>
-              <th>Message</th>
-              <th>Action</th>
+              <th data-col="date" class="sortable">Date</th>
+              <th data-col="name">Name &amp; Email</th>
+              <th data-col="company">Company</th>
+              <th data-col="source">Source</th>
+              <th data-col="status">Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody id="leads-body">
-            <tr><td colspan="5"><div class="empty-state">Loading…</div></td></tr>
+            <tr><td colspan="6"><div class="empty-state">Loading…</div></td></tr>
           </tbody>
         </table>
       </div>
@@ -1136,7 +1137,7 @@
       }
 
       renderBookings(data.bookings || []);
-      renderLeads(data.leads || []);
+      renderLeads(data.leads || [], data.maps || []);
       return true;
 
     } catch (err) {
@@ -1618,43 +1619,73 @@
   });
 
   // ── Render leads ─────────────────────────────────────────────────────────────
-  function renderLeads(leads) {
-    document.getElementById('tab-leads').textContent = `Leads (${leads.length})`;
-    document.getElementById('stat-leads').textContent = leads.length;
+  function renderLeads(leads, maps) {
+    // Merge contact-form leads and automation-map submissions into one list
+    const allLeads = [
+      ...(leads || []).map(l => ({ ...l, _source: 'form' })),
+      ...(maps  || []).map(m => ({ ...m, _source: 'map',
+        // normalise field names so the renderer has a consistent shape
+        email:   m.email   || (m.map_data && m.map_data.email) || '',
+        message: m.industry ? `Industry: ${m.industry}` : '',
+      })),
+    ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-    const body = document.getElementById('leads-body');
+    const LEAD_STATUSES = ['new','contacted','qualified','converted','closed'];
+    const LEAD_STATUS_LABELS = { new:'New', contacted:'Contacted', qualified:'Qualified', converted:'Converted', closed:'Closed' };
 
-    if (!leads.length) {
-      body.innerHTML = '<tr><td colspan="5"><div class="empty-state">No leads yet</div></td></tr>';
+    document.getElementById('tab-leads').textContent = `Leads (${allLeads.length})`;
+    document.getElementById('stat-leads').textContent = allLeads.length;
+
+    const tbody = document.getElementById('leads-body');
+    if (!allLeads.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--muted)">No leads yet</td></tr>';
       return;
     }
-
-    body.innerHTML = leads.map((l, i) => {
-      const msg     = l.message || l.notes || '';
-      const short   = msg.length > 100 ? msg.slice(0, 100) + '…' : msg;
-      const hasMore = msg.length > 100;
-      const lid     = `lead-${i}`;
-
-      const msgCell = hasMore
-        ? `<span class="msg-short" id="${lid}-short">${esc(short)}
-            <span class="msg-toggle" onclick="expandMsg('${lid}')">more</span>
-           </span>
-           <span class="msg-full" id="${lid}-full">${esc(msg)}
-            <span class="msg-toggle" onclick="collapseMsg('${lid}')">less</span>
-           </span>`
-        : esc(msg || '—');
-
+    tbody.innerHTML = allLeads.map((l, i) => {
+      const dateStr = formatLeadDate(l.created_at);
+      const name    = esc(l.name || '—');
+      const email   = esc(l.email || '');
+      const company = esc(l.company || '—');
+      const source  = l._source === 'map'
+        ? '<span style="background:#e8f0fe;color:#1a56db;font-size:11px;padding:2px 6px;border-radius:4px;font-weight:600">AI Map</span>'
+        : '<span style="background:#f0fdf4;color:#15803d;font-size:11px;padding:2px 6px;border-radius:4px;font-weight:600">Form</span>';
+      const currentStatus = l.status || 'new';
+      const statusSel = `<select class="status-select status-${currentStatus}" onchange="onLeadStatusChange(this,'${l.id}','${l._source}')" style="font-size:12px;padding:2px 6px;border-radius:4px;border:1px solid var(--border)">
+        ${LEAD_STATUSES.map(s => `<option value="${s}"${s===currentStatus?' selected':''}>${LEAD_STATUS_LABELS[s]}</option>`).join('')}
+      </select>`;
+      const mapBtn = l._source === 'map'
+        ? `<a href="/map/${l.id}" target="_blank" class="btn-sm btn-outline" style="font-size:11px;padding:2px 8px">View Map</a> `
+        : '';
+      const emailBtn = email
+        ? `<a href="mailto:${email}" class="btn-sm btn-outline" style="font-size:11px;padding:2px 8px">✉ Email</a> `
+        : '';
+      const deleteBtn = `<button onclick="deleteLead('${l.id}','${l._source}')" class="btn-sm btn-danger" style="font-size:11px;padding:2px 8px">Delete</button>`;
       return `<tr>
-        <td style="white-space:nowrap;color:var(--muted);font-size:12px">${esc(formatLeadDate(l.created_at))}</td>
-        <td>
-          <div style="font-weight:600">${esc(l.name || '—')}</div>
-          <a href="mailto:${esc(l.email)}" style="color:var(--accent);font-size:12px">${esc(l.email || '')}</a>
-        </td>
-        <td>${esc(l.company || '—')}</td>
-        <td style="max-width:320px;word-break:break-word">${msgCell}</td>
-        <td><a href="mailto:${esc(l.email)}" class="btn-action">✉ Email</a></td>
+        <td style="white-space:nowrap;font-size:13px">${dateStr}</td>
+        <td><strong>${name}</strong>${email ? `<br><a href="mailto:${email}" style="font-size:12px;color:var(--accent)">${email}</a>` : ''}</td>
+        <td>${company}</td>
+        <td>${source}</td>
+        <td>${statusSel}</td>
+        <td style="white-space:nowrap">${mapBtn}${emailBtn}${deleteBtn}</td>
       </tr>`;
     }).join('');
+  }
+
+  function onLeadStatusChange(sel, id, source) {
+    const status = sel.value;
+    sel.className = `status-select status-${status}`;
+    if (source === 'map') {
+      adminFetch('/api/admin-update', { method: 'POST', body: JSON.stringify({ table: 'automation_maps', id, updates: { status } }) });
+    } else {
+      adminFetch('/api/admin-update', { method: 'POST', body: JSON.stringify({ table: 'leads', id, updates: { status } }) });
+    }
+  }
+
+  async function deleteLead(id, source) {
+    if (!await confirmDialog('Delete this lead? This cannot be undone.')) return;
+    const table = source === 'map' ? 'automation_maps' : 'leads';
+    const r = await adminFetch('/api/admin-delete', { method: 'POST', body: JSON.stringify({ table, id }) });
+    if (r && r.ok) fetchData();
   }
 
   // ── Message expand/collapse ───────────────────────────────────────────────────
