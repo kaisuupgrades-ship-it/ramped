@@ -241,21 +241,9 @@
         <!-- Hero form + trust signals -->
         <div class="max-w-md">
           <div class="card ink-shadow p-6" id="hero-form-wrap">
-                        <!-- Primary CTA: free automation map -->
-            <div style="margin-bottom:18px;">
-              <a href="/questionnaire" class="btn-primary w-full justify-center" style="width:100%;text-align:center;padding:15px 22px;font-size:16px;display:block;">Get your free automation map →</a>
-              <p style="font-size:12px;color:var(--muted);margin-top:10px;text-align:center;line-height:1.5;">
-                2-minute questionnaire · your personalized AI deployment map, free.
-              </p>
-            </div>
-            <div style="display:flex;align-items:center;gap:10px;margin:14px 0;">
-              <div style="flex:1;height:1px;background:var(--line);"></div>
-              <span style="font-size:11px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;">or</span>
-              <div style="flex:1;height:1px;background:var(--line);"></div>
-            </div>
-            <!-- Form -->
+                        <!-- Form -->
             <div id="hero-form-inner">
-              <p style="font-weight:600;font-size:14px;margin-bottom:12px;color:var(--ink);">Have us reach out</p>
+              <p style="font-weight:600;font-size:16px;margin-bottom:16px;color:var(--ink);">Tell us about your business</p>
               <form id="hero-form" action="/api/contact" method="POST" class="flex flex-col gap-3">
                 <label for="hero-name" class="sr-only">Your name</label>
                 <input id="hero-name" class="form-input" type="text" name="name" placeholder="Your name" required autocomplete="name" />
@@ -263,7 +251,7 @@
                 <input id="hero-email" class="form-input" type="email" name="email" placeholder="Work email" required autocomplete="email" />
                 <label for="hero-company" class="sr-only">Company name</label>
                 <input id="hero-company" class="form-input" type="text" name="company" placeholder="Company name" required autocomplete="organization" />
-                <button type="submit" class="btn-primary w-full justify-center mt-1" style="background:#fff;color:var(--ink);border:1px solid var(--line);">Have us reach out →</button>
+                <button type="submit" class="btn-primary w-full justify-center mt-1" >Get started →</button>
                 <div class="form-error"></div>
               </form>
               <p style="font-size:12px;color:var(--muted);margin-top:12px;text-align:center;">
@@ -301,7 +289,7 @@
           <details class="faq-item ink-shadow rounded-xl border border-[var(--line)] bg-white overflow-hidden group">
             <summary class="flex items-center justify-between gap-4 cursor-pointer px-6 py-5 select-none list-none">
               <span style="font-weight:600;font-size:15px;color:var(--ink);">How is this different from hiring an AI consultant?</span>
-              <span class="faq-icon" aria-hidden="true" style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;transition:transform .2s;">+</span>
+              <span class="faq-icon" aria-hidden="true" style="flex-shrink:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;transition:transform .2s;color:var(--muted);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </summary>
             <div class="faq-body px-6 pb-5">
               <p style="color:var(--muted);line-height:1.7;font-size:14px;">We build and run the agents ourselves. You get working software, not a strategy deck.</p>
@@ -311,7 +299,7 @@
           <details class="faq-item ink-shadow rounded-xl border border-[var(--line)] bg-white overflow-hidden group">
             <summary class="flex items-center justify-between gap-4 cursor-pointer px-6 py-5 select-none list-none">
               <span style="font-weight:600;font-size:15px;color:var(--ink);">Do I need technical staff to work with you?</span>
-              <span class="faq-icon" aria-hidden="true" style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;transition:transform .2s;">+</span>
+              <span class="faq-icon" aria-hidden="true" style="flex-shrink:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;transition:transform .2s;color:var(--muted);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </summary>
             <div class="faq-body px-6 pb-5">
               <p style="color:var(--muted);line-height:1.7;font-size:14px;">No. We handle everything — setup, integration, training, and maintenance. Your team just uses the results.</p>
@@ -321,7 +309,7 @@
           <details class="faq-item ink-shadow rounded-xl border border-[var(--line)] bg-white overflow-hidden group">
             <summary class="flex items-center justify-between gap-4 cursor-pointer px-6 py-5 select-none list-none">
               <span style="font-weight:600;font-size:15px;color:var(--ink);">What kinds of businesses do you work with?</span>
-              <span class="faq-icon" aria-hidden="true" style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;transition:transform .2s;">+</span>
+              <span class="faq-icon" aria-hidden="true" style="flex-shrink:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;transition:transform .2s;color:var(--muted);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </summary>
             <div class="faq-body px-6 pb-5">
               <p style="color:var(--muted);line-height:1.7;font-size:14px;">Established businesses with real workflows to automate. We work best with companies doing $1M+ in revenue that have repetitive, high-volume processes.</p>
@@ -331,7 +319,7 @@
           <details class="faq-item ink-shadow rounded-xl border border-[var(--line)] bg-white overflow-hidden group">
             <summary class="flex items-center justify-between gap-4 cursor-pointer px-6 py-5 select-none list-none">
               <span style="font-weight:600;font-size:15px;color:var(--ink);">What if it doesn't work in 30 days?</span>
-              <span class="faq-icon" aria-hidden="true" style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;transition:transform .2s;">+</span>
+              <span class="faq-icon" aria-hidden="true" style="flex-shrink:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;transition:transform .2s;color:var(--muted);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </summary>
             <div class="faq-body px-6 pb-5">
               <p style="color:var(--muted);line-height:1.7;font-size:14px;">You get a full refund. No questions asked.</p>
@@ -341,12 +329,18 @@
           <details class="faq-item ink-shadow rounded-xl border border-[var(--line)] bg-white overflow-hidden group">
             <summary class="flex items-center justify-between gap-4 cursor-pointer px-6 py-5 select-none list-none">
               <span style="font-weight:600;font-size:15px;color:var(--ink);">What does the monthly fee cover?</span>
-              <span class="faq-icon" aria-hidden="true" style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;transition:transform .2s;">+</span>
+              <span class="faq-icon" aria-hidden="true" style="flex-shrink:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;transition:transform .2s;color:var(--muted);"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </summary>
             <div class="faq-body px-6 pb-5">
               <p style="color:var(--muted);line-height:1.7;font-size:14px;">Uptime, maintenance, iteration, and ongoing improvements. As your business grows, we expand the system without a new engagement.</p>
             </div>
           </details>
+
+          <!-- Automation map CTA -->
+          <div style="margin-top:24px;">
+            <a href="/questionnaire" class="btn-primary" style="width:100%;text-align:center;padding:15px 22px;font-size:16px;display:block;">Get your free automation map →</a>
+            <p style="font-size:12px;color:var(--muted);margin-top:10px;text-align:center;line-height:1.5;">2-minute questionnaire · your personalized AI deployment map, free.</p>
+          </div>
 
         </div>
       </div>
