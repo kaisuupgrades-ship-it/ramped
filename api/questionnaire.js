@@ -1,4 +1,4 @@
-// api/questionnaire.js — Attach questionnaire answers to a booking + grade + generate NanoClaw roadmap
+// api/questionnaire.js — Attach questionnaire answers to a booking + grade + generate automation roadmap
 // POST /api/questionnaire
 //
 // Env vars needed:
@@ -59,7 +59,7 @@ Each AI agent we build:
 - Is triggered by real business events (new CRM contact, form submission, daily schedule, etc.)
 - Saves the team hours each week by removing manual busywork
 
-Your job: analyze this prospect and produce a grade + a personalized automation roadmap for their discovery call. Write everything from the client's perspective — focus on outcomes and time saved, not technology.
+Your job: analyze this prospect and produce a grade + a personalized automation roadmap for their discovery call. Write everything from the client's perspective — focus on outcomes and time saved, not technology. NEVER mention "NanoClaw" or any internal platform names — use plain language like "AI agent", "automation", or "assistant".
 
 GRADING CRITERIA:
 A (Hot): Clear specific pain, 10+ team OR $500K+ revenue, decision-maker signal, premium tier interest, concrete use case
