@@ -240,7 +240,7 @@ export default async function handler(req, res) {
 
   let mapId = null;
   if (SUPABASE_URL && SUPABASE_KEY) {
-    const { ok, data } = await supabaseInsert('automation_maps', {
+    const baseRow = {
       company, name, email, industry, team_size, revenue,
       channels: [channels].flat().filter(Boolean),
       platforms: [platforms].flat().filter(Boolean),
@@ -248,11 +248,15 @@ export default async function handler(req, res) {
       time_sinks: [time_sinks].flat().filter(Boolean),
       notes: notes || null,
       map_data: mapData,
-      grade,
-      grade_summary: gradeSummary,
       status: 'generated',
-    });
-    if (ok && data?.[0]) mapId = data[0].id;
+    };
+    // Try with grade fields first; fall back without them if columns don't exist yet
+    let result = await supabaseInsert('automation_maps', { ...baseRow, grade, grade_summary: gradeSummary });
+    if (!result.ok) {
+      console.warn('Insert with grade failed, retrying without grade fields:', result.status);
+      result = await supabaseInsert('automation_maps', baseRow);
+    }
+    if (result.ok && result.data?.[0]) mapId = result.data[0].id;
   }
 
   const mapUrl = mapId ? `${SITE_URL}/map/${mapId}` : null;
