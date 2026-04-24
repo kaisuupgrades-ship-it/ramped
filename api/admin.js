@@ -33,10 +33,12 @@ export default async function handler(req, res) {
 
   const bookingsResult = await supabase('GET', '/bookings?select=*&order=datetime.desc&limit=200');
   const leadsResult    = await supabase('GET', '/leads?select=*&order=created_at.desc&limit=200');
+  const mapsResult     = await supabase('GET', '/automation_maps?select=*&order=created_at.desc&limit=200');
 
   return res.status(200).json({
     configured: true,
     bookings: bookingsResult.ok ? (bookingsResult.data || []) : [],
     leads:    leadsResult.ok    ? (leadsResult.data    || []) : [],
+    maps:     mapsResult.ok     ? (mapsResult.data     || []) : [],
   });
 }
