@@ -1,4 +1,8 @@
 {
+  "functions": {
+    "api/questionnaire.js": { "maxDuration": 60 },
+    "api/generate-map.js":  { "maxDuration": 60 }
+  },
   "rewrites": [
     { "source": "/demo",                    "destination": "/client-demo.html" },
     { "source": "/logo-concepts",           "destination": "/logo-concepts.html" },
