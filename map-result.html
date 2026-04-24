@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Your Custom Automation Map — Ramped AI</title>
+<meta name="description" content="Your custom AI automation map, built by Ramped AI before your Map Call." />
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── Tokens ── */
+:root {
+  --ink: #0B1220;
+  --ink-2: #1A2233;
+  --paper: #FAFAF7;
+  --line: #E6E4DC;
+  --muted: #5B6272;
+  --accent: #1F4FFF;
+  --accent-2: #0B2A8C;
+  --accent-dim: #EEF2FF;
+  --good: #0F7A4B;
+  --good-dim: #ECFDF5;
+  --warn: #B45309;
+  --warn-dim: #FFFBEB;
+  --surface: #F5F5F3;
+  --card-bg: #fff;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  background: var(--ink);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ── Skip link ── */
+.skip-link {
+  position: absolute; left: -9999px; top: 0;
+  background: var(--accent); color: #fff;
+  padding: 10px 14px; border-radius: 0 0 8px 0;
+  font-size: 13px; font-weight: 600; z-index: 100;
+}
+.skip-link:focus { left: 0; }
+
+/* ── Document frame ── */
+.doc-frame {
+  max-width: 860px;
+  margin: 0 auto;
+  background: var(--paper);
+  min-height: 100vh;
+}
+
+/* ── Cover / header ── */
+.doc-cover {
+  background: var(--ink);
+  color: #fff;
+  padding: 48px 48px 40px;
+}
+@media (max-width: 600px) { .doc-cover { padding: 32px 24px 28px; } }
+
+.cover-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: rgba(255,255,255,0.5);
+  margin-bottom: 20px;
+  display: flex; align-items: center; gap: 12px;
+}
+.cover-logo {
+  display: flex; align-items: flex-end; gap: 3px;
+  margin-right: 12px;
+}
+.cover-bar {
+  width: 5px; border-radius: 2px 2px 0 0;
+  background: rgba(255,255,255,0.6);
+}
+.cover-bar:nth-child(4) { background: #4F79FF; }
+
+.cover-title {
+  font-size: clamp(24px, 4vw, 38px);
+  font-weight: 800; letter-spacing: -0.03em;
+  line-height: 1.1; margin-bottom: 10px;
+}
+.cover-company {
+  font-size: clamp(15px, 2.5vw, 19px);
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 28px;
+}
+
+.cover-meta {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.cover-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 12px; font-family: 'JetBrains Mono', monospace;
+  color: rgba(255,255,255,0.7);
+}
+.cover-tag .tag-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #4F79FF;
+}
+
+/* ── Bot hero strip ── */
+.bot-hero {
+  background: linear-gradient(135deg, #1A2233 0%, #0B1220 100%);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding: 28px 48px;
+  display: flex; align-items: center; gap: 24px;
+  color: #fff; flex-wrap: wrap;
+}
+@media (max-width: 600px) { .bot-hero { padding: 24px; gap: 16px; } }
+
+.bot-avatar {
+  width: 56px; height: 56px; border-radius: 14px;
+  background: linear-gradient(135deg, #1F4FFF, #4F79FF);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; flex-shrink: 0;
+  box-shadow: 0 0 0 4px rgba(79,121,255,0.25);
+}
+.bot-info { flex: 1; min-width: 180px; }
+.bot-name { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; }
+.bot-handle { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #4F79FF; margin-bottom: 4px; }
+.bot-persona { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.5; }
+.bot-channels {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.bot-channel-tag {
+  background: rgba(31,79,255,0.18);
+  border: 1px solid rgba(79,121,255,0.3);
+  border-radius: 6px; padding: 4px 10px;
+  font-size: 11px; font-weight: 600; color: #7FA4FF;
+  font-family: 'JetBrains Mono', monospace; letter-spacing: 0.04em;
+}
+
+/* ── Main content ── */
+.doc-body { padding: 48px; }
+@media (max-width: 600px) { .doc-body { padding: 24px; } }
+
+/* ── Section ── */
+.doc-section { margin-bottom: 48px; }
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 6px;
+}
+.section-title {
+  font-size: 20px; font-weight: 800;
+  letter-spacing: -0.02em; margin-bottom: 4px;
+  color: var(--ink);
+}
+.section-rule {
+  height: 1px; background: var(--line);
+  margin: 14px 0 20px;
+}
+
+/* ── Opportunity ── */
+.opp-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px; margin-bottom: 20px;
+}
+@media (max-width: 600px) { .opp-grid { grid-template-columns: 1fr 1fr; } }
+
+.opp-stat {
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: 12px; padding: 16px;
+}
+.opp-stat .stat-val {
+  font-size: 24px; font-weight: 800;
+  letter-spacing: -0.02em; color: var(--ink);
+  margin-bottom: 2px;
+}
+.opp-stat .stat-val.accent { color: var(--accent); }
+.opp-stat .stat-val.good { color: var(--good); }
+.opp-stat .stat-label { font-size: 11px; color: var(--muted); font-weight: 500; line-height: 1.4; }
+
+.savings-banner {
+  background: var(--good-dim);
+  border: 1.5px solid #BBF7D0;
+  border-radius: 12px; padding: 16px 20px;
+  display: flex; align-items: center; gap: 14px;
+}
+.savings-icon { font-size: 24px; flex-shrink: 0; }
+.savings-text .savings-headline {
+  font-size: 15px; font-weight: 700; color: #065F46; margin-bottom: 2px;
+}
+.savings-text .savings-sub { font-size: 13px; color: #047857; }
+
+/* ── Time sinks table ── */
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table {
+  width: 100%; border-collapse: collapse;
+  font-size: 14px; min-width: 420px;
+}
+thead th {
+  text-align: left; padding: 8px 12px;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--muted); background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+thead th:first-child { border-radius: 8px 0 0 0; }
+thead th:last-child { border-radius: 0 8px 0 0; }
+tbody tr { border-bottom: 1px solid var(--line); }
+tbody tr:last-child { border-bottom: none; }
+tbody td { padding: 12px; color: var(--ink); vertical-align: top; }
+tbody td.num { font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; }
+tbody td.muted { color: var(--muted); font-size: 13px; line-height: 1.5; }
+.table-container {
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: 12px; overflow: hidden;
+}
+
+/* ── Skills ── */
+.skills-list { display: flex; flex-direction: column; gap: 12px; }
+.skill-card {
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: 12px; padding: 16px 20px;
+  display: flex; gap: 16px; align-items: flex-start;
+}
+.skill-badge {
+  flex-shrink: 0; width: 36px; height: 36px;
+  border-radius: 9px; background: var(--accent-dim);
+  color: var(--accent); font-weight: 800;
+  font-size: 12px; font-family: 'JetBrains Mono', monospace;
+  display: flex; align-items: center; justify-content: center;
+}
+.skill-name { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
+.skill-desc { font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 8px; }
+.skill-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.skill-tag {
+  font-size: 11px; font-weight: 600;
+  padding: 3px 8px; border-radius: 5px;
+  font-family: 'JetBrains Mono', monospace; letter-spacing: 0.04em;
+}
+.skill-tag.week { background: var(--accent-dim); color: var(--accent); }
+.skill-tag.effort-S { background: #DCFCE7; color: #15803D; }
+.skill-tag.effort-M { background: #FEF3C7; color: #B45309; }
+.skill-tag.effort-L { background: #FEE2E2; color: #B91C1C; }
+.skill-tag.integration { background: var(--surface); color: var(--muted); }
+
+/* ── Sprint timeline ── */
+.sprint-timeline {
+  position: relative;
+  display: flex; flex-direction: column; gap: 0;
+}
+.sprint-week {
+  display: flex; gap: 20px; padding-bottom: 0;
+  position: relative;
+}
+.sprint-week::before {
+  content: '';
+  position: absolute;
+  left: 15px; top: 32px; bottom: 0;
+  width: 2px; background: var(--line);
+}
+.sprint-week:last-child::before { display: none; }
+
+.sprint-week-num {
+  flex-shrink: 0; width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--ink); color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; z-index: 1;
+  margin-top: 14px;
+}
+.sprint-week-content {
+  flex: 1; padding: 14px 0 28px;
+}
+.sprint-theme {
+  font-size: 15px; font-weight: 700;
+  margin-bottom: 10px; color: var(--ink);
+}
+.sprint-deliverables { display: flex; flex-direction: column; gap: 6px; }
+.sprint-deliverable {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 13px; color: var(--muted); line-height: 1.5;
+}
+.sprint-deliverable::before {
+  content: '—';
+  color: var(--accent); font-weight: 700; flex-shrink: 0;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── Metrics ── */
+.metrics-table {
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: 12px; overflow: hidden;
+}
+.metrics-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  border-bottom: 1px solid var(--line);
+}
+.metrics-row:last-child { border-bottom: none; }
+.metrics-row.header { background: var(--surface); }
+.metrics-cell {
+  padding: 12px 16px;
+  font-size: 13px; border-right: 1px solid var(--line);
+}
+.metrics-cell:last-child { border-right: none; }
+.metrics-row.header .metrics-cell {
+  font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted);
+}
+.metrics-cell .metric-label { font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.metrics-cell .metric-val { color: var(--muted); font-size: 13px; }
+.metrics-cell .metric-target { color: var(--good); font-weight: 700; font-size: 13px; }
+@media (max-width: 520px) {
+  .metrics-row { grid-template-columns: 1fr; }
+  .metrics-cell { border-right: none; border-bottom: 1px solid var(--line); }
+  .metrics-cell:last-child { border-bottom: none; }
+}
+
+/* ── Pricing ── */
+.pricing-card {
+  background: var(--ink);
+  border-radius: 14px;
+  padding: 28px 32px;
+  color: #fff;
+}
+.pricing-tier-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(79,121,255,0.2);
+  border: 1px solid rgba(79,121,255,0.4);
+  border-radius: 6px; padding: 4px 12px;
+  font-size: 12px; font-weight: 700;
+  color: #7FA4FF; font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.pricing-amount {
+  font-size: 38px; font-weight: 800;
+  letter-spacing: -0.03em; color: #fff;
+  margin-bottom: 4px;
+}
+.pricing-amount span { font-size: 18px; font-weight: 400; color: rgba(255,255,255,0.5); }
+.pricing-sub { font-size: 14px; color: rgba(255,255,255,0.55); margin-bottom: 20px; }
+.pricing-line-items { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+.pricing-line {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 13px; padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.pricing-line:last-child { border-bottom: none; }
+.pricing-line .pl-label { color: rgba(255,255,255,0.6); }
+.pricing-line .pl-val { font-weight: 600; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+.pricing-note {
+  font-size: 12px; color: rgba(255,255,255,0.4);
+  line-height: 1.6;
+}
+
+/* ── Red flags ── */
+.red-flags {
+  background: var(--warn-dim);
+  border: 1.5px solid #FDE68A;
+  border-radius: 12px; padding: 16px 20px;
+}
+.red-flag-title {
+  font-size: 13px; font-weight: 700; color: #92400E; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+.red-flag-item {
+  font-size: 13px; color: #78350F; line-height: 1.5;
+  display: flex; align-items: flex-start; gap: 8px; margin-bottom: 4px;
+}
+.red-flag-item::before { content: '↗'; color: #B45309; flex-shrink: 0; }
+
+/* ── Integrations + channels ── */
+.tag-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag-pill {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 12px; font-weight: 500; color: var(--muted);
+}
+.tag-pill.accent {
+  background: var(--accent-dim);
+  border-color: rgba(31,79,255,0.2);
+  color: var(--accent); font-weight: 600;
+}
+
+/* ── CTA section ── */
+.cta-section {
+  background: linear-gradient(135deg, #1F4FFF 0%, #0B2A8C 100%);
+  padding: 40px 48px;
+  text-align: center; color: #fff;
+}
+@media (max-width: 600px) { .cta-section { padding: 32px 24px; } }
+.cta-title {
+  font-size: 24px; font-weight: 800;
+  letter-spacing: -0.02em; margin-bottom: 8px;
+}
+.cta-sub { font-size: 15px; color: rgba(255,255,255,0.7); margin-bottom: 24px; line-height: 1.6; }
+.cta-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #fff; color: var(--accent);
+  font-weight: 800; font-size: 16px;
+  padding: 16px 32px; border-radius: 12px;
+  transition: transform 0.12s, opacity 0.12s;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+}
+.cta-btn:hover { transform: translateY(-2px); opacity: 0.95; }
+
+/* ── Footer ── */
+.doc-footer {
+  background: var(--ink-2);
+  padding: 20px 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px;
+  color: rgba(255,255,255,0.4);
+  font-size: 12px; font-family: 'JetBrains Mono', monospace;
+}
+@media (max-width: 600px) { .doc-footer { padding: 20px 24px; } }
+.doc-footer a { color: rgba(255,255,255,0.5); }
+.doc-footer a:hover { color: rgba(255,255,255,0.8); }
+
+/* ── Loading / error states ── */
+.state-container {
+  min-height: 100vh; background: var(--paper);
+  display: flex; align-items: center; justify-content: center;
+  padding: 40px;
+}
+.state-box { max-width: 400px; text-align: center; }
+.state-icon { font-size: 48px; margin-bottom: 16px; }
+.state-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; color: var(--ink); }
+.state-sub { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 24px; }
+.state-spinner {
+  width: 40px; height: 40px;
+  border: 3px solid var(--line);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 20px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.state-btn {
+  display: inline-block;
+  background: var(--accent); color: #fff;
+  font-weight: 700; font-size: 14px;
+  padding: 12px 24px; border-radius: 10px;
+}
+
+/* ── Focus ── */
+a:focus-visible, button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+</style>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<div id="app">
+  <div class="state-container">
+    <div class="state-box">
+      <div class="state-spinner"></div>
+      <div class="state-title">Loading your map…</div>
+      <div class="state-sub">Fetching your custom automation plan.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+'use strict';
+
+/* ── Utilities ── */
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function fmt$$(n) {
+  if (n == null || n === 'Custom') return 'Custom';
+  return '$' + Number(n).toLocaleString();
+}
+
+function fmtDate(iso) {
+  if (!iso) return '';
+  try {
+    return new Date(iso).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  } catch (e) { return iso; }
+}
+
+/* ── Get map ID from URL ── */
+function getMapId() {
+  var path = window.location.pathname;
+  var m = path.match(/\/map\/([0-9a-f-]{36})/i);
+  return m ? m[1] : null;
+}
+
+/* ── Show error ── */
+function showError(title, sub, showBack) {
+  document.getElementById('app').innerHTML =
+    '<div class="state-container"><div class="state-box">' +
+    '<div class="state-icon">⚠️</div>' +
+    '<div class="state-title">' + esc(title) + '</div>' +
+    '<div class="state-sub">' + esc(sub) + '</div>' +
+    (showBack ? '<a href="/questionnaire" class="state-btn">Start over →</a>' : '') +
+    '</div></div>';
+}
+
+/* ── Render helpers ── */
+function renderTimeSinks(sinks) {
+  if (!sinks || !sinks.length) return '<p style="color:var(--muted);font-size:14px;">No time sinks recorded.</p>';
+  var rows = sinks.map(function (s) {
+    return '<tr>' +
+      '<td><strong>' + esc(s.label) + '</strong></td>' +
+      '<td class="num">' + esc(s.hours_per_week) + ' hrs/wk</td>' +
+      '<td class="muted">' + esc(s.description) + '</td>' +
+      '</tr>';
+  }).join('');
+  return '<div class="table-container"><div class="table-wrap"><table>' +
+    '<thead><tr><th>Time Sink</th><th>Hours/Wk</th><th>What this looks like</th></tr></thead>' +
+    '<tbody>' + rows + '</tbody></table></div></div>';
+}
+
+function renderOpportunity(opp) {
+  if (!opp) return '';
+  var recovPct = Math.round(opp.projected_recovery_pct || 0);
+  return '<div class="opp-grid">' +
+    '<div class="opp-stat"><div class="stat-val">' + esc(opp.total_hours_per_week) + '<span style="font-size:14px;font-weight:400;color:var(--muted)"> hrs/wk</span></div><div class="stat-label">Hours burned per week</div></div>' +
+    '<div class="opp-stat"><div class="stat-val accent">' + fmt$$(opp.annual_cost) + '</div><div class="stat-label">Annual cost of status quo</div></div>' +
+    '<div class="opp-stat"><div class="stat-val good">' + recovPct + '%</div><div class="stat-label">Projected automation rate</div></div>' +
+    '</div>' +
+    '<div class="savings-banner">' +
+    '<div class="savings-icon">💰</div>' +
+    '<div class="savings-text">' +
+    '<div class="savings-headline">' + fmt$$(opp.projected_savings_annual) + ' projected annual savings</div>' +
+    '<div class="savings-sub">Based on ' + recovPct + '% reduction at $45/hr blended fully-loaded cost</div>' +
+    '</div></div>';
+}
+
+function renderSkills(skills) {
+  if (!skills || !skills.length) return '';
+  return '<div class="skills-list">' + skills.map(function (s, i) {
+    var effortClass = 'effort-' + (s.effort || 'M');
+    var effortLabel = { S: 'Small (2–3 days)', M: 'Medium (3–5 days)', L: 'Large (5–10 days)' }[s.effort] || s.effort;
+    return '<div class="skill-card">' +
+      '<div class="skill-badge">S' + (i + 1) + '</div>' +
+      '<div style="flex:1;">' +
+      '<div class="skill-name">' + esc(s.name) + '</div>' +
+      '<div class="skill-desc">' + esc(s.description) + '</div>' +
+      '<div class="skill-tags">' +
+      '<span class="skill-tag week">Week ' + esc(s.week_built) + '</span>' +
+      '<span class="skill-tag ' + esc(effortClass) + '">' + esc(effortLabel) + '</span>' +
+      (s.integration ? '<span class="skill-tag integration">↔ ' + esc(s.integration) + '</span>' : '') +
+      '</div></div></div>';
+  }).join('') + '</div>';
+}
+
+function renderSprintPlan(plan) {
+  if (!plan || !plan.length) return '';
+  return '<div class="sprint-timeline">' + plan.map(function (w) {
+    var delivs = (w.deliverables || []).map(function (d) {
+      return '<div class="sprint-deliverable">' + esc(d) + '</div>';
+    }).join('');
+    return '<div class="sprint-week">' +
+      '<div class="sprint-week-num">W' + esc(w.week) + '</div>' +
+      '<div class="sprint-week-content">' +
+      '<div class="sprint-theme">' + esc(w.theme) + '</div>' +
+      '<div class="sprint-deliverables">' + delivs + '</div>' +
+      '</div></div>';
+  }).join('') + '</div>';
+}
+
+function renderMetrics(metrics) {
+  if (!metrics || !metrics.length) return '';
+  return '<div class="metrics-table">' +
+    '<div class="metrics-row header">' +
+    '<div class="metrics-cell">Metric</div>' +
+    '<div class="metrics-cell">Baseline Today</div>' +
+    '<div class="metrics-cell">Day-30 Target</div>' +
+    '</div>' +
+    metrics.map(function (m) {
+      return '<div class="metrics-row">' +
+        '<div class="metrics-cell"><div class="metric-label">' + esc(m.label) + '</div></div>' +
+        '<div class="metrics-cell"><div class="metric-val">' + esc(m.baseline) + '</div></div>' +
+        '<div class="metrics-cell"><div class="metric-target">' + esc(m.day30_target) + '</div></div>' +
+        '</div>';
+    }).join('') + '</div>';
+}
+
+function renderPricing(pricing) {
+  if (!pricing) return '';
+  var annualDisplay = pricing.annual === 'Custom' ? 'Custom' :
+    (typeof pricing.annual === 'number' ? fmt$$(pricing.annual) + '<span>/year</span>' : esc(pricing.annual));
+  return '<div class="pricing-card">' +
+    '<div class="pricing-tier-badge">' + esc(pricing.tier || 'Growth') + ' Plan</div>' +
+    '<div class="pricing-amount">' + annualDisplay + '</div>' +
+    '<div class="pricing-sub">Annual subscription · billed annually</div>' +
+    '<div class="pricing-line-items">' +
+    '<div class="pricing-line"><span class="pl-label">Onboarding fee</span><span class="pl-val">' + fmt$$(pricing.onboarding) + '</span></div>' +
+    '<div class="pricing-line"><span class="pl-label">Fly.io infrastructure</span><span class="pl-val">' + esc(pricing.fly_io_monthly || 'TBD') + '/mo pass-through</span></div>' +
+    '<div class="pricing-line"><span class="pl-label">Anthropic API usage</span><span class="pl-val">' + esc(pricing.anthropic_monthly || '~$50–200') + '/mo pass-through</span></div>' +
+    '</div>' +
+    '<div class="pricing-note">Pass-through costs billed at cost, no markup. Annual contract. 30-day go-live guarantee — if we miss it, we extend free.</div>' +
+    '</div>';
+}
+
+function renderRedFlags(flags) {
+  if (!flags || !flags.length) return '';
+  return '<div class="red-flags">' +
+    '<div class="red-flag-title">⚠ Items to discuss on the call</div>' +
+    flags.map(function (f) {
+      return '<div class="red-flag-item">' + esc(f) + '</div>';
+    }).join('') + '</div>';
+}
+
+function renderTagList(items, accent) {
+  if (!items || !items.length) return '<span style="color:var(--muted);font-size:13px;">None listed</span>';
+  return '<div class="tag-list">' + items.map(function (t) {
+    return '<span class="tag-pill' + (accent ? ' accent' : '') + '">' + esc(t) + '</span>';
+  }).join('') + '</div>';
+}
+
+/* ── Main render ── */
+function renderMap(data) {
+  var m = data.map_data || {};
+  var today = fmtDate(data.created_at);
+  var company = data.company || m.bot_name || 'Your Company';
+
+  var html = '<div class="doc-frame" id="main-content">';
+
+  /* Cover */
+  html += '<div class="doc-cover">' +
+    '<div class="cover-eyebrow">' +
+    '<div class="cover-logo" aria-hidden="true">' +
+    '<div class="cover-bar" style="height:8px"></div>' +
+    '<div class="cover-bar" style="height:12px"></div>' +
+    '<div class="cover-bar" style="height:16px"></div>' +
+    '<div class="cover-bar" style="height:20px"></div>' +
+    '</div>' +
+    'Ramped AI · Custom Automation Map' +
+    '</div>' +
+    '<div class="cover-title">Your AI Automation Map</div>' +
+    '<div class="cover-company">' + esc(company) + ' · Prepared ' + esc(today) + '</div>' +
+    '<div class="cover-meta">' +
+    '<div class="cover-tag"><span class="tag-dot"></span>' + esc(data.industry || m.persona || 'SMB') + '</div>' +
+    (m.pricing ? '<div class="cover-tag"><span class="tag-dot"></span>' + esc(m.pricing.tier) + ' tier</div>' : '') +
+    (m.opportunity ? '<div class="cover-tag"><span class="tag-dot"></span>' + fmt$$(m.opportunity.projected_savings_annual) + '/yr projected savings</div>' : '') +
+    '</div>' +
+    '</div>';
+
+  /* Bot hero */
+  if (m.bot_name) {
+    html += '<div class="bot-hero">' +
+      '<div class="bot-avatar" aria-hidden="true">🤖</div>' +
+      '<div class="bot-info">' +
+      '<div class="bot-handle">' + esc(m.bot_handle || '') + '</div>' +
+      '<div class="bot-name">' + esc(m.bot_name) + '</div>' +
+      '<div class="bot-persona">' + esc(m.persona || '') + '</div>' +
+      '</div>' +
+      '<div class="bot-channels">' +
+      (m.channels || []).map(function (c) {
+        return '<div class="bot-channel-tag">' + esc(c) + '</div>';
+      }).join('') +
+      '</div></div>';
+  }
+
+  html += '<div class="doc-body">';
+
+  /* What we heard */
+  html += '<div class="doc-section">' +
+    '<div class="section-label">01 — What we heard</div>' +
+    '<div class="section-title">Your situation</div>' +
+    '<div class="section-rule"></div>' +
+    '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;" class="heard-grid">' +
+    '<div><div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Industry</div><div style="font-size:14px;font-weight:500;">' + esc(data.industry || '—') + '</div></div>' +
+    '<div><div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Team size</div><div style="font-size:14px;font-weight:500;">' + esc(data.map_data && data.map_data._intake && data.map_data._intake.team_size || '—') + '</div></div>' +
+    '</div>' +
+    '<div style="margin-top:16px;">' +
+    '<div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">Integrations in scope</div>' +
+    renderTagList(m.integrations, true) +
+    '</div>' +
+    '</div>';
+
+  /* Opportunity */
+  html += '<div class="doc-section">' +
+    '<div class="section-label">02 — The opportunity</div>' +
+    '<div class="section-title">Where your team's time is going</div>' +
+    '<div class="section-rule"></div>' +
+    renderTimeSinks(m.time_sinks) +
+    '<div style="margin-top:20px;">' + renderOpportunity(m.opportunity) + '</div>' +
+    '</div>';
+
+  /* AI coworker */
+  html += '<div class="doc-section">' +
+    '<div class="section-label">03 — Meet your AI coworker</div>' +
+    '<div class="section-title">Skills built in your Sprint</div>' +
+    '<div class="section-rule"></div>' +
+    renderSkills(m.skills) +
+    '</div>';
+
+  /* Sprint plan */
+  html += '<div class="doc-section">' +
+    '<div class="section-label">04 — Your 30-day Sprint</div>' +
+    '<div class="section-title">Week-by-week build plan</div>' +
+    '<div class="section-rule"></div>' +
+    renderSprintPlan(m.sprint_plan) +
+    '</div>';
+
+  /* Metrics */
+  html += '<div class="doc-section">' +
+    '<div class="section-label">05 — Day-30 targets</div>' +
+    '<div class="section-title">What success looks like</div>' +
+    '<div class="section-rule"></div>' +
+    renderMetrics(m.metrics) +
+    '</div>';
+
+  /* Investment */
+  html += '<div class="doc-section">' +
+    '<div class="section-label">06 — Investment</div>' +
+    '<div class="section-title">Recommended plan</div>' +
+    '<div class="section-rule"></div>' +
+    renderPricing(m.pricing) +
+    '</div>';
+
+  /* Red flags */
+  if (m.red_flags && m.red_flags.length) {
+    html += '<div class="doc-section">' + renderRedFlags(m.red_flags) + '</div>';
+  }
+
+  html += '</div>'; // doc-body
+
+  /* CTA */
+  html += '<div class="cta-section">' +
+    '<div class="cta-title">Ready to build this?</div>' +
+    '<div class="cta-sub">This map is your starting point. Book your Map Call and we'll walk through every line together — then kick off your Sprint the same week.</div>' +
+    '<a href="/book" class="cta-btn">Book your Map Call →</a>' +
+    '</div>';
+
+  /* Footer */
+  html += '<div class="doc-footer">' +
+    '<span>Ramped AI · <a href="https://www.30dayramp.com">30dayramp.com</a></span>' +
+    '<span>Confidential · Prepared for ' + esc(data.name || company) + '</span>' +
+    '<span>© 2026</span>' +
+    '</div>';
+
+  html += '</div>'; // doc-frame
+
+  document.getElementById('app').innerHTML = html;
+  document.title = 'Automation Map — ' + company + ' · Ramped AI';
+}
+
+/* ── Boot ── */
+var mapId = getMapId();
+if (!mapId) {
+  showError('Map not found', 'No map ID in this URL. Please check the link in your email.', true);
+} else {
+  fetch('/api/get-map?id=' + encodeURIComponent(mapId))
+    .then(function (r) {
+      return r.json().then(function (d) { return { ok: r.ok, status: r.status, data: d }; });
+    })
+    .then(function (res) {
+      if (res.status === 404) {
+        showError('Map not found', 'This link may have expired or the ID is incorrect.', true);
+      } else if (!res.ok) {
+        showError('Something went wrong', 'We couldn't load your map. Please try again or contact hello@30dayramp.com.', false);
+      } else {
+        renderMap(res.data);
+      }
+    })
+    .catch(function (err) {
+      console.error(err);
+      showError('Network error', 'Please check your connection and refresh the page.', false);
+    });
+}
+
+})();
+</script>
+</body>
+</html>
