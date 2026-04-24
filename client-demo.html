@@ -40,7 +40,7 @@
   .btn-ghost{padding:12px 16px;border-radius:10px;font-weight:600;color:var(--ink);border:1px solid var(--line);background:#fff;text-decoration:none;}
   .btn-ghost:hover{background:#F2F0E8;}
   .card{background:#fff;border:1px solid var(--line);border-radius:14px;}
-  .chip{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:6px;background:#F2F0E8;color:var(--ink);font-size:11px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;}
+  .chip{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border-radius:6px;background:#F2F0E8;color:var(--ink);font-size:11px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;max-width:100%;word-break:break-word;white-space:normal;}
   .sectionnum{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;}
   .scenario-tab{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border:1px solid transparent;transition:all .15s ease;background:none;}
   .scenario-tab:hover{background:#F2F0E8;color:var(--ink);}
@@ -100,6 +100,10 @@
   .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 14px;border-radius:0 0 8px 0;font-size:13px;font-weight:600;z-index:100;}
   .skip-link:focus{left:0;}
   @media(max-width:768px){.py-20{padding-block:48px;}.py-16{padding-block:40px;}}
+  @media(max-width:640px){
+    #escalation-chip{max-width:calc(100vw - 48px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .mt-5.flex.flex-wrap{gap:6px;}
+  }
 </style>
 </head>
 <body>
@@ -253,7 +257,7 @@
             <div class="text-xs text-[var(--muted)] uppercase tracking-wide mb-2" id="draft-label">Drafted reply (queued for human review)</div>
             <div class="card p-4 bg-[var(--paper)] text-sm leading-relaxed whitespace-pre-line" id="draft-text"></div>
             <div class="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3" id="metrics-row"></div>
-            <div class="mt-5 text-[11px] text-[var(--muted)] flex items-center gap-2">
+            <div class="mt-5 text-[11px] text-[var(--muted)] flex flex-wrap items-center gap-x-2 gap-y-2">
               <span>Approval gate:</span><span class="chip">Human review</span><span>·</span>
               <span>Escalation path:</span><span class="chip" id="escalation-chip">Admissions lead</span>
             </div>
