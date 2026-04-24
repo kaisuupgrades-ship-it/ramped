@@ -51,16 +51,15 @@ async function analyzeProspect(booking, qData) {
   const toolsText = (qData.integrations || qData.tools || []).join(', ') || '—';
   const aiText    = (qData.ai_tools || []).join(', ') || '—';
 
-  const prompt = `You are a NanoClaw implementation specialist and B2B sales consultant at Ramped AI. Ramped AI sells done-for-you NanoClaw AI agent implementations to businesses.
+  const prompt = `You are an AI automation consultant at Ramped AI. Ramped AI builds done-for-you AI agent implementations for small and mid-size businesses.
 
-NanoClaw is an AI agent platform that:
-- Connects Claude AI to WhatsApp, Telegram, Slack, Discord, and other messaging channels
-- Runs scheduled tasks (cron jobs) for automated reports, follow-ups, and alerts
-- Integrates with CRMs, calendars, email providers, and business tools via APIs
-- Handles inbound conversations, triggers workflows, and automates multi-step processes
-- Each "agent" is a Claude-powered bot that lives in the client's existing channels
+Each AI agent we build:
+- Lives inside the client's existing tools (Slack, email, CRM, etc.) — no new apps to learn
+- Handles repetitive tasks automatically: follow-ups, reporting, scheduling, responses
+- Is triggered by real business events (new CRM contact, form submission, daily schedule, etc.)
+- Saves the team hours each week by removing manual busywork
 
-Your job: analyze this prospect and produce a grade + a specific NanoClaw roadmap for their discovery call.
+Your job: analyze this prospect and produce a grade + a personalized automation roadmap for their discovery call. Write everything from the client's perspective — focus on outcomes and time saved, not technology.
 
 GRADING CRITERIA:
 A (Hot): Clear specific pain, 10+ team OR $500K+ revenue, decision-maker signal, premium tier interest, concrete use case
@@ -91,12 +90,12 @@ Respond with ONLY valid JSON — no markdown, no text outside the JSON:
   "grade": "A",
   "grade_summary": "2-3 sentence explanation of grade and key signals",
   "roadmap": {
-    "summary": "2-3 sentences describing their biggest automation opportunity and what NanoClaw will do for them specifically",
+    "summary": "2-3 sentences describing their biggest automation opportunity in plain language — focus on the business outcome, not technology",
     "top_agents": [
       {
         "name": "Specific agent name e.g. Lead Response Agent",
         "channel": "WhatsApp / Slack / Telegram / etc",
-        "what_it_does": "1-2 specific sentences about what this agent does for THIS business — use their actual tools and pain points",
+        "what_it_does": "1-2 sentences written to the client about what this agent does for their business — use outcomes and their actual pain points, not technical jargon",
         "trigger": "What triggers it e.g. New form submission, Daily at 8am, New CRM contact",
         "integrations": ["Tool1", "Tool2"],
         "hours_saved": "X-Y hours/week"
@@ -332,8 +331,8 @@ export default async function handler(req, res) {
           <span style="font-size:15px;font-weight:700;color:#0B1220;vertical-align:middle;">Ramped AI</span>
         </div>
 
-        <p style="font-size:22px;font-weight:800;margin:0 0 8px;">Here's your automation roadmap, ${esc(firstName)} 🗺️</p>
-        <p style="font-size:14px;color:#6B7280;margin:0 0 24px;line-height:1.6;">We built this specifically for your business based on your answers. We'll walk through it together on the call — but here's a preview of what we're thinking.</p>
+        <p style="font-size:22px;font-weight:800;margin:0 0 8px;">Here's what we're thinking for you, ${esc(firstName)}</p>
+        <p style="font-size:14px;color:#6B7280;margin:0 0 24px;line-height:1.6;">Based on your answers, I put together a quick preview of the automations that would make the biggest difference for your business. We'll walk through this on the call.</p>
 
         ${roadmap.summary ? `
         <div style="background:#F5F8FF;border-left:4px solid ${accentColor};padding:14px 16px;border-radius:0 8px 8px 0;margin-bottom:24px;">
@@ -341,20 +340,20 @@ export default async function handler(req, res) {
         </div>` : ''}
 
         ${clientAgentsHTML ? `
-        <p style="font-size:12px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;margin:0 0 4px;">Your top AI agents</p>
+        <p style="font-size:12px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;margin:0 0 4px;">What we'd build for you</p>
         <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
           ${clientAgentsHTML}
         </table>` : ''}
 
         ${roadmap.week_1_focus ? `
         <div style="background:#0B1220;color:#fff;border-radius:10px;padding:16px 20px;margin-bottom:24px;">
-          <p style="margin:0 0 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#9CA3AF;">Week 1 focus</p>
+          <p style="margin:0 0 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#9CA3AF;">Where we'd start</p>
           <p style="margin:0;font-size:14px;line-height:1.6;">${esc(roadmap.week_1_focus)}</p>
         </div>` : ''}
 
-        <p style="font-size:14px;color:#374151;margin:0 0 24px;line-height:1.6;">On the call, we'll confirm which agents make the most sense to launch first and map out the 30-day go-live plan. No pitch — just a real conversation about what AI can take off your plate.</p>
+        <p style="font-size:14px;color:#374151;margin:0 0 24px;line-height:1.6;">This is just a starting point — on the call we'll make sure it fits your actual workflow and prioritize what makes the most sense to go live first. No pressure, no pitch.</p>
 
-        <p style="font-size:13px;color:#6B7280;margin:0;border-top:1px solid #E5E7EB;padding-top:20px;">Questions before the call? Reply to this email — I read every one.<br><strong style="color:#0B1220;">Jon</strong> · Ramped AI · <a href="mailto:jon@30dayramp.com" style="color:${accentColor};">jon@30dayramp.com</a></p>
+        <p style="font-size:13px;color:#6B7280;margin:0;border-top:1px solid #E5E7EB;padding-top:20px;">Any questions before we talk? Just reply — I'll get back to you.<br><strong style="color:#0B1220;">Jon</strong> · Ramped AI · <a href="mailto:jon@30dayramp.com" style="color:${accentColor};">jon@30dayramp.com</a></p>
       </div>`
     );
   }
