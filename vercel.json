@@ -1,7 +1,7 @@
 {
   "functions": {
-    "api/questionnaire.js": { "maxDuration": 60 },
-    "api/generate-map.js":  { "maxDuration": 60 }
+    "api/questionnaire.js": { "maxDuration": 120 },
+    "api/generate-map.js":  { "maxDuration": 120 }
   },
   "rewrites": [
     { "source": "/demo",                    "destination": "/client-demo.html" },
