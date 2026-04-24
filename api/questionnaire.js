@@ -269,98 +269,231 @@ export default async function handler(req, res) {
 
   // Owner notification email with grade + roadmap summary
   if (grade && RESEND_KEY) {
-    const gc       = { A: '#16a34a', B: '#2563eb', C: '#d97706', D: '#dc2626' }[grade] || '#5B6272';
-    const pains    = qData.pain_points.length ? qData.pain_points.join(', ') : (qData.bottleneck || '—');
-    const tools    = qData.integrations.length ? qData.integrations.join(', ') : '—';
-    const qName    = booking.name || email;
-    const agentsHTML = roadmap?.top_agents?.slice(0, 3).map(a =>
-      `<tr><td style="padding:6px 0;color:#6B7280;vertical-align:top;width:140px;">${esc(a.name)}</td><td style="color:#0B1220;font-size:13px;">${esc(a.what_it_does)} <span style="color:#6B7280;">(${esc(a.channel)})</span></td></tr>`
+    const gc         = { A: '#16a34a', B: '#2563eb', C: '#d97706', D: '#dc2626' }[grade] || '#5B6272';
+    const gradeLabel = { A: 'Hot lead 🔥', B: 'Warm lead', C: 'Lukewarm', D: 'Poor fit' }[grade] || '';
+    const pains      = qData.pain_points.length ? qData.pain_points.join(', ') : (qData.bottleneck || '—');
+    const tools      = qData.integrations.length ? qData.integrations.join(', ') : '—';
+    const qName      = booking.name || email;
+
+    const agentRowsHTML = roadmap?.top_agents?.slice(0, 3).map((a, i) =>
+      `<tr>
+        <td style="padding:10px 0;border-top:1px solid #F3F4F6;vertical-align:top;">
+          <table style="width:100%;border-collapse:collapse;">
+            <tr>
+              <td style="width:28px;vertical-align:top;padding-right:10px;">
+                <div style="width:22px;height:22px;border-radius:50%;background:#1F4FFF;color:#fff;font-size:11px;font-weight:700;text-align:center;line-height:22px;">${i + 1}</div>
+              </td>
+              <td style="vertical-align:top;">
+                <div style="font-size:13px;font-weight:700;color:#0B1220;">${esc(a.name)}<span style="font-weight:400;color:#6B7280;font-size:12px;"> · ${esc(a.channel || '')}</span></div>
+                <div style="font-size:12px;color:#374151;line-height:1.5;margin-top:2px;">${esc(a.what_it_does)}</div>
+                ${a.hours_saved ? `<div style="margin-top:3px;font-size:11px;color:#059669;font-weight:600;">⏱ ${esc(a.hours_saved)}</div>` : ''}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>`
     ).join('') || '';
 
     await sendEmail(
       OWNER_EMAIL,
-      `[${grade}] Roadmap ready — ${qName}`,
-      `<div style="font-family:-apple-system,sans-serif;max-width:540px;margin:0 auto;padding:32px 24px;">
-        <p style="font-size:20px;font-weight:800;color:#0B1220;margin-bottom:16px;">Booking questionnaire + roadmap complete</p>
-        <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
-          <tr>
-            <td style="width:60px;vertical-align:middle;padding-right:12px;">
-              <div style="background:${gc};color:#fff;width:48px;height:48px;border-radius:10px;font-size:26px;font-weight:900;text-align:center;line-height:48px;">${esc(grade)}</div>
-            </td>
-            <td style="vertical-align:middle;">
-              <p style="color:#374151;font-size:14px;margin:0;line-height:1.5;">${esc(gradeSummary || '')}</p>
-            </td>
-          </tr>
-        </table>
-        ${roadmap?.summary ? `<p style="font-size:13px;color:#0B1220;background:#F5F8FF;border-left:3px solid #1F4FFF;padding:10px 14px;border-radius:0 8px 8px 0;margin-bottom:16px;">${esc(roadmap.summary)}</p>` : ''}
-        <table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:16px;">
-          <tr><td style="padding:6px 0;color:#6B7280;width:140px;">Name</td><td style="color:#0B1220;">${esc(booking.name || '—')}</td></tr>
-          <tr><td style="padding:6px 0;color:#6B7280;">Email</td><td><a href="mailto:${esc(email)}" style="color:#1F4FFF;">${esc(email)}</a></td></tr>
-          ${qData.industry ? `<tr><td style="padding:6px 0;color:#6B7280;">Industry</td><td style="color:#0B1220;">${esc(qData.industry)}</td></tr>` : ''}
-          ${qData.team_size ? `<tr><td style="padding:6px 0;color:#6B7280;">Team size</td><td style="color:#0B1220;">${esc(qData.team_size)}</td></tr>` : ''}
-          ${qData.revenue ? `<tr><td style="padding:6px 0;color:#6B7280;">Revenue</td><td style="color:#0B1220;">${esc(qData.revenue)}</td></tr>` : ''}
-          ${pains !== '—' ? `<tr><td style="padding:6px 0;color:#6B7280;vertical-align:top;">Pain points</td><td style="color:#0B1220;">${esc(pains)}</td></tr>` : ''}
-          <tr><td style="padding:6px 0;color:#6B7280;">Tools</td><td style="color:#0B1220;">${esc(tools)}</td></tr>
-          ${effectiveTier ? `<tr><td style="padding:6px 0;color:#6B7280;">Tier</td><td style="font-weight:700;color:#1F4FFF;text-transform:capitalize;">${esc(effectiveTier)}</td></tr>` : ''}
-        </table>
-        ${agentsHTML ? `<p style="font-size:12px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Top agents for this prospect</p><table style="width:100%;border-collapse:collapse;">${agentsHTML}</table>` : ''}
-        ${roadmap?.week_1_focus ? `<p style="margin-top:16px;font-size:13px;color:#0B1220;"><strong>Week 1 focus:</strong> ${esc(roadmap.week_1_focus)}</p>` : ''}
-      </div>`
+      `[${grade}] ${gradeLabel} — ${qName}`,
+      `<!DOCTYPE html>
+<html>
+<body style="margin:0;padding:0;background:#F3F4F6;">
+<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:560px;margin:0 auto;">
+
+  <!-- Grade banner -->
+  <div style="background:${gc};padding:24px 28px;">
+    <table style="width:100%;border-collapse:collapse;">
+      <tr>
+        <td style="width:68px;vertical-align:middle;padding-right:16px;">
+          <div style="width:56px;height:56px;border-radius:12px;background:rgba(255,255,255,0.2);color:#fff;font-size:32px;font-weight:900;text-align:center;line-height:56px;">${esc(grade)}</div>
+        </td>
+        <td style="vertical-align:middle;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:rgba(255,255,255,0.7);margin-bottom:3px;">RAMPED AI · SCORECARD</div>
+          <div style="font-size:20px;font-weight:800;color:#fff;line-height:1.2;">${esc(gradeLabel)} — ${esc(qName)}</div>
+          ${gradeSummary ? `<div style="font-size:13px;color:rgba(255,255,255,0.85);margin-top:6px;line-height:1.5;">${esc(gradeSummary)}</div>` : ''}
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Body -->
+  <div style="background:#FAFAFA;padding:24px 28px;">
+
+    <!-- Prospect details card -->
+    <div style="background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:16px 20px;margin-bottom:20px;">
+      <p style="margin:0 0 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#6B7280;">Prospect Details</p>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <tr><td style="padding:5px 0;color:#6B7280;width:110px;">Name</td><td style="color:#0B1220;font-weight:600;">${esc(booking.name || '—')}</td></tr>
+        <tr><td style="padding:5px 0;color:#6B7280;">Email</td><td><a href="mailto:${esc(email)}" style="color:#1F4FFF;text-decoration:none;">${esc(email)}</a></td></tr>
+        ${qData.industry ? `<tr><td style="padding:5px 0;color:#6B7280;">Industry</td><td style="color:#0B1220;">${esc(qData.industry)}</td></tr>` : ''}
+        ${qData.team_size ? `<tr><td style="padding:5px 0;color:#6B7280;">Team size</td><td style="color:#0B1220;">${esc(qData.team_size)}</td></tr>` : ''}
+        ${qData.revenue ? `<tr><td style="padding:5px 0;color:#6B7280;">Revenue</td><td style="color:#0B1220;font-weight:600;">${esc(qData.revenue)}</td></tr>` : ''}
+        ${pains !== '—' ? `<tr><td style="padding:5px 0;color:#6B7280;vertical-align:top;">Pain points</td><td style="color:#0B1220;">${esc(pains)}</td></tr>` : ''}
+        <tr><td style="padding:5px 0;color:#6B7280;vertical-align:top;">Tools</td><td style="color:#0B1220;">${esc(tools)}</td></tr>
+        ${effectiveTier ? `<tr><td style="padding:5px 0;color:#6B7280;">Tier interest</td><td style="font-weight:700;color:#1F4FFF;text-transform:capitalize;">${esc(effectiveTier)}</td></tr>` : ''}
+      </table>
+    </div>
+
+    ${roadmap?.summary ? `
+    <!-- Roadmap summary -->
+    <div style="background:#fff;border:1px solid #E5E7EB;border-left:4px solid #1F4FFF;border-radius:0 12px 12px 0;padding:14px 18px;margin-bottom:20px;">
+      <p style="margin:0 0 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#1F4FFF;">Automation Opportunity</p>
+      <p style="margin:0;font-size:13px;color:#0B1220;line-height:1.6;">${esc(roadmap.summary)}</p>
+    </div>` : ''}
+
+    ${agentRowsHTML ? `
+    <!-- Top agents card -->
+    <div style="background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:16px 20px;margin-bottom:20px;">
+      <p style="margin:0 0 2px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#6B7280;">Top Agents for This Prospect</p>
+      <table style="width:100%;border-collapse:collapse;">
+        ${agentRowsHTML}
+      </table>
+    </div>` : ''}
+
+    ${roadmap?.week_1_focus ? `
+    <!-- Week 1 focus -->
+    <div style="background:#0B1220;border-radius:12px;padding:16px 20px;margin-bottom:20px;">
+      <p style="margin:0 0 6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#1F4FFF;">⚡ Where to Start</p>
+      <p style="margin:0;font-size:13px;color:#F9FAFB;line-height:1.6;">${esc(roadmap.week_1_focus)}</p>
+    </div>` : ''}
+
+    <!-- Admin CTA -->
+    <div style="text-align:center;padding-top:4px;">
+      <a href="https://30dayramp.com/admin" style="display:inline-block;background:#1F4FFF;color:#fff;font-size:13px;font-weight:700;text-decoration:none;padding:10px 24px;border-radius:8px;">View in Admin Panel →</a>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div style="padding:14px 28px;text-align:center;">
+    <p style="margin:0;font-size:11px;color:#9CA3AF;">Ramped AI · Internal scorecard · Do not forward</p>
+  </div>
+
+</div>
+</body>
+</html>`
     );
   }
 
   // Client roadmap email — send their personalized automation plan before the call
   if (roadmap && RESEND_KEY) {
     const firstName  = (booking.name || email).split(/\s+/)[0];
-    const accentColor = '#1F4FFF';
+    const agentCount = roadmap.top_agents?.length || 0;
 
     const clientAgentsHTML = roadmap.top_agents?.map((a, i) =>
-      `<tr>
-        <td style="padding:12px 0;border-top:1px solid #E5E7EB;vertical-align:top;width:28px;">
-          <div style="width:22px;height:22px;border-radius:50%;background:${accentColor};color:#fff;font-size:11px;font-weight:700;text-align:center;line-height:22px;">${i + 1}</div>
-        </td>
-        <td style="padding:12px 0 12px 12px;border-top:1px solid #E5E7EB;vertical-align:top;">
-          <div style="font-weight:700;font-size:14px;color:#0B1220;margin-bottom:3px;">${esc(a.name)}</div>
-          <div style="font-size:13px;color:#374151;line-height:1.5;">${esc(a.what_it_does)}</div>
-          ${a.hours_saved ? `<div style="margin-top:4px;font-size:12px;color:${accentColor};font-weight:600;">⏱ ${esc(a.hours_saved)}</div>` : ''}
-        </td>
-      </tr>`
+      `<div style="background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:18px 20px;margin-bottom:10px;">
+        <table style="width:100%;border-collapse:collapse;">
+          <tr>
+            <td style="width:42px;vertical-align:top;padding-right:14px;">
+              <div style="width:32px;height:32px;border-radius:50%;background:#1F4FFF;color:#fff;font-size:14px;font-weight:800;text-align:center;line-height:32px;">${i + 1}</div>
+            </td>
+            <td style="vertical-align:top;">
+              <table style="width:100%;border-collapse:collapse;margin-bottom:6px;">
+                <tr>
+                  <td style="vertical-align:middle;">
+                    <span style="font-size:15px;font-weight:700;color:#0B1220;">${esc(a.name)}</span>
+                  </td>
+                  ${a.channel ? `<td style="text-align:right;vertical-align:middle;white-space:nowrap;padding-left:8px;">
+                    <span style="display:inline-block;background:#E8F0FE;color:#1F4FFF;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;">${esc(a.channel)}</span>
+                  </td>` : ''}
+                </tr>
+              </table>
+              <p style="font-size:13px;color:#374151;line-height:1.6;margin:0 0 8px;">${esc(a.what_it_does)}</p>
+              ${a.hours_saved ? `<span style="display:inline-block;background:#ECFDF5;color:#059669;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;">⏱ Saves ${esc(a.hours_saved)}</span>` : ''}
+            </td>
+          </tr>
+        </table>
+      </div>`
     ).join('') || '';
 
     await sendEmail(
       email,
-      `Your custom automation roadmap — ${firstName}`,
-      `<div style="font-family:-apple-system,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;color:#0B1220;">
+      `Your automation roadmap is ready, ${firstName}`,
+      `<!DOCTYPE html>
+<html>
+<body style="margin:0;padding:0;background:#F3F4F6;">
+<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:580px;margin:0 auto;">
 
-        <div style="margin-bottom:28px;">
-          <span style="display:inline-block;background:#1F4FFF;color:#fff;font-size:13px;font-weight:800;letter-spacing:0.02em;padding:5px 10px;border-radius:6px;vertical-align:middle;margin-right:8px;">RAMPED</span>
-          <span style="font-size:15px;font-weight:700;color:#0B1220;vertical-align:middle;">AI</span>
-        </div>
+  <!-- Hero header -->
+  <div style="background:#0B1220;padding:32px 32px 28px;">
+    <div style="display:inline-block;background:#1F4FFF;color:#fff;font-size:11px;font-weight:900;letter-spacing:0.08em;padding:4px 10px;border-radius:6px;margin-bottom:14px;">RAMPED AI</div>
+    <p style="margin:0 0 8px;font-size:26px;font-weight:800;color:#fff;line-height:1.2;">Your automation roadmap<br>is ready, ${esc(firstName)} ✦</p>
+    <p style="margin:0;font-size:14px;color:#9CA3AF;line-height:1.5;">Based on your answers — we'll walk through this together on the call.</p>
+  </div>
 
-        <p style="font-size:22px;font-weight:800;margin:0 0 8px;">Here's what we're thinking for you, ${esc(firstName)}</p>
-        <p style="font-size:14px;color:#6B7280;margin:0 0 24px;line-height:1.6;">Based on your answers, I put together a quick preview of the automations that would make the biggest difference for your business. We'll walk through this on the call.</p>
+  <!-- Body -->
+  <div style="background:#FAFAFA;padding:28px 32px;">
 
-        ${roadmap.summary ? `
-        <div style="background:#F5F8FF;border-left:4px solid ${accentColor};padding:14px 16px;border-radius:0 8px 8px 0;margin-bottom:24px;">
-          <p style="margin:0;font-size:14px;color:#0B1220;line-height:1.6;">${esc(roadmap.summary)}</p>
-        </div>` : ''}
+    ${roadmap.summary ? `
+    <!-- Summary callout -->
+    <div style="background:#fff;border-left:4px solid #1F4FFF;padding:16px 18px;margin-bottom:24px;">
+      <p style="margin:0 0 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#1F4FFF;">YOUR OPPORTUNITY</p>
+      <p style="margin:0;font-size:14px;color:#0B1220;line-height:1.7;font-style:italic;">"${esc(roadmap.summary)}"</p>
+    </div>` : ''}
 
-        ${clientAgentsHTML ? `
-        <p style="font-size:12px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;margin:0 0 4px;">What we'd build for you</p>
-        <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
-          ${clientAgentsHTML}
-        </table>` : ''}
+    <!-- Stats bar -->
+    <table style="width:100%;border-collapse:collapse;margin-bottom:24px;background:#fff;border:1px solid #E5E7EB;">
+      <tr>
+        <td style="text-align:center;padding:16px 8px;border-right:1px solid #E5E7EB;width:33%;">
+          <div style="font-size:28px;font-weight:900;color:#1F4FFF;line-height:1;">${agentCount}</div>
+          <div style="font-size:10px;color:#6B7280;margin-top:4px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">AI Agents</div>
+        </td>
+        <td style="text-align:center;padding:16px 8px;border-right:1px solid #E5E7EB;width:33%;">
+          <div style="font-size:28px;font-weight:900;color:#1F4FFF;line-height:1;">30</div>
+          <div style="font-size:10px;color:#6B7280;margin-top:4px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">Day Go-Live</div>
+        </td>
+        <td style="text-align:center;padding:16px 8px;width:33%;">
+          <div style="font-size:28px;font-weight:900;color:#059669;line-height:1;">$0</div>
+          <div style="font-size:10px;color:#6B7280;margin-top:4px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">If We Miss It</div>
+        </td>
+      </tr>
+    </table>
 
-        ${roadmap.week_1_focus ? `
-        <div style="background:#0B1220;color:#fff;border-radius:10px;padding:16px 20px;margin-bottom:24px;">
-          <p style="margin:0 0 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#9CA3AF;">Where we'd start</p>
-          <p style="margin:0;font-size:14px;line-height:1.6;">${esc(roadmap.week_1_focus)}</p>
-        </div>` : ''}
+    ${clientAgentsHTML ? `
+    <!-- Agent cards -->
+    <p style="font-size:11px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 12px;">What we'd build for you</p>
+    ${clientAgentsHTML}` : ''}
 
-        <p style="font-size:14px;color:#374151;margin:0 0 24px;line-height:1.6;">This is just a starting point — on the call we'll make sure it fits your actual workflow and prioritize what makes the most sense to go live first. No pressure, no pitch.</p>
+    ${roadmap.week_1_focus ? `
+    <!-- Week 1 focus -->
+    <div style="background:#0B1220;border-radius:12px;padding:20px 22px;margin-bottom:24px;margin-top:16px;">
+      <p style="margin:0 0 8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#1F4FFF;">⚡ WHERE WE'D START</p>
+      <p style="margin:0;font-size:14px;color:#F9FAFB;line-height:1.7;">${esc(roadmap.week_1_focus)}</p>
+    </div>` : ''}
 
-        <p style="font-size:13px;color:#6B7280;margin:0;border-top:1px solid #E5E7EB;padding-top:20px;">Any questions before we talk? Just reply — I'll get back to you.<br><strong style="color:#0B1220;">Jon</strong> · Ramped AI · <a href="mailto:jon@30dayramp.com" style="color:${accentColor};">jon@30dayramp.com</a></p>
-      </div>`
+    <!-- Closing note -->
+    <p style="font-size:14px;color:#374151;line-height:1.7;margin:0 0 24px;">This is a starting point — on the call we'll make sure it fits your actual workflow and prioritize what makes the most sense to ship first. No pressure, no pitch.</p>
+
+    <!-- Sign-off card -->
+    <div style="background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:18px 22px;">
+      <table style="width:100%;border-collapse:collapse;">
+        <tr>
+          <td style="width:52px;vertical-align:middle;padding-right:14px;">
+            <div style="width:40px;height:40px;border-radius:50%;background:#1F4FFF;color:#fff;font-size:18px;font-weight:800;text-align:center;line-height:40px;">J</div>
+          </td>
+          <td style="vertical-align:middle;">
+            <div style="font-size:14px;font-weight:700;color:#0B1220;line-height:1.2;">Jon</div>
+            <div style="font-size:12px;color:#6B7280;">Founder, Ramped AI</div>
+          </td>
+          <td style="text-align:right;vertical-align:middle;">
+            <a href="mailto:jon@30dayramp.com" style="display:inline-block;background:#1F4FFF;color:#fff;font-size:13px;font-weight:700;text-decoration:none;padding:8px 16px;border-radius:8px;">Reply to Jon</a>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div style="padding:16px 32px;text-align:center;">
+    <p style="margin:0;font-size:11px;color:#9CA3AF;">Ramped AI · <a href="https://30dayramp.com" style="color:#9CA3AF;text-decoration:none;">30dayramp.com</a> · Questions? <a href="mailto:jon@30dayramp.com" style="color:#9CA3AF;text-decoration:none;">jon@30dayramp.com</a></p>
+  </div>
+
+</div>
+</body>
+</html>`
     );
   }
 
