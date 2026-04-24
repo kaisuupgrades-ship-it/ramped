@@ -1620,11 +1620,13 @@
 
   // ── Render leads ─────────────────────────────────────────────────────────────
   function renderLeads(leads, maps) {
+    const GRADE_COLOR = { A:'#15803d', B:'#1a56db', C:'#b45309', D:'#dc2626' };
+    const GRADE_BG    = { A:'#f0fdf4', B:'#eff6ff', C:'#fffbeb', D:'#fef2f2' };
+
     // Merge contact-form leads and automation-map submissions into one list
     const allLeads = [
       ...(leads || []).map(l => ({ ...l, _source: 'form' })),
       ...(maps  || []).map(m => ({ ...m, _source: 'map',
-        // normalise field names so the renderer has a consistent shape
         email:   m.email   || (m.map_data && m.map_data.email) || '',
         message: m.industry ? `Industry: ${m.industry}` : '',
       })),
@@ -1638,7 +1640,7 @@
 
     const tbody = document.getElementById('leads-body');
     if (!allLeads.length) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--muted)">No leads yet</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">No leads yet</td></tr>';
       return;
     }
     tbody.innerHTML = allLeads.map((l, i) => {
@@ -1649,6 +1651,19 @@
       const source  = l._source === 'map'
         ? '<span style="background:#e8f0fe;color:#1a56db;font-size:11px;padding:2px 6px;border-radius:4px;font-weight:600">AI Map</span>'
         : '<span style="background:#f0fdf4;color:#15803d;font-size:11px;padding:2px 6px;border-radius:4px;font-weight:600">Form</span>';
+
+      // Grade badge (AI Map rows only)
+      let gradeBadge = '';
+      let gradeSummaryRow = '';
+      if (l._source === 'map' && l.grade) {
+        const gc = GRADE_COLOR[l.grade] || '#5B6272';
+        const gb = GRADE_BG[l.grade]    || '#f9fafb';
+        gradeBadge = `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;background:${gb};border:1.5px solid ${gc};font-weight:900;font-size:13px;color:${gc};cursor:pointer;margin-left:6px;" title="${esc(l.grade_summary || '')}" onclick="toggleGradeSummary('gs-${i}')">${l.grade}</span>`;
+        if (l.grade_summary) {
+          gradeSummaryRow = `<tr id="gs-${i}" style="display:none"><td colspan="7" style="padding:8px 16px 12px;background:${gb}"><p style="margin:0;font-size:13px;color:#374151;border-left:3px solid ${gc};padding-left:10px;">${esc(l.grade_summary)}</p></td></tr>`;
+        }
+      }
+
       const currentStatus = l.status || 'new';
       const statusSel = `<select class="status-select status-${currentStatus}" onchange="onLeadStatusChange(this,'${l.id}','${l._source}')" style="font-size:12px;padding:2px 6px;border-radius:4px;border:1px solid var(--border)">
         ${LEAD_STATUSES.map(s => `<option value="${s}"${s===currentStatus?' selected':''}>${LEAD_STATUS_LABELS[s]}</option>`).join('')}
@@ -1665,10 +1680,16 @@
         <td><strong>${name}</strong>${email ? `<br><a href="mailto:${email}" style="font-size:12px;color:var(--accent)">${email}</a>` : ''}</td>
         <td>${company}</td>
         <td>${source}</td>
+        <td>${gradeBadge}</td>
         <td>${statusSel}</td>
         <td style="white-space:nowrap">${mapBtn}${emailBtn}${deleteBtn}</td>
-      </tr>`;
+      </tr>${gradeSummaryRow}`;
     }).join('');
+  }
+
+  function toggleGradeSummary(id) {
+    const el = document.getElementById(id);
+    if (el) el.style.display = el.style.display === 'none' ? 'table-row' : 'none';
   }
 
   function onLeadStatusChange(sel, id, source) {
