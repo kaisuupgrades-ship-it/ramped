@@ -33,16 +33,6 @@
   body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;}
   a{color:inherit;text-decoration:none;}
 
-  /* ── Visible focus ring for every interactive element (M2) ── */
-  a:focus-visible, button:focus-visible, select:focus-visible, textarea:focus-visible, input:focus-visible, [role="button"]:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-    border-radius: 6px;
-  }
-  /* ── Skip link ── */
-  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 14px;border-radius:0 0 8px 0;font-size:13px;font-weight:600;z-index:100;}
-  .skip-link:focus{left:0;}
-
   /* ── Layout ── */
   .page{max-width:1120px;margin-left:auto;margin-right:auto;padding:48px 24px 64px;}
   .section-wrap{max-width:1120px;margin-left:auto;margin-right:auto;padding-left:24px;padding-right:24px;}
@@ -95,9 +85,7 @@
   .slot-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
   .slot-btn{padding:10px;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;font-size:13px;font-weight:500;text-align:center;}
   .slot-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
-  /* Disabled slot: greyed out, no strikethrough (strikethrough reads as "error"
-     to users). title="Unavailable" shows on hover — plus aria-label on the element. */
-  .slot-btn:disabled{color:#bbb;cursor:not-allowed;background:#f7f7f5;border-color:#eeece6;}
+  .slot-btn:disabled{color:#bbb;text-decoration:line-through;cursor:default;background:#fafafa;}
 
   /* ── Back button ── */
   .back-btn{background:none;border:none;cursor:pointer;font-size:13px;color:var(--muted);padding:0 0 16px;display:flex;align-items:center;gap:4px;}
@@ -110,6 +98,14 @@
   .btn-primary:hover{opacity:.88;transform:translateY(-1px);}
   .btn-ghost{padding:13px 18px;border-radius:10px;font-weight:600;font-size:15px;color:var(--ink);border:1px solid var(--line);background:#fff;cursor:pointer;transition:background .12s ease;display:inline-flex;align-items:center;text-decoration:none;}
   .btn-ghost:hover{background:#F2F0E8;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 14px;border-radius:0 0 8px 0;font-size:13px;font-weight:600;z-index:100;}
+  .skip-link:focus{left:0;}
+  a:focus-visible, button:focus-visible, select:focus-visible, textarea:focus-visible, input:focus-visible, [role="button"]:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  .slot-btn:disabled{color:#bbb;cursor:not-allowed;background:#f7f7f5;border-color:#eeece6;}
 </style>
 </head>
 <body>
@@ -117,24 +113,24 @@
 <header class="border-b border-[var(--line)] bg-[var(--paper)]/85 backdrop-blur sticky top-0 z-40">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
     <!-- Logo -->
-    <a href="/" class="flex items-center gap-2 shrink-0" aria-label="Ramped AI — home">
+    <a href="/" class="flex items-center gap-2 shrink-0">
   <svg width="26" height="22" viewBox="0 0 26 22" fill="none" aria-hidden="true">
     <rect x="0" y="14" width="5" height="8" rx="1.5" fill="var(--accent)"/>
     <rect x="7" y="9" width="5" height="13" rx="1.5" fill="var(--accent)" opacity=".75"/>
     <rect x="14" y="4" width="5" height="18" rx="1.5" fill="var(--accent)" opacity=".55"/>
     <rect x="21" y="0" width="5" height="22" rx="1.5" fill="var(--accent)" opacity=".35"/>
   </svg>
-  <span class="font-bold text-lg tracking-tight ml-2 book-logo-text">Ramped AI</span>
+  <span class="font-bold text-lg tracking-tight ml-2">Ramped AI</span>
 </a>
-    <!-- Nav links (desktop) -->
-    <nav class="hidden sm:flex items-center gap-3" aria-label="Primary">
-      <a href="/demo" class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">Demo</a>
-      <a href="/comparison" class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">VA vs. AI</a>
-      <a href="/" class="btn-primary whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">← Home</a>
+    <!-- Nav links -->
+    <nav class="hidden sm:flex items-center gap-3">
+      <a href="/demo" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Demo</a>
+      <a href="/comparison" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">VA vs. AI</a>
+      <a href="/" class="btn-primary whitespace-nowrap" style="padding:8px 16px;font-size:13px;">← Home</a>
     </nav>
-    <!-- Mobile: hamburger + back-home CTA -->
+    <!-- Mobile CTA -->
     <div class="sm:hidden flex items-center gap-2">
-      <a href="/" class="btn-primary" style="padding:11px 14px;font-size:13px;min-height:44px;">← Home</a>
+      <a href="/" class="btn-primary" style="padding:8px 14px;font-size:13px;">← Home</a>
       <button type="button" id="mobile-nav-toggle" aria-expanded="false" aria-controls="mobile-nav-drawer" aria-label="Open menu"
         style="width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;">
         <svg width="18" height="14" viewBox="0 0 18 14" aria-hidden="true" focusable="false">
@@ -155,7 +151,6 @@
   </nav>
 </header>
 <script>
-  // Mobile nav toggle (same recipe as index.html for consistent nav UX across pages)
   (function(){
     var btn = document.getElementById('mobile-nav-toggle');
     var drawer = document.getElementById('mobile-nav-drawer');
@@ -224,14 +219,6 @@
 
 </main>
 
-<!-- JavaScript-disabled fallback (m10) -->
-<noscript>
-  <div style="max-width:560px;margin:24px auto;padding:16px 20px;background:#FFFBEB;border:1px solid #F59E0B;border-radius:10px;color:#92400E;font-size:14px;line-height:1.5;text-align:center;">
-    <strong>Booking requires JavaScript.</strong> Please enable JavaScript to pick a time —
-    or email <a href="mailto:jon@30dayramp.com" style="color:#92400E;font-weight:600;">jon@30dayramp.com</a> and we'll get you on the calendar.
-  </div>
-</noscript>
-
 <script>
 const HOST_TZ = 'America/Chicago';
 const VISITOR_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -267,8 +254,6 @@ function buildCalendarHTML(year, month) {
     '<div class="cal-grid">' +
     ['Su','Mo','Tu','We','Th','Fr','Sa'].map(function(d){return '<div class="cal-header">'+d+'</div>';}).join('');
 
-  // Leading blank cells are decorative spacers — render as <div> with
-  // aria-hidden so screen readers skip them (and axe doesn't flag empty buttons).
   for(var i=0;i<firstDay;i++) html += '<div class="cal-day other-month" aria-hidden="true"></div>';
 
   var FULL_DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -282,13 +267,11 @@ function buildCalendarHTML(year, month) {
     var disabled = isPast||isWeekend;
     var cls = ['cal-day', isToday?'today':'', disabled?'':'available'].filter(Boolean).join(' ');
     var dateStr = year+'-'+String(month+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
-    // Every button gets a proper accessible name — e.g. "Friday, April 24, 2026"
-    // or "Saturday, April 25, 2026 (weekend, unavailable)".
-    var ariaLabel = FULL_DAYS[date.getDay()]+', '+FULL_MONTHS[month]+' '+d+', '+year;
-    if (isPast) ariaLabel += ' (unavailable — past date)';
-    else if (isWeekend) ariaLabel += ' (unavailable — weekend)';
-    else if (isToday) ariaLabel += ' (today)';
-    html += '<button type="button" class="'+cls+'" aria-label="'+ariaLabel+'" '+(disabled?'disabled':'')+' data-date="'+dateStr+'">'+d+'</button>';
+    var ariaLabel = FULL_DAYS[date.getDay()] + ', ' + FULL_MONTHS[month] + ' ' + d + ', ' + year;
+    if(isPast) ariaLabel += ' (unavailable \u2014 past date)';
+    else if(isWeekend) ariaLabel += ' (unavailable \u2014 weekend)';
+    else if(isToday) ariaLabel += ' (today)';
+    html += '<button class="'+cls+'" '+(disabled?'disabled':'')+' data-date="'+dateStr+'" aria-label="'+ariaLabel+'">'+d+'</button>';
   }
 
   html += '</div><p style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px;">Times in your local timezone</p>';
@@ -336,14 +319,8 @@ async function showSlots(){
     var iso = utcDate.toISOString();
     var isBooked = booked.some(function(b){return Math.abs(new Date(b)-new Date(iso))<60000;});
     var isPast = new Date(iso) < new Date(Date.now() + 30*60*1000); // disable slots starting in less than 30 min
-    // Button label: clean time (no TZ abbrev, since the header line already shows the zone).
-    // The aria-label / data-label keep the zone so screen readers + confirmation stay unambiguous.
-    var cleanLabel = utcDate.toLocaleString('en-US',{hour:'numeric',minute:'2-digit',hour12:true,timeZone:VISITOR_TZ});
-    var fullLabel  = utcDate.toLocaleString('en-US',{hour:'numeric',minute:'2-digit',hour12:true,timeZone:VISITOR_TZ,timeZoneName:'short'});
-    var disabled = isBooked || isPast;
-    var reason = isBooked ? 'Unavailable — already booked' : (isPast ? 'Unavailable — too soon' : '');
-    var aria = disabled ? (fullLabel + ' — ' + reason) : fullLabel;
-    return '<button type="button" class="slot-btn"'+(disabled?' disabled title="'+reason+'"':'')+' aria-label="'+aria+'" data-iso="'+iso+'" data-label="'+fullLabel+'">'+cleanLabel+'</button>';
+    var localLabel = utcDate.toLocaleString('en-US',{hour:'numeric',minute:'2-digit',hour12:true,timeZone:VISITOR_TZ,timeZoneName:'short'});
+    return '<button class="slot-btn" '+((isBooked||isPast)?'disabled':'')+' data-iso="'+iso+'" data-label="'+localLabel+'">'+localLabel+'</button>';
   }).join('');
 
   var tzLabel = '<p style="font-size:12px;color:var(--muted);margin:0 0 10px;">Times shown in your local timezone · <strong>' + VISITOR_TZ.replace(/_/g,' ') + '</strong></p>';
@@ -359,30 +336,27 @@ function showForm(){
   var dateLabel = d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
   var tierLabels = {starter:'Starter · $2,500/mo', growth:'Growth · $5,000/mo', enterprise:'Enterprise · Custom'};
   var tierBadge = selectedTier ? '<div style="background:#EEF3FF;border:1px solid #c7d2fe;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:13px;color:var(--accent);font-weight:600;">📋 Plan interest: '+(tierLabels[selectedTier.toLowerCase()]||selectedTier)+'</div>' : '';
-  // novalidate: we run our own inline validation below (nicer UX than native
-  // tooltips; see m2/M4). autocomplete hints let password managers + mobile
-  // browsers pre-fill correctly (M12).
   stepDiv.innerHTML =
     '<button class="back-btn" id="back-to-slots">\u2190 '+dateLabel+' at '+selectedSlot.label+'</button>' +
     tierBadge +
     '<form id="book-form" novalidate style="display:flex;flex-direction:column;gap:14px;">' +
       '<div>' +
-        '<label for="book-name" style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">YOUR NAME <span style="color:var(--accent);" aria-hidden="true">*</span></label>' +
-        '<input id="book-name" name="name" required autocomplete="name" placeholder="Jane Smith" class="form-input" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;box-sizing:border-box;">' +
+        '<label for="book-name" style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">YOUR NAME<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span></label>' +
+        '<input id="book-name" name="name" required placeholder="Jane Smith" autocomplete="name" class="form-input" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;box-sizing:border-box;">' +
         '<p class="field-error" id="err-name" style="display:none;color:#dc2626;font-size:12px;margin-top:4px;"></p>' +
       '</div>' +
       '<div>' +
-        '<label for="book-email" style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">WORK EMAIL <span style="color:var(--accent);" aria-hidden="true">*</span></label>' +
-        '<input id="book-email" name="email" type="email" required autocomplete="email" inputmode="email" placeholder="jane@company.com" class="form-input" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;box-sizing:border-box;">' +
+        '<label for="book-email" style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">WORK EMAIL<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span></label>' +
+        '<input id="book-email" name="email" type="email" required placeholder="jane@company.com" autocomplete="email" inputmode="email" class="form-input" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;box-sizing:border-box;">' +
         '<p class="field-error" id="err-email" style="display:none;color:#dc2626;font-size:12px;margin-top:4px;"></p>' +
       '</div>' +
       '<div>' +
         '<label for="book-company" style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">COMPANY NAME</label>' +
-        '<input id="book-company" name="company" autocomplete="organization" placeholder="Acme Inc." class="form-input" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;box-sizing:border-box;">' +
+        '<input id="book-company" name="company" placeholder="Acme Inc." autocomplete="organization" class="form-input" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;box-sizing:border-box;">' +
       '</div>' +
       '<div>' +
-        '<label for="book-notes" style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">WHAT CAN WE HELP WITH?</label>' +
-        '<textarea id="book-notes" name="notes" rows="3" maxlength="2000" placeholder="Brief context helps us prep\u2026" class="form-input" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;resize:vertical;box-sizing:border-box;font-family:inherit;"></textarea>' +
+        '<label style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">WHAT CAN WE HELP WITH?</label>' +
+        '<textarea name="notes" rows="3" placeholder="Brief context helps us prep\u2026" class="form-input" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;resize:vertical;box-sizing:border-box;font-family:inherit;"></textarea>' +
       '</div>' +
       '<div id="form-error" role="alert" aria-live="polite" style="display:none;color:#dc2626;font-size:13px;padding:8px 12px;background:#fef2f2;border-radius:6px;"></div>' +
       '<button type="submit" id="submit-btn" style="width:100%;padding:14px;background:var(--ink);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;">Confirm booking \u2192</button>' +
@@ -391,23 +365,20 @@ function showForm(){
   document.getElementById('book-form').addEventListener('submit', submitBooking);
 }
 
-// ── Client-side validation helpers ──────────────────────────────────────────
-// Mirrors server-side rules in api/_lib/validate.js. Keeps rejection messages
-// per-field (M4 complaint: "Please complete all fields" hides which one).
 function _clearFieldError(id){
   var el = document.getElementById(id);
   if(!el) return;
   el.style.display='none';
   el.textContent='';
-  var input = document.getElementById(id.replace(/^err-/, 'book-'));
+  var input = document.getElementById(id.replace(/^err-/,'book-'));
   if(input){ input.removeAttribute('aria-invalid'); input.style.borderColor='var(--line)'; }
 }
 function _setFieldError(id, message){
   var el = document.getElementById(id);
   if(!el) return false;
-  el.textContent = message;
+  el.textContent=message;
   el.style.display='block';
-  var input = document.getElementById(id.replace(/^err-/, 'book-'));
+  var input = document.getElementById(id.replace(/^err-/,'book-'));
   if(input){ input.setAttribute('aria-invalid','true'); input.style.borderColor='#dc2626'; }
   return true;
 }
@@ -415,7 +386,7 @@ function _isValidEmailClient(email){
   if(!email || email.length>254) return false;
   if(!/^[A-Z0-9._%+\-]+@[A-Z0-9.\-]+\.[A-Z]{2,}$/i.test(email)) return false;
   var tld = email.split('.').pop().toLowerCase();
-  if(['invalid','test','example','localhost','local'].indexOf(tld) >= 0) return false;
+  if(['invalid','test','example','localhost','local'].indexOf(tld)>=0) return false;
   return true;
 }
 
@@ -424,16 +395,12 @@ async function submitBooking(e){
   var btn = document.getElementById('submit-btn');
   var errDiv = document.getElementById('form-error');
   errDiv.style.display='none';
-  // Reset per-field error state before re-validating
   _clearFieldError('err-name');
   _clearFieldError('err-email');
 
   var fd = new FormData(e.target);
   var name  = (fd.get('name')  || '').trim();
   var email = (fd.get('email') || '').trim();
-
-  // Per-field inline validation (M4) — highlight the specific missing field and
-  // scroll-focus it. Saves users from "hunt the missing field" on every submit.
   var firstBadInput = null;
   if(!name || name.length < 2){
     _setFieldError('err-name', 'Please enter your name.');
@@ -446,80 +413,303 @@ async function submitBooking(e){
     _setFieldError('err-email', 'Please enter a valid email address.');
     firstBadInput = firstBadInput || document.getElementById('book-email');
   }
-  if(firstBadInput){
-    firstBadInput.focus();
-    return;
-  }
+  if(firstBadInput){ firstBadInput.focus(); return; }
 
   btn.innerHTML='<span class="spinner"></span>Booking\u2026'; btn.disabled=true;
   try{
-    var r = await fetch('/api/book',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({datetime:selectedSlot.iso,name:name,email:email,company:fd.get('company')||'',notes:fd.get('notes')||'',timezone:VISITOR_TZ,tier:selectedTier||''})});
+    var r = await fetch('/api/book',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({datetime:selectedSlot.iso,name:fd.get('name'),email:fd.get('email'),company:fd.get('company')||'',notes:fd.get('notes')||'',timezone:VISITOR_TZ,tier:selectedTier||''})});
     if(r.status===409){errDiv.textContent='That slot was just booked \u2014 please pick another time.';errDiv.style.display='block';btn.textContent='Confirm booking \u2192';btn.disabled=false;setTimeout(function(){showSlots();},2000);return;}
-    if(r.status===429){errDiv.textContent='Too many requests \u2014 please wait a moment and try again.';errDiv.style.display='block';btn.textContent='Confirm booking \u2192';btn.disabled=false;return;}
+    if(r.status===429){ errDiv.textContent='Too many requests \u2014 please wait a moment and try again.'; errDiv.style.display='block'; btn.textContent='Confirm booking \u2192'; btn.disabled=false; return; }
     if(!r.ok){
-      // Surface server error message (validation failures etc.) rather than generic "try again"
       var body = await r.json().catch(function(){ return {}; });
-      throw new Error(body && body.error ? body.error : 'Something went wrong — please try again.');
+      throw new Error(body && body.error ? body.error : 'Something went wrong \u2014 please try again.');
     }
-    showConfirmation(name, email);
-  }catch(err){
-    errDiv.textContent = err && err.message ? err.message : 'Something went wrong — please try again.';
-    errDiv.style.display='block';
-    btn.textContent='Confirm booking \u2192';
-    btn.disabled=false;
-  }
+    showConfirmation(fd.get('name'),fd.get('email'));
+  }catch(err){errDiv.textContent=err.message||'Something went wrong \u2014 please try again.';errDiv.style.display='block';btn.textContent='Confirm booking \u2192';btn.disabled=false;}
 }
 
 function showConfirmation(name, email){
   var stepDiv = document.getElementById('booking-step');
   var d = new Date(selectedDate+'T12:00:00');
   var dateLabel = d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
-  var sizeOptions = ['1\u20135','6\u201315','16\u201330','31\u2013100','100+'];
+  var sizeOptions = ['1\u201325','26\u201350','51\u2013100','100+'];
+  var painOptions = ['Lead follow-up & nurturing','Scheduling & calendar management','Answering repetitive questions','Quotes & proposal sending','Order / invoice processing','Appointment reminders & no-shows','Customer support tickets','Social media posting','Data entry & reporting','Employee onboarding'];
+  var inboundOptions = ['Phone / Voice','Email','Website / Form','Walk-in','Social media DM','Multiple channels'];
+  var integrationOptions = ['WhatsApp Business','Instagram / Facebook DM','SMS / Text (Twilio)','Telegram','Slack','Discord','Email (Gmail / Outlook)','Website chat','Shopify','Google Calendar','Airtable','Make / Zapier','HubSpot','Salesforce / Other CRM'];
+  var revenueOptions = ['Under $300K/yr','$300K\u2013$1M/yr','$1M\u2013$5M/yr','$5M+/yr'];
+  var crmOptions = ['HubSpot','Salesforce','Pipedrive','Other CRM','No CRM yet'];
+  var osOptions = ['Mac','Windows','Linux / Server','Not sure'];
+  var emailOptions = ['Google Workspace / Gmail','Outlook / M365','Both','Other'];
+  var aiToolOptions = ['ChatGPT / OpenAI','Claude / Anthropic','Google Gemini','Microsoft Copilot','Make AI / Zapier AI','Not using AI yet'];
 
-  var toolGroups = [
-    ['Slack','Microsoft Teams','Google Workspace','Outlook / M365'],
-    ['HubSpot','Salesforce','Pipedrive','Zoho CRM'],
-    ['Asana','Monday.com','ClickUp','Notion'],
-    ['QuickBooks','Xero','Stripe','Shopify'],
-    ['Intercom','Zendesk','Calendly','Airtable'],
-    ['WhatsApp Business','Twilio/SMS','DocuSign','Other']
-  ];
-
-  var allTools = toolGroups.reduce(function(acc,g){return acc.concat(g);},[]);
-
-  var toolCheckboxesHTML = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;">' +
-    allTools.map(function(t){
-      var id = 'tool-'+t.replace(/[^a-zA-Z0-9]/g,'-');
-      return '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:11px;font-weight:500;padding:5px 7px;border:1px solid var(--line);border-radius:7px;background:#fff;user-select:none;" class="tool-label" data-tool="'+t+'">' +
-        '<input type="checkbox" name="tools" value="'+t+'" class="tool-check" style="margin:0;cursor:pointer;" id="'+id+'">'+t+'</label>';
+  var painCheckboxesHTML = '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:5px;">' +
+    painOptions.map(function(p){
+      return '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:11px;font-weight:500;padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:#fff;user-select:none;" class="pain-label">' +
+        '<input type="checkbox" name="pain_points" value="'+p+'" class="pain-check" style="margin:0;cursor:pointer;">'+p+'</label>';
     }).join('') +
   '</div>';
 
-  var channelOptions = ['Email','Phone','Website form','WhatsApp/SMS','Live chat'];
+  var integCheckboxesHTML = '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:5px;">' +
+    integrationOptions.map(function(t){
+      return '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:11px;font-weight:500;padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:#fff;user-select:none;" class="integ-label">' +
+        '<input type="checkbox" name="integrations" value="'+t+'" class="integ-check" style="margin:0;cursor:pointer;">'+t+'</label>';
+    }).join('') +
+  '</div>';
 
-  // Build a mailto: reschedule link pre-filled with the booked time so the
-  // admin knows exactly which booking to move (m16).
-  var rescheduleSubject = encodeURIComponent('Reschedule discovery call — ' + dateLabel + ' at ' + selectedSlot.label);
-  var rescheduleBody = encodeURIComponent(
-    'Hi — I booked a discovery call for ' + dateLabel + ' at ' + selectedSlot.label +
-    ' but need to reschedule. Here are a few times that would work better:\n\n- \n- \n\nThanks!'
-  );
+  var rescheduleSubject = encodeURIComponent('Reschedule discovery call \u2014 ' + dateLabel + ' at ' + selectedSlot.label);
+  var rescheduleBody = encodeURIComponent('Hi \u2014 I booked a discovery call for ' + dateLabel + ' at ' + selectedSlot.label + ' but need to reschedule. Here are a few times that would work better:\n\n- \n- \n\nThanks!');
   var rescheduleHref = 'mailto:jon@30dayramp.com?subject=' + rescheduleSubject + '&body=' + rescheduleBody;
 
   stepDiv.innerHTML =
     '<div style="text-align:center;padding:16px 0 14px;">' +
-      '<div style="font-size:36px;line-height:1;margin-bottom:8px;" aria-hidden="true">\u2713</div>' +
+      '<div style="font-size:36px;line-height:1;margin-bottom:8px;">\u2713</div>' +
       '<h2 style="font-size:20px;font-weight:700;margin:0 0 4px;">You\'re booked!</h2>' +
       '<p style="font-size:14px;font-weight:600;color:var(--ink);margin:0 0 3px;">'+dateLabel+' at '+selectedSlot.label+'</p>' +
-      '<p style="font-size:12px;color:var(--muted);margin:0 0 8px;">Confirmation sent to '+email+' &middot; Google Meet link coming before the call.</p>' +
+      '<p style="font-size:12px;color:var(--muted);margin:0 0 6px;">Confirmation sent to '+email+' &middot; Google Meet link coming before the call.</p>' +
       '<p style="font-size:12px;color:var(--muted);margin:0;">Need to change it? <a href="'+rescheduleHref+'" style="color:var(--accent);font-weight:600;">Reschedule or cancel</a>.</p>' +
     '</div>' +
 
-    '<div style="background:#F0FDF4;border:1.5px solid #86EFAC;border-radius:10px;padding:14px 16px;margin:14px 0 16px;">' +
-      '<p style="font-size:13px;font-weight:700;color:#15803D;margin:0 0 3px;">\uD83D\uDCB0 Claim $1,000 off your onboarding fee</p>' +
-      '<p style="font-size:12px;color:#166534;line-height:1.5;margin:0;">Answer 5 quick questions so we can prep for your call. Takes 2 minutes \u2014 discount applied automatically when you sign.</p>' +
+    '<div style="background:#EEF2FF;border:1.5px solid #A5B4FC;border-radius:10px;padding:14px 16px;margin:14px 0 16px;">' +
+      '<p style="font-size:13px;font-weight:700;color:#1F4FFF;margin:0 0 3px;">\uD83D\uDDFA\uFE0F Get a custom automation map before your call</p>' +
+      '<p style="font-size:12px;color:#3730A3;line-height:1.5;margin:0;">Answer 10 quick questions and we\u2019ll build a tailored automation plan before you join \u2014 so your call is 10x more productive. Takes ~2 minutes.</p>' +
     '</div>' +
 
     '<form id="onboard-form" style="display:flex;flex-direction:column;gap:14px;">' +
-      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;letter-spacing:.06em;">1. BIGGEST BOTTLENECK RIGHT NOW? <span style="color:var(--accent);">*</span></label>' +
-        '<textarea name="bottleneck" rows="2" placeholder="e.g. Responding to leads takes hours every day\u2026" style="width:100%;padding:9px 11px;border:1px solid var(--lin
+      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">1. WHAT\u2019S EATING YOUR TEAM\u2019S TIME?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;">(check all that apply)</span></label>' +
+        painCheckboxesHTML +
+        '<input name="pain_other" placeholder="Other (describe)\u2026" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:7px;font-size:12px;background:#fff;box-sizing:border-box;margin-top:5px;">' +
+        '<input name="automation_goal" placeholder="Biggest automation goal right now? (optional)\u2026" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:7px;font-size:12px;background:#fff;box-sizing:border-box;margin-top:5px;color:var(--ink);"></div>' +
+      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;letter-spacing:.06em;">2. WHAT INDUSTRY ARE YOU IN?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span></label>' +
+        '<input name="industry" placeholder="e.g. Cannabis, Real Estate, E-commerce, Law\u2026" style="width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff;box-sizing:border-box;"></div>' +
+      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">3. HOW MANY PEOPLE ON YOUR TEAM?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span></label>' +
+        '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;">' +
+          sizeOptions.map(function(s){ return '<label style="cursor:pointer;text-align:center;display:block;"><input type="radio" name="team_size" value="'+s+'" class="size-radio" style="position:absolute;opacity:0;width:0;height:0;"><span class="size-label" style="display:block;padding:7px 2px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;user-select:none;cursor:pointer;">'+s+'</span></label>'; }).join('') +
+        '</div></div>' +
+      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">4. ANNUAL REVENUE?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span></label>' +
+        '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:5px;">' +
+          revenueOptions.map(function(r){ return '<label style="cursor:pointer;text-align:center;display:block;"><input type="radio" name="revenue" value="'+r+'" class="rev-radio" style="position:absolute;opacity:0;width:0;height:0;"><span class="rev-label" style="display:block;padding:8px 4px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;user-select:none;cursor:pointer;">'+r+'</span></label>'; }).join('') +
+        '</div></div>' +
+      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">5. HOW DO CUSTOMERS PRIMARILY CONTACT YOU?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span></label>' +
+        '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;">' +
+          inboundOptions.map(function(b){ return '<label style="cursor:pointer;text-align:center;display:block;"><input type="radio" name="inbound" value="'+b+'" class="inbound-radio" style="position:absolute;opacity:0;width:0;height:0;"><span class="inbound-label" style="display:block;padding:7px 4px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;user-select:none;cursor:pointer;">'+b+'</span></label>'; }).join('') +
+        '</div></div>' +
+      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">6. WHICH PLATFORMS DOES YOUR BUSINESS USE?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;">(check all that apply)</span></label>' +
+        integCheckboxesHTML +
+      '</div>' +
+      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">7. WHAT OS DOES YOUR TEAM USE?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span></label>' +
+        '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:5px;">' +
+          osOptions.map(function(o){ return '<label style="cursor:pointer;text-align:center;display:block;"><input type="radio" name="device_os" value="'+o+'" class="os-radio" style="position:absolute;opacity:0;width:0;height:0;"><span class="os-label" style="display:block;padding:7px 4px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;user-select:none;cursor:pointer;">'+o+'</span></label>'; }).join('') +
+        '</div></div>' +
+      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">8. CURRENT CRM?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span></label>' +
+        '<div style="display:flex;flex-wrap:wrap;gap:5px;">' +
+          crmOptions.map(function(c){ return '<label style="cursor:pointer;text-align:center;display:block;"><input type="radio" name="crm" value="'+c+'" class="crm-radio" style="position:absolute;opacity:0;width:0;height:0;"><span class="crm-label" style="display:block;padding:7px 11px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;user-select:none;cursor:pointer;white-space:nowrap;">'+c+'</span></label>'; }).join('') +
+        '</div></div>' +
+      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">9. EMAIL PROVIDER?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span></label>' +
+        '<div style="display:flex;flex-wrap:wrap;gap:5px;">' +
+          emailOptions.map(function(e){ return '<label style="cursor:pointer;text-align:center;display:block;"><input type="radio" name="email_provider" value="'+e+'" class="email-radio" style="position:absolute;opacity:0;width:0;height:0;"><span class="email-label" style="display:block;padding:7px 11px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;user-select:none;cursor:pointer;white-space:nowrap;">'+e+'</span></label>'; }).join('') +
+        '</div></div>' +
+      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">10. ARE YOU CURRENTLY USING AI IN YOUR BUSINESS?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;">(check all that apply)</span></label>' +
+        '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:5px;">' +
+          aiToolOptions.map(function(a){ return '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:11px;font-weight:500;padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:#fff;user-select:none;" class="ai-label"><input type="checkbox" name="ai_tools" value="'+a+'" class="ai-check" style="margin:0;cursor:pointer;">'+a+'</label>'; }).join('') +
+        '</div>' +
+        '<input name="ai_other" placeholder="Other AI tools\u2026" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:7px;font-size:12px;background:#fff;box-sizing:border-box;margin-top:5px;"></div>' +
+      '<div id="onboard-error" style="display:none;color:#dc2626;font-size:13px;padding:8px 12px;background:#fef2f2;border-radius:6px;">Please complete all fields.</div>' +
+      '<button type="submit" id="onboard-btn" style="width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;">Submit &amp; get my automation map \u2192</button>' +
+      '<button type="button" id="skip-btn" style="width:100%;padding:6px;background:none;border:none;font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;">Skip for now</button>' +
+    '</form>';
+
+  // Team size pill toggle
+  document.querySelectorAll('.size-radio').forEach(function(radio){
+    radio.addEventListener('change', function(){
+      document.querySelectorAll('.size-label').forEach(function(l){ l.style.background=''; l.style.color=''; l.style.borderColor=''; });
+      this.nextElementSibling.style.background='var(--accent)';
+      this.nextElementSibling.style.color='#fff';
+      this.nextElementSibling.style.borderColor='var(--accent)';
+    });
+  });
+
+  // Pain point checkbox visual highlight
+  document.querySelectorAll('.pain-check').forEach(function(cb){
+    cb.addEventListener('change', function(){
+      var lbl = this.closest('.pain-label');
+      if(this.checked){ lbl.style.background='#E8EEFF'; lbl.style.borderColor='var(--accent)'; lbl.style.color='var(--accent)'; }
+      else { lbl.style.background=''; lbl.style.borderColor=''; lbl.style.color=''; }
+    });
+  });
+
+  // Revenue radio toggle
+  document.querySelectorAll('.rev-radio').forEach(function(radio){
+    radio.addEventListener('change', function(){
+      document.querySelectorAll('.rev-label').forEach(function(l){ l.style.background=''; l.style.color=''; l.style.borderColor=''; });
+      this.nextElementSibling.style.background='var(--accent)';
+      this.nextElementSibling.style.color='#fff';
+      this.nextElementSibling.style.borderColor='var(--accent)';
+    });
+  });
+
+  // Inbound channel radio toggle
+  document.querySelectorAll('.inbound-radio').forEach(function(radio){
+    radio.addEventListener('change', function(){
+      document.querySelectorAll('.inbound-label').forEach(function(l){ l.style.background=''; l.style.color=''; l.style.borderColor=''; });
+      this.nextElementSibling.style.background='var(--accent)';
+      this.nextElementSibling.style.color='#fff';
+      this.nextElementSibling.style.borderColor='var(--accent)';
+    });
+  });
+
+  // Integration checkbox visual highlight
+  document.querySelectorAll('.integ-check').forEach(function(cb){
+    cb.addEventListener('change', function(){
+      var lbl = this.closest('.integ-label');
+      if(this.checked){ lbl.style.background='#E8EEFF'; lbl.style.borderColor='var(--accent)'; lbl.style.color='var(--accent)'; }
+      else { lbl.style.background=''; lbl.style.borderColor=''; lbl.style.color=''; }
+    });
+  });
+
+  // OS pill toggle
+  document.querySelectorAll('.os-radio').forEach(function(radio){
+    radio.addEventListener('change', function(){
+      document.querySelectorAll('.os-label').forEach(function(l){ l.style.background=''; l.style.color=''; l.style.borderColor=''; });
+      this.nextElementSibling.style.background='var(--accent)';
+      this.nextElementSibling.style.color='#fff';
+      this.nextElementSibling.style.borderColor='var(--accent)';
+    });
+  });
+
+  // CRM pill toggle
+  document.querySelectorAll('.crm-radio').forEach(function(radio){
+    radio.addEventListener('change', function(){
+      document.querySelectorAll('.crm-label').forEach(function(l){ l.style.background=''; l.style.color=''; l.style.borderColor=''; });
+      this.nextElementSibling.style.background='var(--accent)';
+      this.nextElementSibling.style.color='#fff';
+      this.nextElementSibling.style.borderColor='var(--accent)';
+    });
+  });
+
+  // Email provider pill toggle
+  document.querySelectorAll('.email-radio').forEach(function(radio){
+    radio.addEventListener('change', function(){
+      document.querySelectorAll('.email-label').forEach(function(l){ l.style.background=''; l.style.color=''; l.style.borderColor=''; });
+      this.nextElementSibling.style.background='var(--accent)';
+      this.nextElementSibling.style.color='#fff';
+      this.nextElementSibling.style.borderColor='var(--accent)';
+    });
+  });
+
+  // AI tools checkbox highlight
+  document.querySelectorAll('.ai-check').forEach(function(cb){
+    cb.addEventListener('change', function(){
+      var lbl = this.closest('.ai-label');
+      if(this.checked){ lbl.style.background='#E8EEFF'; lbl.style.borderColor='var(--accent)'; lbl.style.color='var(--accent)'; }
+      else { lbl.style.background=''; lbl.style.borderColor=''; lbl.style.color=''; }
+    });
+  });
+
+  document.getElementById('skip-btn').addEventListener('click', function(){ showBooked(false); });
+
+  document.getElementById('onboard-form').addEventListener('submit', async function(e){
+    e.preventDefault();
+    var errDiv = document.getElementById('onboard-error');
+    errDiv.style.display='none';
+
+    var fd = new FormData(e.target);
+    var pain_points = fd.getAll('pain_points');
+    var pain_other = (fd.get('pain_other')||'').trim();
+    var automation_goal = (fd.get('automation_goal')||'').trim();
+    var industry = (fd.get('industry')||'').trim();
+    var team_size = fd.get('team_size')||'';
+    var revenue = fd.get('revenue')||'';
+    var inbound = fd.get('inbound')||'';
+    var integrations = fd.getAll('integrations');
+    var device_os = fd.get('device_os')||'';
+    var crm = fd.get('crm')||'';
+    var email_provider = fd.get('email_provider')||'';
+    var ai_tools = fd.getAll('ai_tools');
+    var ai_other = (fd.get('ai_other')||'').trim();
+
+    var all_pain = pain_points.concat(pain_other ? [pain_other] : []);
+    var all_ai = ai_tools.concat(ai_other ? [ai_other] : []);
+
+    // Manual validation
+    if(all_pain.length===0 || !industry || !team_size || !revenue || !inbound || integrations.length===0 || !device_os || !crm || !email_provider || all_ai.length===0){
+      errDiv.style.display='block';
+      return;
+    }
+
+    var btn = document.getElementById('onboard-btn');
+    btn.innerHTML='<span class="spinner"></span>Submitting\u2026'; btn.disabled=true;
+    try{
+      await fetch('/api/questionnaire',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+        email:email,
+        pain_points:all_pain,
+        automation_goal:automation_goal,
+        industry:industry,
+        team_size:team_size,
+        revenue:revenue,
+        inbound:inbound,
+        integrations:integrations,
+        device_os:device_os,
+        crm:crm,
+        email_provider:email_provider,
+        ai_tools:all_ai,
+        tier:selectedTier||''
+      })});
+    }catch(err){}
+    showBooked(true);
+  });
+}
+
+function showBooked(completedMap){
+  var stepDiv = document.getElementById('booking-step');
+  stepDiv.innerHTML = completedMap ?
+    '<div class="confirm-box">' +
+      '<div style="font-size:36px;margin-bottom:8px;">\uD83D\uDDFA\uFE0F</div>' +
+      '<h2 style="font-size:20px;font-weight:700;margin:0 0 8px;">You\u2019re all set!</h2>' +
+      '<p style="font-size:14px;color:var(--muted);line-height:1.6;margin:0 0 8px;">We\u2019re building your custom automation map now. You\u2019ll receive it before the call so we can hit the ground running.</p>' +
+      '<p style="font-size:14px;color:var(--muted);margin:0 0 24px;">See you on the call!</p>' +
+      '<a href="/" style="display:inline-block;padding:10px 24px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;color:var(--ink);">\u2190 Back to home</a>' +
+    '</div>'
+  :
+    '<div class="confirm-box">' +
+      '<div class="check">\u2713</div>' +
+      '<h2 style="font-size:20px;font-weight:700;margin:0 0 8px;">You\u2019re all set!</h2>' +
+      '<p style="font-size:14px;color:var(--muted);margin:0 0 24px;">We\u2019ll send a Google Meet link before the call. See you soon!</p>' +
+      '<a href="/" style="display:inline-block;padding:10px 24px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;color:var(--ink);">\u2190 Back to home</a>' +
+    '</div>';
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+<footer class="border-t border-[var(--line)] px-5 py-10">
+  <div class="section-wrap" style="display:flex;flex-direction:column;gap:20px;">
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:20px;">
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <svg width="22" height="18" viewBox="0 0 26 22" fill="none" aria-hidden="true">
+            <rect x="0" y="14" width="5" height="8" rx="1.5" fill="var(--accent)"/>
+            <rect x="7" y="9" width="5" height="13" rx="1.5" fill="var(--accent)" opacity=".75"/>
+            <rect x="14" y="4" width="5" height="18" rx="1.5" fill="var(--accent)" opacity=".55"/>
+            <rect x="21" y="0" width="5" height="22" rx="1.5" fill="var(--accent)" opacity=".35"/>
+          </svg>
+          <span style="font-weight:700;font-size:14px;color:var(--ink);">Ramped AI</span>
+        </div>
+        <p style="font-size:13px;color:var(--muted);">AI implementation for operating businesses</p>
+      </div>
+      <nav style="display:flex;flex-wrap:wrap;gap:8px 24px;align-items:center;">
+        <a href="/#how-it-works" style="font-size:13px;color:var(--muted);">How it works</a>
+        <a href="/#pricing" style="font-size:13px;color:var(--muted);">Pricing</a>
+        <a href="/demo" style="font-size:13px;color:var(--muted);">Demo</a>
+        <a href="/comparison" style="font-size:13px;color:var(--muted);">VA vs. AI</a>
+        <a href="/book" style="font-size:13px;color:var(--muted);">Book a call</a>
+        <a href="/privacy" style="font-size:13px;color:var(--muted);">Privacy</a>
+      </nav>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;padding-top:12px;border-top:1px solid var(--line);">
+      <p style="font-size:12px;color:var(--muted);">© 2026 Ramped AI. All rights reserved.</p>
+      <a href="mailto:jon@30dayramp.com" style="font-size:12px;color:var(--muted);">jon@30dayramp.com</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
