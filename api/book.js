@@ -122,8 +122,42 @@ export default async function handler(req, res) {
     if (!isValidEmail(email)) return res.status(400).json({ error: 'Please enter a valid email.' });
     if (!isFuture(datetime, 15 * 60_000)) return res.status(400).json({ error: 'Choose a future time (at least 15 min from now).' });
     if (!isWithinBookingWindow(datetime, 90)) return res.status(400).json({ error: 'Please choose a time within the next 90 days.' });
-    const bh = isBusinessHours(datetime, 'America/Chicago');
-    if (!bh.ok) return res.status(400).json({ error: bh.reason });
+    // Check against dynamic availability settings from Supabase (fall back to hardcoded if unavailable)
+    if (SUPABASE_URL && SUPABASE_KEY) {
+      try {
+        const { ok: aOk, data: aData } = await supabase('GET',
+          '/availability_settings?id=eq.1&select=days_available,start_hour,end_hour,slot_duration_min,blocked_dates,timezone'
+        );
+        if (aOk && aData && aData[0]) {
+          const av = aData[0];
+          const tz = av.timezone || 'America/Chicago';
+          const dt = new Date(datetime);
+          const parts = new Intl.DateTimeFormat('en-US', {
+            timeZone: tz, weekday: 'short', hour: 'numeric', minute: 'numeric', hour12: false,
+          }).formatToParts(dt);
+          const wd   = parts.find(p => p.type === 'weekday')?.value;
+          const hour = parseInt(parts.find(p => p.type === 'hour')?.value, 10);
+          const dateStr = new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(dt);
+          const days = av.days_available || ['Mon','Tue','Wed','Thu','Fri'];
+          const blocked = av.blocked_dates || [];
+          if (!days.includes(wd)) return res.status(400).json({ error: 'That day is not available for booking.' });
+          if (hour < av.start_hour || hour >= av.end_hour) {
+            const fmt = h => h === 0 ? '12am' : h < 12 ? h+'am' : h === 12 ? '12pm' : (h-12)+'pm';
+            return res.status(400).json({ error: `Please choose a time between ${fmt(av.start_hour)} and ${fmt(av.end_hour)}.` });
+          }
+          if (blocked.includes(dateStr)) return res.status(400).json({ error: 'That date is not available for booking.' });
+        } else {
+          const bh = isBusinessHours(datetime, 'America/Chicago');
+          if (!bh.ok) return res.status(400).json({ error: bh.reason });
+        }
+      } catch(e) {
+        const bh = isBusinessHours(datetime, 'America/Chicago');
+        if (!bh.ok) return res.status(400).json({ error: bh.reason });
+      }
+    } else {
+      const bh = isBusinessHours(datetime, 'America/Chicago');
+      if (!bh.ok) return res.status(400).json({ error: bh.reason });
+    }
 
     if (!datetime || !name || !email) {
       return res.status(400).json({ error: 'datetime, name, and email are required' });
