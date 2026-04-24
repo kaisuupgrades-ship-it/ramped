@@ -1262,6 +1262,12 @@
   }
 
   // ── Questionnaire toggle ──────────────────────────────────────────────────────
+  function toggleBookingGrade(id) {
+    const row = document.getElementById('grade-summary-' + id);
+    if (!row) return;
+    row.style.display = row.style.display === 'none' ? '' : 'none';
+  }
+
   function toggleQ(bookingId) {
     const panel = document.getElementById(`q-panel-${bookingId}`);
     if (!panel) return;
@@ -1390,7 +1396,13 @@
             ${b.company ? `<div style="color:var(--muted);font-size:12px">${esc(b.company)}</div>` : ''}
             <div style="margin-top:2px"><a href="mailto:${esc(b.email)}" style="color:var(--accent);font-size:12px">${esc(b.email || '')}</a></div>
           </td>
-          <td>${tierBadgeHtml(b.tier)}</td>
+          <td>
+            <div>${tierBadgeHtml(b.tier)}</div>
+            ${b.grade ? `<span
+              onclick="toggleBookingGrade('${bid}')"
+              title="Click to see AI analysis"
+              style="cursor:pointer;display:inline-block;margin-top:5px;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:800;letter-spacing:0.04em;color:${{A:'#15803d',B:'#1a56db',C:'#b45309',D:'#dc2626'}[b.grade]||'#6B7280'};background:${{A:'#f0fdf4',B:'#eff6ff',C:'#fffbeb',D:'#fef2f2'}[b.grade]||'#f3f4f6'};border:1px solid ${{A:'#86efac',B:'#93c5fd',C:'#fcd34d',D:'#fca5a5'}[b.grade]||'#e5e7eb'};">${esc(b.grade)}</span>` : ''}
+          </td>
           <td>${qCell}</td>
           <td style="padding:8px 14px;">
             <textarea
@@ -1473,6 +1485,20 @@
                   <span class="q-label">AI Tools</span>
                   <span class="q-val">${badges(aiArr)}</span>
                 </div>
+              </div>
+            </td>
+          </tr>
+        `);
+      }
+
+      // Grade summary expandable row
+      if (b.grade && b.grade_summary) {
+        const gc = {A:'#15803d',B:'#1a56db',C:'#b45309',D:'#dc2626'}[b.grade] || '#6B7280';
+        rows.push(`
+          <tr id="grade-summary-${bid}" style="display:none">
+            <td colspan="7" style="padding:0">
+              <div style="padding:10px 20px;background:#f8fafb;border-left:3px solid ${gc};font-size:13px;color:#374151;line-height:1.6;">
+                <strong style="color:${gc}">Grade ${esc(b.grade)} — </strong>${esc(b.grade_summary)}
               </div>
             </td>
           </tr>
