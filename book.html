@@ -64,8 +64,8 @@
   @media(max-width:640px){
     .left-panel{display:block;border-right:none;border-bottom:1px solid var(--line);padding:20px;}
     .booking-shell{grid-template-columns:1fr;}
-    .right-panel{border-radius:12px;}
-    .mobile-booking-header{display:block!important;}
+    .right-panel{border-radius:12px;padding-top:0!important;}
+    .mobile-booking-header{display:block!important;padding:20px 20px 20px!important;}
   }
 
   /* ── Calendar ── */
@@ -222,12 +222,28 @@
 <script>
 const HOST_TZ = 'America/Chicago';
 const VISITOR_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
-const SLOT_HOURS = [9,9.5,10,10.5,11,11.5,12,12.5,13,13.5,14,14.5,15,15.5,16,16.5];
+let SLOT_HOURS = [9,9.5,10,10.5,11,11.5,12,12.5,13,13.5,14,14.5,15,15.5,16,16.5];
+let _avail = { days_available:['Mon','Tue','Wed','Thu','Fri'], start_hour:9, end_hour:17, slot_duration_min:30, blocked_dates:[] };
 
 let currentMonth, currentYear, selectedDate, selectedSlot, selectedTier;
 
-function init() {
+function computeSlotHours(avail) {
+  const slots = [];
+  const step = avail.slot_duration_min || 30;
+  const startM = (avail.start_hour || 9) * 60;
+  const endM   = (avail.end_hour   || 17) * 60;
+  for (let m = startM; m < endM; m += step) {
+    slots.push(m / 60);
+  }
+  return slots;
+}
+
+async function init() {
   selectedTier = new URLSearchParams(window.location.search).get('tier') || '';
+  try {
+    const r = await fetch('/api/availability');
+    if (r.ok) { _avail = await r.json(); SLOT_HOURS = computeSlotHours(_avail); }
+  } catch(e) {}
   const now = new Date();
   currentMonth = now.getMonth();
   currentYear = now.getFullYear();
@@ -258,18 +274,24 @@ function buildCalendarHTML(year, month) {
 
   var FULL_DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   var FULL_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var DAY_ABBR   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
   for(var d=1;d<=daysInMonth;d++){
     var date = new Date(year, month, d);
     var isToday = date.toDateString()===today.toDateString();
     var isPast = date < new Date(today.getFullYear(),today.getMonth(),today.getDate());
-    var isWeekend = date.getDay()===0||date.getDay()===6;
-    var disabled = isPast||isWeekend;
-    var cls = ['cal-day', isToday?'today':'', disabled?'':'available'].filter(Boolean).join(' ');
     var dateStr = year+'-'+String(month+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    var dayAbbr = DAY_ABBR[date.getDay()];
+    var availDays = (_avail && _avail.days_available) || ['Mon','Tue','Wed','Thu','Fri'];
+    var blockedDates = (_avail && _avail.blocked_dates) || [];
+    var isUnavailableDay = !availDays.includes(dayAbbr);
+    var isBlocked = blockedDates.includes(dateStr);
+    var disabled = isPast || isUnavailableDay || isBlocked;
+    var cls = ['cal-day', isToday?'today':'', disabled?'':'available'].filter(Boolean).join(' ');
     var ariaLabel = FULL_DAYS[date.getDay()] + ', ' + FULL_MONTHS[month] + ' ' + d + ', ' + year;
     if(isPast) ariaLabel += ' (unavailable \u2014 past date)';
-    else if(isWeekend) ariaLabel += ' (unavailable \u2014 weekend)';
+    else if(isBlocked) ariaLabel += ' (unavailable \u2014 blocked)';
+    else if(isUnavailableDay) ariaLabel += ' (unavailable)';
     else if(isToday) ariaLabel += ' (today)';
     html += '<button class="'+cls+'" '+(disabled?'disabled':'')+' data-date="'+dateStr+'" aria-label="'+ariaLabel+'">'+d+'</button>';
   }
@@ -713,3 +735,4 @@ document.addEventListener('DOMContentLoaded', init);
 </footer>
 </body>
 </html>
+
