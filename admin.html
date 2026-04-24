@@ -1491,14 +1491,47 @@
         `);
       }
 
-      // Grade summary expandable row
+      // Grade + roadmap scorecard expandable row
       if (b.grade && b.grade_summary) {
-        const gc = {A:'#15803d',B:'#1a56db',C:'#b45309',D:'#dc2626'}[b.grade] || '#6B7280';
+        const gc  = {A:'#15803d',B:'#1a56db',C:'#b45309',D:'#dc2626'}[b.grade] || '#6B7280';
+        const gbg = {A:'#f0fdf4',B:'#eff6ff',C:'#fffbeb',D:'#fef2f2'}[b.grade] || '#f8fafb';
+        const rm  = b.automation_map || {};
+
+        // Top agents table
+        let agentsHtml = '';
+        if (rm.top_agents && rm.top_agents.length) {
+          agentsHtml = `
+            <div style="margin-top:12px;">
+              <div style="font-size:11px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Top Agents</div>
+              <table style="width:100%;border-collapse:collapse;font-size:12px;">
+                ${rm.top_agents.map(a => `
+                  <tr style="border-top:1px solid #e5e7eb;">
+                    <td style="padding:6px 8px 6px 0;font-weight:600;color:#0B1220;width:180px;">${esc(a.name||'')}</td>
+                    <td style="padding:6px 8px;color:#6B7280;width:90px;">${esc(a.channel||'')}</td>
+                    <td style="padding:6px 0;color:#374151;">${esc(a.what_it_does||'')}${a.hours_saved ? ` <span style="font-weight:600;color:${gc};">(${esc(a.hours_saved)})</span>` : ''}</td>
+                  </tr>`).join('')}
+              </table>
+            </div>`;
+        }
+
+        const summaryHtml = rm.summary
+          ? `<p style="margin:10px 0 0;font-size:12px;color:#374151;border-left:3px solid ${gc};padding-left:8px;line-height:1.5;">${esc(rm.summary)}</p>`
+          : '';
+        const week1Html = rm.week_1_focus
+          ? `<p style="margin:8px 0 0;font-size:12px;color:#0B1220;"><strong>Week 1:</strong> ${esc(rm.week_1_focus)}</p>`
+          : '';
+
         rows.push(`
           <tr id="grade-summary-${bid}" style="display:none">
             <td colspan="7" style="padding:0">
-              <div style="padding:10px 20px;background:#f8fafb;border-left:3px solid ${gc};font-size:13px;color:#374151;line-height:1.6;">
-                <strong style="color:${gc}">Grade ${esc(b.grade)} — </strong>${esc(b.grade_summary)}
+              <div style="padding:14px 20px;background:${gbg};border-left:4px solid ${gc};">
+                <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px;">
+                  <span style="font-size:22px;font-weight:900;color:${gc};">${esc(b.grade)}</span>
+                  <span style="font-size:13px;color:#374151;line-height:1.5;">${esc(b.grade_summary)}</span>
+                </div>
+                ${summaryHtml}
+                ${agentsHtml}
+                ${week1Html}
               </div>
             </td>
           </tr>
