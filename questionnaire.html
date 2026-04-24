@@ -186,6 +186,8 @@ a { color: inherit; text-decoration: none; }
   background: #fff; cursor: pointer;
   font-size: 13px; font-weight: 500;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
   transition: border-color 0.12s, background 0.12s, color 0.12s;
   line-height: 1.3;
 }
@@ -751,8 +753,14 @@ function bindStepEvents(step, idx) {
   labels.forEach(function (label) {
     label.addEventListener('click', function (e) {
       var input = label.querySelector('input');
-      if (e.target === input) return; // native click already handled
-      input.click();
+      if (!input || e.target === input) return;
+      // Directly toggle state — iOS Safari doesn't reliably fire change on .click() for hidden inputs
+      if (input.type === 'checkbox') {
+        input.checked = !input.checked;
+      } else {
+        input.checked = true;
+      }
+      input.dispatchEvent(new Event('change'));
     });
     var input = label.querySelector('input');
     if (input) {
