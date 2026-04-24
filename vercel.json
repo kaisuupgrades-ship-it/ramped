@@ -9,7 +9,6 @@
     { "source": "/privacy",                 "destination": "/privacy.html" },
     { "source": "/thanks",                  "destination": "/thanks.html" },
     { "source": "/admin",                   "destination": "/admin.html" },
-    { "source": "/dashboard",               "destination": "/dashboard.html" },
     { "source": "/questionnaire-preview",   "destination": "/questionnaire-preview.html" }
   ],
   "headers": [
