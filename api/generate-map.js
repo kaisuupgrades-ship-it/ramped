@@ -179,7 +179,17 @@ export default async function handler(req, res) {
 
   if (!ANTHROPIC_KEY) return res.status(503).json({ error: 'Map generation not available.' });
 
-  let { company, name, email, industry, team_size, revenue, channels, platforms, os, crm, email_provider, existing_ai, time_sinks, notes } = req.body || {};
+  // Normalize camelCase → snake_case so both questionnaire and direct API callers work
+  const raw = req.body || {};
+  const body = {
+    ...raw,
+    time_sinks:     raw.time_sinks     || raw.timeSinks     || [],
+    team_size:      raw.team_size      || raw.teamSize       || '',
+    email_provider: raw.email_provider || raw.emailProvider  || '',
+    existing_ai:    raw.existing_ai    || raw.aiTools        || raw.existingAi || '',
+  };
+
+  let { company, name, email, industry, team_size, revenue, channels, platforms, os, crm, email_provider, existing_ai, time_sinks, notes } = body;
 
   company        = truncate(String(company        || '').trim(), 200);
   name           = truncate(String(name           || '').trim(), 120);
