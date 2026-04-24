@@ -277,10 +277,16 @@ export default async function handler(req, res) {
       `[${grade}] Roadmap ready — ${qName}`,
       `<div style="font-family:-apple-system,sans-serif;max-width:540px;margin:0 auto;padding:32px 24px;">
         <p style="font-size:20px;font-weight:800;color:#0B1220;margin-bottom:16px;">Booking questionnaire + roadmap complete</p>
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-          <div style="background:${gc};color:#fff;display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:10px;font-size:26px;font-weight:900;">${esc(grade)}</div>
-          <p style="color:#374151;font-size:14px;margin:0;line-height:1.5;">${esc(gradeSummary || '')}</p>
-        </div>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
+          <tr>
+            <td style="width:60px;vertical-align:middle;padding-right:12px;">
+              <div style="background:${gc};color:#fff;width:48px;height:48px;border-radius:10px;font-size:26px;font-weight:900;text-align:center;line-height:48px;">${esc(grade)}</div>
+            </td>
+            <td style="vertical-align:middle;">
+              <p style="color:#374151;font-size:14px;margin:0;line-height:1.5;">${esc(gradeSummary || '')}</p>
+            </td>
+          </tr>
+        </table>
         ${roadmap?.summary ? `<p style="font-size:13px;color:#0B1220;background:#F5F8FF;border-left:3px solid #1F4FFF;padding:10px 14px;border-radius:0 8px 8px 0;margin-bottom:16px;">${esc(roadmap.summary)}</p>` : ''}
         <table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:16px;">
           <tr><td style="padding:6px 0;color:#6B7280;width:140px;">Name</td><td style="color:#0B1220;">${esc(booking.name || '—')}</td></tr>
@@ -300,3 +306,4 @@ export default async function handler(req, res) {
 
   return res.status(200).json({ success: true, updated: true, grade: grade || null });
 }
+
