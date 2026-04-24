@@ -1392,7 +1392,10 @@
           </td>
           <td style="white-space:nowrap;font-size:12px">${esc(formatBookingDate(b.datetime, b.timezone))}</td>
           <td>
-            <div style="font-weight:600">${esc(b.name || '—')}</div>
+            <div style="display:flex;align-items:center;gap:7px;">
+              <div style="font-weight:600">${esc(b.name || '—')}</div>
+              ${b.grade ? `<span onclick="toggleBookingGrade('${bid}')" title="Click to see AI analysis" style="cursor:pointer;padding:1px 7px;border-radius:5px;font-size:11px;font-weight:800;letter-spacing:0.04em;color:${{A:'#15803d',B:'#1a56db',C:'#b45309',D:'#dc2626'}[b.grade]||'#6B7280'};background:${{A:'#f0fdf4',B:'#eff6ff',C:'#fffbeb',D:'#fef2f2'}[b.grade]||'#f3f4f6'};border:1px solid ${{A:'#86efac',B:'#93c5fd',C:'#fcd34d',D:'#fca5a5'}[b.grade]||'#e5e7eb'};">${esc(b.grade)}</span>` : ''}
+            </div>
             ${b.company ? `<div style="color:var(--muted);font-size:12px">${esc(b.company)}</div>` : ''}
             <div style="margin-top:2px"><a href="mailto:${esc(b.email)}" style="color:var(--accent);font-size:12px">${esc(b.email || '')}</a></div>
           </td>
