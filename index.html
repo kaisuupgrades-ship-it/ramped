@@ -27,6 +27,10 @@
 <!-- Canonical -->
 <link rel="canonical" href="https://www.30dayramp.com/" />
 
+<!-- Sitemap + Robots -->
+<link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+<meta name="robots" content="index, follow" />
+
 <!-- Vercel Analytics -->
 <script defer src="/_vercel/insights/script.js"></script>
 
@@ -842,10 +846,18 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Ramped AI",
+  "url": "https://www.30dayramp.com/"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
   "@type": "Organization",
   "name": "Ramped AI",
   "url": "https://www.30dayramp.com/",
-  "logo": "https://www.30dayramp.com/og-image.png",
+  "logo": "https://www.30dayramp.com/apple-touch-icon.png",
   "email": "jon@30dayramp.com",
   "description": "AI implementation for operating businesses. Deploy production AI agents in 30 days."
 }
