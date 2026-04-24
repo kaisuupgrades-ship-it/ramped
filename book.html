@@ -106,6 +106,10 @@
     border-radius: 6px;
   }
   .slot-btn:disabled{color:#bbb;cursor:not-allowed;background:#f7f7f5;border-color:#eeece6;}
+
+  /* ── Post-booking questionnaire chips ── */
+  .q-chip{display:flex;align-items:center;justify-content:center;text-align:center;padding:8px 10px;border:1.5px solid var(--line);border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;user-select:none;background:#fff;color:var(--ink);line-height:1.3;-webkit-tap-highlight-color:transparent;touch-action:manipulation;position:relative;}
+  .q-chip.q-chip-on{background:#E8EEFF;border-color:var(--accent);color:var(--accent);}
 </style>
 </head>
 <body>
@@ -457,249 +461,178 @@ function showConfirmation(name, email){
   var stepDiv = document.getElementById('booking-step');
   var d = new Date(selectedDate+'T12:00:00');
   var dateLabel = d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
-  var sizeOptions = ['1\u201325','26\u201350','51\u2013100','100+'];
-  var painOptions = ['Lead follow-up & nurturing','Scheduling & calendar management','Answering repetitive questions','Quotes & proposal sending','Order / invoice processing','Appointment reminders & no-shows','Customer support tickets','Social media posting','Data entry & reporting','Employee onboarding'];
-  var inboundOptions = ['Phone / Voice','Email','Website / Form','Walk-in','Social media DM','Multiple channels'];
-  var integrationOptions = ['WhatsApp Business','Instagram / Facebook DM','SMS / Text (Twilio)','Telegram','Slack','Discord','Email (Gmail / Outlook)','Website chat','Shopify','Google Calendar','Airtable','Make / Zapier','HubSpot','Salesforce / Other CRM'];
-  var revenueOptions = ['Under $300K/yr','$300K\u2013$1M/yr','$1M\u2013$5M/yr','$5M+/yr'];
-  var crmOptions = ['HubSpot','Salesforce','Pipedrive','Other CRM','No CRM yet'];
-  var osOptions = ['Mac','Windows','Linux / Server','Not sure'];
-  var emailOptions = ['Google Workspace / Gmail','Outlook / M365','Both','Other'];
-  var aiToolOptions = ['ChatGPT / OpenAI','Claude / Anthropic','Google Gemini','Microsoft Copilot','Make AI / Zapier AI','Not using AI yet'];
-
-  var painCheckboxesHTML = '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:5px;">' +
-    painOptions.map(function(p){
-      return '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:11px;font-weight:500;padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:#fff;user-select:none;" class="pain-label">' +
-        '<input type="checkbox" name="pain_points" value="'+p+'" class="pain-check" style="margin:0;cursor:pointer;">'+p+'</label>';
-    }).join('') +
-  '</div>';
-
-  var integCheckboxesHTML = '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:5px;">' +
-    integrationOptions.map(function(t){
-      return '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:11px;font-weight:500;padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:#fff;user-select:none;" class="integ-label">' +
-        '<input type="checkbox" name="integrations" value="'+t+'" class="integ-check" style="margin:0;cursor:pointer;">'+t+'</label>';
-    }).join('') +
-  '</div>';
-
-  var rescheduleSubject = encodeURIComponent('Reschedule discovery call \u2014 ' + dateLabel + ' at ' + selectedSlot.label);
-  var rescheduleBody = encodeURIComponent('Hi \u2014 I booked a discovery call for ' + dateLabel + ' at ' + selectedSlot.label + ' but need to reschedule. Here are a few times that would work better:\n\n- \n- \n\nThanks!');
-  var rescheduleHref = 'mailto:jon@30dayramp.com?subject=' + rescheduleSubject + '&body=' + rescheduleBody;
+  var rescheduleSubject = encodeURIComponent('Reschedule discovery call \u2014 '+dateLabel+' at '+selectedSlot.label);
+  var rescheduleBody = encodeURIComponent('Hi \u2014 I booked a discovery call for '+dateLabel+' at '+selectedSlot.label+' but need to reschedule. Here are a few times that work:\n\n- \n- \n\nThanks!');
+  var rescheduleHref = 'mailto:jon@30dayramp.com?subject='+rescheduleSubject+'&body='+rescheduleBody;
 
   stepDiv.innerHTML =
-    '<div style="text-align:center;padding:16px 0 14px;">' +
-      '<div style="font-size:36px;line-height:1;margin-bottom:8px;">\u2713</div>' +
-      '<h2 style="font-size:20px;font-weight:700;margin:0 0 4px;">You\'re booked!</h2>' +
-      '<p style="font-size:14px;font-weight:600;color:var(--ink);margin:0 0 3px;">'+dateLabel+' at '+selectedSlot.label+'</p>' +
-      '<p style="font-size:12px;color:var(--muted);margin:0 0 6px;">Confirmation sent to '+email+' &middot; Google Meet link coming before the call.</p>' +
-      '<p style="font-size:12px;color:var(--muted);margin:0;">Need to change it? <a href="'+rescheduleHref+'" style="color:var(--accent);font-weight:600;">Reschedule or cancel</a>.</p>' +
-    '</div>' +
+    '<div style="text-align:center;padding:16px 0 14px;">'+
+      '<div style="font-size:36px;line-height:1;margin-bottom:8px;">\u2713</div>'+
+      '<h2 style="font-size:20px;font-weight:700;margin:0 0 4px;">You\'re booked!</h2>'+
+      '<p style="font-size:14px;font-weight:600;color:var(--ink);margin:0 0 3px;">'+dateLabel+' at '+selectedSlot.label+'</p>'+
+      '<p style="font-size:12px;color:var(--muted);margin:0 0 6px;">Confirmation sent to '+email+' \u00b7 Google Meet link coming before the call.</p>'+
+      '<p style="font-size:12px;color:var(--muted);margin:0;">Need to change it? <a href="'+rescheduleHref+'" style="color:var(--accent);font-weight:600;">Reschedule or cancel</a>.</p>'+
+    '</div>'+
+    '<div style="background:#EEF2FF;border:1.5px solid #A5B4FC;border-radius:10px;padding:14px 16px;margin:14px 0 16px;">'+
+      '<p style="font-size:13px;font-weight:700;color:#1F4FFF;margin:0 0 3px;">\ud83d\uddfa\ufe0f Help us prepare your roadmap</p>'+
+      '<p style="font-size:12px;color:#3730A3;line-height:1.5;margin:0;">Answer a few quick questions so we can build your custom automation plan before the call. Takes ~2 minutes.</p>'+
+    '</div>'+
+    '<div id="q-container"></div>';
 
-    '<div style="background:#EEF2FF;border:1.5px solid #A5B4FC;border-radius:10px;padding:14px 16px;margin:14px 0 16px;">' +
-      '<p style="font-size:13px;font-weight:700;color:#1F4FFF;margin:0 0 3px;">\uD83D\uDDFA\uFE0F Get a custom automation map before your call</p>' +
-      '<p style="font-size:12px;color:#3730A3;line-height:1.5;margin:0;">Answer 10 quick questions and we\u2019ll build a tailored automation plan before you join \u2014 so your call is 10x more productive. Takes ~2 minutes.</p>' +
-    '</div>' +
+  var Q_STEPS = [
+    {id:'pain_points',    type:'checkbox', title:'What\'s eating your team\'s time?',                           subtitle:'Select all that apply',
+     options:['Lead follow-up & nurturing','Scheduling & calendar management','Answering repetitive questions','Quotes & proposal sending','Order / invoice processing','Appointment reminders & no-shows','Customer support tickets','Social media posting','Data entry & reporting','Employee onboarding']},
+    {id:'industry',       type:'text',     title:'What industry are you in?',
+     placeholder:'e.g. Real Estate, E-commerce, Law, Cannabis\u2026'},
+    {id:'team_size',      type:'radio',    title:'How big is your team?',
+     options:['1\u20135','6\u201315','16\u201350','51\u2013100','100+']},
+    {id:'revenue',        type:'radio',    title:'Annual revenue?',
+     options:['Under $300K/yr','$300K\u2013$1M/yr','$1M\u2013$5M/yr','$5M+/yr']},
+    {id:'lead_source',    type:'radio',    title:'How do clients find you?',
+     options:['Referrals','Instagram / LinkedIn','Cold outreach','Google / SEO','Paid ads','Word of mouth']},
+    {id:'inbound',        type:'radio',    title:'How do customers primarily contact you?',
+     options:['Phone / Voice','Email','Website / Form','Social media DM','Walk-in','Multiple channels']},
+    {id:'integrations',   type:'checkbox', title:'Which platforms does your business use?',                     subtitle:'Select all that apply',
+     options:['WhatsApp Business','Instagram / Facebook DM','SMS / Text (Twilio)','Telegram','Slack','Discord','Email (Gmail / Outlook)','Website chat','Shopify','Google Calendar','Airtable','Make / Zapier','HubSpot','Salesforce / Other CRM','Notion','ClickUp / Asana / Monday','Stripe','QuickBooks / Xero']},
+    {id:'crm',            type:'radio',    title:'Current CRM?',
+     options:['HubSpot','Salesforce','GoHighLevel','Pipedrive','Other CRM','No CRM yet']},
+    {id:'email_provider', type:'radio',    title:'Email provider?',
+     options:['Google Workspace / Gmail','Outlook / M365','Both','Other']},
+    {id:'device_os',      type:'radio',    title:'What OS does your team use?',
+     options:['Mac','Windows','Linux / Server','Mixed / Not sure']},
+    {id:'ai_tools',       type:'checkbox', title:'Are you using AI tools in your business?',                   subtitle:'Select all that apply',
+     options:['ChatGPT / OpenAI','Claude / Anthropic','Google Gemini','Microsoft Copilot','Make AI / Zapier AI','Not using AI yet']},
+    {id:'automation_goal',type:'textarea', title:'What\'s the first thing you\'d want an AI agent to handle?',
+     placeholder:'e.g. \u201cFollow up with leads that haven\'t responded in 48 hours and automatically book them\u2026\u201d', optional:true}
+  ];
 
-    '<form id="onboard-form" style="display:flex;flex-direction:column;gap:14px;">' +
-      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">1. WHAT\u2019S EATING YOUR TEAM\u2019S TIME?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;">(check all that apply)</span></label>' +
-        painCheckboxesHTML +
-        '<input name="pain_other" placeholder="Other (describe)\u2026" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:7px;font-size:12px;background:#fff;box-sizing:border-box;margin-top:5px;">' +
-        '<input name="automation_goal" placeholder="Biggest automation goal right now? (optional)\u2026" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:7px;font-size:12px;background:#fff;box-sizing:border-box;margin-top:5px;color:var(--ink);"></div>' +
-      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;letter-spacing:.06em;">2. WHAT INDUSTRY ARE YOU IN?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span></label>' +
-        '<input name="industry" placeholder="e.g. Cannabis, Real Estate, E-commerce, Law\u2026" style="width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff;box-sizing:border-box;"></div>' +
-      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">3. HOW MANY PEOPLE ON YOUR TEAM?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span></label>' +
-        '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;">' +
-          sizeOptions.map(function(s){ return '<label style="cursor:pointer;text-align:center;display:block;"><input type="radio" name="team_size" value="'+s+'" class="size-radio" style="position:absolute;opacity:0;width:0;height:0;"><span class="size-label" style="display:block;padding:7px 2px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;user-select:none;cursor:pointer;">'+s+'</span></label>'; }).join('') +
-        '</div></div>' +
-      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">4. ANNUAL REVENUE?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span></label>' +
-        '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:5px;">' +
-          revenueOptions.map(function(r){ return '<label style="cursor:pointer;text-align:center;display:block;"><input type="radio" name="revenue" value="'+r+'" class="rev-radio" style="position:absolute;opacity:0;width:0;height:0;"><span class="rev-label" style="display:block;padding:8px 4px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;user-select:none;cursor:pointer;">'+r+'</span></label>'; }).join('') +
-        '</div></div>' +
-      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">5. HOW DO CUSTOMERS PRIMARILY CONTACT YOU?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span></label>' +
-        '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;">' +
-          inboundOptions.map(function(b){ return '<label style="cursor:pointer;text-align:center;display:block;"><input type="radio" name="inbound" value="'+b+'" class="inbound-radio" style="position:absolute;opacity:0;width:0;height:0;"><span class="inbound-label" style="display:block;padding:7px 4px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;user-select:none;cursor:pointer;">'+b+'</span></label>'; }).join('') +
-        '</div></div>' +
-      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">6. WHICH PLATFORMS DOES YOUR BUSINESS USE?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;">(check all that apply)</span></label>' +
-        integCheckboxesHTML +
-      '</div>' +
-      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">7. WHAT OS DOES YOUR TEAM USE?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span></label>' +
-        '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:5px;">' +
-          osOptions.map(function(o){ return '<label style="cursor:pointer;text-align:center;display:block;"><input type="radio" name="device_os" value="'+o+'" class="os-radio" style="position:absolute;opacity:0;width:0;height:0;"><span class="os-label" style="display:block;padding:7px 4px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;user-select:none;cursor:pointer;">'+o+'</span></label>'; }).join('') +
-        '</div></div>' +
-      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">8. CURRENT CRM?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span></label>' +
-        '<div style="display:flex;flex-wrap:wrap;gap:5px;">' +
-          crmOptions.map(function(c){ return '<label style="cursor:pointer;text-align:center;display:block;"><input type="radio" name="crm" value="'+c+'" class="crm-radio" style="position:absolute;opacity:0;width:0;height:0;"><span class="crm-label" style="display:block;padding:7px 11px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;user-select:none;cursor:pointer;white-space:nowrap;">'+c+'</span></label>'; }).join('') +
-        '</div></div>' +
-      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">9. EMAIL PROVIDER?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span></label>' +
-        '<div style="display:flex;flex-wrap:wrap;gap:5px;">' +
-          emailOptions.map(function(e){ return '<label style="cursor:pointer;text-align:center;display:block;"><input type="radio" name="email_provider" value="'+e+'" class="email-radio" style="position:absolute;opacity:0;width:0;height:0;"><span class="email-label" style="display:block;padding:7px 11px;border:1px solid var(--line);border-radius:8px;font-size:11px;font-weight:600;user-select:none;cursor:pointer;white-space:nowrap;">'+e+'</span></label>'; }).join('') +
-        '</div></div>' +
-      '<div><label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.06em;">10. ARE YOU CURRENTLY USING AI IN YOUR BUSINESS?<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;">(check all that apply)</span></label>' +
-        '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:5px;">' +
-          aiToolOptions.map(function(a){ return '<label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:11px;font-weight:500;padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:#fff;user-select:none;" class="ai-label"><input type="checkbox" name="ai_tools" value="'+a+'" class="ai-check" style="margin:0;cursor:pointer;">'+a+'</label>'; }).join('') +
-        '</div>' +
-        '<input name="ai_other" placeholder="Other AI tools\u2026" style="width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:7px;font-size:12px;background:#fff;box-sizing:border-box;margin-top:5px;"></div>' +
-      '<div id="onboard-error" style="display:none;color:#dc2626;font-size:13px;padding:8px 12px;background:#fef2f2;border-radius:6px;">Please complete all fields.</div>' +
-      '<button type="submit" id="onboard-btn" style="width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;">Submit &amp; get my automation map \u2192</button>' +
-      '<button type="button" id="skip-btn" style="width:100%;padding:6px;background:none;border:none;font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;">Skip for now</button>' +
-    '</form>';
+  var qAnswers = {};
+  var qCurrent = 0;
 
-  // Team size pill toggle
-  document.querySelectorAll('.size-radio').forEach(function(radio){
-    radio.addEventListener('change', function(){
-      document.querySelectorAll('.size-label').forEach(function(l){ l.style.background=''; l.style.color=''; l.style.borderColor=''; });
-      this.nextElementSibling.style.background='var(--accent)';
-      this.nextElementSibling.style.color='#fff';
-      this.nextElementSibling.style.borderColor='var(--accent)';
-    });
-  });
+  function renderQStep(idx){
+    var step = Q_STEPS[idx];
+    var pct  = Math.round((idx / Q_STEPS.length) * 100);
+    var c    = document.getElementById('q-container');
+    if(!c) return;
 
-  // Pain point checkbox visual highlight
-  document.querySelectorAll('.pain-check').forEach(function(cb){
-    cb.addEventListener('change', function(){
-      var lbl = this.closest('.pain-label');
-      if(this.checked){ lbl.style.background='#E8EEFF'; lbl.style.borderColor='var(--accent)'; lbl.style.color='var(--accent)'; }
-      else { lbl.style.background=''; lbl.style.borderColor=''; lbl.style.color=''; }
-    });
-  });
-
-  // Revenue radio toggle
-  document.querySelectorAll('.rev-radio').forEach(function(radio){
-    radio.addEventListener('change', function(){
-      document.querySelectorAll('.rev-label').forEach(function(l){ l.style.background=''; l.style.color=''; l.style.borderColor=''; });
-      this.nextElementSibling.style.background='var(--accent)';
-      this.nextElementSibling.style.color='#fff';
-      this.nextElementSibling.style.borderColor='var(--accent)';
-    });
-  });
-
-  // Inbound channel radio toggle
-  document.querySelectorAll('.inbound-radio').forEach(function(radio){
-    radio.addEventListener('change', function(){
-      document.querySelectorAll('.inbound-label').forEach(function(l){ l.style.background=''; l.style.color=''; l.style.borderColor=''; });
-      this.nextElementSibling.style.background='var(--accent)';
-      this.nextElementSibling.style.color='#fff';
-      this.nextElementSibling.style.borderColor='var(--accent)';
-    });
-  });
-
-  // Integration checkbox visual highlight
-  document.querySelectorAll('.integ-check').forEach(function(cb){
-    cb.addEventListener('change', function(){
-      var lbl = this.closest('.integ-label');
-      if(this.checked){ lbl.style.background='#E8EEFF'; lbl.style.borderColor='var(--accent)'; lbl.style.color='var(--accent)'; }
-      else { lbl.style.background=''; lbl.style.borderColor=''; lbl.style.color=''; }
-    });
-  });
-
-  // OS pill toggle
-  document.querySelectorAll('.os-radio').forEach(function(radio){
-    radio.addEventListener('change', function(){
-      document.querySelectorAll('.os-label').forEach(function(l){ l.style.background=''; l.style.color=''; l.style.borderColor=''; });
-      this.nextElementSibling.style.background='var(--accent)';
-      this.nextElementSibling.style.color='#fff';
-      this.nextElementSibling.style.borderColor='var(--accent)';
-    });
-  });
-
-  // CRM pill toggle
-  document.querySelectorAll('.crm-radio').forEach(function(radio){
-    radio.addEventListener('change', function(){
-      document.querySelectorAll('.crm-label').forEach(function(l){ l.style.background=''; l.style.color=''; l.style.borderColor=''; });
-      this.nextElementSibling.style.background='var(--accent)';
-      this.nextElementSibling.style.color='#fff';
-      this.nextElementSibling.style.borderColor='var(--accent)';
-    });
-  });
-
-  // Email provider pill toggle
-  document.querySelectorAll('.email-radio').forEach(function(radio){
-    radio.addEventListener('change', function(){
-      document.querySelectorAll('.email-label').forEach(function(l){ l.style.background=''; l.style.color=''; l.style.borderColor=''; });
-      this.nextElementSibling.style.background='var(--accent)';
-      this.nextElementSibling.style.color='#fff';
-      this.nextElementSibling.style.borderColor='var(--accent)';
-    });
-  });
-
-  // AI tools checkbox highlight
-  document.querySelectorAll('.ai-check').forEach(function(cb){
-    cb.addEventListener('change', function(){
-      var lbl = this.closest('.ai-label');
-      if(this.checked){ lbl.style.background='#E8EEFF'; lbl.style.borderColor='var(--accent)'; lbl.style.color='var(--accent)'; }
-      else { lbl.style.background=''; lbl.style.borderColor=''; lbl.style.color=''; }
-    });
-  });
-
-  document.getElementById('skip-btn').addEventListener('click', function(){ showBooked(false); });
-
-  document.getElementById('onboard-form').addEventListener('submit', async function(e){
-    e.preventDefault();
-    var errDiv = document.getElementById('onboard-error');
-    errDiv.style.display='none';
-
-    var fd = new FormData(e.target);
-    var pain_points = fd.getAll('pain_points');
-    var pain_other = (fd.get('pain_other')||'').trim();
-    var automation_goal = (fd.get('automation_goal')||'').trim();
-    var industry = (fd.get('industry')||'').trim();
-    var team_size = fd.get('team_size')||'';
-    var revenue = fd.get('revenue')||'';
-    var inbound = fd.get('inbound')||'';
-    var integrations = fd.getAll('integrations');
-    var device_os = fd.get('device_os')||'';
-    var crm = fd.get('crm')||'';
-    var email_provider = fd.get('email_provider')||'';
-    var ai_tools = fd.getAll('ai_tools');
-    var ai_other = (fd.get('ai_other')||'').trim();
-
-    var all_pain = pain_points.concat(pain_other ? [pain_other] : []);
-    var all_ai = ai_tools.concat(ai_other ? [ai_other] : []);
-
-    // Manual validation
-    if(all_pain.length===0 || !industry || !team_size || !revenue || !inbound || integrations.length===0 || !device_os || !crm || !email_provider || all_ai.length===0){
-      errDiv.style.display='block';
-      return;
+    var optHTML = '';
+    if(step.type === 'checkbox' || step.type === 'radio'){
+      optHTML = '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:10px;">'+
+        step.options.map(function(opt){
+          var saved = qAnswers[step.id];
+          var on = step.type==='checkbox' ? (Array.isArray(saved) && saved.indexOf(opt)>=0) : (saved===opt);
+          return '<label class="q-chip'+(on?' q-chip-on':'')+'" style="-webkit-tap-highlight-color:transparent;touch-action:manipulation;">'+
+            '<input type="'+step.type+'" name="q_'+step.id+'" value="'+opt+'"'+(on?' checked':'')+' style="position:absolute;opacity:0;width:0;height:0;">'+
+            '<span>'+opt+'</span>'+
+            '</label>';
+        }).join('')+
+      '</div>';
+    } else if(step.type === 'text'){
+      optHTML = '<input type="text" id="q-input" placeholder="'+(step.placeholder||'')+'" value="'+(qAnswers[step.id]||'')+'" autocomplete="off" style="width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:9px;font-size:14px;background:#fff;box-sizing:border-box;margin-top:10px;font-family:inherit;">';
+    } else {
+      optHTML = '<textarea id="q-input" placeholder="'+(step.placeholder||'')+'" rows="3" style="width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:9px;font-size:14px;background:#fff;box-sizing:border-box;margin-top:10px;font-family:inherit;resize:vertical;">'+(qAnswers[step.id]||'')+'</textarea>';
     }
 
-    var btn = document.getElementById('onboard-btn');
-    btn.innerHTML='<span class="spinner"></span>Submitting\u2026'; btn.disabled=true;
+    c.innerHTML =
+      '<div style="margin-bottom:14px;">'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'+
+          '<span style="font-size:11px;font-weight:600;color:var(--muted);">Step '+(idx+1)+' of '+Q_STEPS.length+'</span>'+
+          (step.optional ? '<span style="font-size:10px;color:var(--muted);background:#F5F5F3;padding:2px 7px;border-radius:4px;">optional</span>' : '')+
+        '</div>'+
+        '<div style="background:#E6E4DC;border-radius:4px;height:3px;">'+
+          '<div style="background:var(--accent);height:100%;width:'+pct+'%;transition:width .3s;border-radius:4px;"></div>'+
+        '</div>'+
+      '</div>'+
+      '<p style="font-size:15px;font-weight:700;color:var(--ink);margin:0 0 4px;line-height:1.3;">'+step.title+'</p>'+
+      (step.subtitle ? '<p style="font-size:12px;color:var(--muted);margin:0;">'+step.subtitle+'</p>' : '')+
+      optHTML+
+      '<div id="q-err" style="display:none;color:#dc2626;font-size:12px;margin-top:8px;padding:6px 10px;background:#fef2f2;border-radius:6px;"></div>'+
+      '<div style="display:flex;gap:8px;margin-top:14px;">'+
+        (idx>0 ? '<button type="button" id="q-back" style="flex:0 0 auto;padding:10px 16px;border:1px solid var(--line);border-radius:9px;background:#fff;font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);">\u2190</button>' : '')+
+        '<button type="button" id="q-next" style="flex:1;padding:11px;background:var(--ink);color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;">'+(idx===Q_STEPS.length-1?'Submit \u2192':'Next \u2192')+'</button>'+
+      '</div>'+
+      (idx===0 ? '<button type="button" id="q-skip" style="width:100%;padding:6px;background:none;border:none;font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;margin-top:4px;">Skip for now</button>' : '');
+
+    document.querySelectorAll('.q-chip').forEach(function(label){
+      label.addEventListener('click', function(e){
+        var inp = label.querySelector('input');
+        if(!inp || e.target===inp) return;
+        if(inp.type==='checkbox'){ inp.checked=!inp.checked; } else { inp.checked=true; }
+        inp.dispatchEvent(new Event('change'));
+      });
+      var inp = label.querySelector('input');
+      if(!inp) return;
+      inp.addEventListener('change', function(){
+        if(inp.type==='checkbox'){
+          label.classList.toggle('q-chip-on', inp.checked);
+        } else {
+          document.querySelectorAll('.q-chip').forEach(function(l){ l.classList.remove('q-chip-on'); });
+          label.classList.add('q-chip-on');
+          setTimeout(function(){ advQ(step, idx); }, 220);
+        }
+      });
+    });
+
+    if(step.type==='text'||step.type==='textarea'){
+      var inp2 = document.getElementById('q-input');
+      if(inp2) setTimeout(function(){ inp2.focus(); }, 80);
+    }
+    var nb=document.getElementById('q-next'); if(nb) nb.addEventListener('click',function(){ advQ(step,idx); });
+    var bb=document.getElementById('q-back'); if(bb) bb.addEventListener('click',function(){ qCurrent=idx-1; renderQStep(qCurrent); });
+    var sb=document.getElementById('q-skip'); if(sb) sb.addEventListener('click',function(){ showBooked(false); });
+  }
+
+  function collectQ(step){
+    if(step.type==='checkbox'){ return Array.from(document.querySelectorAll('input[name="q_'+step.id+'"]:checked')).map(function(i){ return i.value; }); }
+    if(step.type==='radio'){ var s=document.querySelector('input[name="q_'+step.id+'"]:checked'); return s?s.value:null; }
+    var i=document.getElementById('q-input'); return i?i.value.trim():'';
+  }
+
+  function advQ(step, idx){
+    var val=collectQ(step);
+    var err=document.getElementById('q-err'); if(err) err.style.display='none';
+    if(!step.optional){
+      if(step.type==='checkbox'&&(!val||!val.length)){ if(err){err.textContent='Please select at least one option.';err.style.display='block';} return; }
+      if((step.type==='radio'||step.type==='text')&&!val){ if(err){err.textContent='Please make a selection to continue.';err.style.display='block';} return; }
+    }
+    qAnswers[step.id]=val;
+    if(idx===Q_STEPS.length-1){ submitQ(); } else { qCurrent=idx+1; renderQStep(qCurrent); }
+  }
+
+  async function submitQ(){
+    var c=document.getElementById('q-container');
+    if(c) c.innerHTML='<div style="text-align:center;padding:32px 16px;"><div style="font-size:32px;margin-bottom:12px;">\u2699\ufe0f</div><p style="font-size:14px;color:var(--muted);">Building your automation roadmap\u2026</p></div>';
     try{
       await fetch('/api/questionnaire',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-        email:email,
-        pain_points:all_pain,
-        automation_goal:automation_goal,
-        industry:industry,
-        team_size:team_size,
-        revenue:revenue,
-        inbound:inbound,
-        integrations:integrations,
-        device_os:device_os,
-        crm:crm,
-        email_provider:email_provider,
-        ai_tools:all_ai,
-        tier:selectedTier||''
+        email:email, pain_points:qAnswers.pain_points||[], automation_goal:qAnswers.automation_goal||'',
+        industry:qAnswers.industry||'', team_size:qAnswers.team_size||'', revenue:qAnswers.revenue||'',
+        lead_source:qAnswers.lead_source||'', inbound:qAnswers.inbound||'', integrations:qAnswers.integrations||[],
+        crm:qAnswers.crm||'', email_provider:qAnswers.email_provider||'', device_os:qAnswers.device_os||'',
+        ai_tools:qAnswers.ai_tools||[], tier:selectedTier||''
       })});
-    }catch(err){}
+    }catch(e){}
     showBooked(true);
-  });
+  }
+
+  renderQStep(0);
 }
 
 function showBooked(completedMap){
   var stepDiv = document.getElementById('booking-step');
   stepDiv.innerHTML = completedMap ?
-    '<div class="confirm-box">' +
-      '<div style="font-size:36px;margin-bottom:8px;">\uD83D\uDDFA\uFE0F</div>' +
-      '<h2 style="font-size:20px;font-weight:700;margin:0 0 8px;">You\u2019re all set!</h2>' +
-      '<p style="font-size:14px;color:var(--muted);line-height:1.6;margin:0 0 8px;">We\u2019re building your custom automation map now. You\u2019ll receive it before the call so we can hit the ground running.</p>' +
-      '<p style="font-size:14px;color:var(--muted);margin:0 0 24px;">See you on the call!</p>' +
-      '<a href="/" style="display:inline-block;padding:10px 24px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;color:var(--ink);">\u2190 Back to home</a>' +
+    '<div class="confirm-box">'+
+      '<div style="font-size:36px;margin-bottom:8px;">\ud83d\uddfa\ufe0f</div>'+
+      '<h2 style="font-size:20px;font-weight:700;margin:0 0 8px;">You\'re all set!</h2>'+
+      '<p style="font-size:14px;color:var(--muted);line-height:1.6;margin:0 0 8px;">We\'re building your custom automation roadmap now. You\'ll receive it before the call so we can hit the ground running.</p>'+
+      '<p style="font-size:14px;color:var(--muted);margin:0 0 24px;">See you on the call!</p>'+
+      '<a href="/" style="display:inline-block;padding:10px 24px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;color:var(--ink);">\u2190 Back to home</a>'+
     '</div>'
   :
-    '<div class="confirm-box">' +
-      '<div class="check">\u2713</div>' +
-      '<h2 style="font-size:20px;font-weight:700;margin:0 0 8px;">You\u2019re all set!</h2>' +
-      '<p style="font-size:14px;color:var(--muted);margin:0 0 24px;">We\u2019ll send a Google Meet link before the call. See you soon!</p>' +
-      '<a href="/" style="display:inline-block;padding:10px 24px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;color:var(--ink);">\u2190 Back to home</a>' +
+    '<div class="confirm-box">'+
+      '<div class="check">\u2713</div>'+
+      '<h2 style="font-size:20px;font-weight:700;margin:0 0 8px;">You\'re all set!</h2>'+
+      '<p style="font-size:14px;color:var(--muted);margin:0 0 24px;">We\'ll send a Google Meet link before the call. See you soon!</p>'+
+      '<a href="/" style="display:inline-block;padding:10px 24px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;color:var(--ink);">\u2190 Back to home</a>'+
     '</div>';
 }
 
