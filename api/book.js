@@ -218,21 +218,7 @@ export default async function handler(req, res) {
       ? `<p style="font-size:15px;color:#0F7A4B;font-weight:600;margin:12px 0 0;"><a href="${esc(meetLink)}" style="color:#1F4FFF;text-decoration:none;">▶ Join Google Meet</a></p><p style="color:#5B6272;font-size:13px;margin-top:4px;word-break:break-all;">${esc(meetLink)}</p>`
       : `<p style="color:#5B6272;font-size:13px;margin-top:8px;">A Google Meet link will be sent separately before your call.</p>`;
 
-    await sendEmail(email, `Confirmed: Discovery call with Ramped AI — ${dtGuest.dateStr}`, `
-      <div style="font-family:-apple-system,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;">
-        <p style="font-size:24px;font-weight:800;color:#0B1220;margin-bottom:4px;">You're booked. ✓</p>
-        <p style="color:#5B6272;margin-bottom:28px;font-size:15px;">We're looking forward to talking with you, ${esc(name.split(' ')[0])}.</p>
-        <div style="background:#F5F8FF;border:1px solid #E6E4DC;border-radius:12px;padding:20px 24px;margin-bottom:28px;">
-          <p style="font-weight:700;font-size:16px;color:#0B1220;margin-bottom:4px;">${esc(dtGuest.dateStr)}</p>
-          <p style="font-size:15px;color:#1F4FFF;font-weight:600;margin-bottom:8px;">${esc(dtGuest.timeStr)}</p>
-          <p style="color:#5B6272;font-size:14px;">30 minutes · Google Meet</p>
-          ${meetBlock}
-        </div>
-        <p style="color:#5B6272;font-size:14px;line-height:1.6;">Need to reschedule? Reply to this email and we'll find another time.</p>
-        <p style="margin-top:32px;font-size:13px;color:#5B6272;">— The Ramped AI team<br><a href="https://www.30dayramp.com" style="color:#1F4FFF;">30dayramp.com</a></p>
-      </div>
-    `);
-
+    // Guest confirmation email removed — calendar invite handles delivery
     await sendEmail(OWNER_EMAIL, `New booking: ${name} — ${dtHost.full}`, `
       <div style="font-family:-apple-system,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;">
         <p style="font-size:20px;font-weight:800;color:#0B1220;margin-bottom:20px;">New discovery call booked</p>
