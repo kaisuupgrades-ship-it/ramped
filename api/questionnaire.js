@@ -304,6 +304,61 @@ export default async function handler(req, res) {
     );
   }
 
+  // Client roadmap email — send their personalized automation plan before the call
+  if (roadmap && RESEND_KEY) {
+    const firstName  = (booking.name || email).split(/\s+/)[0];
+    const accentColor = '#1F4FFF';
+
+    const clientAgentsHTML = roadmap.top_agents?.map((a, i) =>
+      `<tr>
+        <td style="padding:12px 0;border-top:1px solid #E5E7EB;vertical-align:top;width:28px;">
+          <div style="width:22px;height:22px;border-radius:50%;background:${accentColor};color:#fff;font-size:11px;font-weight:700;text-align:center;line-height:22px;">${i + 1}</div>
+        </td>
+        <td style="padding:12px 0 12px 12px;border-top:1px solid #E5E7EB;vertical-align:top;">
+          <div style="font-weight:700;font-size:14px;color:#0B1220;margin-bottom:3px;">${esc(a.name)}</div>
+          <div style="font-size:13px;color:#374151;line-height:1.5;">${esc(a.what_it_does)}</div>
+          ${a.hours_saved ? `<div style="margin-top:4px;font-size:12px;color:${accentColor};font-weight:600;">⏱ ${esc(a.hours_saved)}</div>` : ''}
+        </td>
+      </tr>`
+    ).join('') || '';
+
+    await sendEmail(
+      email,
+      `Your custom automation roadmap — ${firstName}`,
+      `<div style="font-family:-apple-system,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;color:#0B1220;">
+
+        <div style="margin-bottom:28px;">
+          <img src="https://www.30dayramp.com/logo.png" alt="Ramped AI" width="32" style="vertical-align:middle;margin-right:8px;">
+          <span style="font-size:15px;font-weight:700;color:#0B1220;vertical-align:middle;">Ramped AI</span>
+        </div>
+
+        <p style="font-size:22px;font-weight:800;margin:0 0 8px;">Here's your automation roadmap, ${esc(firstName)} 🗺️</p>
+        <p style="font-size:14px;color:#6B7280;margin:0 0 24px;line-height:1.6;">We built this specifically for your business based on your answers. We'll walk through it together on the call — but here's a preview of what we're thinking.</p>
+
+        ${roadmap.summary ? `
+        <div style="background:#F5F8FF;border-left:4px solid ${accentColor};padding:14px 16px;border-radius:0 8px 8px 0;margin-bottom:24px;">
+          <p style="margin:0;font-size:14px;color:#0B1220;line-height:1.6;">${esc(roadmap.summary)}</p>
+        </div>` : ''}
+
+        ${clientAgentsHTML ? `
+        <p style="font-size:12px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.06em;margin:0 0 4px;">Your top AI agents</p>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+          ${clientAgentsHTML}
+        </table>` : ''}
+
+        ${roadmap.week_1_focus ? `
+        <div style="background:#0B1220;color:#fff;border-radius:10px;padding:16px 20px;margin-bottom:24px;">
+          <p style="margin:0 0 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#9CA3AF;">Week 1 focus</p>
+          <p style="margin:0;font-size:14px;line-height:1.6;">${esc(roadmap.week_1_focus)}</p>
+        </div>` : ''}
+
+        <p style="font-size:14px;color:#374151;margin:0 0 24px;line-height:1.6;">On the call, we'll confirm which agents make the most sense to launch first and map out the 30-day go-live plan. No pitch — just a real conversation about what AI can take off your plate.</p>
+
+        <p style="font-size:13px;color:#6B7280;margin:0;border-top:1px solid #E5E7EB;padding-top:20px;">Questions before the call? Reply to this email — I read every one.<br><strong style="color:#0B1220;">Jon</strong> · Ramped AI · <a href="mailto:jon@30dayramp.com" style="color:${accentColor};">jon@30dayramp.com</a></p>
+      </div>`
+    );
+  }
+
   return res.status(200).json({ success: true, updated: true, grade: grade || null });
 }
 
