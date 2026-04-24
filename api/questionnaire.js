@@ -333,8 +333,8 @@ export default async function handler(req, res) {
       `<div style="font-family:-apple-system,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;color:#0B1220;">
 
         <div style="margin-bottom:28px;">
-          <img src="https://www.30dayramp.com/logo.png" alt="Ramped AI" width="32" style="vertical-align:middle;margin-right:8px;">
-          <span style="font-size:15px;font-weight:700;color:#0B1220;vertical-align:middle;">Ramped AI</span>
+          <span style="display:inline-block;background:#1F4FFF;color:#fff;font-size:13px;font-weight:800;letter-spacing:0.02em;padding:5px 10px;border-radius:6px;vertical-align:middle;margin-right:8px;">RAMPED</span>
+          <span style="font-size:15px;font-weight:700;color:#0B1220;vertical-align:middle;">AI</span>
         </div>
 
         <p style="font-size:22px;font-weight:800;margin:0 0 8px;">Here's what we're thinking for you, ${esc(firstName)}</p>
