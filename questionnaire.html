@@ -473,6 +473,13 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 (function () {
 'use strict';
 
+/* ── Email guard — only accessible with a booking email in URL ── */
+var urlParams = new URLSearchParams(window.location.search);
+var prefilledEmail = (urlParams.get('email') || '').trim();
+if (!prefilledEmail) {
+  window.location.replace('/book');
+}
+
 /* ── Data definitions ── */
 var STEPS = [
   {
@@ -631,6 +638,7 @@ var STEPS = [
 
 var TOTAL_STEPS = STEPS.length;
 var answers = {};
+if (prefilledEmail) { answers.contact = { email: prefilledEmail }; }
 var currentStep = 0;
 
 /* ── Helpers ── */
@@ -890,28 +898,30 @@ function startLoadingAnimation() {
 /* ── Submit ── */
 function submitForm() {
   var contact = answers.contact || {};
+  // Use URL-param email first (verified via booking flow), fall back to contact field
+  var emailVal = prefilledEmail || (contact.email || '').trim();
   var payload = {
-    name:           (contact.name || '').trim(),
-    company:        (contact.company || '').trim(),
-    email:          (contact.email || '').trim(),
-    industry:       (answers.industry || '').trim(),
-    team_size:      answers.team_size || '',
-    revenue:        answers.revenue || '',
-    channels:       answers.channels || [],
-    platforms:      answers.platforms || [],
-    os:             answers.os || '',
-    crm:            answers.crm || '',
-    email_provider: answers.email_provider || '',
-    existing_ai:    answers.existing_ai || '',
-    time_sinks:     answers.time_sinks || [],
-    notes:          (contact.notes || '').trim(),
+    email:            emailVal,
+    name:             (contact.name || '').trim(),
+    company:          (contact.company || '').trim(),
+    industry:         (answers.industry || '').trim(),
+    team_size:        answers.team_size || '',
+    revenue:          answers.revenue || '',
+    customer_channel: Array.isArray(answers.channels) ? answers.channels.join(', ') : (answers.channels || ''),
+    tools:            answers.platforms || [],
+    device_os:        answers.os || '',
+    crm:              answers.crm || '',
+    email_provider:   answers.email_provider || '',
+    ai_tools:         Array.isArray(answers.existing_ai) ? answers.existing_ai : (answers.existing_ai ? [answers.existing_ai] : []),
+    pain_points:      answers.time_sinks || [],
+    bottleneck:       (contact.notes || '').trim(),
   };
 
   // Show loading
   document.getElementById('loading-overlay').classList.add('visible');
   startLoadingAnimation();
 
-  fetch('/api/generate-map', {
+  fetch('/api/questionnaire', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -925,19 +935,15 @@ function submitForm() {
       showError(res.data.error || 'Something went wrong. Please try again.');
       return;
     }
-    var mapUrl = res.data.map_url;
-    if (mapUrl) {
-      window.location.href = mapUrl;
-    } else {
-      // No Supabase configured — show success state
-      document.getElementById('loading-overlay').classList.remove('visible');
-      document.getElementById('steps-container').innerHTML =
-        '<div class="step-card" style="padding:48px 32px;text-align:center;">' +
-        '<div style="font-size:48px;margin-bottom:16px;">🗺</div>' +
-        '<h2 style="font-size:24px;font-weight:800;margin-bottom:8px;">Map generated!</h2>' +
-        '<p style="color:var(--muted);font-size:15px;max-width:340px;margin:0 auto 28px;line-height:1.6;">Your custom automation map was built. Check your inbox — we\'ll send it before your call.</p>' +
-        '<a href="/book" style="display:inline-block;background:var(--accent);color:#fff;font-weight:700;padding:14px 28px;border-radius:10px;font-size:15px;">Book your Map Call →</a>' +
-        '</div>';
+    // Success — roadmap emails sent, show confirmation
+    document.getElementById('loading-overlay').classList.remove('visible');
+    document.getElementById('steps-container').innerHTML =
+      '<div class="step-card" style="padding:48px 32px;text-align:center;">' +
+      '<div style="font-size:48px;margin-bottom:16px;">✅</div>' +
+      '<h2 style="font-size:24px;font-weight:800;margin-bottom:8px;">You\'re all set!</h2>' +
+      '<p style="color:var(--muted);font-size:15px;max-width:360px;margin:0 auto 8px;line-height:1.6;">Your automation roadmap is being built. We\'ll have it ready before your call — check your inbox.</p>' +
+      '<p style="color:var(--muted);font-size:14px;max-width:360px;margin:0 auto 28px;line-height:1.5;">See you soon! 👋</p>' +
+      '</div>';
     }
   })
   .catch(function (err) {
@@ -954,3 +960,4 @@ renderStep(0);
 </script>
 </body>
 </html>
+
