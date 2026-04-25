@@ -555,8 +555,9 @@ function showConfirmation(name, email){
 
     document.querySelectorAll('.q-chip').forEach(function(label){
       label.addEventListener('click', function(e){
+        e.preventDefault();
         var inp = label.querySelector('input');
-        if(!inp || e.target===inp) return;
+        if(!inp) return;
         if(inp.type==='checkbox'){ inp.checked=!inp.checked; } else { inp.checked=true; }
         inp.dispatchEvent(new Event('change'));
       });
