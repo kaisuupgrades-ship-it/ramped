@@ -10,6 +10,7 @@ const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const RESEND_KEY   = process.env.RESEND_API_KEY;
 const OWNER_EMAIL  = process.env.OWNER_EMAIL || 'jon@30dayramp.com';
 const FROM_EMAIL   = 'bookings@30dayramp.com';
+const SITE_URL     = process.env.SITE_URL || 'https://www.30dayramp.com';
 
 const ALLOWED_ORIGINS = [
   'https://30dayramp.com',
@@ -185,6 +186,8 @@ export default async function handler(req, res) {
       bookingId = Array.isArray(data) && data[0] ? data[0].id : null;
     }
 
+    const questionnaireUrl = `${SITE_URL}/questionnaire?email=${encodeURIComponent(email)}`;
+
     let meetLink = '';
     let gcalEventId = '';
     if (gcalConfigured()) {
@@ -194,7 +197,7 @@ export default async function handler(req, res) {
         const ev = await createMeetEvent({
           startIso, endIso,
           summary: `Ramped AI · Discovery call with ${name}${company ? ` (${company})` : ''}`,
-          description: `30-minute discovery call.\n\n${notes ? `Guest notes: ${notes}\n\n` : ''}${tier ? `Plan interest: ${tier}\n\n` : ''}Booked via 30dayramp.com`,
+          description: `30-minute discovery call.\n\n${notes ? `Guest notes: ${notes}\n\n` : ''}${tier ? `Plan interest: ${tier}\n\n` : ''}Before the call, complete your intake form:\n${questionnaireUrl}\n\nBooked via 30dayramp.com`,
           guestEmail: email,
           guestName:  name,
         });
@@ -214,11 +217,67 @@ export default async function handler(req, res) {
       }
     }
 
-    const meetBlock = meetLink
-      ? `<p style="font-size:15px;color:#0F7A4B;font-weight:600;margin:12px 0 0;"><a href="${esc(meetLink)}" style="color:#1F4FFF;text-decoration:none;">▶ Join Google Meet</a></p><p style="color:#5B6272;font-size:13px;margin-top:4px;word-break:break-all;">${esc(meetLink)}</p>`
-      : `<p style="color:#5B6272;font-size:13px;margin-top:8px;">A Google Meet link will be sent separately before your call.</p>`;
+    // ── Prepare-for-your-call email → guest ──────────────────────────────
+    const meetCta = meetLink
+      ? `<tr><td align="center" style="padding:0 0 28px;">
+          <a href="${esc(meetLink)}" style="display:inline-block;background:#1F4FFF;color:#fff;font-size:15px;font-weight:700;text-decoration:none;padding:14px 32px;border-radius:10px;border:none;">▶ Join Google Meet</a>
+          <p style="margin:8px 0 0;font-size:12px;color:#5B6272;word-break:break-all;">${esc(meetLink)}</p>
+         </td></tr>`
+      : '';
 
-    // Guest confirmation email removed — calendar invite handles delivery
+    await sendEmail(email, `You're booked — one quick step before your call`, `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Before your call</title></head>
+<body style="margin:0;padding:0;background:#F5F5F3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#F5F5F3;padding:40px 16px;">
+<tr><td align="center">
+<table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;">
+
+  <!-- Dark hero -->
+  <tr><td style="background:#0B1220;border-radius:16px 16px 0 0;padding:36px 40px 32px;text-align:center;">
+    <p style="margin:0 0 12px;font-size:28px;">📋</p>
+    <h1 style="margin:0 0 8px;color:#fff;font-size:22px;font-weight:800;letter-spacing:-0.02em;">You're booked, ${esc(name.split(' ')[0])} ✓</h1>
+    <p style="margin:0;color:#8B9AB5;font-size:14px;line-height:1.5;">${esc(dtGuest.full)}</p>
+  </td></tr>
+
+  <!-- Body -->
+  <tr><td style="background:#fff;padding:32px 40px;">
+    <p style="margin:0 0 20px;font-size:15px;color:#0B1220;line-height:1.6;">Before we meet, take 3 minutes to fill out your intake form. It helps us build your custom automation roadmap <em>before</em> the call so we can hit the ground running.</p>
+
+    <!-- Questionnaire CTA -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#EEF2FF;border-radius:12px;margin-bottom:28px;">
+    <tr><td style="padding:24px;text-align:center;">
+      <p style="margin:0 0 6px;font-family:monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#5B6272;">Step 1 of 1</p>
+      <p style="margin:0 0 16px;font-size:16px;font-weight:700;color:#0B1220;">Complete your intake form</p>
+      <p style="margin:0 0 16px;font-size:13px;color:#5B6272;line-height:1.5;">10 quick questions about your business — takes about 3 minutes. We'll use your answers to map out exactly which automations will save you the most time.</p>
+      <a href="${esc(questionnaireUrl)}" style="display:inline-block;background:#1F4FFF;color:#fff;font-size:15px;font-weight:700;text-decoration:none;padding:14px 32px;border-radius:10px;">Fill out the form →</a>
+    </td></tr>
+    </table>
+
+    ${meetCta ? `<!-- Meet link -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #E6E4DC;border-radius:12px;margin-bottom:28px;">
+    <tr><td style="padding:20px 24px;">
+      <p style="margin:0 0 4px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#5B6272;">Your call link</p>
+      <p style="margin:0 0 12px;font-size:14px;color:#0B1220;font-weight:600;">${esc(dtGuest.full)}</p>
+      <a href="${esc(meetLink)}" style="display:inline-block;background:#0B1220;color:#fff;font-size:14px;font-weight:600;text-decoration:none;padding:10px 20px;border-radius:8px;">▶ Join Google Meet</a>
+    </td></tr>
+    </table>` : ''}
+
+    <p style="margin:0;font-size:13px;color:#5B6272;line-height:1.6;">If you have any questions before the call, just reply to this email.<br>— Jon @ Ramped AI</p>
+  </td></tr>
+
+  <!-- Footer -->
+  <tr><td style="background:#F5F5F3;border-radius:0 0 16px 16px;padding:20px 40px;text-align:center;">
+    <p style="margin:0;font-size:12px;color:#8B9AB5;">Ramped AI · <a href="https://30dayramp.com" style="color:#8B9AB5;">30dayramp.com</a></p>
+  </td></tr>
+
+</table>
+</td></tr>
+</table>
+</body>
+</html>`);
+
+    // ── Owner notification ───────────────────────────────────────────────────
     await sendEmail(OWNER_EMAIL, `New booking: ${name} — ${dtHost.full}`, `
       <div style="font-family:-apple-system,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;">
         <p style="font-size:20px;font-weight:800;color:#0B1220;margin-bottom:20px;">New discovery call booked</p>
