@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Automation Roadmap · Ramped AI</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #F3F4F6;
+      color: #0B1220;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: #1F4FFF; }
+
+    /* ── Header ── */
+    .header {
+      background: #0B1220;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo-badge {
+      display: inline-block;
+      background: #1F4FFF;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      padding: 5px 11px;
+      border-radius: 6px;
+    }
+    .header-cta {
+      font-size: 13px;
+      color: #9CA3AF;
+      text-decoration: none;
+    }
+    .header-cta:hover { color: #fff; }
+
+    /* ── Hero ── */
+    .hero {
+      background: #0B1220;
+      padding: 32px 24px 40px;
+      border-bottom: 1px solid #1a2235;
+    }
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: clamp(24px, 5vw, 36px);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.2;
+    }
+    .hero p {
+      margin: 0;
+      font-size: 15px;
+      color: #9CA3AF;
+    }
+
+    /* ── Content wrapper ── */
+    .content {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 32px 20px 64px;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: #fff;
+      border: 1px solid #E5E7EB;
+      border-radius: 14px;
+      padding: 20px 22px;
+      margin-bottom: 16px;
+    }
+
+    /* ── Callout ── */
+    .callout {
+      background: #fff;
+      border-left: 4px solid #1F4FFF;
+      padding: 16px 18px;
+      margin-bottom: 24px;
+    }
+    .callout .label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #1F4FFF;
+      margin: 0 0 6px;
+    }
+    .callout p {
+      margin: 0;
+      font-size: 15px;
+      color: #0B1220;
+      line-height: 1.7;
+      font-style: italic;
+    }
+
+    /* ── Stats bar ── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      background: #fff;
+      border: 1px solid #E5E7EB;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+    .stat {
+      text-align: center;
+      padding: 18px 8px;
+      border-right: 1px solid #E5E7EB;
+    }
+    .stat:last-child { border-right: none; }
+    .stat-num {
+      font-size: 30px;
+      font-weight: 900;
+      color: #1F4FFF;
+      line-height: 1;
+    }
+    .stat-num.green { color: #059669; }
+    .stat-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #6B7280;
+      margin-top: 5px;
+    }
+
+    /* ── Section headings ── */
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #6B7280;
+      margin: 0 0 12px;
+    }
+
+    /* ── Agent card ── */
+    .agent-card {
+      background: #fff;
+      border: 1px solid #E5E7EB;
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-bottom: 10px;
+    }
+    .agent-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .agent-num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #1F4FFF;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .agent-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0B1220;
+      flex: 1;
+    }
+    .channel-pill {
+      display: inline-block;
+      background: #E8F0FE;
+      color: #1F4FFF;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .agent-desc {
+      font-size: 13px;
+      color: #374151;
+      line-height: 1.6;
+      margin: 0 0 10px 44px;
+    }
+    .hours-pill {
+      display: inline-block;
+      background: #ECFDF5;
+      color: #059669;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-left: 44px;
+    }
+
+    /* ── Week 1 dark block ── */
+    .week1-block {
+      background: #0B1220;
+      border-radius: 14px;
+      padding: 20px 22px;
+      margin-bottom: 24px;
+    }
+    .week1-block .label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #1F4FFF;
+      margin: 0 0 8px;
+    }
+    .week1-block p {
+      margin: 0;
+      font-size: 14px;
+      color: #F9FAFB;
+      line-height: 1.7;
+    }
+
+    /* ── Quick wins ── */
+    .quick-wins {
+      background: #fff;
+      border: 1px solid #E5E7EB;
+      border-radius: 14px;
+      padding: 18px 22px;
+      margin-bottom: 24px;
+    }
+    .quick-win-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid #F3F4F6;
+      font-size: 13px;
+      color: #374151;
+      line-height: 1.5;
+    }
+    .quick-win-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .win-check {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #ECFDF5;
+      color: #059669;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+
+    /* ── CTA ── */
+    .cta-block {
+      text-align: center;
+      background: #fff;
+      border: 1px solid #E5E7EB;
+      border-radius: 14px;
+      padding: 28px 24px;
+      margin-bottom: 16px;
+    }
+    .cta-block h2 {
+      margin: 0 0 8px;
+      font-size: 20px;
+      font-weight: 800;
+    }
+    .cta-block p {
+      margin: 0 0 20px;
+      font-size: 14px;
+      color: #6B7280;
+      line-height: 1.6;
+    }
+    .btn-primary {
+      display: inline-block;
+      background: #1F4FFF;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      padding: 12px 28px;
+      border-radius: 10px;
+    }
+    .btn-primary:hover { background: #1740dd; }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      padding: 16px 24px 32px;
+    }
+    .footer p {
+      margin: 0;
+      font-size: 11px;
+      color: #9CA3AF;
+    }
+
+    /* ── Loading / error ── */
+    #loading, #error-state {
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #6B7280;
+      font-size: 15px;
+      gap: 12px;
+    }
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid #E5E7EB;
+      border-top-color: #1F4FFF;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 480px) {
+      .agent-desc, .hours-pill { margin-left: 0; margin-top: 6px; }
+      .agent-header { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <a href="https://www.30dayramp.com" class="logo-badge">RAMPED AI</a>
+    <a href="https://www.30dayramp.com/book" class="header-cta">Book a call →</a>
+  </div>
+
+  <!-- Loading state -->
+  <div id="loading">
+    <div class="spinner"></div>
+    <span>Loading your roadmap…</span>
+  </div>
+
+  <!-- Error state -->
+  <div id="error-state" style="display:none;">
+    <p id="error-msg">Something went wrong. Please try again or <a href="mailto:jon@30dayramp.com">contact us</a>.</p>
+  </div>
+
+  <!-- Main content (hidden until loaded) -->
+  <div id="main" style="display:none;">
+
+    <!-- Hero -->
+    <div class="hero" id="hero">
+      <h1 id="hero-title">Your automation roadmap</h1>
+      <p id="hero-sub"></p>
+    </div>
+
+    <div class="content">
+
+      <!-- Summary callout -->
+      <div class="callout" id="callout" style="display:none;">
+        <p class="label">YOUR OPPORTUNITY</p>
+        <p id="callout-text"></p>
+      </div>
+
+      <!-- Stats bar -->
+      <div class="stats" id="stats-bar">
+        <div class="stat">
+          <div class="stat-num" id="stat-agents">—</div>
+          <div class="stat-label">AI Agents</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">30</div>
+          <div class="stat-label">Day Go-Live</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num green">$0</div>
+          <div class="stat-label">If We Miss It</div>
+        </div>
+      </div>
+
+      <!-- Agents -->
+      <div id="agents-section" style="display:none;">
+        <p class="section-label">What we'd build for you</p>
+        <div id="agents-list"></div>
+      </div>
+
+      <!-- Week 1 focus -->
+      <div class="week1-block" id="week1-block" style="display:none;">
+        <p class="label">⚡ WHERE WE'D START</p>
+        <p id="week1-text"></p>
+      </div>
+
+      <!-- Quick wins -->
+      <div class="quick-wins" id="quick-wins-section" style="display:none;">
+        <p class="section-label" style="margin-bottom:8px;">Quick wins in week 1</p>
+        <div id="quick-wins-list"></div>
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-block">
+        <h2>Ready to get started?</h2>
+        <p>This is a starting point — on the call we'll match it to your workflow and decide what to ship first.</p>
+        <a href="https://www.30dayramp.com/book" class="btn-primary">Book your discovery call →</a>
+      </div>
+
+      <div style="text-align:center;margin-bottom:24px;">
+        <p style="font-size:13px;color:#6B7280;">Questions before the call? <a href="mailto:jon@30dayramp.com" style="color:#1F4FFF;">Reply to Jon →</a></p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>Ramped AI · <a href="https://www.30dayramp.com" style="color:#9CA3AF;">30dayramp.com</a></p>
+  </div>
+
+  <script>
+    function esc(s) {
+      return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    async function loadRoadmap() {
+      const params = new URLSearchParams(location.search);
+      const id = params.get('id');
+
+      if (!id || !/^[0-9a-f-]{36}$/i.test(id)) {
+        showError('Invalid roadmap link. Please check the URL and try again.');
+        return;
+      }
+
+      try {
+        const r = await fetch(`/api/get-roadmap?id=${encodeURIComponent(id)}`);
+        if (!r.ok) {
+          const { error } = await r.json().catch(() => ({}));
+          showError(error === 'Roadmap not yet generated for this booking'
+            ? 'Your roadmap is still being generated — check back in a moment.'
+            : (error || 'Roadmap not found.'));
+          return;
+        }
+
+        const { name, company, industry, roadmap } = await r.json();
+        renderRoadmap(name, company, industry, roadmap);
+      } catch (err) {
+        showError('Could not load your roadmap. Please try again.');
+      }
+    }
+
+    function renderRoadmap(name, company, industry, roadmap) {
+      const firstName = (name || '').split(/\s+/)[0] || 'there';
+
+      // Hero
+      document.getElementById('hero-title').textContent =
+        `Your automation roadmap, ${firstName} ✦`;
+      const parts = [];
+      if (company) parts.push(company);
+      if (industry) parts.push(industry);
+      document.getElementById('hero-sub').textContent = parts.join(' · ');
+
+      // Summary callout
+      if (roadmap.summary) {
+        document.getElementById('callout-text').textContent = `"${roadmap.summary}"`;
+        document.getElementById('callout').style.display = 'block';
+      }
+
+      // Stats
+      const agentCount = roadmap.top_agents?.length || 0;
+      document.getElementById('stat-agents').textContent = agentCount;
+
+      // Agents
+      if (agentCount > 0) {
+        const list = document.getElementById('agents-list');
+        roadmap.top_agents.forEach((a, i) => {
+          const div = document.createElement('div');
+          div.className = 'agent-card';
+          div.innerHTML = `
+            <div class="agent-header">
+              <div class="agent-num">${i + 1}</div>
+              <div class="agent-name">${esc(a.name)}</div>
+              ${a.channel ? `<span class="channel-pill">${esc(a.channel)}</span>` : ''}
+            </div>
+            <p class="agent-desc">${esc(a.what_it_does)}</p>
+            ${a.hours_saved ? `<span class="hours-pill">⏱ Saves ${esc(a.hours_saved)}</span>` : ''}
+          `;
+          list.appendChild(div);
+        });
+        document.getElementById('agents-section').style.display = 'block';
+      }
+
+      // Week 1 focus
+      if (roadmap.week_1_focus) {
+        document.getElementById('week1-text').textContent = roadmap.week_1_focus;
+        document.getElementById('week1-block').style.display = 'block';
+      }
+
+      // Quick wins
+      if (roadmap.quick_wins?.length) {
+        const list = document.getElementById('quick-wins-list');
+        roadmap.quick_wins.forEach(win => {
+          const div = document.createElement('div');
+          div.className = 'quick-win-item';
+          div.innerHTML = `<span class="win-check">✓</span><span>${esc(win)}</span>`;
+          list.appendChild(div);
+        });
+        document.getElementById('quick-wins-section').style.display = 'block';
+      }
+
+      // Show content, hide loading
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('main').style.display = 'block';
+
+      // Update page title
+      document.title = `${name ? name + "'s " : ''}Automation Roadmap · Ramped AI`;
+    }
+
+    function showError(msg) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('error-msg').innerHTML = esc(msg) + ' — <a href="mailto:jon@30dayramp.com">Contact us</a>';
+      document.getElementById('error-state').style.display = 'flex';
+    }
+
+    loadRoadmap();
+  </script>
+</body>
+</html>
