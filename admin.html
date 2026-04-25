@@ -1418,6 +1418,9 @@
           <td style="white-space:nowrap;">
             <a href="mailto:${esc(b.email)}" class="btn-action" style="margin-right:4px;" title="Email guest">✉</a>
             ${b.meet_link ? `<a href="${esc(b.meet_link)}" target="_blank" rel="noopener" class="btn-action" style="margin-right:4px;color:var(--good);border-color:#bfe3cf;" title="Open Meet">▶ Meet</a>` : ''}
+            ${b.automation_map ? (b.followup_sent_at
+              ? `<button class="btn-action" disabled style="margin-right:4px;color:var(--good);border-color:#bfe3cf;opacity:0.7;" title="Follow-up sent ${new Date(b.followup_sent_at).toLocaleDateString()}">✓ Sent</button>`
+              : `<button class="btn-action" id="fu-${bid}" onclick="sendFollowup('${bid}')" style="margin-right:4px;color:#7C3AED;border-color:#DDD6FE;" title="Send post-call follow-up email">📧 Follow-up</button>`) : ''}
             <button class="btn-action" onclick="editBooking('${bid}')" title="Edit booking" style="margin-right:4px;">✎ Edit</button>
             <button class="btn-action" onclick="deleteBooking('${bid}')" title="Delete booking" style="color:var(--danger);border-color:#f0cfca;">Delete</button>
           </td>
@@ -1600,6 +1603,28 @@
 
   function closeBookingModal() {
     document.getElementById('booking-modal').classList.remove('open');
+  }
+
+  async function sendFollowup(id) {
+    const b = _allBookings.find(x => String(x.id) === String(id));
+    const label = b ? (b.name || b.email || 'this person') : 'this person';
+    if (!await confirmDialog(`Send post-call follow-up email to <strong>${label}</strong>?<br><br>This will send their roadmap + next steps to ${b?.email || 'their email'}.`)) return;
+    const btn = document.getElementById(`fu-${id}`);
+    if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+    try {
+      const res = await adminFetch(`/api/send-followup`, {
+        method: 'POST',
+        body: JSON.stringify({ bookingId: id }),
+      });
+      if (!res.ok) {
+        const { error } = await res.json().catch(() => ({}));
+        throw new Error(error || 'Server error ' + res.status);
+      }
+      if (btn) { btn.textContent = '✓ Sent'; btn.style.color = 'var(--good)'; btn.style.borderColor = '#bfe3cf'; }
+    } catch (err) {
+      alert('Failed to send follow-up: ' + err.message);
+      if (btn) { btn.disabled = false; btn.textContent = '📧 Follow-up'; }
+    }
   }
 
   async function deleteBooking(id) {
@@ -2032,3 +2057,4 @@
 </main>
 </body>
 </html>
+
