@@ -3,6 +3,9 @@
     "api/questionnaire.js": { "maxDuration": 120 },
     "api/generate-map.js":  { "maxDuration": 120 }
   },
+  "crons": [
+    { "path": "/api/reminders", "schedule": "*/30 * * * *" }
+  ],
   "rewrites": [
     { "source": "/demo",                    "destination": "/client-demo.html" },
     { "source": "/logo-concepts",           "destination": "/logo-concepts.html" },
@@ -16,6 +19,7 @@
     { "source": "/dashboard",               "destination": "/dashboard.html" },
     { "source": "/questionnaire-preview",   "destination": "/questionnaire-preview.html" },
     { "source": "/questionnaire",            "destination": "/questionnaire.html" },
+    { "source": "/roadmap",                  "destination": "/roadmap.html" },
     { "source": "/map/(.*)",                 "destination": "/map-result.html" }
   ],
   "headers": [
