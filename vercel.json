@@ -1,26 +1,27 @@
 {
   "functions": {
-    "api/questionnaire.js": { "maxDuration": 120 },
-    "api/generate-map.js":  { "maxDuration": 120 }
+    "api/questionnaire.js": { "maxDuration": 120 }
   },
   "crons": [
     { "path": "/api/reminders", "schedule": "*/30 * * * *" }
   ],
+  "redirects": [
+    { "source": "/questionnaire",          "destination": "/book", "permanent": false },
+    { "source": "/questionnaire-preview",  "destination": "/book", "permanent": false },
+    { "source": "/dashboard",              "destination": "/admin", "permanent": false }
+  ],
   "rewrites": [
-    { "source": "/demo",                    "destination": "/client-demo.html" },
-    { "source": "/logo-concepts",           "destination": "/logo-concepts.html" },
-    { "source": "/one-pager",               "destination": "/one-pager.html" },
-    { "source": "/pricing-onepager",        "destination": "/pricing-onepager.html" },
-    { "source": "/comparison",              "destination": "/comparison.html" },
-    { "source": "/book",                    "destination": "/book.html" },
-    { "source": "/privacy",                 "destination": "/privacy.html" },
-    { "source": "/thanks",                  "destination": "/thanks.html" },
-    { "source": "/admin",                   "destination": "/admin.html" },
-    { "source": "/dashboard",               "destination": "/dashboard.html" },
-    { "source": "/questionnaire-preview",   "destination": "/questionnaire-preview.html" },
-    { "source": "/questionnaire",            "destination": "/questionnaire.html" },
-    { "source": "/roadmap",                  "destination": "/roadmap.html" },
-    { "source": "/map/(.*)",                 "destination": "/map-result.html" }
+    { "source": "/demo",                   "destination": "/client-demo.html" },
+    { "source": "/logo-concepts",          "destination": "/logo-concepts.html" },
+    { "source": "/one-pager",              "destination": "/one-pager.html" },
+    { "source": "/pricing-onepager",       "destination": "/pricing-onepager.html" },
+    { "source": "/comparison",             "destination": "/comparison.html" },
+    { "source": "/book",                   "destination": "/book.html" },
+    { "source": "/privacy",               "destination": "/privacy.html" },
+    { "source": "/thanks",                 "destination": "/thanks.html" },
+    { "source": "/admin",                  "destination": "/admin.html" },
+    { "source": "/roadmap",               "destination": "/roadmap.html" },
+    { "source": "/map/(.*)",              "destination": "/map-result.html" }
   ],
   "headers": [
     {
@@ -41,7 +42,7 @@
       ]
     },
     {
-      "source": "/:page(index|book|comparison|client-demo|privacy|thanks|admin|dashboard).html",
+      "source": "/:page(index|book|comparison|client-demo|privacy|thanks|admin).html",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
       ]
