@@ -385,8 +385,10 @@ export default async function handler(req, res) {
 
   // Client roadmap email — send their personalized automation plan before the call
   if (roadmap && RESEND_KEY) {
-    const firstName  = (booking.name || email).split(/\s+/)[0];
-    const agentCount = roadmap.top_agents?.length || 0;
+    const SITE_URL    = process.env.SITE_URL || 'https://www.30dayramp.com';
+    const roadmapUrl  = `${SITE_URL}/roadmap?id=${bookingId}`;
+    const firstName   = (booking.name || email).split(/\s+/)[0];
+    const agentCount  = roadmap.top_agents?.length || 0;
 
     const clientAgentsHTML = roadmap.top_agents?.map((a, i) =>
       `<div style="background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:18px 20px;margin-bottom:10px;">
@@ -468,6 +470,11 @@ export default async function handler(req, res) {
       <p style="margin:0 0 8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#1F4FFF;">⚡ WHERE WE'D START</p>
       <p style="margin:0;font-size:14px;color:#F9FAFB;line-height:1.7;">${esc(roadmap.week_1_focus)}</p>
     </div>` : ''}
+
+    <!-- View online CTA -->
+    <div style="text-align:center;margin-bottom:20px;">
+      <a href="${esc(roadmapUrl)}" style="display:inline-block;background:#F3F4F6;color:#0B1220;font-size:13px;font-weight:600;text-decoration:none;padding:10px 20px;border-radius:8px;border:1px solid #E5E7EB;">🔗 View this roadmap online →</a>
+    </div>
 
     <!-- Closing note -->
     <p style="font-size:14px;color:#374151;line-height:1.7;margin:0 0 24px;">This is a starting point — on the call we'll make sure it fits your actual workflow and prioritize what makes the most sense to ship first. No pressure, no pitch.</p>
