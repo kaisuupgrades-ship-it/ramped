@@ -241,31 +241,10 @@
         <!-- Hero form + trust signals -->
         <div class="max-w-md">
           <div class="card ink-shadow p-6" id="hero-form-wrap">
-                        <!-- Form -->
-            <div id="hero-form-inner">
-              <p style="font-weight:600;font-size:16px;margin-bottom:16px;color:var(--ink);">Tell us about your business</p>
-              <form id="hero-form" action="/api/contact" method="POST" class="flex flex-col gap-3">
-                <label for="hero-name" class="sr-only">Your name</label>
-                <input id="hero-name" class="form-input" type="text" name="name" placeholder="Your name" required autocomplete="name" />
-                <label for="hero-email" class="sr-only">Work email</label>
-                <input id="hero-email" class="form-input" type="email" name="email" placeholder="Work email" required autocomplete="email" />
-                <label for="hero-company" class="sr-only">Company name</label>
-                <input id="hero-company" class="form-input" type="text" name="company" placeholder="Company name" required autocomplete="organization" />
-                <button type="submit" class="btn-primary w-full justify-center mt-1" >Get started →</button>
-                <div class="form-error"></div>
-              </form>
-              <p style="font-size:12px;color:var(--muted);margin-top:12px;text-align:center;">
-                Or <a href="/book" style="color:var(--accent);font-weight:500;">book a free 30-min call</a> first — no commitment.
-              </p>
-            </div>
-            <!-- Success state -->
-            <div id="hero-form-success" class="success-state flex-col items-center text-center py-4">
-              <div style="width:48px;height:48px;border-radius:999px;background:#ECFDF5;border:2px solid #D1FAE5;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
-                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><path d="M4 11.5l5 5 9-10" stroke="var(--good)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </div>
-              <p style="font-weight:700;font-size:17px;color:var(--ink);margin-bottom:6px;">Got it — we'll reach out within one business day.</p>
-              <p style="font-size:14px;color:var(--muted);line-height:1.5;">In the meantime, feel free to <a href="/book" style="color:var(--accent);font-weight:500;">book a free 30-min call</a>.</p>
-            </div>
+            <p style="font-weight:600;font-size:16px;margin-bottom:6px;color:var(--ink);">Start with a free 30-min call</p>
+            <p style="font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.5;">We'll map out what to automate first and what it's worth — no pitch, no pressure.</p>
+            <a href="/book" class="btn-primary w-full justify-center" style="text-decoration:none;font-size:15px;">Book a discovery call →</a>
+            <p style="font-size:12px;color:var(--muted);margin-top:12px;text-align:center;">Free · 30 minutes · No commitment</p>
           </div>
 
           <!-- Trust signals -->
@@ -664,41 +643,16 @@
         Ready to ramp?
       </h2>
       <p style="font-size:16px;color:var(--muted);margin-top:12px;line-height:1.6;">
-        Tell us about your business and we'll follow up within one business day to scope the right starting point.
+        Book a free 30-minute discovery call. We'll map out your biggest automation win and show you exactly what it's worth.
       </p>
     </div>
 
-    <!-- Final form -->
+    <!-- Final CTA -->
     <div class="card ink-shadow p-7 max-w-md">
-      <!-- Form inner -->
-      <div id="final-form-inner">
-        <form id="final-form" action="/api/contact" method="POST" class="flex flex-col gap-3">
-          <label for="final-name" class="sr-only">Your name</label>
-          <input id="final-name" class="form-input" type="text" name="name" placeholder="Your name" required autocomplete="name" />
-          <label for="final-email" class="sr-only">Work email</label>
-          <input id="final-email" class="form-input" type="email" name="email" placeholder="Work email" required autocomplete="email" />
-          <label for="final-company" class="sr-only">Company name</label>
-          <input id="final-company" class="form-input" type="text" name="company" placeholder="Company name" required autocomplete="organization" />
-          <button type="submit" class="btn-primary w-full justify-center mt-1">Get started →</button>
-          <div class="form-error"></div>
-        </form>
-        <div class="flex items-center gap-3 mt-5">
-          <div style="flex:1;height:1px;background:var(--line);"></div>
-          <span style="font-size:12px;color:var(--muted);">or</span>
-          <div style="flex:1;height:1px;background:var(--line);"></div>
-        </div>
-        <a href="/book" target="_self" rel="noopener" class="btn-ghost w-full flex justify-center mt-3" style="text-decoration:none;font-size:14px;">
-          Book a call instead →
-        </a>
-      </div>
-      <!-- Success state -->
-      <div id="final-form-success" class="success-state flex-col items-center text-center py-4">
-        <div style="width:48px;height:48px;border-radius:999px;background:#ECFDF5;border:2px solid #D1FAE5;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><path d="M4 11.5l5 5 9-10" stroke="var(--good)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <p style="font-weight:700;font-size:17px;color:var(--ink);margin-bottom:6px;">Got it — we'll reach out within one business day.</p>
-        <p style="font-size:14px;color:var(--muted);line-height:1.5;">In the meantime, feel free to <a href="/book" style="color:var(--accent);font-weight:500;">book a free 30-min call</a>.</p>
-      </div>
+      <p style="font-weight:600;font-size:16px;margin-bottom:6px;color:var(--ink);">Book a free discovery call</p>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.5;">30 minutes. We'll identify your highest-impact automation, build a roadmap, and tell you exactly what it'll take to go live.</p>
+      <a href="/book" class="btn-primary w-full justify-center" style="text-decoration:none;font-size:15px;">Book a call →</a>
+      <p style="font-size:12px;color:var(--muted);margin-top:12px;text-align:center;">Free · No commitment · Go live in 30 days or it's free</p>
     </div>
   </div>
 </section>
@@ -888,5 +842,6 @@
 </script>
 </body>
 </html>
+
 
 
