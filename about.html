@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>About — Ramped AI</title>
+  <meta name="description" content="Meet the team behind Ramped AI — operators who built the AI department they wished they'd had."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=typography" defer></script>
+  <style>
+    :root {
+      --ink:#0B1220; --ink-2:#1A2233;
+      --accent:#1F4FFF; --accent-2:#0B2A8C;
+      --muted:#5B6272; --line:#E5E8EF;
+      --paper:#FAFAFA; --surface:#F4F5F7;
+    }
+    html,body{background:var(--paper);color:var(--ink);font-family:'Inter',ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    .section-wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+    .btn-primary{background:var(--ink);color:#fff;padding:13px 22px;border-radius:10px;font-weight:600;font-size:15px;display:inline-flex;align-items:center;gap:8px;transition:transform .12s ease,opacity .12s ease;cursor:pointer;border:none;text-decoration:none;}
+    .btn-primary:hover{opacity:.88;transform:translateY(-1px);}
+    .btn-ghost{padding:13px 18px;border-radius:10px;font-weight:600;font-size:15px;color:var(--ink);border:1px solid var(--line);background:#fff;cursor:pointer;transition:background .12s ease;text-decoration:none;display:inline-flex;align-items:center;}
+    .btn-ghost:hover{background:var(--surface);}
+    .card{background:#fff;border:1px solid var(--line);border-radius:16px;}
+    .ink-shadow{box-shadow:0 1px 3px rgba(11,18,32,.07),0 4px 16px rgba(11,18,32,.05);}
+    .sectionnum{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+    .grid-bg{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:32px 32px;background-position:-1px -1px;}
+
+    /* Ticker */
+    .ticker-bar{background:var(--ink);overflow:hidden;height:38px;display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,0.07);}
+    .ticker-track{display:flex;gap:48px;animation:ticker 28s linear infinite;white-space:nowrap;}
+    .ticker-track span{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.55);}
+    .ticker-track span b{color:#fff;}
+    @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+    /* Team card */
+    .team-card{background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden;}
+    .team-card-photo{width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--surface);display:flex;align-items:center;justify-content:center;}
+    .team-card-photo-placeholder{width:100%;aspect-ratio:4/3;background:linear-gradient(135deg,var(--surface) 0%,#E8EAEF 100%);display:flex;align-items:center;justify-content:center;}
+
+    /* Stat strip */
+    .about-stat{border-left:2px solid var(--accent);padding-left:14px;}
+    .about-stat-val{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:700;color:var(--ink);line-height:1;display:block;margin-bottom:4px;}
+    .about-stat-label{font-size:13px;color:var(--muted);line-height:1.4;}
+
+    nav a:hover{color:var(--ink);}
+  </style>
+</head>
+<body>
+
+<!-- Ticker -->
+<div class="ticker-bar" aria-hidden="true">
+  <div class="ticker-track">
+    <span>• <b>30-day go-live guarantee</b></span>
+    <span>• Avg. <b>$12,000+</b> saved / mo</span>
+    <span>• <b>40+ hrs</b> saved per week</span>
+    <span>• <b>3×</b> faster lead response</span>
+    <span>• <b>5×</b> avg. ROI in year 1</span>
+    <span>• <b>24/7</b> AI coverage — no sick days</span>
+    <span>• <b>30-day go-live guarantee</b></span>
+    <span>• Avg. <b>$12,000+</b> saved / mo</span>
+    <span>• <b>40+ hrs</b> saved per week</span>
+    <span>• <b>3×</b> faster lead response</span>
+    <span>• <b>5×</b> avg. ROI in year 1</span>
+    <span>• <b>24/7</b> AI coverage — no sick days</span>
+  </div>
+</div>
+
+<!-- Nav -->
+<header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-[var(--line)]">
+  <div class="section-wrap" style="display:flex;align-items:center;justify-content:space-between;height:60px;">
+    <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+      <svg width="22" height="18" viewBox="0 0 26 22" fill="none" aria-hidden="true">
+        <rect x="0"  y="14" width="5" height="8"  rx="1.5" fill="var(--accent)"/>
+        <rect x="7"  y="9"  width="5" height="13" rx="1.5" fill="var(--accent)" opacity=".75"/>
+        <rect x="14" y="4"  width="5" height="18" rx="1.5" fill="var(--accent)" opacity=".55"/>
+        <rect x="21" y="0"  width="5" height="22" rx="1.5" fill="var(--accent)" opacity=".35"/>
+      </svg>
+      <span style="font-weight:700;font-size:15px;color:var(--ink);">Ramped AI</span>
+    </a>
+    <nav class="hidden sm:flex items-center gap-3" aria-label="Primary">
+      <a href="/about" class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;background:var(--surface);">About</a>
+      <a href="/demo" class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">Demo</a>
+      <a href="/comparison" class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">VA vs. AI</a>
+      <a href="/book" class="btn-primary whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">Get started →</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="grid-bg py-20 border-b border-[var(--line)]">
+  <div class="section-wrap">
+    <div class="mb-3"><span class="sectionnum">About Ramped AI</span></div>
+    <h1 style="font-size:clamp(2rem,4.5vw,3rem);font-weight:800;line-height:1.08;letter-spacing:-.03em;color:var(--ink);max-width:700px;" class="mb-6">
+      Built by operators,<br>for operators.
+    </h1>
+    <p style="font-size:1.1rem;color:var(--muted);line-height:1.75;max-width:580px;">
+      Ramped AI was founded by business owners who experienced the problem firsthand — manual, high-friction tasks draining time and capping growth. We didn't hire consultants to solve it. We built the AI department we wished we'd had.
+    </p>
+  </div>
+</section>
+
+<!-- Stats -->
+<section class="py-16 border-b border-[var(--line)] bg-white">
+  <div class="section-wrap">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:32px 48px;">
+      <div class="about-stat">
+        <span class="about-stat-val">30 days</span>
+        <span class="about-stat-label">Guaranteed go-live for every client</span>
+      </div>
+      <div class="about-stat">
+        <span class="about-stat-val">14 hrs</span>
+        <span class="about-stat-label">Weekly manual work eliminated at our first client</span>
+      </div>
+      <div class="about-stat">
+        <span class="about-stat-val">4h → 8m</span>
+        <span class="about-stat-label">Response time improvement at Xtractor Depot</span>
+      </div>
+      <div class="about-stat">
+        <span class="about-stat-val">$0</span>
+        <span class="about-stat-label">Ongoing management required after deployment</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Origin story -->
+<section class="py-20 border-b border-[var(--line)]">
+  <div class="section-wrap">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start;" class="md:grid-cols-2">
+
+      <div>
+        <div class="mb-3"><span class="sectionnum">Our story</span></div>
+        <h2 style="font-size:clamp(1.5rem,3vw,2.1rem);font-weight:800;line-height:1.15;letter-spacing:-.02em;color:var(--ink);" class="mb-6">
+          The problem we lived before we built the solution.
+        </h2>
+        <div style="display:flex;flex-direction:column;gap:16px;font-size:15px;color:var(--muted);line-height:1.8;">
+          <p>Running Xtractor Depot — a fast-scaling physical-goods business supplying extraction equipment to clients from cannabis operators to SpaceX and Lucid Motors — meant dealing with an endless stream of manual, repetitive tasks. Quote intake. Follow-up emails. Lead qualification. Status updates. Each one small on its own. Together, they consumed weeks of productive time every month.</p>
+          <p>Existing AI tools promised automation but delivered dashboards. Consultants delivered decks, not working software. The market had a gap: no one was actually building and running the systems for you.</p>
+          <p>Ramped AI was founded to close that gap — deploying a fully operational AI department for any operating business, live in 30 days, on a flat monthly fee. No technical staff required. No endless onboarding. Just results.</p>
+          <p>Xtractor Depot became our first case study. After deployment: 14 hours of manual work eliminated per week, response times dropped from 4 hours to under 8 minutes, with zero ongoing management.</p>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:16px;padding-top:8px;">
+        <div class="card ink-shadow p-6">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">Xtractor Depot · Case Study</div>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:14px;border-bottom:1px solid var(--line);">
+              <div>
+                <div style="font-size:13px;color:var(--muted);">Manual work eliminated</div>
+                <div style="font-size:1.6rem;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ink);">14 hrs/wk</div>
+              </div>
+              <div style="background:#F0FDF4;color:#16A34A;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;">Verified</div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:14px;border-bottom:1px solid var(--line);">
+              <div>
+                <div style="font-size:13px;color:var(--muted);">Lead response time</div>
+                <div style="font-size:1.6rem;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ink);">4h → 8m</div>
+              </div>
+              <div style="background:#F0FDF4;color:#16A34A;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;">Verified</div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+              <div>
+                <div style="font-size:13px;color:var(--muted);">Ongoing management required</div>
+                <div style="font-size:1.6rem;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ink);">Zero</div>
+              </div>
+              <div style="background:#F0FDF4;color:#16A34A;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;">Verified</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-5" style="background:var(--surface);border-color:var(--line);">
+          <p style="font-size:14px;color:var(--muted);line-height:1.7;font-style:italic;">"Andrew's vision for Ramped AI is straightforward and battle-tested: give every operating business the same operational edge he built at Xtractor Depot, but powered by AI that actually works out of the box instead of becoming 'one more thing to manage.'"</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Team -->
+<section class="py-20 border-b border-[var(--line)] bg-white">
+  <div class="section-wrap">
+    <div class="mb-3"><span class="sectionnum">The team</span></div>
+    <h2 style="font-size:clamp(1.5rem,3vw,2.1rem);font-weight:800;line-height:1.15;letter-spacing:-.02em;color:var(--ink);" class="mb-3">
+      Operators first. Technologists second.
+    </h2>
+    <p style="font-size:15px;color:var(--muted);line-height:1.7;max-width:520px;margin-bottom:48px;">Every person on this team has run a real business. We know what it costs to have the wrong systems — or none at all.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px;max-width:800px;">
+
+      <!-- Andrew Yoon -->
+      <div class="team-card ink-shadow">
+        <div class="team-card-photo-placeholder">
+          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <circle cx="32" cy="24" r="14" fill="var(--line)"/>
+            <ellipse cx="32" cy="54" rx="22" ry="14" fill="var(--line)"/>
+          </svg>
+        </div>
+        <div style="padding:24px;">
+          <div style="margin-bottom:16px;">
+            <div style="font-size:19px;font-weight:800;color:var(--ink);letter-spacing:-.02em;">Andrew Yoon</div>
+            <div style="font-size:13px;font-weight:600;color:var(--accent);margin-top:3px;">Founder &amp; CEO</div>
+          </div>
+          <p style="font-size:14px;color:var(--muted);line-height:1.75;margin-bottom:16px;">Andrew is the Founder and CEO of Ramped AI and Xtractor Depot. A Saint Louis University accounting graduate, his entrepreneurial journey began in college before founding Xtractor Depot in 2016 — which grew into a multi-industry innovator supplying precision lab equipment to clients ranging from cannabis operators to SpaceX and Lucid Motors.</p>
+          <p style="font-size:14px;color:var(--muted);line-height:1.75;margin-bottom:16px;">Running a fast-scaling physical-goods business revealed a universal problem: manual, high-friction tasks were draining time and limiting growth. That insight led him to co-found Ramped AI — delivering an entire AI department, live in 30 days, on a flat monthly fee with guaranteed results.</p>
+          <p style="font-size:14px;color:var(--muted);line-height:1.75;margin-bottom:20px;">Outside the office, Andrew plays ice hockey, golf, tennis, and paintball. He lives in Los Angeles County with his wife Steph and their dogs.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface);color:var(--muted);">Operations</span>
+            <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface);color:var(--muted);">B2B Sales</span>
+            <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface);color:var(--muted);">Manufacturing</span>
+            <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface);color:var(--muted);">AI Strategy</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Co-founder placeholder -->
+      <div class="team-card ink-shadow">
+        <div class="team-card-photo-placeholder">
+          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <circle cx="32" cy="24" r="14" fill="var(--line)"/>
+            <ellipse cx="32" cy="54" rx="22" ry="14" fill="var(--line)"/>
+          </svg>
+        </div>
+        <div style="padding:24px;">
+          <div style="margin-bottom:16px;">
+            <div style="font-size:19px;font-weight:800;color:var(--ink);letter-spacing:-.02em;">Co-Founder</div>
+            <div style="font-size:13px;font-weight:600;color:var(--accent);margin-top:3px;">COO</div>
+          </div>
+          <p style="font-size:14px;color:var(--muted);line-height:1.75;margin-bottom:20px;">Bio coming soon.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Values -->
+<section class="py-20 border-b border-[var(--line)] grid-bg">
+  <div class="section-wrap">
+    <div class="mb-3"><span class="sectionnum">How we work</span></div>
+    <h2 style="font-size:clamp(1.5rem,3vw,2.1rem);font-weight:800;line-height:1.15;letter-spacing:-.02em;color:var(--ink);" class="mb-12">
+      A few things we care about.
+    </h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;">
+      <div class="card ink-shadow p-6">
+        <div style="font-size:22px;margin-bottom:12px;">⚙️</div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:8px;">Results, not reports</div>
+        <p style="font-size:14px;color:var(--muted);line-height:1.7;">We measure success by hours saved and revenue recovered — not decks delivered or dashboards built.</p>
+      </div>
+      <div class="card ink-shadow p-6">
+        <div style="font-size:22px;margin-bottom:12px;">🔒</div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:8px;">We own the risk</div>
+        <p style="font-size:14px;color:var(--muted);line-height:1.7;">30-day go-live guarantee with a full refund if we miss it. We don't get paid unless it works.</p>
+      </div>
+      <div class="card ink-shadow p-6">
+        <div style="font-size:22px;margin-bottom:12px;">🧱</div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:8px;">One bill, everything included</div>
+        <p style="font-size:14px;color:var(--muted);line-height:1.7;">AI compute, hosting, maintenance, and iteration — all covered. No surprise invoices, no "that's out of scope."</p>
+      </div>
+      <div class="card ink-shadow p-6">
+        <div style="font-size:22px;margin-bottom:12px;">📈</div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:8px;">Grows with you</div>
+        <p style="font-size:14px;color:var(--muted);line-height:1.7;">As your business scales, we expand the system. No new engagement required, no renegotiation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-20 bg-white">
+  <div class="section-wrap" style="text-align:center;">
+    <h2 style="font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;line-height:1.15;letter-spacing:-.02em;color:var(--ink);margin-bottom:12px;">
+      Ready to ramp?
+    </h2>
+    <p style="font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:32px;max-width:480px;margin-left:auto;margin-right:auto;">Book a free 30-minute discovery call. We'll map out your biggest automation win and show you exactly what it's worth.</p>
+    <a href="/book" class="btn-primary" style="font-size:16px;padding:15px 32px;">Book a free discovery call →</a>
+    <p style="font-size:12px;color:var(--muted);margin-top:12px;">Free · No commitment · Go live in 30 days or it's free</p>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="border-t border-[var(--line)] px-5 py-10">
+  <div class="section-wrap" style="display:flex;flex-direction:column;gap:20px;">
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:20px;">
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <svg width="22" height="18" viewBox="0 0 26 22" fill="none" aria-hidden="true">
+            <rect x="0"  y="14" width="5" height="8"  rx="1.5" fill="var(--accent)"/>
+            <rect x="7"  y="9"  width="5" height="13" rx="1.5" fill="var(--accent)" opacity=".75"/>
+            <rect x="14" y="4"  width="5" height="18" rx="1.5" fill="var(--accent)" opacity=".55"/>
+            <rect x="21" y="0"  width="5" height="22" rx="1.5" fill="var(--accent)" opacity=".35"/>
+          </svg>
+          <span style="font-weight:700;font-size:14px;color:var(--ink);">Ramped AI</span>
+        </div>
+        <p style="font-size:13px;color:var(--muted);">AI implementation for operating businesses</p>
+      </div>
+      <nav style="display:flex;flex-wrap:wrap;gap:8px 24px;align-items:center;">
+        <a href="/#how-it-works" style="font-size:13px;color:var(--muted);">How it works</a>
+        <a href="/#pricing"      style="font-size:13px;color:var(--muted);">Pricing</a>
+        <a href="/about"         style="font-size:13px;color:var(--muted);">About</a>
+        <a href="/demo"          style="font-size:13px;color:var(--muted);">Demo</a>
+        <a href="/comparison"    style="font-size:13px;color:var(--muted);">VA vs. AI</a>
+        <a href="/book"          style="font-size:13px;color:var(--muted);">Book a call</a>
+        <a href="/privacy"       style="font-size:13px;color:var(--muted);">Privacy</a>
+      </nav>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;padding-top:12px;border-top:1px solid var(--line);">
+      <p style="font-size:12px;color:var(--muted);">© 2026 Ramped AI. All rights reserved.</p>
+      <a href="mailto:jon@30dayramp.com" style="font-size:12px;color:var(--muted);">jon@30dayramp.com</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
