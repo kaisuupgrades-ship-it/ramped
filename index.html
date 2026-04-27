@@ -211,6 +211,24 @@
     font-size:11px;letter-spacing:.08em;text-transform:uppercase;
     color:var(--muted);opacity:0.45;
   }
+
+  /* ── Hero agent UI showcase (PR 8 hero hybrid) ── */
+  .hero-agent-showcase{
+    margin:56px auto 0;max-width:1120px;
+    border-radius:16px;overflow:hidden;
+    box-shadow:
+      0 1px 0 rgba(11,18,32,0.04),
+      0 40px 80px -32px rgba(11,18,32,0.28),
+      0 14px 32px -14px rgba(31,79,255,0.22);
+    transform:translateZ(0);
+  }
+  .hero-agent-showcase img{display:block;width:100%;height:auto;}
+  .hero-agent-caption{
+    margin:18px auto 0;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--muted);text-align:center;
+  }
   /* Reduced motion — kill ticker, count-up, and hover-lift transforms for users
      who prefer less motion (audit H9). */
   @media (prefers-reduced-motion: reduce) {
@@ -307,55 +325,53 @@
   </div>
 </div>
 
-<!-- ─── HERO ──────────────────────────────────────────────────────────────── -->
+<!-- ─── HERO — centered text + agent UI showcase (B+C hybrid) ──────────────── -->
 <main id="main">
 <section class="hero-section" id="hero">
-  <div class="section-wrap hero-inner">
+  <div class="section-wrap hero-inner" style="text-align:center;">
 
-    <!-- Eyebrow pill — surfaces the strongest commitment above the headline -->
-    <div class="hero-eyebrow">
+    <!-- Eyebrow pill — strongest commitment, centered -->
+    <div class="hero-eyebrow" style="display:inline-flex;">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
         <path d="M7 1L2 3.5v4C2 10.1 4.2 12.6 7 13.5c2.8-.9 5-3.4 5-6V3.5L7 1z" fill="#F59E0B" opacity=".25" stroke="#B45309" stroke-width="1.3"/>
       </svg>
       <span>30-DAY GO-LIVE GUARANTEE — OR FULL REFUND</span>
     </div>
 
-    <!-- Headline -->
-    <h1 class="hero-h1">
+    <!-- Headline — bigger and centered -->
+    <h1 class="hero-h1" style="font-size:clamp(2.8rem, 7vw, 5rem);line-height:1.02;letter-spacing:-.04em;max-width:1000px;margin:0 auto 24px;">
       Your AI department,<br>live in 30 days.
     </h1>
 
-    <!-- Subheadline -->
-    <p class="hero-sub">
-      Done-for-you AI implementation. We build, deploy, and run AI agents inside your operating business — answering calls, routing leads, automating your highest-friction workflows. Flat monthly fee. No technical staff required.
+    <!-- Subheadline — narrower max-width for centered comfort -->
+    <p class="hero-sub" style="margin:0 auto 36px;font-size:1.125rem;max-width:640px;">
+      Done-for-you AI implementation. We build, deploy, and run AI agents inside your operating business — automating your highest-friction workflows on a flat monthly fee.
     </p>
 
-    <!-- Three dominant metric cards — HighLevel-pattern -->
-    <div class="hero-metrics" aria-label="Key results">
-      <div class="hero-metric-card">
-        <span class="hero-metric-val">40+ hrs</span>
-        <span class="hero-metric-label">saved per week, per client</span>
-      </div>
-      <div class="hero-metric-card">
-        <span class="hero-metric-val">$12,000+</span>
-        <span class="hero-metric-label">avg. saved per month vs. staffing</span>
-      </div>
-      <div class="hero-metric-card">
-        <span class="hero-metric-val">30 days</span>
-        <span class="hero-metric-label">from kickoff to live agent</span>
-      </div>
-    </div>
-
-    <!-- CTA row -->
-    <div class="hero-cta-row">
+    <!-- CTA row — centered -->
+    <div class="hero-cta-row" style="justify-content:center;margin-bottom:18px;">
       <a href="/book" class="btn-primary btn-large">Book a discovery call →</a>
       <a href="/demo" class="btn-ghost btn-large">Watch a 2-min demo</a>
     </div>
 
-    <!-- Founder credibility + microcopy -->
-    <p class="hero-founder">
+    <!-- Founder credibility + microcopy — centered -->
+    <p class="hero-founder" style="max-width:680px;margin:0 auto;">
       Built by <strong>Andrew Yoon</strong> — 10-year operator and founder of Xtractor Depot.
       <span class="hero-founder-trust">Free · 30 minutes · No commitment.</span>
+    </p>
+
+    <!-- Agent UI showcase — the dominant visual element -->
+    <div class="hero-agent-showcase">
+      <img
+        src="/assets/agent-ui.png"
+        srcset="/assets/agent-ui.png 1x, /assets/agent-ui@2x.png 2x"
+        alt="Ramped AI agent inbox: a prospect's quote request being read, drafted, and queued for one-click send."
+        width="1280" height="720"
+        loading="eager" decoding="async"
+      >
+    </div>
+    <p class="hero-agent-caption">
+      Above: an actual Ramped agent handling inbound quote requests on day 30 of deployment.
     </p>
 
   </div>
@@ -377,31 +393,25 @@
   </div>
 </section>
 
-<!-- ─── SEE IT IN ACTION ─────────────────────────────────────────────────── -->
-<section class="py-20" id="see-it" style="background:linear-gradient(180deg,#FFFFFF 0%,#F5F8FF 100%);">
+<!-- ─── BY THE NUMBERS — moved out of hero so the hero stays focused ──────── -->
+<section style="background:linear-gradient(180deg,#FFFFFF 0%,#F5F8FF 100%);padding-block:64px;">
   <div class="section-wrap">
-    <div style="max-width:680px;margin-bottom:32px;">
-      <p class="sectionnum mb-3">See it in action</p>
-      <h2 style="font-size:clamp(1.75rem,4vw,2.5rem);font-weight:800;letter-spacing:-.02em;color:var(--ink);line-height:1.1;">
-        Working software. Not a slide deck.
-      </h2>
-      <p style="font-size:1rem;color:var(--muted);line-height:1.7;margin-top:12px;">
-        Above: an actual Ramped agent handling inbound quote requests for a customer on day 30. It reads the email, looks up the right product and pricing tier, drafts the reply, and waits for one click to send. Five workflows like this go live in 30 days.
-      </p>
+    <div style="text-align:center;margin-bottom:28px;">
+      <p class="sectionnum">By the numbers</p>
     </div>
-    <div class="agent-figure">
-      <img
-        src="/assets/agent-ui.png"
-        srcset="/assets/agent-ui.png 1x, /assets/agent-ui@2x.png 2x"
-        alt="Ramped AI agent inbox: a prospect's quote request being read, drafted, and queued for one-click send."
-        width="1280" height="720"
-        loading="lazy" decoding="async"
-        style="display:block;width:100%;height:auto;border-radius:14px;box-shadow:0 1px 0 rgba(11,18,32,0.04), 0 36px 72px -32px rgba(11,18,32,0.22), 0 12px 28px -12px rgba(31,79,255,0.18);"
-      >
-    </div>
-    <div style="margin-top:28px;display:flex;flex-wrap:wrap;gap:14px;align-items:center;">
-      <a href="/demo" class="btn-primary">Watch a 2-min demo →</a>
-      <p style="font-size:14px;color:var(--muted);margin:0;">See real workflows for legal, real estate, healthcare, and field services.</p>
+    <div class="hero-metrics" style="margin:0 auto;max-width:1000px;">
+      <div class="hero-metric-card">
+        <span class="hero-metric-val">40+ hrs</span>
+        <span class="hero-metric-label">saved per week, per client</span>
+      </div>
+      <div class="hero-metric-card">
+        <span class="hero-metric-val">$12,000+</span>
+        <span class="hero-metric-label">avg. saved per month vs. staffing</span>
+      </div>
+      <div class="hero-metric-card">
+        <span class="hero-metric-val">30 days</span>
+        <span class="hero-metric-label">from kickoff to live agent</span>
+      </div>
     </div>
   </div>
 </section>
