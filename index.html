@@ -751,10 +751,10 @@
   function setBilling(isAnnual) {
     document.getElementById('starter-price').textContent = isAnnual ? '$2,292' : '$2,500';
     document.getElementById('starter-period').textContent = '/mo';
-    document.getElementById('starter-note').textContent = isAnnual ? '12 months for the price of 11 \u00b7 + $2,500 onboarding' : '+ $2,500 one-time onboarding';
+    document.getElementById('starter-note').textContent = isAnnual ? 'billed annually \u00b7 save $2,500 \u00b7 + $2,500 onboarding' : '+ $2,500 one-time onboarding';
     document.getElementById('growth-price').textContent = isAnnual ? '$4,583' : '$5,000';
     document.getElementById('growth-period').textContent = '/mo';
-    document.getElementById('growth-note').textContent = isAnnual ? '12 months for the price of 11 \u00b7 + $3,500 onboarding' : '+ $3,500 one-time onboarding';
+    document.getElementById('growth-note').textContent = isAnnual ? 'billed annually \u00b7 save $5,000 \u00b7 + $3,500 onboarding' : '+ $3,500 one-time onboarding';
     var badge = document.getElementById('annual-badge');
     badge.style.display = isAnnual ? 'inline' : 'none';
     var ma = document.getElementById('btn-monthly'), aa = document.getElementById('btn-annual');
