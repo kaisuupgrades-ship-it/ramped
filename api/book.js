@@ -111,7 +111,7 @@ export default async function handler(req, res) {
 
   // ── POST: create a booking ───────────────────────────────────────────────
   if (req.method === 'POST') {
-    let { datetime, name, email, company, notes, timezone, tier } = req.body || {};
+    let { datetime, name, email, company, notes, timezone, tier, billing } = req.body || {};
 
     name     = truncate(String(name     || '').trim(), 120);
     email    = truncate(String(email    || '').trim(), 254);
@@ -119,6 +119,8 @@ export default async function handler(req, res) {
     notes    = notes    ? truncate(String(notes).trim(),    2000) : '';
     timezone = timezone ? truncate(String(timezone).trim(), 64)  : '';
     tier     = tier     ? truncate(String(tier).trim(),     32)  : '';
+    billing  = billing  ? truncate(String(billing).trim(),  16)  : '';
+    if (billing && billing !== 'monthly' && billing !== 'annual') billing = '';
 
     if (!isValidEmail(email)) return res.status(400).json({ error: 'Please enter a valid email.' });
     if (!isFuture(datetime, 15 * 60_000)) return res.status(400).json({ error: 'Choose a future time (at least 15 min from now).' });
@@ -186,7 +188,9 @@ export default async function handler(req, res) {
       bookingId = Array.isArray(data) && data[0] ? data[0].id : null;
     }
 
-    const questionnaireUrl = `${SITE_URL}/questionnaire?email=${encodeURIComponent(email)}`;
+    // Include booking_id so the standalone /questionnaire page can attach to the
+    // right booking unambiguously (audit C2 — no more "most recent by email" guessing).
+    const questionnaireUrl = `${SITE_URL}/questionnaire?email=${encodeURIComponent(email)}${bookingId ? `&booking_id=${encodeURIComponent(bookingId)}` : ''}`;
 
     let meetLink = '';
     let gcalEventId = '';
@@ -293,7 +297,7 @@ export default async function handler(req, res) {
       </div>
     `);
 
-    return res.status(200).json({ success: true, meet_link: meetLink || null });
+    return res.status(200).json({ success: true, booking_id: bookingId || null, meet_link: meetLink || null });
   }
 
   return res.status(405).json({ error: 'Method not allowed' });

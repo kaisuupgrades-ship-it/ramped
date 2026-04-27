@@ -6,7 +6,7 @@
 <meta charset="utf-8" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Book a Discovery Call — Ramped AI</title>
 <meta name="description" content="Schedule a free 30-minute discovery call with the Ramped AI team." />
@@ -231,7 +231,7 @@ const VISITOR_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
 let SLOT_HOURS = [9,9.5,10,10.5,11,11.5,12,12.5,13,13.5,14,14.5,15,15.5,16,16.5];
 let _avail = { days_available:['Mon','Tue','Wed','Thu','Fri'], start_hour:9, end_hour:17, slot_duration_min:30, blocked_dates:[] };
 
-let currentMonth, currentYear, selectedDate, selectedSlot, selectedTier;
+let currentMonth, currentYear, selectedDate, selectedSlot, selectedTier, selectedBilling;
 
 function computeSlotHours(avail) {
   const slots = [];
@@ -245,7 +245,11 @@ function computeSlotHours(avail) {
 }
 
 async function init() {
-  selectedTier = new URLSearchParams(window.location.search).get('tier') || '';
+  const urlParams = new URLSearchParams(window.location.search);
+  selectedTier = urlParams.get('tier') || '';
+  // Default to annual since that's the homepage default and the more advantageous price.
+  selectedBilling = (urlParams.get('billing') || 'annual').toLowerCase();
+  if (selectedBilling !== 'monthly' && selectedBilling !== 'annual') selectedBilling = 'annual';
   try {
     const r = await fetch('/api/availability');
     if (r.ok) { _avail = await r.json(); SLOT_HOURS = computeSlotHours(_avail); }
@@ -365,7 +369,9 @@ function showForm(){
   var stepDiv = document.getElementById('booking-step');
   var d = new Date(selectedDate+'T12:00:00');
   var dateLabel = d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
-  var tierLabels = {starter:'Starter · $2,500/mo', growth:'Growth · $5,000/mo', enterprise:'Enterprise · Custom'};
+  var tierLabels = selectedBilling === 'annual'
+    ? {starter:'Starter · $2,083/mo (billed annually · save $5,000)', growth:'Growth · $4,167/mo (billed annually · save $10,000)', enterprise:'Enterprise · Custom'}
+    : {starter:'Starter · $2,500/mo', growth:'Growth · $5,000/mo', enterprise:'Enterprise · Custom'};
   var tierBadge = selectedTier ? '<div style="background:#EEF3FF;border:1px solid #c7d2fe;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:13px;color:var(--accent);font-weight:600;">📋 Plan interest: '+(tierLabels[selectedTier.toLowerCase()]||selectedTier)+'</div>' : '';
   stepDiv.innerHTML =
     '<button class="back-btn" id="back-to-slots">\u2190 '+dateLabel+' at '+selectedSlot.label+'</button>' +
@@ -448,13 +454,17 @@ async function submitBooking(e){
 
   btn.innerHTML='<span class="spinner"></span>Booking\u2026'; btn.disabled=true;
   try{
-    var r = await fetch('/api/book',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({datetime:selectedSlot.iso,name:fd.get('name'),email:fd.get('email'),company:fd.get('company')||'',notes:fd.get('notes')||'',timezone:VISITOR_TZ,tier:selectedTier||''})});
+    var r = await fetch('/api/book',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({datetime:selectedSlot.iso,name:fd.get('name'),email:fd.get('email'),company:fd.get('company')||'',notes:fd.get('notes')||'',timezone:VISITOR_TZ,tier:selectedTier||'',billing:selectedBilling||''})});
     if(r.status===409){errDiv.textContent='That slot was just booked \u2014 please pick another time.';errDiv.style.display='block';btn.textContent='Confirm booking \u2192';btn.disabled=false;setTimeout(function(){showSlots();},2000);return;}
     if(r.status===429){ errDiv.textContent='Too many requests \u2014 please wait a moment and try again.'; errDiv.style.display='block'; btn.textContent='Confirm booking \u2192'; btn.disabled=false; return; }
     if(!r.ok){
       var body = await r.json().catch(function(){ return {}; });
       throw new Error(body && body.error ? body.error : 'Something went wrong \u2014 please try again.');
     }
+    // Capture booking_id from the response so the inline questionnaire below
+    // attaches to the right booking \u2014 fixes audit C2.
+    var bookResponse = await r.json().catch(function(){ return {}; });
+    window._lastBookingId = (bookResponse && bookResponse.booking_id) || null;
     showConfirmation(fd.get('name'),fd.get('email'));
   }catch(err){errDiv.textContent=err.message||'Something went wrong \u2014 please try again.';errDiv.style.display='block';btn.textContent='Confirm booking \u2192';btn.disabled=false;}
 }
@@ -607,7 +617,8 @@ function showConfirmation(name, email){
     if(c) c.innerHTML='<div style="text-align:center;padding:32px 16px;"><div style="font-size:32px;margin-bottom:12px;">\u2699\ufe0f</div><p style="font-size:14px;color:var(--muted);">Building your automation roadmap\u2026</p></div>';
     try{
       await fetch('/api/questionnaire',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-        email:email, pain_points:qAnswers.pain_points||[], automation_goal:qAnswers.automation_goal||'',
+        email:email, booking_id: window._lastBookingId || undefined,
+        pain_points:qAnswers.pain_points||[], automation_goal:qAnswers.automation_goal||'',
         industry:qAnswers.industry||'', team_size:qAnswers.team_size||'', revenue:qAnswers.revenue||'',
         lead_source:qAnswers.lead_source||'', inbound:qAnswers.inbound||'', integrations:qAnswers.integrations||[],
         crm:qAnswers.crm||'', email_provider:qAnswers.email_provider||'', device_os:qAnswers.device_os||'',
@@ -673,6 +684,46 @@ document.addEventListener('DOMContentLoaded', init);
     </div>
   </div>
 </footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "serviceType": "AI implementation",
+  "provider": {
+    "@type": "Organization",
+    "name": "Ramped AI",
+    "url": "https://www.30dayramp.com/"
+  },
+  "name": "AI Department in 30 Days",
+  "description": "Done-for-you deployment of production AI agents into operating businesses. Live within 30 days or full refund.",
+  "areaServed": "US",
+  "offers": [
+    {
+      "@type": "Offer",
+      "name": "Starter",
+      "priceSpecification": {
+        "@type": "UnitPriceSpecification",
+        "price": "2500",
+        "priceCurrency": "USD",
+        "billingIncrement": 1,
+        "unitCode": "MON"
+      }
+    },
+    {
+      "@type": "Offer",
+      "name": "Growth",
+      "priceSpecification": {
+        "@type": "UnitPriceSpecification",
+        "price": "5000",
+        "priceCurrency": "USD",
+        "billingIncrement": 1,
+        "unitCode": "MON"
+      }
+    }
+  ]
+}
+</script>
 </body>
 </html>
 

@@ -769,16 +769,21 @@ function renderMap(data) {
 
 /* ── Boot ── */
 var mapId = getMapId();
+// Forward the signed-link params (exp + t) from /map/{id}?exp=...&t=... to the API.
+// Without these, /api/get-map will reject with 403 — the IDOR fix from audit C1.
+var mapQuery = window.location.search || '';
 if (!mapId) {
   showError('Map not found', 'No map ID in this URL. Please check the link in your email.', true);
 } else {
-  fetch('/api/get-map?id=' + encodeURIComponent(mapId))
+  fetch('/api/get-map?id=' + encodeURIComponent(mapId) + (mapQuery ? '&' + mapQuery.replace(/^\?/, '') : ''))
     .then(function (r) {
       return r.json().then(function (d) { return { ok: r.ok, status: r.status, data: d }; });
     })
     .then(function (res) {
       if (res.status === 404) {
         showError('Map not found', 'This link may have expired or the ID is incorrect.', true);
+      } else if (res.status === 403) {
+        showError('Link expired', 'This map link is no longer valid. Please request a fresh one — email jon@30dayramp.com and we will resend.', false);
       } else if (!res.ok) {
         showError('Something went wrong', 'We couldn't load your map. Please try again or contact jon@30dayramp.com.', false);
       } else {

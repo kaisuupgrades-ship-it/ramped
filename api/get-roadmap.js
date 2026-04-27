@@ -1,6 +1,10 @@
 // api/get-roadmap.js — public roadmap viewer
-// GET /api/get-roadmap?id=BOOKING_UUID
+// GET /api/get-roadmap?id=BOOKING_UUID&exp=<unix>&t=<hmac>
 // Returns only client-safe roadmap data — no grade, no email, no admin fields
+//
+// Auth: HMAC-signed expiring token (see api/_lib/map-token.js). Required.
+
+import { verifyMapToken, isMapTokenConfigured } from './_lib/map-token.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -22,12 +26,18 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { id } = req.query;
+  const { id, exp, t } = req.query;
   if (!id || !/^[0-9a-f-]{36}$/i.test(id)) {
     return res.status(400).json({ error: 'Invalid ID' });
   }
   if (!SUPABASE_URL || !SUPABASE_KEY) {
     return res.status(503).json({ error: 'Not configured' });
+  }
+  if (!isMapTokenConfigured()) {
+    return res.status(503).json({ error: 'Roadmap link signing not configured' });
+  }
+  if (!verifyMapToken(id, exp, t)) {
+    return res.status(403).json({ error: 'This link is invalid or has expired. Please request a new one.' });
   }
 
   const r = await fetch(

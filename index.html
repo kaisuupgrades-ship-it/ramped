@@ -112,6 +112,14 @@
   .hero-stat-val{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:700;color:var(--ink);line-height:1;display:block;margin-bottom:4px;}
   .hero-stat-label{font-size:11px;color:var(--muted);letter-spacing:.03em;white-space:nowrap;display:block;}
   @media(max-width:480px){.hero-stats{grid-template-columns:repeat(2,1fr);}}
+  /* Reduced motion — kill ticker, count-up, and hover-lift transforms for users
+     who prefer less motion (audit H9). */
+  @media (prefers-reduced-motion: reduce) {
+    .ticker-items { animation: none !important; }
+    .hover-lift { transition: none !important; }
+    .hover-lift:hover { transform: none !important; }
+    *, *::before, *::after { transition-duration: 0.001ms !important; animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; }
+  }
 </style>
 </head>
 <body>
@@ -552,7 +560,7 @@
             <span style="font-size:14px;color:var(--ink);">All compute &amp; hosting included</span>
           </li>
         </ul>
-        <a href="/book?tier=starter" class="btn-primary w-full justify-center">Get started →</a>
+        <a href="/book?tier=starter&billing=annual" class="btn-primary w-full justify-center" data-tier-cta="starter">Get started →</a>
       </div>
 
       <!-- Growth (featured) -->
@@ -588,7 +596,7 @@
             <span style="font-size:14px;color:var(--ink);">All compute &amp; hosting included</span>
           </li>
         </ul>
-        <a href="/book?tier=growth" class="btn-primary w-full justify-center" style="background:var(--accent);">Get started →</a>
+        <a href="/book?tier=growth&billing=annual" class="btn-primary w-full justify-center" style="background:var(--accent);" data-tier-cta="growth">Get started →</a>
       </div>
 
       <!-- Enterprise -->
@@ -621,7 +629,7 @@
             <span style="font-size:14px;color:var(--ink);">White-label option available</span>
           </li>
         </ul>
-        <a href="/book?tier=enterprise" class="btn-primary w-full justify-center">Let's talk →</a>
+        <a href="/book?tier=enterprise&billing=annual" class="btn-primary w-full justify-center" data-tier-cta="enterprise">Let's talk →</a>
       </div>
     </div>
 
@@ -770,6 +778,12 @@
     var ma = document.getElementById('btn-monthly'), aa = document.getElementById('btn-annual');
     if(isAnnual){ aa.style.background='#fff'; aa.style.color='var(--ink)'; aa.style.boxShadow='0 1px 4px rgba(0,0,0,.1)'; ma.style.background='transparent'; ma.style.color='var(--muted)'; ma.style.boxShadow='none'; }
     else { ma.style.background='#fff'; ma.style.color='var(--ink)'; ma.style.boxShadow='0 1px 4px rgba(0,0,0,.1)'; aa.style.background='transparent'; aa.style.color='var(--muted)'; aa.style.boxShadow='none'; }
+    // Keep tier CTA hrefs in sync with the toggle so /book?tier=X&billing=Y matches what the visitor was just looking at.
+    var billingParam = isAnnual ? 'annual' : 'monthly';
+    document.querySelectorAll('a[data-tier-cta]').forEach(function(a){
+      var t = a.getAttribute('data-tier-cta');
+      a.setAttribute('href', '/book?tier=' + t + '&billing=' + billingParam);
+    });
   }
   setBilling(true); // default to annual
 </script>

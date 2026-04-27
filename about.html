@@ -43,7 +43,8 @@
     }
     html,body{background:var(--paper);color:var(--ink);font-family:'Inter',ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    .section-wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+    .section-wrap{max-width:1120px;margin:0 auto;padding:0 24px;}
+    @media(min-width:768px){.section-wrap{padding:0 32px;}}
     .btn-primary{background:var(--ink);color:#fff;padding:13px 22px;border-radius:10px;font-weight:600;font-size:15px;display:inline-flex;align-items:center;gap:8px;transition:transform .12s ease,opacity .12s ease;cursor:pointer;border:none;text-decoration:none;}
     .btn-primary:hover{opacity:.88;transform:translateY(-1px);}
     .btn-ghost{padding:13px 18px;border-radius:10px;font-weight:600;font-size:15px;color:var(--ink);border:1px solid var(--line);background:#fff;cursor:pointer;transition:background .12s ease;text-decoration:none;display:inline-flex;align-items:center;}
@@ -77,6 +78,7 @@
     /* Responsive: origin story 2-col */
     @media (max-width: 768px) {
       .origin-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+      .origin-aside { position: static !important; }
     }
     /* Skip link */
     .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 14px;border-radius:0 0 8px 0;font-size:13px;font-weight:600;z-index:100;}
@@ -92,24 +94,6 @@
 </head>
 <body>
 <a href="#main" class="skip-link">Skip to main content</a>
-
-<!-- Ticker -->
-<div class="ticker-bar" aria-hidden="true">
-  <div class="ticker-track">
-    <span>• <b>30-day go-live guarantee</b></span>
-    <span>• Avg. <b>$12,000+</b> saved / mo</span>
-    <span>• <b>40+ hrs</b> saved per week</span>
-    <span>• <b>3×</b> faster lead response</span>
-    <span>• <b>5×</b> avg. ROI in year 1</span>
-    <span>• <b>24/7</b> AI coverage — no sick days</span>
-    <span>• <b>30-day go-live guarantee</b></span>
-    <span>• Avg. <b>$12,000+</b> saved / mo</span>
-    <span>• <b>40+ hrs</b> saved per week</span>
-    <span>• <b>3×</b> faster lead response</span>
-    <span>• <b>5×</b> avg. ROI in year 1</span>
-    <span>• <b>24/7</b> AI coverage — no sick days</span>
-  </div>
-</div>
 
 <!-- Nav -->
 <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-[var(--line)]">
@@ -172,6 +156,24 @@
   })();
 </script>
 
+<!-- Ticker -->
+<div class="ticker-bar" aria-hidden="true">
+  <div class="ticker-track">
+    <span>• <b>30-day go-live guarantee</b></span>
+    <span>• Avg. <b>$12,000+</b> saved / mo</span>
+    <span>• <b>40+ hrs</b> saved per week</span>
+    <span>• <b>3×</b> faster lead response</span>
+    <span>• <b>5×</b> avg. ROI in year 1</span>
+    <span>• <b>24/7</b> AI coverage — no sick days</span>
+    <span>• <b>30-day go-live guarantee</b></span>
+    <span>• Avg. <b>$12,000+</b> saved / mo</span>
+    <span>• <b>40+ hrs</b> saved per week</span>
+    <span>• <b>3×</b> faster lead response</span>
+    <span>• <b>5×</b> avg. ROI in year 1</span>
+    <span>• <b>24/7</b> AI coverage — no sick days</span>
+  </div>
+</div>
+
 <main id="main">
 <!-- Hero -->
 <section class="grid-bg py-20 border-b border-[var(--line)]">
@@ -213,7 +215,7 @@
 <!-- Origin story -->
 <section class="py-20 border-b border-[var(--line)]">
   <div class="section-wrap">
-    <div class="origin-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start;">
+    <div class="origin-grid" style="display:grid;grid-template-columns:7fr 5fr;gap:64px;align-items:start;">
 
       <div>
         <div style="margin-bottom:12px;"><span class="sectionnum">Our story</span></div>
@@ -228,7 +230,7 @@
         </div>
       </div>
 
-      <div style="display:flex;flex-direction:column;gap:16px;padding-top:4px;">
+      <div class="origin-aside" style="display:flex;flex-direction:column;gap:16px;padding-top:4px;position:sticky;top:80px;align-self:start;">
         <!-- Case study card -->
         <div class="card ink-shadow" style="padding:24px;">
           <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;">Xtractor Depot · Case Study</div>

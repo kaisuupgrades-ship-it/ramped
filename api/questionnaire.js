@@ -8,6 +8,7 @@
 //   RESEND_API_KEY       — Resend key (owner notification email)
 
 import { isValidEmail, truncate, checkRateLimit, getClientIp } from './_lib/validate.js';
+import { signMapToken, isMapTokenConfigured } from './_lib/map-token.js';
 
 const SUPABASE_URL  = process.env.SUPABASE_URL;
 const SUPABASE_KEY  = process.env.SUPABASE_SERVICE_KEY;
@@ -194,12 +195,17 @@ export default async function handler(req, res) {
   if (!rl.ok) return res.status(429).json({ error: 'Too many requests. Please wait a moment.' });
 
   const body = req.body || {};
-  let { email, tier } = body;
+  let { email, tier, booking_id } = body;
 
   if (!email) return res.status(400).json({ error: 'email is required' });
   email = truncate(String(email).trim(), 254);
   if (!isValidEmail(email)) return res.status(400).json({ error: 'Please enter a valid email address.' });
   tier = tier ? truncate(String(tier).trim(), 32) : null;
+  // booking_id is preferred — passed by book.html after a successful /api/book.
+  // It guarantees the questionnaire attaches to the right booking even if the
+  // visitor has multiple pending bookings under the same email.
+  booking_id = booking_id ? String(booking_id).trim() : null;
+  if (booking_id && !/^[0-9a-f-]{36}$/i.test(booking_id)) booking_id = null;
 
   // Sanitize helpers
   const t = (v, max = MAX_FIELD) => v ? truncate(String(v).trim(), max) : null;
@@ -233,14 +239,35 @@ export default async function handler(req, res) {
     return res.status(200).json({ success: true, updated: false });
   }
 
-  // Find most recent booking for this email
-  const findResult = await supabase(
-    'GET',
-    `/bookings?email=eq.${encodeURIComponent(email)}&order=created_at.desc&limit=1&select=id,name,company,notes,tier`
-  );
+  // Find the booking. Prefer booking_id (passed from book.html post-confirmation
+  // flow). Fall back to most-recent-by-email only for legacy callers; this is the
+  // ambiguous path the audit flagged — log it loudly so we can spot stragglers.
+  let findResult;
+  if (booking_id) {
+    findResult = await supabase(
+      'GET',
+      `/bookings?id=eq.${encodeURIComponent(booking_id)}&select=id,name,company,notes,tier,email`
+    );
+    // Defense-in-depth: ensure the email on the looked-up booking matches the
+    // submitted email. Stops anyone from forcing a questionnaire onto a stranger's
+    // booking by guessing a UUID.
+    if (findResult.ok && Array.isArray(findResult.data) && findResult.data.length) {
+      const found = findResult.data[0];
+      if (found.email && found.email.toLowerCase() !== email.toLowerCase()) {
+        console.warn('Booking_id email mismatch — refusing to attach questionnaire', { booking_id, email });
+        return res.status(403).json({ error: 'Booking does not match the submitted email.' });
+      }
+    }
+  } else {
+    console.warn('Questionnaire submitted without booking_id — falling back to email lookup', { email });
+    findResult = await supabase(
+      'GET',
+      `/bookings?email=eq.${encodeURIComponent(email)}&order=created_at.desc&limit=1&select=id,name,company,notes,tier,email`
+    );
+  }
 
   if (!findResult.ok || !Array.isArray(findResult.data) || !findResult.data.length) {
-    console.warn('No booking found for email:', email);
+    console.warn('No booking found for', booking_id ? `id=${booking_id}` : `email=${email}`);
     return res.status(200).json({ success: true, updated: false });
   }
 
@@ -386,7 +413,17 @@ export default async function handler(req, res) {
   // Client roadmap email — send their personalized automation plan before the call
   if (roadmap && RESEND_KEY) {
     const SITE_URL    = process.env.SITE_URL || 'https://www.30dayramp.com';
-    const roadmapUrl  = `${SITE_URL}/roadmap?id=${bookingId}`;
+    // Sign the roadmap URL with an HMAC token so the link can't be brute-forced
+    // and expires after 30 days. See api/_lib/map-token.js.
+    let roadmapUrl;
+    if (isMapTokenConfigured()) {
+      const { exp, t } = signMapToken(bookingId);
+      roadmapUrl = `${SITE_URL}/roadmap?id=${bookingId}&exp=${exp}&t=${encodeURIComponent(t)}`;
+    } else {
+      // If MAP_LINK_SECRET isn't set, omit the link rather than ship an unsigned URL.
+      console.warn('MAP_LINK_SECRET not configured — skipping roadmap link in customer email');
+      roadmapUrl = '';
+    }
     const firstName   = (booking.name || email).split(/\s+/)[0];
     const agentCount  = roadmap.top_agents?.length || 0;
 
@@ -471,10 +508,11 @@ export default async function handler(req, res) {
       <p style="margin:0;font-size:14px;color:#F9FAFB;line-height:1.7;">${esc(roadmap.week_1_focus)}</p>
     </div>` : ''}
 
+    ${roadmapUrl ? `
     <!-- View online CTA -->
     <div style="text-align:center;margin-bottom:20px;">
       <a href="${esc(roadmapUrl)}" style="display:inline-block;background:#F3F4F6;color:#0B1220;font-size:13px;font-weight:600;text-decoration:none;padding:10px 20px;border-radius:8px;border:1px solid #E5E7EB;">🔗 View this roadmap online →</a>
-    </div>
+    </div>` : ''}
 
     <!-- Closing note -->
     <p style="font-size:14px;color:#374151;line-height:1.7;margin:0 0 24px;">This is a starting point — on the call we'll make sure it fits your actual workflow and prioritize what makes the most sense to ship first. No pressure, no pitch.</p>

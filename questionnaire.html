@@ -478,6 +478,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 /* ── Email guard — only accessible with a booking email in URL ── */
 var urlParams = new URLSearchParams(window.location.search);
 var prefilledEmail = (urlParams.get('email') || '').trim();
+var prefilledBookingId = (urlParams.get('booking_id') || '').trim();
 if (!prefilledEmail) {
   window.location.replace('/book');
 }
@@ -904,6 +905,7 @@ function submitForm() {
   var emailVal = prefilledEmail || (contact.email || '').trim();
   var payload = {
     email:            emailVal,
+    booking_id:       prefilledBookingId || undefined,
     name:             (contact.name || '').trim(),
     company:          (contact.company || '').trim(),
     industry:         (answers.industry || '').trim(),

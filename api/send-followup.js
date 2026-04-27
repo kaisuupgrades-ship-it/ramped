@@ -1,20 +1,15 @@
 // api/send-followup.js — send a post-call follow-up email to a prospect
 // POST /api/send-followup  { bookingId: string }
-// Auth: same Bearer token as api/admin-update
+// Auth: same Bearer token as every other admin endpoint (ADMIN_TOKEN env var,
+// constant-time compared in api/_lib/admin-auth.js).
+
+import { setAdminCors, isAuthorized } from './_lib/admin-auth.js';
 
 const SUPABASE_URL  = process.env.SUPABASE_URL;
 const SUPABASE_KEY  = process.env.SUPABASE_SERVICE_KEY;
 const RESEND_KEY    = process.env.RESEND_API_KEY;
-const ADMIN_PASS    = process.env.ADMIN_PASSWORD;
 const FROM_EMAIL    = 'bookings@30dayramp.com';
 const SITE_URL      = process.env.SITE_URL || 'https://www.30dayramp.com';
-
-const ALLOWED_ORIGINS = [
-  'https://30dayramp.com',
-  'https://www.30dayramp.com',
-  'https://ramped-git-main-kaisuupgrades-ship-its-projects.vercel.app',
-  'http://localhost:3000',
-];
 
 function esc(s) {
   return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -49,17 +44,14 @@ async function sendEmail(to, subject, html) {
 }
 
 export default async function handler(req, res) {
-  const o = req.headers.origin || '';
-  if (ALLOWED_ORIGINS.includes(o)) { res.setHeader('Access-Control-Allow-Origin', o); res.setHeader('Vary', 'Origin'); }
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  setAdminCors(req, res);
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  // Auth — same Bearer token as admin panel
-  const auth = req.headers.authorization || '';
-  const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
-  if (!ADMIN_PASS || token !== ADMIN_PASS) {
+  // Auth — shared helper (constant-time compare against ADMIN_TOKEN). Audit H4
+  // replaced this file's bespoke ADMIN_PASSWORD check so admin endpoints share
+  // one env var.
+  if (!isAuthorized(req)) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
