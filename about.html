@@ -175,45 +175,52 @@
 </div>
 
 <main id="main">
-<!-- Hero -->
-<section class="grid-bg py-20" style="background-image:radial-gradient(900px 500px at 90% 0%, rgba(31,79,255,0.07), transparent 60%), linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);background-size:auto, 32px 32px, 32px 32px;background-color:var(--paper);">
-  <div class="section-wrap">
-    <div style="margin-bottom:12px;"><span class="sectionnum">About Ramped AI</span></div>
-    <h1 style="font-size:clamp(2rem,4.5vw,3rem);font-weight:800;line-height:1.08;letter-spacing:-.03em;color:var(--ink);max-width:680px;margin-bottom:20px;">
+<!-- Hero — proportions matched to homepage hero (PR 7 Tier B vertical-rhythm fix) -->
+<section class="grid-bg" style="position:relative;overflow:hidden;background-image:radial-gradient(1100px 600px at 95% -5%, rgba(31,79,255,0.12), transparent 60%), radial-gradient(800px 500px at -5% 105%, rgba(31,79,255,0.06), transparent 55%), linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);background-size:auto, auto, 32px 32px, 32px 32px;background-color:var(--paper);">
+  <div class="section-wrap" style="padding-top:88px;padding-bottom:104px;">
+    <!-- Eyebrow pill — visual parity with homepage's amber pill -->
+    <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 14px;margin-bottom:28px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,0.7);backdrop-filter:blur(6px);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;">
+      <span style="width:6px;height:6px;border-radius:50%;background:var(--accent);"></span>
+      About Ramped AI
+    </div>
+    <h1 style="font-size:clamp(2.2rem,5vw,3.4rem);font-weight:800;line-height:1.05;letter-spacing:-.035em;color:var(--ink);max-width:760px;margin-bottom:24px;">
       Built by operators,<br>for operators.
     </h1>
-    <p style="font-size:1.05rem;color:var(--muted);line-height:1.8;max-width:560px;">
+    <p style="font-size:1.075rem;color:var(--muted);line-height:1.7;max-width:620px;margin-bottom:36px;">
       Ramped AI was founded by business owners who experienced the problem firsthand — manual, repetitive tasks draining time and capping growth. We didn't hire consultants to solve it. We built the AI department we wished we'd had.
+    </p>
+    <p style="font-size:13.5px;color:var(--muted);line-height:1.6;">
+      Founded by <strong style="color:var(--ink);font-weight:600;">Andrew Yoon</strong> — 10-year operator at Xtractor Depot.
     </p>
   </div>
 </section>
 
-<!-- Stats strip -->
-<section class="py-16 bg-white">
+<!-- Stats strip — promoted to proper metric cards (matches homepage hero treatment) -->
+<section class="py-20 bg-white">
   <div class="section-wrap">
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:36px 48px;">
-      <div class="about-stat">
-        <span class="about-stat-val">30 days</span>
-        <span class="about-stat-label">Guaranteed go-live for every client</span>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;">
+      <div class="card ink-shadow" style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px 26px;box-shadow:0 1px 0 rgba(11,18,32,0.04), 0 8px 24px -16px rgba(11,18,32,0.10);">
+        <span style="display:block;font-family:'JetBrains Mono',monospace;font-size:1.85rem;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.02em;margin-bottom:10px;">30 days</span>
+        <span style="display:block;font-size:13px;color:var(--muted);line-height:1.5;">Guaranteed go-live for every client</span>
       </div>
-      <div class="about-stat">
-        <span class="about-stat-val">14 hrs</span>
-        <span class="about-stat-label">Weekly manual work eliminated at our first client</span>
+      <div class="card ink-shadow" style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px 26px;box-shadow:0 1px 0 rgba(11,18,32,0.04), 0 8px 24px -16px rgba(11,18,32,0.10);">
+        <span style="display:block;font-family:'JetBrains Mono',monospace;font-size:1.85rem;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.02em;margin-bottom:10px;">14 hrs</span>
+        <span style="display:block;font-size:13px;color:var(--muted);line-height:1.5;">Weekly manual work eliminated at our first client</span>
       </div>
-      <div class="about-stat">
-        <span class="about-stat-val">4h → 8m</span>
-        <span class="about-stat-label">Lead response time improvement, Xtractor Depot</span>
+      <div class="card ink-shadow" style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px 26px;box-shadow:0 1px 0 rgba(11,18,32,0.04), 0 8px 24px -16px rgba(11,18,32,0.10);">
+        <span style="display:block;font-family:'JetBrains Mono',monospace;font-size:1.85rem;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.02em;margin-bottom:10px;">4h&nbsp;→&nbsp;8m</span>
+        <span style="display:block;font-size:13px;color:var(--muted);line-height:1.5;">Lead response time, Xtractor Depot</span>
       </div>
-      <div class="about-stat">
-        <span class="about-stat-val">$0</span>
-        <span class="about-stat-label">Ongoing management required after deployment</span>
+      <div class="card ink-shadow" style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px 26px;box-shadow:0 1px 0 rgba(11,18,32,0.04), 0 8px 24px -16px rgba(11,18,32,0.10);">
+        <span style="display:block;font-family:'JetBrains Mono',monospace;font-size:1.85rem;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.02em;margin-bottom:10px;">$0</span>
+        <span style="display:block;font-size:13px;color:var(--muted);line-height:1.5;">Ongoing management after deployment</span>
       </div>
     </div>
   </div>
 </section>
 
 <!-- Origin story -->
-<section class="py-20" style="background:var(--paper);">
+<section style="background:var(--paper);padding-block:96px;">
   <div class="section-wrap">
     <div class="origin-grid" style="display:grid;grid-template-columns:7fr 5fr;gap:64px;align-items:start;">
 
@@ -275,7 +282,7 @@
 </section>
 
 <!-- Team -->
-<section class="py-20 bg-white">
+<section class="bg-white" style="padding-block:96px;">
   <div class="section-wrap">
     <div style="margin-bottom:12px;"><span class="sectionnum">The team</span></div>
     <h2 style="font-size:clamp(1.5rem,3vw,2rem);font-weight:800;line-height:1.15;letter-spacing:-.02em;color:var(--ink);margin-bottom:8px;">
@@ -335,7 +342,7 @@
 </section>
 
 <!-- Values -->
-<section class="py-20 grid-bg" style="background:linear-gradient(180deg,#F5F8FF 0%,var(--paper) 100%);">
+<section class="grid-bg" style="background:linear-gradient(180deg,#F5F8FF 0%,var(--paper) 100%);padding-block:96px;">
   <div class="section-wrap">
     <div style="margin-bottom:12px;"><span class="sectionnum">How we work</span></div>
     <h2 style="font-size:clamp(1.5rem,3vw,2rem);font-weight:800;line-height:1.15;letter-spacing:-.02em;color:var(--ink);margin-bottom:48px;">
@@ -390,7 +397,7 @@
 </section>
 
 <!-- CTA -->
-<section class="py-20 bg-white">
+<section class="bg-white" style="padding-block:96px;">
   <div class="section-wrap" style="text-align:center;">
     <h2 style="font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;line-height:1.15;letter-spacing:-.02em;color:var(--ink);margin-bottom:12px;">
       Ready to ramp?
