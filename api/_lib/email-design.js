@@ -23,7 +23,7 @@ const FROM_EMAIL = 'jon@30dayramp.com';
 // Bulletproof header with brand-blue R mark + wordmark on dark navy.
 // Uses table layout so it renders correctly in Gmail / Outlook / Apple Mail.
 export function emailHeader() {
-  return `<tr><td style="background:#0B1220;border-radius:16px 16px 0 0;padding:24px 36px;">
+  return `<tr><td class="ehead-pad" style="background:#0B1220;border-radius:16px 16px 0 0;padding:24px 36px;">
   <table cellpadding="0" cellspacing="0" border="0" role="presentation">
     <tr>
       <td style="vertical-align:middle;padding-right:12px;line-height:0;">
@@ -38,7 +38,7 @@ export function emailHeader() {
 // Footer with brand info + privacy + reschedule contact.
 // `siteUrl` lets callers override (matches process.env.SITE_URL).
 export function emailFooter({ siteUrl = SITE_URL_DEFAULT, showPrivacy = true } = {}) {
-  return `<tr><td style="background:#FAFAF7;border-radius:0 0 16px 16px;padding:28px 36px;border-top:1px solid #E6E4DC;">
+  return `<tr><td class="efoot-pad" style="background:#FAFAF7;border-radius:0 0 16px 16px;padding:28px 36px;border-top:1px solid #E6E4DC;">
   <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
     <tr>
       <td style="vertical-align:top;font-family:'Helvetica Neue',Arial,sans-serif;font-size:12px;color:#5B6272;line-height:1.5;">
@@ -64,10 +64,34 @@ export function wrapEmail({ subject, preheader, innerRows, siteUrl }) {
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>${subject}</title>
+<style>
+/* Mobile-only overrides — modern Gmail / Apple Mail / iOS Outlook respect these.
+   Older clients fall back to inline styles, which are intentionally desktop-first. */
+@media only screen and (max-width:480px) {
+  table.outer-pad { padding:18px 8px !important; }
+  td.ep { padding-left:20px !important; padding-right:20px !important; }
+  td.ep-top { padding-top:24px !important; }
+  td.ep-bot { padding-bottom:18px !important; }
+  td.ehead-pad { padding:18px 20px !important; }
+  td.efoot-pad { padding:20px 20px !important; }
+  h1.ehero-h1 { font-size:21px !important; line-height:1.25 !important; }
+  td.ecta-pad-in, td.einfo-pad-in { padding:20px 18px !important; }
+  td.estat-cell { padding:14px 4px !important; }
+  div.estat-num { font-size:21px !important; }
+  div.estat-lab { font-size:9px !important; letter-spacing:0.06em !important; }
+  td.eagent-pad-in { padding:14px 16px !important; }
+  span.eagent-name { font-size:14px !important; }
+  span.eagent-pill { font-size:10px !important; padding:2px 7px !important; white-space:nowrap; }
+  td.eagent-pill-cell { display:block !important; padding:6px 0 0 0 !important; text-align:left !important; }
+  td.eagent-name-cell { display:block !important; width:100% !important; }
+  div.eagent-icon { width:28px !important; height:28px !important; line-height:28px !important; font-size:12px !important; }
+  td.eagent-icon-cell { width:36px !important; padding-right:10px !important; }
+}
+</style>
 </head>
 <body style="margin:0;padding:0;background:#F5F5F3;font-family:'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased;color:#0B1220;">
 ${pre}
-<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="background:#F5F5F3;padding:32px 16px;">
+<table class="outer-pad" width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="background:#F5F5F3;padding:32px 16px;">
 <tr><td align="center">
 <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="max-width:580px;background:#FFFFFF;border-radius:16px;box-shadow:0 1px 0 rgba(11,18,32,0.04), 0 12px 36px -16px rgba(11,18,32,0.10);">
 ${emailHeader()}
@@ -82,23 +106,23 @@ ${emailFooter({ siteUrl })}
 
 // Hero band inside the email body (the eyebrow + big headline + supporting line).
 export function emailHero({ eyebrow, headline, sub }) {
-  return `<tr><td style="background:#FFFFFF;padding:36px 36px 12px;">
+  return `<tr><td class="ep ep-top" style="background:#FFFFFF;padding:36px 36px 12px;">
   ${eyebrow ? `<p style="margin:0 0 10px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#1F4FFF;">${eyebrow}</p>` : ''}
-  <h1 style="margin:0 0 ${sub ? '12px' : '0'};font-family:'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:24px;line-height:1.2;letter-spacing:-0.02em;color:#0B1220;">${headline}</h1>
+  <h1 class="ehero-h1" style="margin:0 0 ${sub ? '12px' : '0'};font-family:'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:24px;line-height:1.2;letter-spacing:-0.02em;color:#0B1220;">${headline}</h1>
   ${sub ? `<p style="margin:0;font-family:'Helvetica Neue',Arial,sans-serif;font-size:14px;line-height:1.6;color:#5B6272;">${sub}</p>` : ''}
 </td></tr>`;
 }
 
 // Body copy block with clean type and consistent padding.
 export function emailBody(html) {
-  return `<tr><td style="background:#FFFFFF;padding:12px 36px 28px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:14.5px;line-height:1.65;color:#374151;">${html}</td></tr>`;
+  return `<tr><td class="ep" style="background:#FFFFFF;padding:12px 36px 28px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:14.5px;line-height:1.65;color:#374151;">${html}</td></tr>`;
 }
 
 // Primary CTA card — light blue bg, centered, single button.
 export function emailCtaCard({ eyebrow, title, body, ctaHref, ctaLabel }) {
-  return `<tr><td style="background:#FFFFFF;padding:0 36px 28px;">
+  return `<tr><td class="ep" style="background:#FFFFFF;padding:0 36px 28px;">
   <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="background:#EEF3FF;border-radius:12px;">
-    <tr><td style="padding:24px 28px;text-align:center;">
+    <tr><td class="ecta-pad-in" style="padding:24px 28px;text-align:center;">
       ${eyebrow ? `<p style="margin:0 0 6px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#1F4FFF;">${eyebrow}</p>` : ''}
       ${title ? `<p style="margin:0 0 12px;font-family:'Helvetica Neue',Arial,sans-serif;font-weight:700;font-size:16px;color:#0B1220;line-height:1.3;">${title}</p>` : ''}
       ${body ? `<p style="margin:0 0 18px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:13.5px;color:#5B6272;line-height:1.6;">${body}</p>` : ''}
@@ -110,9 +134,9 @@ export function emailCtaCard({ eyebrow, title, body, ctaHref, ctaLabel }) {
 
 // Inline info card — white with border. Used for things like "your call link".
 export function emailInfoCard({ eyebrow, title, body, ctaHref, ctaLabel }) {
-  return `<tr><td style="background:#FFFFFF;padding:0 36px 24px;">
+  return `<tr><td class="ep" style="background:#FFFFFF;padding:0 36px 24px;">
   <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="border:1px solid #E6E4DC;border-radius:12px;">
-    <tr><td style="padding:18px 22px;">
+    <tr><td class="einfo-pad-in" style="padding:18px 22px;">
       ${eyebrow ? `<p style="margin:0 0 4px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#5B6272;">${eyebrow}</p>` : ''}
       ${title ? `<p style="margin:0 0 ${(body || ctaHref) ? '10px' : '0'};font-family:'Helvetica Neue',Arial,sans-serif;font-weight:700;font-size:15px;color:#0B1220;line-height:1.3;">${title}</p>` : ''}
       ${body ? `<p style="margin:0 0 ${ctaHref ? '12px' : '0'};font-family:'Helvetica Neue',Arial,sans-serif;font-size:13.5px;color:#374151;line-height:1.55;">${body}</p>` : ''}
@@ -124,7 +148,7 @@ export function emailInfoCard({ eyebrow, title, body, ctaHref, ctaLabel }) {
 
 // Sign-off block — "— Jon @ Ramped AI" with the founder's mention.
 export function emailSignoff({ name = 'Jon', extra = '' } = {}) {
-  return `<tr><td style="background:#FFFFFF;padding:0 36px 32px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:13.5px;line-height:1.6;color:#5B6272;">
+  return `<tr><td class="ep" style="background:#FFFFFF;padding:0 36px 32px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:13.5px;line-height:1.6;color:#5B6272;">
   ${extra ? `<p style="margin:0 0 14px;">${extra}</p>` : ''}
   <p style="margin:0;">— <strong style="color:#0B1220;font-weight:600;">${name}</strong> &nbsp;·&nbsp; Ramped AI</p>
 </td></tr>`;

@@ -432,17 +432,17 @@ export default async function handler(req, res) {
       `<div style="background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:18px 20px;margin-bottom:10px;">
         <table style="width:100%;border-collapse:collapse;">
           <tr>
-            <td style="width:42px;vertical-align:top;padding-right:14px;">
-              <div style="width:32px;height:32px;border-radius:50%;background:#1F4FFF;color:#fff;font-size:14px;font-weight:800;text-align:center;line-height:32px;">${i + 1}</div>
+            <td class="eagent-icon-cell" style="width:42px;vertical-align:top;padding-right:14px;">
+              <div class="eagent-icon" style="width:32px;height:32px;border-radius:50%;background:#1F4FFF;color:#fff;font-size:14px;font-weight:800;text-align:center;line-height:32px;">${i + 1}</div>
             </td>
             <td style="vertical-align:top;">
               <table style="width:100%;border-collapse:collapse;margin-bottom:6px;">
                 <tr>
-                  <td style="vertical-align:middle;">
-                    <span style="font-size:15px;font-weight:700;color:#0B1220;">${esc(a.name)}</span>
+                  <td class="eagent-name-cell" style="vertical-align:middle;">
+                    <span class="eagent-name" style="font-size:15px;font-weight:700;color:#0B1220;">${esc(a.name)}</span>
                   </td>
-                  ${a.channel ? `<td style="text-align:right;vertical-align:middle;white-space:nowrap;padding-left:8px;">
-                    <span style="display:inline-block;background:#E8F0FE;color:#1F4FFF;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;">${esc(a.channel)}</span>
+                  ${a.channel ? `<td class="eagent-pill-cell" style="text-align:right;vertical-align:middle;white-space:nowrap;padding-left:8px;">
+                    <span class="eagent-pill" style="display:inline-block;background:#E8F0FE;color:#1F4FFF;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;">${esc(a.channel)}</span>
                   </td>` : ''}
                 </tr>
               </table>
@@ -455,14 +455,14 @@ export default async function handler(req, res) {
     ).join('') || '';
 
     // Build the agent cards block (kept as a custom inner row since it has rich content)
-    const agentsRow = clientAgentsHTML ? `<tr><td style="background:#FFFFFF;padding:0 36px 8px;">
+    const agentsRow = clientAgentsHTML ? `<tr><td class="ep" style="background:#FFFFFF;padding:0 36px 8px;">
       <p style="margin:0 0 14px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5B6272;">What we'd build for you</p>
       ${clientAgentsHTML}
     </td></tr>` : '';
 
-    const summaryRow = roadmap.summary ? `<tr><td style="background:#FFFFFF;padding:0 36px 24px;">
+    const summaryRow = roadmap.summary ? `<tr><td class="ep" style="background:#FFFFFF;padding:0 36px 24px;">
       <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="background:#EEF3FF;border-radius:12px;border-left:4px solid #1F4FFF;">
-        <tr><td style="padding:18px 22px;">
+        <tr><td class="einfo-pad-in" style="padding:18px 22px;">
           <p style="margin:0 0 6px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#1F4FFF;">Your opportunity</p>
           <p style="margin:0;font-family:'Helvetica Neue',Arial,sans-serif;font-size:14.5px;color:#0B1220;line-height:1.65;font-style:italic;">"${esc(roadmap.summary)}"</p>
         </td></tr>
@@ -470,29 +470,29 @@ export default async function handler(req, res) {
     </td></tr>` : '';
 
     // Three-stat band (agent count, 30 days, $0)
-    const statsRow = `<tr><td style="background:#FFFFFF;padding:0 36px 24px;">
+    const statsRow = `<tr><td class="ep" style="background:#FFFFFF;padding:0 36px 24px;">
       <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="border:1px solid #E6E4DC;border-radius:12px;background:#FAFAF7;">
         <tr>
-          <td style="text-align:center;padding:18px 8px;border-right:1px solid #E6E4DC;width:33.33%;">
-            <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:24px;font-weight:900;color:#1F4FFF;line-height:1;">${agentCount}</div>
-            <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:10px;color:#5B6272;margin-top:5px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">AI Agents</div>
+          <td class="estat-cell" style="text-align:center;padding:18px 8px;border-right:1px solid #E6E4DC;width:33.33%;">
+            <div class="estat-num" style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:24px;font-weight:900;color:#1F4FFF;line-height:1;">${agentCount}</div>
+            <div class="estat-lab" style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:10px;color:#5B6272;margin-top:5px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">AI Agents</div>
           </td>
-          <td style="text-align:center;padding:18px 8px;border-right:1px solid #E6E4DC;width:33.33%;">
-            <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:24px;font-weight:900;color:#1F4FFF;line-height:1;">30</div>
-            <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:10px;color:#5B6272;margin-top:5px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">Day Go-Live</div>
+          <td class="estat-cell" style="text-align:center;padding:18px 8px;border-right:1px solid #E6E4DC;width:33.33%;">
+            <div class="estat-num" style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:24px;font-weight:900;color:#1F4FFF;line-height:1;">30</div>
+            <div class="estat-lab" style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:10px;color:#5B6272;margin-top:5px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">Day Go-Live</div>
           </td>
-          <td style="text-align:center;padding:18px 8px;width:33.33%;">
-            <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:24px;font-weight:900;color:#0F7A4B;line-height:1;">$0</div>
-            <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:10px;color:#5B6272;margin-top:5px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">If We Miss It</div>
+          <td class="estat-cell" style="text-align:center;padding:18px 8px;width:33.33%;">
+            <div class="estat-num" style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:24px;font-weight:900;color:#0F7A4B;line-height:1;">$0</div>
+            <div class="estat-lab" style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:10px;color:#5B6272;margin-top:5px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">If We Miss It</div>
           </td>
         </tr>
       </table>
     </td></tr>`;
 
     // Week 1 focus block (dark navy, accent eyebrow)
-    const week1Row = roadmap.week_1_focus ? `<tr><td style="background:#FFFFFF;padding:0 36px 24px;">
+    const week1Row = roadmap.week_1_focus ? `<tr><td class="ep" style="background:#FFFFFF;padding:0 36px 24px;">
       <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="background:#0B1220;border-radius:12px;">
-        <tr><td style="padding:20px 22px;">
+        <tr><td class="einfo-pad-in" style="padding:20px 22px;">
           <p style="margin:0 0 8px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#1F4FFF;">⚡ Where we'd start</p>
           <p style="margin:0;font-family:'Helvetica Neue',Arial,sans-serif;font-size:14px;color:#F9FAFB;line-height:1.65;">${esc(roadmap.week_1_focus)}</p>
         </td></tr>
