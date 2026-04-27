@@ -36,15 +36,22 @@
 
     /* Team card */
     .team-card{background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden;}
-    .team-card-photo{width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--surface);display:flex;align-items:center;justify-content:center;}
-    .team-card-photo-placeholder{width:100%;aspect-ratio:4/3;background:linear-gradient(135deg,var(--surface) 0%,#E8EAEF 100%);display:flex;align-items:center;justify-content:center;}
+    .team-card-photo-placeholder{width:100%;aspect-ratio:3/2;background:linear-gradient(135deg,var(--surface) 0%,#E8EAEF 100%);display:flex;align-items:center;justify-content:center;}
 
     /* Stat strip */
-    .about-stat{border-left:2px solid var(--accent);padding-left:14px;}
-    .about-stat-val{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:700;color:var(--ink);line-height:1;display:block;margin-bottom:4px;}
-    .about-stat-label{font-size:13px;color:var(--muted);line-height:1.4;}
+    .about-stat{border-left:3px solid var(--accent);padding-left:16px;}
+    .about-stat-val{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:700;color:var(--ink);line-height:1;display:block;margin-bottom:6px;}
+    .about-stat-label{font-size:13px;color:var(--muted);line-height:1.5;}
+
+    /* Value icon */
+    .value-icon{width:40px;height:40px;border-radius:10px;background:var(--surface);display:flex;align-items:center;justify-content:center;margin-bottom:14px;flex-shrink:0;}
 
     nav a:hover{color:var(--ink);}
+
+    /* Responsive: origin story 2-col */
+    @media (max-width: 768px) {
+      .origin-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+    }
   </style>
 </head>
 <body>
@@ -79,11 +86,13 @@
       </svg>
       <span style="font-weight:700;font-size:15px;color:var(--ink);">Ramped AI</span>
     </a>
-    <nav class="hidden sm:flex items-center gap-3" aria-label="Primary">
-      <a href="/about" class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;background:var(--surface);">About</a>
-      <a href="/demo" class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">Demo</a>
-      <a href="/comparison" class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">VA vs. AI</a>
-      <a href="/book" class="btn-primary whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">Get started →</a>
+    <nav class="hidden sm:flex items-center gap-2" aria-label="Primary">
+      <a href="/#how-it-works" class="btn-ghost whitespace-nowrap" style="padding:9px 14px;font-size:13px;min-height:40px;">How it works</a>
+      <a href="/#pricing"      class="btn-ghost whitespace-nowrap" style="padding:9px 14px;font-size:13px;min-height:40px;">Pricing</a>
+      <a href="/about"         class="btn-ghost whitespace-nowrap" style="padding:9px 14px;font-size:13px;min-height:40px;background:var(--surface);">About</a>
+      <a href="/demo"          class="btn-ghost whitespace-nowrap" style="padding:9px 14px;font-size:13px;min-height:40px;">Demo</a>
+      <a href="/comparison"    class="btn-ghost whitespace-nowrap" style="padding:9px 14px;font-size:13px;min-height:40px;">VA vs. AI</a>
+      <a href="/book"          class="btn-primary whitespace-nowrap" style="padding:9px 16px;font-size:13px;min-height:40px;">Get started →</a>
     </nav>
   </div>
 </header>
@@ -91,20 +100,20 @@
 <!-- Hero -->
 <section class="grid-bg py-20 border-b border-[var(--line)]">
   <div class="section-wrap">
-    <div class="mb-3"><span class="sectionnum">About Ramped AI</span></div>
-    <h1 style="font-size:clamp(2rem,4.5vw,3rem);font-weight:800;line-height:1.08;letter-spacing:-.03em;color:var(--ink);max-width:700px;" class="mb-6">
+    <div style="margin-bottom:12px;"><span class="sectionnum">About Ramped AI</span></div>
+    <h1 style="font-size:clamp(2rem,4.5vw,3rem);font-weight:800;line-height:1.08;letter-spacing:-.03em;color:var(--ink);max-width:680px;margin-bottom:20px;">
       Built by operators,<br>for operators.
     </h1>
-    <p style="font-size:1.1rem;color:var(--muted);line-height:1.75;max-width:580px;">
-      Ramped AI was founded by business owners who experienced the problem firsthand — manual, high-friction tasks draining time and capping growth. We didn't hire consultants to solve it. We built the AI department we wished we'd had.
+    <p style="font-size:1.05rem;color:var(--muted);line-height:1.8;max-width:560px;">
+      Ramped AI was founded by business owners who experienced the problem firsthand — manual, repetitive tasks draining time and capping growth. We didn't hire consultants to solve it. We built the AI department we wished we'd had.
     </p>
   </div>
 </section>
 
-<!-- Stats -->
+<!-- Stats strip -->
 <section class="py-16 border-b border-[var(--line)] bg-white">
   <div class="section-wrap">
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:32px 48px;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:36px 48px;">
       <div class="about-stat">
         <span class="about-stat-val">30 days</span>
         <span class="about-stat-label">Guaranteed go-live for every client</span>
@@ -115,7 +124,7 @@
       </div>
       <div class="about-stat">
         <span class="about-stat-val">4h → 8m</span>
-        <span class="about-stat-label">Response time improvement at Xtractor Depot</span>
+        <span class="about-stat-label">Lead response time improvement, Xtractor Depot</span>
       </div>
       <div class="about-stat">
         <span class="about-stat-val">$0</span>
@@ -128,51 +137,61 @@
 <!-- Origin story -->
 <section class="py-20 border-b border-[var(--line)]">
   <div class="section-wrap">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start;" class="md:grid-cols-2">
+    <div class="origin-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start;">
 
       <div>
-        <div class="mb-3"><span class="sectionnum">Our story</span></div>
-        <h2 style="font-size:clamp(1.5rem,3vw,2.1rem);font-weight:800;line-height:1.15;letter-spacing:-.02em;color:var(--ink);" class="mb-6">
-          The problem we lived before we built the solution.
+        <div style="margin-bottom:12px;"><span class="sectionnum">Our story</span></div>
+        <h2 style="font-size:clamp(1.5rem,3vw,2rem);font-weight:800;line-height:1.15;letter-spacing:-.02em;color:var(--ink);margin-bottom:24px;">
+          We lived the problem before we built the solution.
         </h2>
-        <div style="display:flex;flex-direction:column;gap:16px;font-size:15px;color:var(--muted);line-height:1.8;">
+        <div style="display:flex;flex-direction:column;gap:16px;font-size:15px;color:var(--muted);line-height:1.85;">
           <p>Running Xtractor Depot — a fast-scaling physical-goods business supplying extraction equipment to clients from cannabis operators to SpaceX and Lucid Motors — meant dealing with an endless stream of manual, repetitive tasks. Quote intake. Follow-up emails. Lead qualification. Status updates. Each one small on its own. Together, they consumed weeks of productive time every month.</p>
-          <p>Existing AI tools promised automation but delivered dashboards. Consultants delivered decks, not working software. The market had a gap: no one was actually building and running the systems for you.</p>
-          <p>Ramped AI was founded to close that gap — deploying a fully operational AI department for any operating business, live in 30 days, on a flat monthly fee. No technical staff required. No endless onboarding. Just results.</p>
-          <p>Xtractor Depot became our first case study. After deployment: 14 hours of manual work eliminated per week, response times dropped from 4 hours to under 8 minutes, with zero ongoing management.</p>
+          <p>Existing AI tools promised automation but delivered dashboards. Consultants delivered decks, not working software. The market had a clear gap: no one was actually building and running the systems for you on an ongoing basis.</p>
+          <p>Ramped AI was founded to close that gap. We deploy a fully operational AI department for any operating business — live in 30 days, on a flat monthly retainer. No technical staff required. No endless onboarding. Just results.</p>
+          <p>Xtractor Depot was our first deployment. Results: 14 hours of manual work eliminated per week, lead response times dropped from 4 hours to under 8 minutes, zero ongoing management overhead.</p>
         </div>
       </div>
 
-      <div style="display:flex;flex-direction:column;gap:16px;padding-top:8px;">
-        <div class="card ink-shadow p-6">
-          <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">Xtractor Depot · Case Study</div>
-          <div style="display:flex;flex-direction:column;gap:14px;">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:14px;border-bottom:1px solid var(--line);">
+      <div style="display:flex;flex-direction:column;gap:16px;padding-top:4px;">
+        <!-- Case study card -->
+        <div class="card ink-shadow" style="padding:24px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;">Xtractor Depot · Case Study</div>
+          <div style="display:flex;flex-direction:column;gap:0;">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);">
               <div>
-                <div style="font-size:13px;color:var(--muted);">Manual work eliminated</div>
-                <div style="font-size:1.6rem;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ink);">14 hrs/wk</div>
+                <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Manual work eliminated</div>
+                <div style="font-size:1.5rem;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ink);line-height:1;">14 hrs/wk</div>
               </div>
-              <div style="background:#F0FDF4;color:#16A34A;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;">Verified</div>
+              <span style="background:#F0FDF4;color:#16A34A;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;flex-shrink:0;">Verified</span>
             </div>
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:14px;border-bottom:1px solid var(--line);">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);">
               <div>
-                <div style="font-size:13px;color:var(--muted);">Lead response time</div>
-                <div style="font-size:1.6rem;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ink);">4h → 8m</div>
+                <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Lead response time</div>
+                <div style="font-size:1.5rem;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ink);line-height:1;">4h → 8m</div>
               </div>
-              <div style="background:#F0FDF4;color:#16A34A;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;">Verified</div>
+              <span style="background:#F0FDF4;color:#16A34A;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;flex-shrink:0;">Verified</span>
             </div>
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;">
               <div>
-                <div style="font-size:13px;color:var(--muted);">Ongoing management required</div>
-                <div style="font-size:1.6rem;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ink);">Zero</div>
+                <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Ongoing management required</div>
+                <div style="font-size:1.5rem;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ink);line-height:1;">Zero</div>
               </div>
-              <div style="background:#F0FDF4;color:#16A34A;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;">Verified</div>
+              <span style="background:#F0FDF4;color:#16A34A;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;flex-shrink:0;">Verified</span>
             </div>
           </div>
         </div>
 
-        <div class="card p-5" style="background:var(--surface);border-color:var(--line);">
-          <p style="font-size:14px;color:var(--muted);line-height:1.7;font-style:italic;">"Andrew's vision for Ramped AI is straightforward and battle-tested: give every operating business the same operational edge he built at Xtractor Depot, but powered by AI that actually works out of the box instead of becoming 'one more thing to manage.'"</p>
+        <!-- Industry card -->
+        <div class="card" style="padding:20px;background:var(--surface);">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Industries served</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            <span style="font-size:12px;font-weight:600;padding:4px 12px;border-radius:999px;background:#fff;color:var(--ink);border:1px solid var(--line);">Manufacturing</span>
+            <span style="font-size:12px;font-weight:600;padding:4px 12px;border-radius:999px;background:#fff;color:var(--ink);border:1px solid var(--line);">Professional Services</span>
+            <span style="font-size:12px;font-weight:600;padding:4px 12px;border-radius:999px;background:#fff;color:var(--ink);border:1px solid var(--line);">E-commerce</span>
+            <span style="font-size:12px;font-weight:600;padding:4px 12px;border-radius:999px;background:#fff;color:var(--ink);border:1px solid var(--line);">Healthcare</span>
+            <span style="font-size:12px;font-weight:600;padding:4px 12px;border-radius:999px;background:#fff;color:var(--ink);border:1px solid var(--line);">Real Estate</span>
+            <span style="font-size:12px;font-weight:600;padding:4px 12px;border-radius:999px;background:#fff;color:var(--ink);border:1px solid var(--line);">B2B SaaS</span>
+          </div>
         </div>
       </div>
 
@@ -183,53 +202,57 @@
 <!-- Team -->
 <section class="py-20 border-b border-[var(--line)] bg-white">
   <div class="section-wrap">
-    <div class="mb-3"><span class="sectionnum">The team</span></div>
-    <h2 style="font-size:clamp(1.5rem,3vw,2.1rem);font-weight:800;line-height:1.15;letter-spacing:-.02em;color:var(--ink);" class="mb-3">
+    <div style="margin-bottom:12px;"><span class="sectionnum">The team</span></div>
+    <h2 style="font-size:clamp(1.5rem,3vw,2rem);font-weight:800;line-height:1.15;letter-spacing:-.02em;color:var(--ink);margin-bottom:8px;">
       Operators first. Technologists second.
     </h2>
     <p style="font-size:15px;color:var(--muted);line-height:1.7;max-width:520px;margin-bottom:48px;">Every person on this team has run a real business. We know what it costs to have the wrong systems — or none at all.</p>
 
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px;max-width:800px;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px;max-width:760px;">
 
       <!-- Andrew Yoon -->
       <div class="team-card ink-shadow">
         <div class="team-card-photo-placeholder">
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-            <circle cx="32" cy="24" r="14" fill="var(--line)"/>
-            <ellipse cx="32" cy="54" rx="22" ry="14" fill="var(--line)"/>
+          <!-- Placeholder silhouette -->
+          <svg width="72" height="72" viewBox="0 0 72 72" fill="none" aria-hidden="true">
+            <circle cx="36" cy="26" r="16" fill="var(--line)"/>
+            <ellipse cx="36" cy="62" rx="26" ry="16" fill="var(--line)"/>
           </svg>
         </div>
-        <div style="padding:24px;">
-          <div style="margin-bottom:16px;">
+        <div style="padding:24px 24px 28px;">
+          <div style="margin-bottom:6px;">
             <div style="font-size:19px;font-weight:800;color:var(--ink);letter-spacing:-.02em;">Andrew Yoon</div>
-            <div style="font-size:13px;font-weight:600;color:var(--accent);margin-top:3px;">Founder &amp; CEO</div>
+            <div style="font-size:13px;font-weight:600;color:var(--accent);margin-top:4px;">Founder &amp; CEO</div>
           </div>
-          <p style="font-size:14px;color:var(--muted);line-height:1.75;margin-bottom:16px;">Andrew is the Founder and CEO of Ramped AI and Xtractor Depot. A Saint Louis University accounting graduate, his entrepreneurial journey began in college before founding Xtractor Depot in 2016 — which grew into a multi-industry innovator supplying precision lab equipment to clients ranging from cannabis operators to SpaceX and Lucid Motors.</p>
-          <p style="font-size:14px;color:var(--muted);line-height:1.75;margin-bottom:16px;">Running a fast-scaling physical-goods business revealed a universal problem: manual, high-friction tasks were draining time and limiting growth. That insight led him to co-found Ramped AI — delivering an entire AI department, live in 30 days, on a flat monthly fee with guaranteed results.</p>
-          <p style="font-size:14px;color:var(--muted);line-height:1.75;margin-bottom:20px;">Outside the office, Andrew plays ice hockey, golf, tennis, and paintball. He lives in Los Angeles County with his wife Steph and their dogs.</p>
+          <div style="width:32px;height:2px;background:var(--line);margin:14px 0;"></div>
+          <p style="font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:14px;">Andrew founded Xtractor Depot in 2016, growing it into a multi-industry supplier of precision lab equipment to clients ranging from cannabis operators to SpaceX and Lucid Motors. A Saint Louis University accounting graduate, he started his entrepreneurial journey in college.</p>
+          <p style="font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:14px;">Running a fast-scaling physical-goods business exposed a universal gap: no one was building and running AI automation systems for operating businesses on an ongoing basis. That insight became Ramped AI.</p>
+          <p style="font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:20px;">Outside the office, Andrew plays ice hockey, golf, tennis, and paintball. He lives in Los Angeles County with his wife Steph and their dogs.</p>
           <div style="display:flex;flex-wrap:wrap;gap:6px;">
-            <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface);color:var(--muted);">Operations</span>
-            <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface);color:var(--muted);">B2B Sales</span>
-            <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface);color:var(--muted);">Manufacturing</span>
-            <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface);color:var(--muted);">AI Strategy</span>
+            <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface);color:var(--muted);border:1px solid var(--line);">Operations</span>
+            <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface);color:var(--muted);border:1px solid var(--line);">B2B Sales</span>
+            <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface);color:var(--muted);border:1px solid var(--line);">Manufacturing</span>
+            <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface);color:var(--muted);border:1px solid var(--line);">AI Strategy</span>
           </div>
         </div>
       </div>
 
-      <!-- Co-founder placeholder -->
-      <div class="team-card ink-shadow">
-        <div class="team-card-photo-placeholder">
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-            <circle cx="32" cy="24" r="14" fill="var(--line)"/>
-            <ellipse cx="32" cy="54" rx="22" ry="14" fill="var(--line)"/>
+      <!-- Co-founder coming soon -->
+      <div class="team-card" style="border-style:dashed;background:var(--surface);">
+        <div style="width:100%;aspect-ratio:3/2;background:linear-gradient(135deg,var(--surface) 0%,var(--line) 100%);display:flex;align-items:center;justify-content:center;">
+          <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true">
+            <circle cx="28" cy="28" r="27" stroke="var(--line)" stroke-width="2" stroke-dasharray="4 4"/>
+            <line x1="28" y1="18" x2="28" y2="38" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"/>
+            <line x1="18" y1="28" x2="38" y2="28" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </div>
-        <div style="padding:24px;">
-          <div style="margin-bottom:16px;">
-            <div style="font-size:19px;font-weight:800;color:var(--ink);letter-spacing:-.02em;">Co-Founder</div>
-            <div style="font-size:13px;font-weight:600;color:var(--accent);margin-top:3px;">COO</div>
+        <div style="padding:24px 24px 28px;">
+          <div style="margin-bottom:6px;">
+            <div style="font-size:17px;font-weight:700;color:var(--muted);letter-spacing:-.01em;">Co-Founder · COO</div>
+            <div style="font-size:13px;font-weight:500;color:var(--muted);margin-top:4px;opacity:.7;">Coming soon</div>
           </div>
-          <p style="font-size:14px;color:var(--muted);line-height:1.75;margin-bottom:20px;">Bio coming soon.</p>
+          <div style="width:32px;height:2px;background:var(--line);margin:14px 0;"></div>
+          <p style="font-size:14px;color:var(--muted);line-height:1.8;opacity:.7;">We're growing the team. More to come here soon.</p>
         </div>
       </div>
 
@@ -240,31 +263,54 @@
 <!-- Values -->
 <section class="py-20 border-b border-[var(--line)] grid-bg">
   <div class="section-wrap">
-    <div class="mb-3"><span class="sectionnum">How we work</span></div>
-    <h2 style="font-size:clamp(1.5rem,3vw,2.1rem);font-weight:800;line-height:1.15;letter-spacing:-.02em;color:var(--ink);" class="mb-12">
-      A few things we care about.
+    <div style="margin-bottom:12px;"><span class="sectionnum">How we work</span></div>
+    <h2 style="font-size:clamp(1.5rem,3vw,2rem);font-weight:800;line-height:1.15;letter-spacing:-.02em;color:var(--ink);margin-bottom:48px;">
+      A few things we care deeply about.
     </h2>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;">
-      <div class="card ink-shadow p-6">
-        <div style="font-size:22px;margin-bottom:12px;">⚙️</div>
+
+      <div class="card ink-shadow" style="padding:24px;">
+        <div class="value-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M3 10l4 4 10-8" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
         <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:8px;">Results, not reports</div>
         <p style="font-size:14px;color:var(--muted);line-height:1.7;">We measure success by hours saved and revenue recovered — not decks delivered or dashboards built.</p>
       </div>
-      <div class="card ink-shadow p-6">
-        <div style="font-size:22px;margin-bottom:12px;">🔒</div>
+
+      <div class="card ink-shadow" style="padding:24px;">
+        <div class="value-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <rect x="3" y="9" width="14" height="9" rx="2" stroke="var(--accent)" stroke-width="2"/>
+            <path d="M7 9V6a3 3 0 016 0v3" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
         <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:8px;">We own the risk</div>
         <p style="font-size:14px;color:var(--muted);line-height:1.7;">30-day go-live guarantee with a full refund if we miss it. We don't get paid unless it works.</p>
       </div>
-      <div class="card ink-shadow p-6">
-        <div style="font-size:22px;margin-bottom:12px;">🧱</div>
+
+      <div class="card ink-shadow" style="padding:24px;">
+        <div class="value-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <rect x="2" y="5" width="16" height="12" rx="2" stroke="var(--accent)" stroke-width="2"/>
+            <path d="M6 5V4a2 2 0 014 0v1M10 5V4a2 2 0 014 0v1" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
         <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:8px;">One bill, everything included</div>
         <p style="font-size:14px;color:var(--muted);line-height:1.7;">AI compute, hosting, maintenance, and iteration — all covered. No surprise invoices, no "that's out of scope."</p>
       </div>
-      <div class="card ink-shadow p-6">
-        <div style="font-size:22px;margin-bottom:12px;">📈</div>
+
+      <div class="card ink-shadow" style="padding:24px;">
+        <div class="value-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <polyline points="2,15 7,9 11,12 18,4" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
         <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:8px;">Grows with you</div>
-        <p style="font-size:14px;color:var(--muted);line-height:1.7;">As your business scales, we expand the system. No new engagement required, no renegotiation.</p>
+        <p style="font-size:14px;color:var(--muted);line-height:1.7;">As your business scales, we expand the system. No new engagement, no renegotiation — just more automation.</p>
       </div>
+
     </div>
   </div>
 </section>
@@ -275,9 +321,9 @@
     <h2 style="font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;line-height:1.15;letter-spacing:-.02em;color:var(--ink);margin-bottom:12px;">
       Ready to ramp?
     </h2>
-    <p style="font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:32px;max-width:480px;margin-left:auto;margin-right:auto;">Book a free 30-minute discovery call. We'll map out your biggest automation win and show you exactly what it's worth.</p>
+    <p style="font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:32px;max-width:460px;margin-left:auto;margin-right:auto;">Book a free 30-minute discovery call. We'll map out your biggest automation win and show you exactly what it's worth.</p>
     <a href="/book" class="btn-primary" style="font-size:16px;padding:15px 32px;">Book a free discovery call →</a>
-    <p style="font-size:12px;color:var(--muted);margin-top:12px;">Free · No commitment · Go live in 30 days or it's free</p>
+    <p style="font-size:12px;color:var(--muted);margin-top:14px;">Free · No commitment · Live in 30 days or it's free</p>
   </div>
 </section>
 
