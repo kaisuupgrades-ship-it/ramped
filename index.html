@@ -517,7 +517,7 @@
       <div class="card p-7 hover-lift flex flex-col">
         <div class="mb-5">
           <p class="mono" style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">Starter</p>
-          <p style="font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.02em;"><span id="starter-price">$27,500</span><span id="starter-period" style="font-size:15px;font-weight:500;color:var(--muted);">/yr</span></p>
+          <p style="font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.02em;"><span id="starter-price">$2,292</span><span id="starter-period" style="font-size:15px;font-weight:500;color:var(--muted);">/yr</span></p>
           <p id="starter-note" style="font-size:13px;color:var(--muted);margin-top:3px;">12 months for the price of 11 · + $2,500 onboarding</p>
         </div>
         <p style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:12px;">Best for: 5–30 employees</p>
@@ -553,7 +553,7 @@
         </div>
         <div class="mb-5">
           <p class="mono" style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">Growth</p>
-          <p style="font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.02em;"><span id="growth-price">$55,000</span><span id="growth-period" style="font-size:15px;font-weight:500;color:var(--muted);">/yr</span></p>
+          <p style="font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.02em;"><span id="growth-price">$4,583</span><span id="growth-period" style="font-size:15px;font-weight:500;color:var(--muted);">/yr</span></p>
           <p id="growth-note" style="font-size:13px;color:var(--muted);margin-top:3px;">12 months for the price of 11 · + $3,500 onboarding</p>
         </div>
         <p style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:12px;">Best for: 30–100 employees</p>
@@ -749,11 +749,11 @@
 
   // Billing toggle
   function setBilling(isAnnual) {
-    document.getElementById('starter-price').textContent = isAnnual ? '$27,500' : '$2,500';
-    document.getElementById('starter-period').textContent = isAnnual ? '/yr' : '/mo';
+    document.getElementById('starter-price').textContent = isAnnual ? '$2,292' : '$2,500';
+    document.getElementById('starter-period').textContent = '/mo';
     document.getElementById('starter-note').textContent = isAnnual ? '12 months for the price of 11 \u00b7 + $2,500 onboarding' : '+ $2,500 one-time onboarding';
-    document.getElementById('growth-price').textContent = isAnnual ? '$55,000' : '$5,000';
-    document.getElementById('growth-period').textContent = isAnnual ? '/yr' : '/mo';
+    document.getElementById('growth-price').textContent = isAnnual ? '$4,583' : '$5,000';
+    document.getElementById('growth-period').textContent = '/mo';
     document.getElementById('growth-note').textContent = isAnnual ? '12 months for the price of 11 \u00b7 + $3,500 onboarding' : '+ $3,500 one-time onboarding';
     var badge = document.getElementById('annual-badge');
     badge.style.display = isAnnual ? 'inline' : 'none';
