@@ -78,11 +78,6 @@
 
     nav a:hover{color:var(--ink);}
 
-    /* Responsive: origin story 2-col */
-    @media (max-width: 768px) {
-      .origin-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
-      .origin-aside { position: static !important; }
-    }
     /* Skip link */
     .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 14px;border-radius:0 0 8px 0;font-size:13px;font-weight:600;z-index:100;}
     .skip-link:focus{left:0;}
@@ -196,25 +191,22 @@
   </div>
 </section>
 
-<!-- Stats strip — promoted to proper metric cards (matches homepage hero treatment) -->
+<!-- Stats strip — Xtractor Depot proof points. 3 cards, generous padding, eyebrow caption. -->
 <section class="py-20 bg-white">
-  <div class="section-wrap">
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;">
-      <div class="card ink-shadow" style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px 26px;box-shadow:0 1px 0 rgba(11,18,32,0.04), 0 8px 24px -16px rgba(11,18,32,0.10);">
-        <span style="display:block;font-family:'JetBrains Mono',monospace;font-size:1.85rem;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.02em;margin-bottom:10px;">30 days</span>
-        <span style="display:block;font-size:13px;color:var(--muted);line-height:1.5;">Guaranteed go-live for every client</span>
+  <div class="section-wrap" style="max-width:1080px;">
+    <p style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:18px;text-align:center;">First client · Xtractor Depot</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;">
+      <div class="card ink-shadow" style="background:#fff;border:1px solid var(--line);border-radius:16px;padding:32px 28px;box-shadow:0 1px 0 rgba(11,18,32,0.04), 0 10px 28px -18px rgba(11,18,32,0.10);">
+        <span style="display:block;font-family:'JetBrains Mono',monospace;font-size:2.2rem;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.02em;margin-bottom:14px;">14 hrs/wk</span>
+        <span style="display:block;font-size:13.5px;color:var(--muted);line-height:1.5;">Manual work eliminated</span>
       </div>
-      <div class="card ink-shadow" style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px 26px;box-shadow:0 1px 0 rgba(11,18,32,0.04), 0 8px 24px -16px rgba(11,18,32,0.10);">
-        <span style="display:block;font-family:'JetBrains Mono',monospace;font-size:1.85rem;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.02em;margin-bottom:10px;">14 hrs</span>
-        <span style="display:block;font-size:13px;color:var(--muted);line-height:1.5;">Weekly manual work eliminated at our first client</span>
+      <div class="card ink-shadow" style="background:#fff;border:1px solid var(--line);border-radius:16px;padding:32px 28px;box-shadow:0 1px 0 rgba(11,18,32,0.04), 0 10px 28px -18px rgba(11,18,32,0.10);">
+        <span style="display:block;font-family:'JetBrains Mono',monospace;font-size:2.2rem;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.02em;margin-bottom:14px;">4h&nbsp;→&nbsp;8m</span>
+        <span style="display:block;font-size:13.5px;color:var(--muted);line-height:1.5;">Lead response time</span>
       </div>
-      <div class="card ink-shadow" style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px 26px;box-shadow:0 1px 0 rgba(11,18,32,0.04), 0 8px 24px -16px rgba(11,18,32,0.10);">
-        <span style="display:block;font-family:'JetBrains Mono',monospace;font-size:1.85rem;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.02em;margin-bottom:10px;">4h&nbsp;→&nbsp;8m</span>
-        <span style="display:block;font-size:13px;color:var(--muted);line-height:1.5;">Lead response time, Xtractor Depot</span>
-      </div>
-      <div class="card ink-shadow" style="background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px 26px;box-shadow:0 1px 0 rgba(11,18,32,0.04), 0 8px 24px -16px rgba(11,18,32,0.10);">
-        <span style="display:block;font-family:'JetBrains Mono',monospace;font-size:1.85rem;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.02em;margin-bottom:10px;">$0</span>
-        <span style="display:block;font-size:13px;color:var(--muted);line-height:1.5;">Ongoing management after deployment</span>
+      <div class="card ink-shadow" style="background:#fff;border:1px solid var(--line);border-radius:16px;padding:32px 28px;box-shadow:0 1px 0 rgba(11,18,32,0.04), 0 10px 28px -18px rgba(11,18,32,0.10);">
+        <span style="display:block;font-family:'JetBrains Mono',monospace;font-size:2.2rem;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.02em;margin-bottom:14px;">Zero</span>
+        <span style="display:block;font-size:13.5px;color:var(--muted);line-height:1.5;">Ongoing management required</span>
       </div>
     </div>
   </div>
@@ -222,62 +214,15 @@
 
 <!-- Origin story -->
 <section style="background:var(--paper);padding-block:96px;">
-  <div class="section-wrap">
-    <div class="origin-grid" style="display:grid;grid-template-columns:7fr 5fr;gap:64px;align-items:start;">
-
-      <div>
-        <div style="margin-bottom:12px;"><span class="sectionnum">Our story</span></div>
-        <h2 style="font-size:clamp(1.5rem,3vw,2rem);font-weight:800;line-height:1.15;letter-spacing:-.02em;color:var(--ink);margin-bottom:24px;">
-          We lived the problem before we built the solution.
-        </h2>
-        <div style="display:flex;flex-direction:column;gap:16px;font-size:15px;color:var(--muted);line-height:1.85;">
-          <p>Running Xtractor Depot — a fast-scaling physical-goods business supplying extraction equipment to clients from cannabis operators to SpaceX and Lucid Motors — meant dealing with an endless stream of manual, repetitive tasks. Quote intake. Follow-up emails. Lead qualification. Status updates. Each one small on its own. Together, they consumed weeks of productive time every month.</p>
-          <p>Existing AI tools promised automation but delivered dashboards. Consultants delivered decks, not working software. The market had a clear gap: no one was actually building and running the systems for you on an ongoing basis.</p>
-          <p>Ramped AI was founded to close that gap. We deploy a fully operational AI department for any operating business — live in 30 days, on a flat monthly retainer. No technical staff required. No endless onboarding. Just results.</p>
-          <p>Xtractor Depot was our first deployment. Results: 14 hours of manual work eliminated per week, lead response times dropped from 4 hours to under 8 minutes, zero ongoing management overhead.</p>
-        </div>
-      </div>
-
-      <div class="origin-aside" style="display:flex;flex-direction:column;gap:16px;padding-top:4px;position:sticky;top:80px;align-self:start;">
-        <!-- Case study card -->
-        <div class="card ink-shadow" style="padding:24px;">
-          <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;">Xtractor Depot · Case Study</div>
-          <div style="display:flex;flex-direction:column;gap:0;">
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);">
-              <div>
-                <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Manual work eliminated</div>
-                <div style="font-size:1.5rem;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ink);line-height:1;">14 hrs/wk</div>
-              </div>
-                          </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);">
-              <div>
-                <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Lead response time</div>
-                <div style="font-size:1.5rem;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ink);line-height:1;">4h → 8m</div>
-              </div>
-                          </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;">
-              <div>
-                <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Ongoing management required</div>
-                <div style="font-size:1.5rem;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ink);line-height:1;">Zero</div>
-              </div>
-                          </div>
-          </div>
-        </div>
-
-        <!-- Industry card -->
-        <div class="card" style="padding:20px;background:var(--surface);">
-          <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Industries served</div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;">
-            <span style="font-size:12px;font-weight:600;padding:4px 12px;border-radius:999px;background:#fff;color:var(--ink);border:1px solid var(--line);">Manufacturing</span>
-            <span style="font-size:12px;font-weight:600;padding:4px 12px;border-radius:999px;background:#fff;color:var(--ink);border:1px solid var(--line);">Professional Services</span>
-            <span style="font-size:12px;font-weight:600;padding:4px 12px;border-radius:999px;background:#fff;color:var(--ink);border:1px solid var(--line);">E-commerce</span>
-            <span style="font-size:12px;font-weight:600;padding:4px 12px;border-radius:999px;background:#fff;color:var(--ink);border:1px solid var(--line);">Healthcare</span>
-            <span style="font-size:12px;font-weight:600;padding:4px 12px;border-radius:999px;background:#fff;color:var(--ink);border:1px solid var(--line);">Real Estate</span>
-            <span style="font-size:12px;font-weight:600;padding:4px 12px;border-radius:999px;background:#fff;color:var(--ink);border:1px solid var(--line);">B2B SaaS</span>
-          </div>
-        </div>
-      </div>
-
+  <div class="section-wrap" style="max-width:780px;">
+    <div style="margin-bottom:12px;"><span class="sectionnum">Our story</span></div>
+    <h2 style="font-size:clamp(1.5rem,3vw,2rem);font-weight:800;line-height:1.15;letter-spacing:-.02em;color:var(--ink);margin-bottom:28px;">
+      We lived the problem before we built the solution.
+    </h2>
+    <div style="display:flex;flex-direction:column;gap:18px;font-size:16px;color:var(--muted);line-height:1.8;">
+      <p>Running Xtractor Depot — a fast-scaling physical-goods business supplying extraction equipment to clients from cannabis operators to SpaceX and Lucid Motors — meant dealing with an endless stream of manual, repetitive tasks. Quote intake. Follow-up emails. Lead qualification. Status updates. Each one small on its own. Together, they consumed weeks of productive time every month.</p>
+      <p>Existing AI tools promised automation but delivered dashboards. Consultants delivered decks, not working software. The market had a clear gap: no one was actually building and running the systems for you on an ongoing basis.</p>
+      <p>Ramped AI was founded to close that gap. We deploy a fully operational AI department for any operating business — live in 30 days, on a flat monthly retainer. No technical staff required. No endless onboarding. Just results.</p>
     </div>
   </div>
 </section>
