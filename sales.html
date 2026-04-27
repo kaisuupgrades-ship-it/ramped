@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Ramped AI — Discovery Call Deck</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #0B1220; --paper: #FAFAF7; --line: #E6E4DC;
+    --muted: #5B6272; --accent: #1F4FFF; --accent-soft: #EEF3FF;
+    --accent-2: #0B2A8C;
+    --good: #0F7A4B; --warn: #B45309;
+  }
+  html, body {
+    height: 100%; overflow: hidden;
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: var(--ink);
+    background: var(--ink);
+  }
+  .stage {
+    position: fixed; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .slide {
+    position: absolute; inset: 0;
+    display: none;
+    padding: clamp(24px, 5vh, 64px) clamp(28px, 6vw, 96px);
+    overflow: hidden;
+  }
+  .slide.active { display: flex; flex-direction: column; justify-content: center; }
+
+  /* Theme classes */
+  .slide.dark { background: linear-gradient(135deg, var(--ink) 0%, #050810 100%); color: #fff; }
+  .slide.dark::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(900px 600px at 90% 10%, rgba(31,79,255,0.18), transparent 60%);
+  }
+  .slide.light { background: var(--paper); color: var(--ink); }
+  .slide.light::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      radial-gradient(900px 600px at 90% 0%, rgba(31,79,255,0.08), transparent 55%),
+      linear-gradient(rgba(11,18,32,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(11,18,32,0.04) 1px, transparent 1px);
+    background-size: auto, 24px 24px, 24px 24px;
+  }
+
+  /* Slide content sits above the ::before gradient */
+  .slide > * { position: relative; z-index: 1; }
+
+  /* Brand mark in corner */
+  .brand {
+    position: absolute; top: clamp(20px, 3vh, 36px); left: clamp(28px, 4vw, 64px);
+    display: inline-flex; align-items: center; gap: 8px;
+    z-index: 2;
+  }
+  .brand-mark {
+    width: 26px; height: 26px; border-radius: 6px;
+    background: linear-gradient(135deg, #1F4FFF, #0B2A8C);
+    color: #fff; font-weight: 900; font-size: 16px; line-height: 26px; text-align: center;
+    letter-spacing: -0.04em;
+  }
+  .brand-name { font-weight: 700; font-size: 14px; letter-spacing: -0.01em; }
+  .slide.dark .brand-name { color: #fff; }
+  .slide.light .brand-name { color: var(--ink); }
+
+  /* Eyebrow + headline */
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(11px, 1.1vw, 13px);
+    font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .slide.dark .eyebrow { color: var(--accent); }
+  .slide.light .eyebrow { color: var(--muted); }
+
+  h1 {
+    font-size: clamp(40px, 6.4vw, 96px);
+    font-weight: 800; line-height: 1.04; letter-spacing: -0.035em;
+    margin-bottom: clamp(12px, 1.6vh, 28px);
+    max-width: 1200px;
+  }
+  h1.huge { font-size: clamp(56px, 9vw, 140px); line-height: 1; }
+  h2 {
+    font-size: clamp(28px, 3.6vw, 52px);
+    font-weight: 800; line-height: 1.1; letter-spacing: -0.025em;
+    margin-bottom: clamp(12px, 1.4vh, 24px);
+    max-width: 1100px;
+  }
+  .lede {
+    font-size: clamp(18px, 1.6vw, 26px);
+    line-height: 1.5; max-width: 880px;
+    color: rgba(255,255,255,0.75);
+  }
+  .slide.light .lede { color: var(--muted); }
+  .lede strong { color: inherit; font-weight: 700; }
+  .slide.dark .lede strong { color: #fff; }
+  .slide.light .lede strong { color: var(--ink); }
+
+  /* 3-column grid for problem/workflows */
+  .three-col {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: clamp(16px, 2vw, 32px);
+    margin-top: clamp(16px, 2.4vh, 36px);
+    max-width: 1400px;
+  }
+  .card {
+    padding: clamp(20px, 2.4vw, 32px);
+    border-radius: 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.10);
+  }
+  .slide.light .card { background: #fff; border-color: var(--line); box-shadow: 0 1px 0 rgba(11,18,32,.04), 0 12px 32px -16px rgba(11,18,32,.10); }
+  .card-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700;
+    margin-bottom: clamp(10px, 1.4vh, 18px);
+  }
+  .card-title { font-size: clamp(18px, 1.8vw, 24px); font-weight: 700; margin-bottom: 10px; line-height: 1.25; letter-spacing: -0.015em; }
+  .card-desc { font-size: clamp(14px, 1.2vw, 18px); line-height: 1.55; }
+  .slide.dark .card-desc { color: rgba(255,255,255,0.65); }
+  .slide.light .card-desc { color: var(--muted); }
+
+  /* Big-number row */
+  .big-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: clamp(20px, 2.5vw, 40px);
+    margin-top: clamp(20px, 3vh, 44px);
+    max-width: 1200px;
+  }
+  .big-stat-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(40px, 6vw, 84px); font-weight: 700;
+    line-height: 1; letter-spacing: -0.025em;
+    margin-bottom: 10px;
+  }
+  .slide.dark .big-stat-val { color: #fff; }
+  .slide.light .big-stat-val { color: var(--ink); }
+  .big-stat-label { font-size: clamp(13px, 1.1vw, 16px); }
+  .slide.dark .big-stat-label { color: rgba(255,255,255,0.65); }
+  .slide.light .big-stat-label { color: var(--muted); }
+
+  /* Pricing table */
+  .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(14px, 1.6vw, 24px); max-width: 1300px; margin-top: clamp(20px, 3vh, 36px); }
+  .price {
+    border-radius: 14px; padding: clamp(20px, 2.4vw, 32px);
+    background: #fff; border: 1px solid var(--line); color: var(--ink);
+  }
+  .price.featured { border-color: var(--accent); border-width: 2px; transform: translateY(-8px); box-shadow: 0 18px 48px -20px rgba(31,79,255,0.32); }
+  .price-tier { font-family: 'JetBrains Mono', monospace; font-size: clamp(11px, 1vw, 13px); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .price.featured .price-tier { color: var(--accent); }
+  .price-amt { font-size: clamp(28px, 3vw, 44px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.05; }
+  .price-amt .per { font-size: 0.5em; font-weight: 500; color: var(--muted); }
+  .price-note { font-size: clamp(12px, 1vw, 15px); color: var(--muted); margin-top: 6px; line-height: 1.5; }
+  .price-best { font-size: clamp(12px, 1vw, 15px); margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); font-weight: 600; }
+
+  /* Guarantee */
+  .guarantee-card {
+    display: flex; align-items: center; gap: 24px;
+    padding: clamp(20px, 2.6vw, 36px);
+    border: 2px solid var(--ink); background: #FFFBEB;
+    border-radius: 16px;
+    max-width: 1100px;
+  }
+  .slide.dark .guarantee-card { background: rgba(255,251,235,0.94); }
+  .g-shield {
+    flex-shrink: 0; width: 70px; height: 70px;
+    border-radius: 50%; background: #FEF3C7;
+    border: 3px solid #F59E0B;
+    display: flex; align-items: center; justify-content: center;
+    color: #92400E; font-weight: 900; font-size: 32px;
+  }
+  .g-text { font-size: clamp(16px, 1.5vw, 22px); line-height: 1.5; color: var(--ink); }
+  .g-text strong { display: block; font-size: clamp(20px, 1.9vw, 28px); font-weight: 800; margin-bottom: 6px; letter-spacing: -0.015em; }
+
+  /* Image full bleed */
+  .image-frame {
+    margin-top: clamp(16px, 2.4vh, 36px);
+    max-width: 100%;
+    border-radius: 14px; overflow: hidden;
+    box-shadow: 0 1px 0 rgba(11,18,32,0.04), 0 36px 72px -32px rgba(11,18,32,0.32), 0 12px 28px -12px rgba(31,79,255,0.20);
+  }
+  .image-frame img { display: block; width: 100%; height: auto; }
+
+  /* Cover slide */
+  .cover-stack { display: flex; flex-direction: column; gap: 4vh; }
+  .cover-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 16px; border-radius: 999px;
+    border: 1px solid rgba(245,158,11,0.4);
+    background: rgba(180,83,9,0.18);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(11px, 1vw, 13px); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    color: #F59E0B; align-self: flex-start;
+  }
+  .cover-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #F59E0B; }
+  .cover-meta {
+    display: flex; gap: 32px; flex-wrap: wrap;
+    font-family: 'JetBrains Mono', monospace; font-size: clamp(12px, 1vw, 15px);
+    color: rgba(255,255,255,0.55);
+    margin-top: 2vh;
+  }
+  .cover-meta span strong { color: #fff; font-weight: 700; }
+
+  /* Final CTA slide */
+  .cta-stack {
+    display: flex; flex-direction: column; align-items: flex-start; gap: clamp(18px, 2vh, 32px);
+  }
+  .cta-button {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: var(--accent); color: #fff;
+    padding: clamp(16px, 1.8vw, 24px) clamp(28px, 3vw, 44px);
+    border-radius: 12px;
+    font-size: clamp(18px, 1.6vw, 24px); font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 16px 40px -16px rgba(31,79,255,0.5);
+  }
+
+  /* Slide counter + nav hints */
+  .counter {
+    position: fixed; bottom: 24px; right: 32px;
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.06em;
+    color: rgba(255,255,255,0.4);
+    z-index: 10;
+    user-select: none;
+  }
+  .slide.light ~ .counter, body.light-active .counter { color: var(--muted); }
+  .nav-hint {
+    position: fixed; bottom: 24px; left: 32px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.04em;
+    color: rgba(255,255,255,0.3);
+    z-index: 10;
+    user-select: none;
+  }
+  body.light-active .nav-hint { color: var(--muted); opacity: 0.5; }
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+  <!-- Slide 1 — Cover (dark) -->
+  <section class="slide dark active" data-theme="dark">
+    <div class="brand"><div class="brand-mark">R</div><div class="brand-name">Ramped AI</div></div>
+    <div class="cover-stack">
+      <span class="cover-pill">30-DAY GO-LIVE GUARANTEE — OR FULL REFUND</span>
+      <h1 class="huge">Your AI department,<br>live in 30 days.</h1>
+      <p class="lede">Done-for-you AI implementation for operating businesses. We build, deploy, and run AI agents inside your business — answering calls, routing leads, automating your highest-friction workflows.</p>
+      <div class="cover-meta">
+        <span><strong>Discovery call</strong> · 30 minutes</span>
+        <span><strong>Andrew Yoon &amp; Jon</strong> · Ramped AI</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 2 — The problem (dark) -->
+  <section class="slide dark" data-theme="dark">
+    <div class="brand"><div class="brand-mark">R</div><div class="brand-name">Ramped AI</div></div>
+    <p class="eyebrow">The problem</p>
+    <h1>Still running on spreadsheets and gut feel?</h1>
+    <p class="lede">You know AI could help. Your team is busy. The tools are confusing. Another quarter goes by and nothing changes.</p>
+    <div class="three-col">
+      <div class="card">
+        <div class="card-num">1</div>
+        <div class="card-title">You don't know where to start.</div>
+        <p class="card-desc">Every week you read about AI transforming businesses like yours. The space moves fast. The tools are confusing. Picking the wrong starting point burns 6 months.</p>
+      </div>
+      <div class="card">
+        <div class="card-num">2</div>
+        <div class="card-title">Consultants give you decks.</div>
+        <p class="card-desc">You've sat through the strategy sessions. You have the roadmap PDF. But nothing in your business actually changed. Deliverables aren't outcomes.</p>
+      </div>
+      <div class="card">
+        <div class="card-num">3</div>
+        <div class="card-title">Your team is stuck on manual work.</div>
+        <p class="card-desc">Quote intake. Follow-up emails. Data entry. Routing. Your best people spend hours on tasks an AI agent could handle in seconds.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 3 — Why consultants fail (light) -->
+  <section class="slide light" data-theme="light">
+    <div class="brand"><div class="brand-mark">R</div><div class="brand-name">Ramped AI</div></div>
+    <p class="eyebrow">Why most AI projects stall</p>
+    <h1>Consultants ship decks. We ship working software.</h1>
+    <p class="lede">The AI consulting world is full of strategy sessions, roadmap PDFs, and pilots that never go to production. We do the opposite: we deploy live agents into your business inside 30 days, then run them for you on a flat monthly fee.</p>
+    <div class="three-col">
+      <div class="card">
+        <div class="card-num">A</div>
+        <div class="card-title">Build, deploy, run.</div>
+        <p class="card-desc">We don't hand you a strategy and walk away. Every engagement ships a live agent into your business that we own end-to-end.</p>
+      </div>
+      <div class="card">
+        <div class="card-num">B</div>
+        <div class="card-title">Your tools, not ours.</div>
+        <p class="card-desc">Agents run inside the systems you already use — your inbox, your CRM, your phone, your forms. Nothing new for your team to learn.</p>
+      </div>
+      <div class="card">
+        <div class="card-num">C</div>
+        <div class="card-title">Flat monthly fee.</div>
+        <p class="card-desc">Compute, hosting, maintenance, iteration — all included. No surprise invoices. No "that's out of scope." We grow the system as you grow.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 4 — How we work, three steps (dark) -->
+  <section class="slide dark" data-theme="dark">
+    <div class="brand"><div class="brand-mark">R</div><div class="brand-name">Ramped AI</div></div>
+    <p class="eyebrow">How we work</p>
+    <h1>Three steps. Thirty days.</h1>
+    <div class="three-col">
+      <div class="card">
+        <div class="card-num">1</div>
+        <div class="card-title">Diagnose · Week 1</div>
+        <p class="card-desc">We spend week one inside your business — mapping workflows, talking to your team, identifying where an AI agent delivers the fastest, highest-leverage return.<br><br><strong style="color:var(--accent)">Output:</strong> Workflow audit + agent deployment plan, agreed before build begins.</p>
+      </div>
+      <div class="card">
+        <div class="card-num">2</div>
+        <div class="card-title">Build · Days 2–30</div>
+        <p class="card-desc">We deploy live AI agents — not a prototype, not a demo — into your actual systems within 30 days. Working software, not a roadmap.<br><br><strong style="color:var(--accent)">Output:</strong> A live, production AI agent running in your business.</p>
+      </div>
+      <div class="card">
+        <div class="card-num">3</div>
+        <div class="card-title">Run · Month 2+</div>
+        <p class="card-desc">Flat monthly retainer. We own uptime, maintenance, iteration. As your business grows we expand the system without a new engagement.<br><br><strong style="color:var(--accent)">Output:</strong> An AI system that gets smarter and more capable over time.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 5 — Example workflow (the agent UI mockup) (light) -->
+  <section class="slide light" data-theme="light">
+    <div class="brand"><div class="brand-mark">R</div><div class="brand-name">Ramped AI</div></div>
+    <p class="eyebrow">What we deploy · Example: Quote intake</p>
+    <h1>Working software. Not a slide deck.</h1>
+    <p class="lede">An AI agent that reads inbound quote requests, matches them to your inventory, drafts a reply with the right pricing tier, and queues it for one-click send. <strong>Saves 14 hours/week</strong> at our first client.</p>
+    <div class="image-frame">
+      <img src="/assets/agent-ui.png" srcset="/assets/agent-ui.png 1x, /assets/agent-ui@2x.png 2x" alt="Ramped AI agent inbox showing quote intake workflow">
+    </div>
+  </section>
+
+  <!-- Slide 6 — Real result: Xtractor Depot (dark) -->
+  <section class="slide dark" data-theme="dark">
+    <div class="brand"><div class="brand-mark">R</div><div class="brand-name">Ramped AI</div></div>
+    <p class="eyebrow">Case study · Xtractor Depot</p>
+    <h1>Industrial supplier. 30 days. Real numbers.</h1>
+    <p class="lede">Xtractor Depot supplies precision lab equipment to industrial customers. They were spending <strong>14 hours a week</strong> on manual quote intake and follow-up. After a 30-day Ramped sprint:</p>
+    <div class="big-stats">
+      <div>
+        <div class="big-stat-val">14 hrs/wk</div>
+        <div class="big-stat-label">manual work eliminated</div>
+      </div>
+      <div>
+        <div class="big-stat-val">4h → 8m</div>
+        <div class="big-stat-label">lead response time, every channel</div>
+      </div>
+      <div>
+        <div class="big-stat-val">Zero</div>
+        <div class="big-stat-label">ongoing management required from their team</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 7 — What we'd build for you (light) -->
+  <section class="slide light" data-theme="light">
+    <div class="brand"><div class="brand-mark">R</div><div class="brand-name">Ramped AI</div></div>
+    <p class="eyebrow">Common deployments</p>
+    <h1>Three workflows we ship most often.</h1>
+    <p class="lede">Your specific deployments depend on what's eating your team's time. We build whatever delivers fastest payback — these are the patterns that show up most.</p>
+    <div class="three-col">
+      <div class="card">
+        <div class="card-num">01</div>
+        <div class="card-title">Quote intake &amp; reply</div>
+        <p class="card-desc">Inbound RFQs read, matched to inventory, drafted with the right pricing tier and historical context, queued for one-click send. Net-new revenue surfaces automatically.</p>
+      </div>
+      <div class="card">
+        <div class="card-num">02</div>
+        <div class="card-title">Lead routing &amp; nurture</div>
+        <p class="card-desc">New inquiries routed to the right rep based on geography, deal size, source, and your CRM history. Auto-follow-up if no response in 48 hours.</p>
+      </div>
+      <div class="card">
+        <div class="card-num">03</div>
+        <div class="card-title">Status updates &amp; ops</div>
+        <p class="card-desc">Order, ticket, and project status auto-summarized for customers and internal teams. Replaces "where are we on this?" pings with proactive updates.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 8 — Pricing (light) -->
+  <section class="slide light" data-theme="light">
+    <div class="brand"><div class="brand-mark">R</div><div class="brand-name">Ramped AI</div></div>
+    <p class="eyebrow">Pricing</p>
+    <h1>Simple, performance-backed.</h1>
+    <p class="lede">Flat monthly retainer covers compute, hosting, maintenance, and iteration. Onboarding fee covers the diagnose + build phase. Annual billing saves you two months.</p>
+    <div class="pricing-grid">
+      <div class="price">
+        <div class="price-tier">Starter</div>
+        <div class="price-amt">$2,500<span class="per">/mo</span></div>
+        <div class="price-note">+ $2,500 onboarding<br>or $2,083/mo billed annually (save $5,000)</div>
+        <div class="price-best">5–30 employees<br>Up to 5 workflow automations</div>
+      </div>
+      <div class="price featured">
+        <div class="price-tier">★ Growth</div>
+        <div class="price-amt">$5,000<span class="per">/mo</span></div>
+        <div class="price-note">+ $3,500 onboarding<br>or $4,167/mo billed annually (save $10,000)</div>
+        <div class="price-best">30–100 employees<br>Up to 15 workflow automations</div>
+      </div>
+      <div class="price">
+        <div class="price-tier">Enterprise</div>
+        <div class="price-amt">Custom</div>
+        <div class="price-note">Scoped per engagement<br>White-label option available</div>
+        <div class="price-best">100+ employees<br>Unlimited workflow automations</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 9 — Guarantee (light) -->
+  <section class="slide light" data-theme="light">
+    <div class="brand"><div class="brand-mark">R</div><div class="brand-name">Ramped AI</div></div>
+    <p class="eyebrow">Risk transfer</p>
+    <h1>30 days, or your money back.</h1>
+    <p class="lede">We absorb the risk. Most AI projects fail because the firm gets paid whether or not anything ships. Ours are tied to a date. If we miss it, you don't pay.</p>
+    <div class="guarantee-card">
+      <div class="g-shield">✓</div>
+      <div class="g-text">
+        <strong>30-day go-live guarantee.</strong>
+        If your AI agent isn't live and running within 30 days of kickoff, you get a full refund. No questions, no partial payments, no fine print.
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 10 — Why us (dark) -->
+  <section class="slide dark" data-theme="dark">
+    <div class="brand"><div class="brand-mark">R</div><div class="brand-name">Ramped AI</div></div>
+    <p class="eyebrow">Why us</p>
+    <h1>Operators first. Technologists second.</h1>
+    <p class="lede">Andrew Yoon founded Xtractor Depot in 2016 — supplied industrial customers including SpaceX and Lucid Motors. He hit the manual-ops ceiling that every operating business hits. Built Ramped AI to close that gap for everyone else. We staff each engagement with senior people plus a specialist advisor network — no junior consultants, no learning on your dime.</p>
+    <div class="big-stats">
+      <div>
+        <div class="big-stat-val">10 yrs</div>
+        <div class="big-stat-label">running an operating business at scale</div>
+      </div>
+      <div>
+        <div class="big-stat-val">Senior</div>
+        <div class="big-stat-label">core team only — no junior consultants</div>
+      </div>
+      <div>
+        <div class="big-stat-val">Advisors</div>
+        <div class="big-stat-label">on LLM ops, data eng, and vertical SMEs</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 11 — Next steps (dark) -->
+  <section class="slide dark" data-theme="dark">
+    <div class="brand"><div class="brand-mark">R</div><div class="brand-name">Ramped AI</div></div>
+    <p class="eyebrow">Next steps</p>
+    <h1 class="huge">Let's pick<br>workflow #1.</h1>
+    <p class="lede">If today's call lands, the next step is a 30-minute diagnosis session with your team. We map your busiest workflows, agree which one ships first, and lock the kickoff date. We're live in 30 days from kickoff — or you don't pay.</p>
+    <div class="cta-stack">
+      <a href="https://www.30dayramp.com/book" class="cta-button">Book the diagnosis call →</a>
+      <p class="lede" style="font-size:clamp(14px,1.1vw,18px);opacity:0.6;">Or just reply to my email — <strong style="color:#fff">jon@30dayramp.com</strong></p>
+    </div>
+  </section>
+
+</div>
+
+<div class="counter"><span id="cur">1</span> / <span id="total">11</span></div>
+<div class="nav-hint">← → navigate · F fullscreen</div>
+
+<script>
+  (function(){
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+    const curEl = document.getElementById('cur');
+    const totalEl = document.getElementById('total');
+    totalEl.textContent = total;
+
+    let idx = 0;
+    function show(i) {
+      idx = Math.max(0, Math.min(total - 1, i));
+      slides.forEach((s, j) => s.classList.toggle('active', j === idx));
+      curEl.textContent = idx + 1;
+      // Light/dark theme toggle on body so the counter contrasts correctly
+      const theme = slides[idx].dataset.theme;
+      document.body.classList.toggle('light-active', theme === 'light');
+      // Update URL hash for direct linking
+      history.replaceState(null, '', '#' + (idx + 1));
+    }
+
+    function next() { show(idx + 1); }
+    function prev() { show(idx - 1); }
+
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+      else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+      else if (e.key === 'Home') { e.preventDefault(); show(0); }
+      else if (e.key === 'End') { e.preventDefault(); show(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+        else document.exitFullscreen();
+      }
+    });
+
+    // Click on right half of stage = next, left half = prev (for screenshare audiences)
+    document.querySelector('.stage').addEventListener('click', function(e){
+      const x = e.clientX;
+      const w = window.innerWidth;
+      if (x > w * 0.5) next(); else prev();
+    });
+
+    // Direct link via #N
+    const hash = parseInt((window.location.hash || '#1').slice(1), 10);
+    if (Number.isFinite(hash) && hash >= 1 && hash <= total) show(hash - 1);
+    else show(0);
+  })();
+</script>
+</body>
+</html>

@@ -8,6 +8,7 @@
 // cron windows.
 
 import { signMapToken, isMapTokenConfigured } from './_lib/map-token.js';
+import { wrapEmail, emailHero, emailBody, emailCtaCard, emailInfoCard, emailSignoff } from './_lib/email-design.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -114,39 +115,50 @@ export default async function handler(req, res) {
   for (const b of bookings24) {
     const tz        = b.timezone || 'America/Chicago';
     const timeStr   = formatTime(b.datetime, tz);
-    const firstName = (b.name || b.email).split(/\s+/)[0];
-    const meetBlock = b.meet_link
-      ? `<a href="${esc(b.meet_link)}" style="display:inline-block;background:#1F4FFF;color:#fff;font-size:14px;font-weight:700;text-decoration:none;padding:10px 20px;border-radius:8px;margin-top:12px;">▶ Join Google Meet</a>
-         <p style="font-size:12px;color:#6B7280;margin:6px 0 0;word-break:break-all;">${esc(b.meet_link)}</p>`
-      : `<p style="font-size:13px;color:#6B7280;margin:10px 0 0;">A Google Meet link will be sent before your call.</p>`;
+    const firstName = esc((b.name || b.email).split(/\s+/)[0]);
     const roadmapLink = buildSignedRoadmapLink(b.id);
 
+    const innerRows24 =
+      emailHero({
+        eyebrow: 'Tomorrow',
+        headline: `See you tomorrow, ${firstName}.`,
+        sub: `<strong style="color:#0B1220;font-weight:600;">${esc(timeStr)}</strong> · 30-minute discovery call`,
+      }) +
+      (b.meet_link
+        ? emailInfoCard({
+            eyebrow: 'Your call link',
+            title: 'Google Meet ready',
+            body: 'Join from this link or your calendar invite — both work.',
+            ctaHref: esc(b.meet_link),
+            ctaLabel: '▶ Join Google Meet',
+          })
+        : emailInfoCard({
+            eyebrow: 'Heads up',
+            title: 'Your Google Meet link is coming separately.',
+            body: 'It will arrive in your calendar invite before the call.',
+          })) +
+      emailBody(`We'll walk through your automation roadmap and figure out the highest-impact thing to build first. Come with questions — this is a working session, not a pitch.`) +
+      (roadmapLink
+        ? emailCtaCard({
+            eyebrow: 'Recommended',
+            title: 'Skim your roadmap first',
+            body: 'Reading it once before the call lets us spend our 30 minutes on what to ship, not what to ask.',
+            ctaHref: esc(roadmapLink),
+            ctaLabel: 'View your roadmap →',
+          })
+        : '') +
+      emailSignoff({
+        name: 'Jon',
+        extra: `Need to reschedule? <a href="${esc(SITE_URL)}/book" style="color:#1F4FFF;text-decoration:underline;">Pick a new time →</a>`,
+      });
+
     try {
-      await sendEmail(b.email, `Tomorrow: your discovery call with Ramped AI`, `<!DOCTYPE html>
-<html>
-<body style="margin:0;padding:0;background:#F3F4F6;">
-<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:520px;margin:0 auto;">
-  <div style="background:#0B1220;padding:24px 28px;">
-    <div style="display:inline-block;background:#1F4FFF;color:#fff;font-size:11px;font-weight:900;letter-spacing:0.08em;padding:4px 10px;border-radius:6px;margin-bottom:12px;">RAMPED AI</div>
-    <p style="margin:0;font-size:22px;font-weight:800;color:#fff;line-height:1.2;">See you tomorrow, ${esc(firstName)} 👋</p>
-  </div>
-  <div style="background:#FAFAFA;padding:24px 28px;">
-    <div style="background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:18px 20px;margin-bottom:20px;">
-      <p style="margin:0 0 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#6B7280;">YOUR CALL</p>
-      <p style="margin:0;font-size:16px;font-weight:700;color:#0B1220;">${esc(timeStr)}</p>
-      <p style="margin:6px 0 12px;font-size:13px;color:#374151;">30-minute discovery call · Ramped AI</p>
-      ${meetBlock}
-    </div>
-    <p style="font-size:14px;color:#374151;line-height:1.6;margin:0 0 16px;">We'll walk through your automation roadmap and figure out the highest-impact thing to build first. Come with questions — this is a working session.</p>
-    ${roadmapLink ? `<p style="font-size:14px;color:#374151;line-height:1.6;margin:0 0 20px;">📋 <a href="${esc(roadmapLink)}" style="color:#1F4FFF;font-weight:600;">View your roadmap before the call →</a></p>` : ''}
-    <p style="font-size:13px;color:#6B7280;border-top:1px solid #E5E7EB;padding-top:16px;margin:0;">Need to reschedule? <a href="${esc(SITE_URL)}/book" style="color:#1F4FFF;">Pick a new time →</a><br><strong style="color:#0B1220;">Jon</strong> · Ramped AI · <a href="mailto:jon@30dayramp.com" style="color:#1F4FFF;">jon@30dayramp.com</a></p>
-  </div>
-  <div style="padding:12px 28px;text-align:center;">
-    <p style="margin:0;font-size:11px;color:#9CA3AF;">Ramped AI · 30dayramp.com</p>
-  </div>
-</div>
-</body>
-</html>`);
+      await sendEmail(b.email, `Tomorrow: your discovery call with Ramped AI`, wrapEmail({
+        subject: 'Tomorrow: your discovery call with Ramped AI',
+        preheader: `${timeStr} · 30 minutes · Ramped AI discovery call.`,
+        innerRows: innerRows24,
+        siteUrl: SITE_URL,
+      }));
       results.sent_24h.push(b.email);
       await markReminderSent(b.id, 'reminded_24h_at');
     } catch (err) {
@@ -165,33 +177,33 @@ export default async function handler(req, res) {
   for (const b of bookings1h) {
     const tz        = b.timezone || 'America/Chicago';
     const timeStr   = formatTime(b.datetime, tz);
-    const firstName = (b.name || b.email).split(/\s+/)[0];
-    const meetBlock = b.meet_link
-      ? `<a href="${esc(b.meet_link)}" style="display:inline-block;background:#1F4FFF;color:#fff;font-size:14px;font-weight:700;text-decoration:none;padding:10px 20px;border-radius:8px;margin-top:10px;">▶ Join Google Meet now</a>
-         <p style="font-size:12px;color:#6B7280;margin:6px 0 0;word-break:break-all;">${esc(b.meet_link)}</p>`
-      : '';
+    const firstName = esc((b.name || b.email).split(/\s+/)[0]);
+
+    const innerRows1h =
+      emailHero({
+        eyebrow: '1 hour out',
+        headline: `${firstName}, we're on in an hour.`,
+        sub: `<strong style="color:#0B1220;font-weight:600;">${esc(timeStr)}</strong>`,
+      }) +
+      (b.meet_link
+        ? emailCtaCard({
+            eyebrow: 'Call link',
+            title: 'Join Google Meet',
+            body: 'Or use the link in your calendar invite.',
+            ctaHref: esc(b.meet_link),
+            ctaLabel: '▶ Join now',
+          })
+        : '') +
+      emailBody(`See you soon. If you haven't skimmed your automation roadmap yet, take 60 seconds — we'll use it as our starting point.`) +
+      emailSignoff({ name: 'Jon', extra: 'Questions? Just reply.' });
 
     try {
-      await sendEmail(b.email, `Your call is in 1 hour ⏰`, `<!DOCTYPE html>
-<html>
-<body style="margin:0;padding:0;background:#F3F4F6;">
-<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:520px;margin:0 auto;">
-  <div style="background:#0B1220;padding:24px 28px;">
-    <div style="display:inline-block;background:#1F4FFF;color:#fff;font-size:11px;font-weight:900;letter-spacing:0.08em;padding:4px 10px;border-radius:6px;margin-bottom:12px;">RAMPED AI</div>
-    <p style="margin:0;font-size:22px;font-weight:800;color:#fff;line-height:1.2;">1 hour, ${esc(firstName)} ⏰</p>
-  </div>
-  <div style="background:#FAFAFA;padding:24px 28px;">
-    <div style="background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:18px 20px;margin-bottom:20px;">
-      <p style="margin:0 0 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#6B7280;">TODAY AT</p>
-      <p style="margin:0;font-size:20px;font-weight:800;color:#0B1220;">${esc(timeStr)}</p>
-      ${meetBlock}
-    </div>
-    <p style="font-size:14px;color:#374151;line-height:1.6;margin:0 0 16px;">We're on in an hour. If you haven't reviewed your automation roadmap yet, take a quick look — we'll use it as our starting point.</p>
-    <p style="font-size:13px;color:#6B7280;border-top:1px solid #E5E7EB;padding-top:16px;margin:0;">Questions? Just reply.<br><strong style="color:#0B1220;">Jon</strong> · Ramped AI</p>
-  </div>
-</div>
-</body>
-</html>`);
+      await sendEmail(b.email, `Your call is in 1 hour`, wrapEmail({
+        subject: 'Your call is in 1 hour',
+        preheader: `${timeStr} · we're on in an hour.`,
+        innerRows: innerRows1h,
+        siteUrl: SITE_URL,
+      }));
       results.sent_1h.push(b.email);
       await markReminderSent(b.id, 'reminded_1h_at');
     } catch (err) {

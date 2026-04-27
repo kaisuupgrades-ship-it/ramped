@@ -32,6 +32,18 @@
       "destination": "/resources.html"
     },
     {
+      "source": "/sales",
+      "destination": "/sales.html"
+    },
+    {
+      "source": "/pitch",
+      "destination": "/pitch.html"
+    },
+    {
+      "source": "/heroes",
+      "destination": "/heroes.html"
+    },
+    {
       "source": "/demo",
       "destination": "/client-demo.html"
     },

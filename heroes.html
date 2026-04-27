@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Ramped — Hero variant comparison</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #0B1220; --paper: #FAFAF7; --line: #E6E4DC;
+    --muted: #5B6272; --accent: #1F4FFF; --accent-2: #0B2A8C;
+    --good: #0F7A4B;
+  }
+  html, body { background: var(--paper); color: var(--ink); font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+
+  /* Sticky comparison toolbar at top */
+  .compare-bar {
+    position: sticky; top: 0; z-index: 40;
+    background: rgba(11,18,32,0.97);
+    color: #fff;
+    padding: 14px 28px;
+    display: flex; align-items: center; gap: 18px;
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .compare-bar h1 { font-size: 14px; font-weight: 700; letter-spacing: -0.01em; flex-shrink: 0; }
+  .compare-bar nav { display: flex; gap: 6px; flex: 1; }
+  .compare-bar a {
+    padding: 6px 12px; border-radius: 8px;
+    font-size: 12px; font-weight: 600; text-decoration: none;
+    color: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.04);
+  }
+  .compare-bar a:hover { background: rgba(255,255,255,0.10); color: #fff; }
+  .compare-bar .live { margin-left: auto; padding: 6px 12px; border-radius: 8px; background: var(--accent); color: #fff; font-size: 12px; font-weight: 700; text-decoration: none; }
+
+  /* Variant labels */
+  .variant-label {
+    background: var(--ink); color: #fff;
+    padding: 12px 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .variant-label .badge { background: var(--accent); padding: 3px 8px; border-radius: 4px; font-weight: 700; }
+  .variant-label .desc { color: rgba(255,255,255,0.6); font-size: 11px; letter-spacing: 0.04em; text-transform: none; font-family: 'Inter', sans-serif; }
+
+  .section-wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+  @media (min-width: 768px) { .section-wrap { padding: 0 32px; } }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* Buttons (shared) */
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 22px; border-radius: 10px;
+    background: var(--ink); color: #fff;
+    font-weight: 600; font-size: 15px; text-decoration: none;
+    border: none; cursor: pointer;
+  }
+  .btn-primary.accent { background: var(--accent); }
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 18px; border-radius: 10px;
+    background: #fff; border: 1px solid var(--line);
+    color: var(--ink); font-weight: 600; font-size: 15px; text-decoration: none;
+  }
+  .btn-ghost.dark { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); color: #fff; }
+  .btn-large { padding: 15px 26px; font-size: 15px; }
+
+  /* ===== Variant A — Dark theme (Viktor / HighLevel pattern) ===== */
+  .alt-dark {
+    background:
+      radial-gradient(1100px 600px at 95% -5%, rgba(31,79,255,0.22), transparent 60%),
+      radial-gradient(800px 500px at -5% 105%, rgba(31,79,255,0.10), transparent 55%),
+      linear-gradient(135deg, #0B1220 0%, #050810 100%);
+    color: #fff;
+    padding: 88px 0 104px;
+    position: relative; overflow: hidden;
+  }
+  .alt-dark .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; margin-bottom: 28px;
+    border-radius: 999px;
+    background: rgba(255,251,235,0.08); border: 1px solid rgba(245,158,11,0.34);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: #F59E0B; text-transform: uppercase;
+  }
+  .alt-dark .pill::before { content:''; width:6px; height:6px; border-radius:50%; background:#F59E0B; }
+  .alt-dark h1 {
+    font-size: clamp(2.6rem, 6vw, 4rem);
+    font-weight: 800; line-height: 1.04; letter-spacing: -0.035em;
+    margin-bottom: 24px; max-width: 800px; color: #fff;
+  }
+  .alt-dark .sub { font-size: 1.075rem; color: rgba(255,255,255,0.7); line-height: 1.65; max-width: 620px; margin-bottom: 36px; }
+  .alt-dark .metrics {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px; margin-bottom: 32px; max-width: 880px;
+  }
+  .alt-dark .metric {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 14px; padding: 20px 22px;
+  }
+  .alt-dark .metric-val {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(1.7rem, 3vw, 2.1rem); font-weight: 700;
+    color: #fff; line-height: 1; letter-spacing: -0.02em; margin-bottom: 8px;
+  }
+  .alt-dark .metric-lbl { display: block; font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.5; }
+  .alt-dark .cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; }
+  .alt-dark .founder { font-size: 13.5px; color: rgba(255,255,255,0.55); line-height: 1.6; }
+  .alt-dark .founder strong { color: #fff; font-weight: 600; }
+
+  /* ===== Variant B — Centered (Viktor-style) ===== */
+  .alt-centered {
+    background:
+      radial-gradient(900px 500px at 50% -10%, rgba(31,79,255,0.10), transparent 60%),
+      var(--paper);
+    padding: 88px 0 96px;
+    position: relative; overflow: hidden;
+    text-align: center;
+  }
+  .alt-centered::before {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background-image:
+      linear-gradient(rgba(11,18,32,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(11,18,32,0.025) 1px, transparent 1px);
+    background-size: 24px 24px;
+    mask-image: radial-gradient(ellipse 100% 80% at 50% 30%, #000 40%, transparent 90%);
+  }
+  .alt-centered > .section-wrap { position: relative; }
+  .alt-centered .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 16px; margin-bottom: 28px;
+    border-radius: 999px;
+    background: rgba(255,251,235,0.7); border: 1px solid rgba(180,83,9,0.25);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #92400E; text-transform: uppercase;
+  }
+  .alt-centered .pill svg { vertical-align: middle; }
+  .alt-centered h1 {
+    font-size: clamp(2.8rem, 7vw, 5rem);
+    font-weight: 800; line-height: 1.02; letter-spacing: -0.04em;
+    margin: 0 auto 24px; max-width: 1000px;
+  }
+  .alt-centered .sub {
+    font-size: 1.125rem; color: var(--muted); line-height: 1.65;
+    max-width: 640px; margin: 0 auto 36px;
+  }
+  .alt-centered .cta-row {
+    display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 22px;
+  }
+  .alt-centered .trust {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 36px;
+  }
+  .alt-centered .trust span { display: inline-block; margin: 0 14px; }
+  .alt-centered .founder-strip {
+    display: flex; justify-content: center; gap: 20px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase;
+    border-top: 1px solid var(--line); padding-top: 24px; margin-top: 36px;
+  }
+  .alt-centered .founder-strip strong { color: var(--ink); font-weight: 700; }
+
+  /* ===== Variant C — Split (text left, agent UI right) ===== */
+  .alt-split {
+    background:
+      radial-gradient(900px 500px at 100% 0%, rgba(31,79,255,0.10), transparent 60%),
+      var(--paper);
+    padding: 80px 0 80px;
+    position: relative; overflow: hidden;
+  }
+  .alt-split-grid {
+    display: grid; grid-template-columns: 1fr 1.05fr;
+    gap: 56px; align-items: center;
+  }
+  @media (max-width: 900px) { .alt-split-grid { grid-template-columns: 1fr; gap: 36px; } }
+  .alt-split .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; margin-bottom: 24px;
+    border-radius: 999px;
+    background: rgba(255,251,235,0.7); border: 1px solid rgba(180,83,9,0.25);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #92400E; text-transform: uppercase;
+  }
+  .alt-split h1 {
+    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    font-weight: 800; line-height: 1.04; letter-spacing: -0.035em;
+    margin-bottom: 20px;
+  }
+  .alt-split .sub { font-size: 1.05rem; color: var(--muted); line-height: 1.65; margin-bottom: 28px; }
+  .alt-split .cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; }
+  .alt-split .founder { font-size: 13px; color: var(--muted); line-height: 1.55; }
+  .alt-split .founder strong { color: var(--ink); font-weight: 600; }
+  .alt-split-img {
+    border-radius: 14px; overflow: hidden; display: block;
+    box-shadow: 0 1px 0 rgba(11,18,32,0.04), 0 32px 64px -28px rgba(11,18,32,0.22), 0 12px 28px -12px rgba(31,79,255,0.18);
+  }
+  .alt-split-img img { display: block; width: 100%; height: auto; }
+</style>
+</head>
+<body>
+
+<div class="compare-bar">
+  <h1>🎨 Hero variant comparison</h1>
+  <nav>
+    <a href="#a">A · Dark</a>
+    <a href="#b">B · Centered</a>
+    <a href="#c">C · Split</a>
+  </nav>
+  <a class="live" href="/" target="_blank">Open live homepage ↗</a>
+</div>
+
+<!-- ─────────────────────── VARIANT A · DARK ─────────────────────── -->
+<div class="variant-label" id="a">
+  <span class="badge">A</span>
+  <span>Dark theme · operator-confident</span>
+  <span class="desc">— Same composition as our current hero, but in the Viktor / HighLevel / WhiteHorse aesthetic. Strong differentiation against the rest of the site.</span>
+</div>
+<section class="alt-dark">
+  <div class="section-wrap">
+    <div class="pill">30-day go-live guarantee — or full refund</div>
+    <h1>Your AI department,<br>live in 30 days.</h1>
+    <p class="sub">Done-for-you AI implementation. We build, deploy, and run AI agents inside your operating business — answering calls, routing leads, automating your highest-friction workflows. Flat monthly fee. No technical staff required.</p>
+    <div class="metrics">
+      <div class="metric"><span class="metric-val">40+ hrs</span><span class="metric-lbl">saved per week, per client</span></div>
+      <div class="metric"><span class="metric-val">$12,000+</span><span class="metric-lbl">avg. saved per month vs. staffing</span></div>
+      <div class="metric"><span class="metric-val">30 days</span><span class="metric-lbl">from kickoff to live agent</span></div>
+    </div>
+    <div class="cta-row">
+      <a href="/book" class="btn-primary accent btn-large">Book a discovery call →</a>
+      <a href="/demo" class="btn-ghost dark btn-large">Watch a 2-min demo</a>
+    </div>
+    <p class="founder">Built by <strong>Andrew Yoon</strong> — 10-year operator and founder of Xtractor Depot. Free · 30 minutes · No commitment.</p>
+  </div>
+</section>
+
+<!-- ─────────────────────── VARIANT B · CENTERED ─────────────────────── -->
+<div class="variant-label" id="b">
+  <span class="badge">B</span>
+  <span>Centered · single-message dominance</span>
+  <span class="desc">— Viktor-style. Headline dominates, text centered, single CTA, founder credibility as a horizontal trust strip below. Most "expensive-feeling" of the three.</span>
+</div>
+<section class="alt-centered">
+  <div class="section-wrap">
+    <div class="pill">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <path d="M7 1L2 3.5v4C2 10.1 4.2 12.6 7 13.5c2.8-.9 5-3.4 5-6V3.5L7 1z" fill="#F59E0B" opacity=".25" stroke="#B45309" stroke-width="1.3"/>
+      </svg>
+      30-DAY GO-LIVE GUARANTEE — OR FULL REFUND
+    </div>
+    <h1>Your AI department,<br>live in 30 days.</h1>
+    <p class="sub">We build, deploy, and run AI agents inside your operating business — done-for-you, on a flat monthly fee.</p>
+    <div class="cta-row">
+      <a href="/book" class="btn-primary btn-large">Book a discovery call →</a>
+      <a href="/demo" class="btn-ghost btn-large">Watch a 2-min demo</a>
+    </div>
+    <div class="trust">
+      <span>● Live agents, not roadmaps</span>
+      <span>● Flat monthly fee</span>
+      <span>● Refund if we miss 30 days</span>
+    </div>
+    <div class="founder-strip">
+      <span>Built by engineers who've shipped at <strong>SaaS</strong></span>
+      <span>·</span>
+      <span>Founded by <strong>Andrew Yoon</strong> · ex-CEO Xtractor Depot</span>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────── VARIANT C · SPLIT ─────────────────────── -->
+<div class="variant-label" id="c">
+  <span class="badge">C</span>
+  <span>Split · text left, agent UI right</span>
+  <span class="desc">— Stripe / Linear pattern. Pitches the offer in copy AND shows the product simultaneously. Highest signal-density.</span>
+</div>
+<section class="alt-split">
+  <div class="section-wrap">
+    <div class="alt-split-grid">
+      <div>
+        <div class="pill">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M7 1L2 3.5v4C2 10.1 4.2 12.6 7 13.5c2.8-.9 5-3.4 5-6V3.5L7 1z" fill="#F59E0B" opacity=".25" stroke="#B45309" stroke-width="1.3"/>
+          </svg>
+          30-DAY GO-LIVE GUARANTEE — OR FULL REFUND
+        </div>
+        <h1>Your AI department,<br>live in 30 days.</h1>
+        <p class="sub">Done-for-you AI implementation. We build, deploy, and run AI agents inside your operating business — answering calls, routing leads, automating your highest-friction workflows.</p>
+        <div class="cta-row">
+          <a href="/book" class="btn-primary btn-large">Book a discovery call →</a>
+          <a href="/demo" class="btn-ghost btn-large">Watch a 2-min demo</a>
+        </div>
+        <p class="founder">Built by <strong>Andrew Yoon</strong> — 10-year operator and founder of Xtractor Depot.</p>
+      </div>
+      <div class="alt-split-img">
+        <img src="/assets/agent-ui.png" srcset="/assets/agent-ui.png 1x, /assets/agent-ui@2x.png 2x" alt="Ramped AI agent inbox showing a quote intake workflow." width="1280" height="720">
+      </div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

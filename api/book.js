@@ -4,6 +4,7 @@
 
 import { esc, isValidEmail, isFuture, isWithinBookingWindow, isBusinessHours, truncate, checkRateLimit, getClientIp } from './_lib/validate.js';
 import { isConfigured as gcalConfigured, getBusyRanges, createMeetEvent } from './_lib/google-calendar.js';
+import { wrapEmail, emailHero, emailBody, emailCtaCard, emailInfoCard, emailSignoff, emailSpacer } from './_lib/email-design.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -222,64 +223,38 @@ export default async function handler(req, res) {
     }
 
     // ── Prepare-for-your-call email → guest ──────────────────────────────
-    const meetCta = meetLink
-      ? `<tr><td align="center" style="padding:0 0 28px;">
-          <a href="${esc(meetLink)}" style="display:inline-block;background:#1F4FFF;color:#fff;font-size:15px;font-weight:700;text-decoration:none;padding:14px 32px;border-radius:10px;border:none;">▶ Join Google Meet</a>
-          <p style="margin:8px 0 0;font-size:12px;color:#5B6272;word-break:break-all;">${esc(meetLink)}</p>
-         </td></tr>`
-      : '';
-
-    await sendEmail(email, `You're booked — one quick step before your call`, `<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Before your call</title></head>
-<body style="margin:0;padding:0;background:#F5F5F3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#F5F5F3;padding:40px 16px;">
-<tr><td align="center">
-<table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;">
-
-  <!-- Dark hero -->
-  <tr><td style="background:#0B1220;border-radius:16px 16px 0 0;padding:36px 40px 32px;text-align:center;">
-    <p style="margin:0 0 12px;font-size:28px;">📋</p>
-    <h1 style="margin:0 0 8px;color:#fff;font-size:22px;font-weight:800;letter-spacing:-0.02em;">You're booked, ${esc(name.split(' ')[0])} ✓</h1>
-    <p style="margin:0;color:#8B9AB5;font-size:14px;line-height:1.5;">${esc(dtGuest.full)}</p>
-  </td></tr>
-
-  <!-- Body -->
-  <tr><td style="background:#fff;padding:32px 40px;">
-    <p style="margin:0 0 20px;font-size:15px;color:#0B1220;line-height:1.6;">Before we meet, take 3 minutes to fill out your intake form. It helps us build your custom automation roadmap <em>before</em> the call so we can hit the ground running.</p>
-
-    <!-- Questionnaire CTA -->
-    <table width="100%" cellpadding="0" cellspacing="0" style="background:#EEF2FF;border-radius:12px;margin-bottom:28px;">
-    <tr><td style="padding:24px;text-align:center;">
-      <p style="margin:0 0 6px;font-family:monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#5B6272;">Step 1 of 1</p>
-      <p style="margin:0 0 16px;font-size:16px;font-weight:700;color:#0B1220;">Complete your intake form</p>
-      <p style="margin:0 0 16px;font-size:13px;color:#5B6272;line-height:1.5;">10 quick questions about your business — takes about 3 minutes. We'll use your answers to map out exactly which automations will save you the most time.</p>
-      <a href="${esc(questionnaireUrl)}" style="display:inline-block;background:#1F4FFF;color:#fff;font-size:15px;font-weight:700;text-decoration:none;padding:14px 32px;border-radius:10px;">Fill out the form →</a>
-    </td></tr>
-    </table>
-
-    ${meetCta ? `<!-- Meet link -->
-    <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #E6E4DC;border-radius:12px;margin-bottom:28px;">
-    <tr><td style="padding:20px 24px;">
-      <p style="margin:0 0 4px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#5B6272;">Your call link</p>
-      <p style="margin:0 0 12px;font-size:14px;color:#0B1220;font-weight:600;">${esc(dtGuest.full)}</p>
-      <a href="${esc(meetLink)}" style="display:inline-block;background:#0B1220;color:#fff;font-size:14px;font-weight:600;text-decoration:none;padding:10px 20px;border-radius:8px;">▶ Join Google Meet</a>
-    </td></tr>
-    </table>` : ''}
-
-    <p style="margin:0;font-size:13px;color:#5B6272;line-height:1.6;">If you have any questions before the call, just reply to this email.<br>— Jon @ Ramped AI</p>
-  </td></tr>
-
-  <!-- Footer -->
-  <tr><td style="background:#F5F5F3;border-radius:0 0 16px 16px;padding:20px 40px;text-align:center;">
-    <p style="margin:0;font-size:12px;color:#8B9AB5;">Ramped AI · <a href="https://30dayramp.com" style="color:#8B9AB5;">30dayramp.com</a></p>
-  </td></tr>
-
-</table>
-</td></tr>
-</table>
-</body>
-</html>`);
+    const firstName = esc(name.split(/\s+/)[0]);
+    const innerRows =
+      emailHero({
+        eyebrow: 'You\'re booked',
+        headline: `${firstName}, your discovery call is locked in.`,
+        sub: `<strong style="color:#0B1220;font-weight:600;">${esc(dtGuest.full)}</strong> · 30 minutes`,
+      }) +
+      emailBody(`Before we meet, take 3 minutes to fill out the intake form. We use your answers to <strong>build your custom automation roadmap before the call</strong> so we can spend the time on what to ship first, not what to ask.`) +
+      emailCtaCard({
+        eyebrow: 'Step 1 of 1',
+        title: 'Complete your intake form',
+        body: '10 quick questions. About 3 minutes. Saves us 15 minutes on the call.',
+        ctaHref: esc(questionnaireUrl),
+        ctaLabel: 'Fill out the form →',
+      }) +
+      (meetLink ? emailInfoCard({
+        eyebrow: 'Your call link',
+        title: esc(dtGuest.full),
+        body: 'A Google Meet invite is also in your calendar.',
+        ctaHref: esc(meetLink),
+        ctaLabel: '▶ Join Google Meet',
+      }) : '') +
+      emailSignoff({
+        name: 'Jon',
+        extra: 'Questions before the call? Just reply to this email — it goes straight to me.',
+      });
+    await sendEmail(email, `You're booked — one quick step before your call`, wrapEmail({
+      subject: 'You\'re booked — one quick step before your call',
+      preheader: `Your call: ${dtGuest.full}. 3-minute intake form before we meet.`,
+      innerRows,
+      siteUrl: SITE_URL,
+    }));
 
     // ── Owner notification ───────────────────────────────────────────────────
     await sendEmail(OWNER_EMAIL, `New booking: ${name} — ${dtHost.full}`, `

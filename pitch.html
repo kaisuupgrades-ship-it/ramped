@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Ramped AI — Investor Deck</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  /* This deck reuses the same chrome as /sales.html. Kept in a single file for
+     simplicity — if these decks evolve substantially, extract shared CSS to
+     /assets/deck.css and link from both. */
+  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #0B1220; --paper: #FAFAF7; --line: #E6E4DC;
+    --muted: #5B6272; --accent: #1F4FFF; --accent-soft: #EEF3FF;
+    --accent-2: #0B2A8C;
+    --good: #0F7A4B; --warn: #B45309;
+  }
+  html, body {
+    height: 100%; overflow: hidden;
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: var(--ink);
+    background: var(--ink);
+  }
+  .stage { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+  .slide {
+    position: absolute; inset: 0; display: none;
+    padding: clamp(24px, 5vh, 64px) clamp(28px, 6vw, 96px);
+    overflow: hidden;
+  }
+  .slide.active { display: flex; flex-direction: column; justify-content: center; }
+  .slide.dark { background: linear-gradient(135deg, var(--ink) 0%, #050810 100%); color: #fff; }
+  .slide.dark::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(900px 600px at 90% 10%, rgba(31,79,255,0.18), transparent 60%); }
+  .slide.light { background: var(--paper); color: var(--ink); }
+  .slide.light::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background-image: radial-gradient(900px 600px at 90% 0%, rgba(31,79,255,0.08), transparent 55%), linear-gradient(rgba(11,18,32,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(11,18,32,0.04) 1px, transparent 1px);
+    background-size: auto, 24px 24px, 24px 24px;
+  }
+  .slide > * { position: relative; z-index: 1; }
+
+  .brand { position: absolute; top: clamp(20px,3vh,36px); left: clamp(28px,4vw,64px); display: inline-flex; align-items: center; gap: 8px; z-index: 2; }
+  .brand-mark { width: 26px; height: 26px; border-radius: 6px; background: linear-gradient(135deg, #1F4FFF, #0B2A8C); color: #fff; font-weight: 900; font-size: 16px; line-height: 26px; text-align: center; letter-spacing: -0.04em; }
+  .brand-name { font-weight: 700; font-size: 14px; letter-spacing: -0.01em; }
+  .slide.dark .brand-name { color: #fff; }
+  .slide.light .brand-name { color: var(--ink); }
+  .slide-no {
+    position: absolute; top: clamp(20px,3vh,36px); right: clamp(28px,4vw,64px);
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em;
+    z-index: 2;
+  }
+  .slide.dark .slide-no { color: rgba(255,255,255,0.4); }
+  .slide.light .slide-no { color: var(--muted); opacity: 0.6; }
+
+  .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: clamp(11px,1.1vw,13px); font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 18px; }
+  .slide.dark .eyebrow { color: var(--accent); }
+  .slide.light .eyebrow { color: var(--muted); }
+
+  h1 { font-size: clamp(40px,6.4vw,96px); font-weight: 800; line-height: 1.04; letter-spacing: -0.035em; margin-bottom: clamp(12px,1.6vh,28px); max-width: 1300px; }
+  h1.huge { font-size: clamp(56px,9vw,140px); line-height: 1; }
+  h2 { font-size: clamp(28px,3.6vw,52px); font-weight: 800; line-height: 1.1; letter-spacing: -0.025em; margin-bottom: clamp(12px,1.4vh,24px); max-width: 1100px; }
+  .lede { font-size: clamp(18px,1.6vw,26px); line-height: 1.5; max-width: 1000px; color: rgba(255,255,255,0.75); }
+  .slide.light .lede { color: var(--muted); }
+  .lede strong { color: inherit; font-weight: 700; }
+  .slide.dark .lede strong { color: #fff; }
+  .slide.light .lede strong { color: var(--ink); }
+
+  .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(16px,2vw,32px); margin-top: clamp(16px,2.4vh,36px); max-width: 1400px; }
+  .two-col { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(20px,3vw,48px); margin-top: clamp(16px,2.4vh,36px); max-width: 1400px; align-items: start; }
+  .card { padding: clamp(20px,2.4vw,32px); border-radius: 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.10); }
+  .slide.light .card { background: #fff; border-color: var(--line); box-shadow: 0 1px 0 rgba(11,18,32,.04), 0 12px 32px -16px rgba(11,18,32,.10); }
+  .card-num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; margin-bottom: clamp(10px,1.4vh,18px); }
+  .card-title { font-size: clamp(18px,1.8vw,24px); font-weight: 700; margin-bottom: 10px; line-height: 1.25; letter-spacing: -0.015em; }
+  .card-desc { font-size: clamp(14px,1.2vw,18px); line-height: 1.55; }
+  .slide.dark .card-desc { color: rgba(255,255,255,0.65); }
+  .slide.light .card-desc { color: var(--muted); }
+
+  .big-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(20px,2.5vw,40px); margin-top: clamp(20px,3vh,44px); max-width: 1300px; }
+  .big-stat-val { font-family: 'JetBrains Mono', monospace; font-size: clamp(40px,6vw,84px); font-weight: 700; line-height: 1; letter-spacing: -0.025em; margin-bottom: 10px; }
+  .slide.dark .big-stat-val { color: #fff; }
+  .slide.light .big-stat-val { color: var(--ink); }
+  .big-stat-label { font-size: clamp(13px,1.1vw,16px); }
+  .slide.dark .big-stat-label { color: rgba(255,255,255,0.65); }
+  .slide.light .big-stat-label { color: var(--muted); }
+
+  .cover-pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px; border: 1px solid rgba(31,79,255,0.4); background: rgba(31,79,255,0.18); font-family: 'JetBrains Mono', monospace; font-size: clamp(11px,1vw,13px); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); align-self: flex-start; }
+  .cover-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+  .compare-table {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    margin-top: clamp(16px,2.4vh,28px); max-width: 1300px;
+  }
+  .compare-table th, .compare-table td {
+    padding: 14px 18px; text-align: left;
+    font-size: clamp(14px,1.2vw,17px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .slide.light .compare-table th, .slide.light .compare-table td { border-bottom-color: var(--line); }
+  .compare-table th { font-family: 'JetBrains Mono', monospace; font-size: clamp(11px,1vw,13px); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .compare-table .row-label { font-weight: 600; }
+  .slide.dark .compare-table .row-label { color: #fff; }
+  .col-us { background: rgba(31,79,255,0.10); border-radius: 8px 8px 0 0; }
+  .col-us-cell { background: rgba(31,79,255,0.06); }
+
+  .ask-stack { display: flex; flex-direction: column; gap: clamp(14px,1.6vh,24px); }
+  .ask-num { font-family: 'JetBrains Mono', monospace; font-size: clamp(56px,8vw,120px); font-weight: 700; line-height: 1; letter-spacing: -0.03em; color: var(--accent); }
+
+  .counter { position: fixed; bottom: 24px; right: 32px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.06em; color: rgba(255,255,255,0.4); z-index: 10; user-select: none; }
+  body.light-active .counter { color: var(--muted); }
+  .nav-hint { position: fixed; bottom: 24px; left: 32px; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.04em; color: rgba(255,255,255,0.3); z-index: 10; user-select: none; }
+  body.light-active .nav-hint { color: var(--muted); opacity: 0.5; }
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+  <!-- 1. Cover -->
+  <section class="slide dark active" data-theme="dark">
+    <div class="brand"><div class="brand-mark">R</div><div class="brand-name">Ramped AI</div></div>
+    <span class="slide-no">01</span>
+    <span class="cover-pill">Investor preview · 2026</span>
+    <h1 class="huge">An AI department,<br>productized.</h1>
+    <p class="lede" style="margin-top:24px;">We deploy and run AI agents inside operating businesses on a flat monthly fee. Live in 30 days, or full refund. <strong>Founder-led, revenue-positive, $0 raised.</strong></p>
+  </section>
+
+  <!-- 2. The problem (size of it) -->
+  <section class="slide dark" data-theme="dark">
+    <div class="brand"><div class="brand-mark">R</div><div class="brand-name">Ramped AI</div></div>
+    <span class="slide-no">02</span>
+    <p class="eyebrow">The problem</p>
+    <h1>Mid-market businesses know AI works. They can't deploy it.</h1>
+    <p class="lede">Every operating business above $1M ARR has the same internal conversation: "We should be using AI." The conversation never ends in a deployment because the available paths are all bad.</p>
+    <div class="three-col">
+      <div class="card"><div class="card-num">1</div><div class="card-title">Build it themselves.</div><p class="card-desc">Hire engineers. 6–18 months. High burn, high failure rate. They aren't software companies and don't want to be.</p></div>
+      <div class="card"><div class="card-num">2</div><div class="card-title">Hire a consultancy.</div><p class="card-desc">Strategy decks, roadmap PDFs, pilots that never ship. Revenue model is decoupled from outcomes. Most engagements end without working software.</p></div>
+      <div class="card"><div class="card-num">3</div><div class="card-title">Buy point tools.</div><p class="card-desc">An AI for sales, an AI for support, an AI for ops. Now they have 8 dashboards no one logs into and no integration with the business.</p></div>
+    </div>
+  </section>
+
+  <!-- 3. Solution -->
+  <section class="slide light" data-theme="light">
+    <div class="brand"><div class="brand-mark">R</div><div class="brand-name">Ramped AI</div></div>
+    <span class="slide-no">03</span>
+    <p class="eyebrow">Solution</p>
+    <h1>An AI department, delivered as a product.</h1>
+    <p class="lede">We do the work consultancies promise but don't ship. We deploy live AI agents inside the customer's existing systems — their inbox, their CRM, their phones — within 30 days. Then we run them on a flat monthly fee. <strong>The customer gets working software. We carry every risk except theirs.</strong></p>
+    <div class="three-col">
+      <div class="card"><div class="card-num">A</div><div class="card-title">Productized engagement.</div><p class="card-desc">Same shape every time: 1 week diagnose, 3 weeks build, then run. No bespoke consulting wheel-spin.</p></div>
+      <div class="card"><div class="card-num">B</div><div class="card-title">Live agents, not roadmaps.</div><p class="card-desc">The deliverable is software running in production. Onboarding fee is fixed. Retainer covers everything ongoing.</p></div>
+      <div class="card"><div class="card-num">C</div><div class="card-title">Risk transferred.</div><p class="card-desc">30-day go-live guarantee with full refund. We don't get paid unless the agent ships.</p></div>
+    </div>
+  </section>
+
+  <!-- 4. How it works (in plain operator language) -->
+  <section class="slide dark" data-theme="dark">
+    <div class="brand"><div class="brand-mark">R</div><div class="brand-name">Ramped AI</div></div>
+    <span class="slide-no">04</span>
+    <p class="eyebrow">Mechanics</p>
+    <h1>One offering. Three phases. Recurring revenue.</h1>
+    <div class="three-col">
+      <div class="card"><div class="card-num">1</div><div class="card-title">Diagnose · Week 1</div><p class="card-desc">Workflow audit + agent deployment plan. Charged as fixed onboarding fee.</p></div>
+      <div class="card"><div class="card-num">2</div><div class="card-title">Build · Days 2–30</div><p class="card-desc">Live agent shipped into customer's actual systems. Onboarding fee covers this work.</p></div>
+      <div class="card"><div class="card-num">3</div><div class="card-title">Run · Month 2+</div><p class="card-desc">Flat monthly retainer. Compute, hosting, iteration, and new agents included. Net retention &gt; 100% from scope expansion.</p></div>
+    </div>
+  </section>
+
+  <!-- 5. Traction -->
+  <section class="slide dark" data-theme="dark">
+    <div class="brand"><div class="brand-mark">R</div><div class="brand-name">Ramped AI</div></div>
+    <span class="slide-no">05</span>
+    <p class="eyebrow">Traction · early</p>
+    <h1>First deployment shipped. Real numbers.</h1>
+    <p class="lede">Xtractor Depot — industrial supplier, ships precision lab equipment to industrial customers — was our pilot. Live agent deployed inside 30 days, running today. We're using these results to convert a pipeline of mid-market operating businesses with similar manual-ops problems.</p>
+    <div class="big-stats">
+      <div><div class="big-stat-val">14 hrs/wk</div><div class="big-stat-label">manual work eliminated, week one</div></div>
+      <div><div class="big-stat-val">4h → 8m</div><div class="big-stat-label">lead response time, every channel</div></div>
+      <div><div class="big-stat-val">$0</div><div class="big-stat-label">ongoing management required from customer</div></div>
+    </div>
+  </section>
+
+  <!-- 6. Business model -->
+  <section class="slide light" data-theme="light">
+    <div class="brand"><div class="brand-mark">R</div><div class="brand-name">Ramped AI</div></div>
+    <span class="slide-no">06</span>
+    <p class="eyebrow">Business model</p>
+    <h1>Onboarding ARPU + monthly recurring.</h1>
+    <p class="lede">Two-part revenue. Onboarding fee front-loads engagement cost. Monthly retainer is true SaaS-like recurring revenue with very low churn risk because the agents are embedded inside customer workflows.</p>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-num">$</div>
+        <div class="card-title">Onboarding</div>
+        <p class="card-desc">$2,500 (Starter) – $3,500 (Growth) one-time. Covers the diagnose + build phase. Margin: ~70% — most cost is senior team time. Booked at signing.</p>
+      </div>
+      <div class="card">
+        <div class="card-num">∞</div>
+        <div class="card-title">Recurring retainer</div>
+        <p class="card-desc">$2,500 – $5,000/mo (or annual at 2 months free). Covers compute, hosting, maintenance, and ongoing iteration. Margin: ~85% at scale. Contracted month-to-month — no lock-in, low friction at sale.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Unit economics (simple, defensible) -->
+  <section class="slide light" data-theme="light">
+    <div class="brand"><div class="brand-mark">R</div><div class="brand-name">Ramped AI</div></div>
+    <span class="slide-no">07</span>
+    <p class="eyebrow">Unit economics</p>
+    <h1>One Growth customer pays back inside year one.</h1>
+    <table class="compare-table">
+      <thead><tr><th>Per Growth customer · year 1</th><th class="col-us">Amount</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="row-label">Onboarding fee</td><td class="col-us-cell">$3,500</td><td>One-time, billed at signing.</td></tr>
+        <tr><td class="row-label">Monthly retainer × 12</td><td class="col-us-cell">$60,000</td><td>$5,000/mo · or $50k if customer chooses annual ($4,167/mo).</td></tr>
+        <tr><td class="row-label">Gross revenue (year 1)</td><td class="col-us-cell"><strong>$63,500</strong></td><td>Lower bound — assumes monthly billing only.</td></tr>
+        <tr><td class="row-label">Direct costs (compute + senior labor allocation)</td><td class="col-us-cell">~$15,000</td><td>Compute is &lt; $200/mo per customer at current model usage. Labor amortized.</td></tr>
+        <tr><td class="row-label">Gross margin</td><td class="col-us-cell"><strong>~76%</strong></td><td>Drops over time as we templatize — expected to reach 85%+ at 50+ customers.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 8. Market -->
+  <section class="slide dark" data-theme="dark">
+    <div class="brand"><div class="brand-mark">R</div><div class="brand-name">Ramped AI</div></div>
+    <span class="slide-no">08</span>
+    <p class="eyebrow">Market</p>
+    <h1>Mid-market operating businesses with $1M+ ARR.</h1>
+    <p class="lede">Industrial suppliers. Specialty distributors. Field services. Healthcare practices. Real estate brokerages. Legal practices. Logistics. Cannabis operators. ~3.5 million companies in the US with revenue between $1M and $50M, none of which have an AI department but most of which know they need one. Our wedge is the segment that's too small for IBM/Accenture and too operationally complex for SaaS point tools.</p>
+    <div class="big-stats">
+      <div><div class="big-stat-val">3.5M</div><div class="big-stat-label">US businesses with $1M – $50M revenue</div></div>
+      <div><div class="big-stat-val">$60K+</div><div class="big-stat-label">average year-1 contract value</div></div>
+      <div><div class="big-stat-val">~5%</div><div class="big-stat-label">SOM at 5-yr — implies $10B+ revenue ceiling</div></div>
+    </div>
+  </section>
+
+  <!-- 9. Competition -->
+  <section class="slide light" data-theme="light">
+    <div class="brand"><div class="brand-mark">R</div><div class="brand-name">Ramped AI</div></div>
+    <span class="slide-no">09</span>
+    <p class="eyebrow">Competition</p>
+    <h1>The market splits four ways. We're the only category-of-one.</h1>
+    <table class="compare-table">
+      <thead><tr><th>Approach</th><th>Time to live</th><th>Risk on customer</th><th>Recurring revenue</th><th class="col-us">Ramped</th></tr></thead>
+      <tbody>
+        <tr><td class="row-label">In-house build</td><td>6–18 months</td><td>100%</td><td>n/a</td><td class="col-us-cell">30 days · refund · yes</td></tr>
+        <tr><td class="row-label">Big consultancies (Accenture, Deloitte)</td><td>6+ months</td><td>~80%</td><td>Some</td><td class="col-us-cell">30 days · refund · yes</td></tr>
+        <tr><td class="row-label">AI consulting boutiques</td><td>3–6 months</td><td>~70%</td><td>Rare</td><td class="col-us-cell">30 days · refund · yes</td></tr>
+        <tr><td class="row-label">Point AI tools (chatbots, copilots)</td><td>Days</td><td>Low setup, low value</td><td>Yes</td><td class="col-us-cell">Higher value, integrated</td></tr>
+      </tbody>
+    </table>
+    <p class="lede" style="margin-top:24px;font-size:clamp(14px,1.2vw,18px);">Moat: 30-day guarantee + flat-fee productization is the only model that takes risk off the customer. As we templatize, our cost-to-deliver drops while everyone else's stays flat.</p>
+  </section>
+
+  <!-- 10. Team -->
+  <section class="slide dark" data-theme="dark">
+    <div class="brand"><div class="brand-mark">R</div><div class="brand-name">Ramped AI</div></div>
+    <span class="slide-no">10</span>
+    <p class="eyebrow">Team</p>
+    <h1>Operators first. Technologists second.</h1>
+    <p class="lede">Andrew Yoon — founder, ex-CEO of Xtractor Depot (2016–present), industrial supplier shipping precision lab equipment to industrial customers. Ten years of running an operating business at scale. Built Ramped because he hit the manual-ops ceiling that every $1M+ business hits.<br><br>Senior engineering core team plus a specialist advisor network covering LLM ops, data engineering, CRM and integrations, and vertical SMEs. We staff up per engagement — no junior consultants, no learning on customer dime.</p>
+  </section>
+
+  <!-- 11. Why now -->
+  <section class="slide dark" data-theme="dark">
+    <div class="brand"><div class="brand-mark">R</div><div class="brand-name">Ramped AI</div></div>
+    <span class="slide-no">11</span>
+    <p class="eyebrow">Why now</p>
+    <h1>Three things just became true at once.</h1>
+    <div class="three-col">
+      <div class="card"><div class="card-num">1</div><div class="card-title">Models work.</div><p class="card-desc">Frontier LLMs (Claude Opus 4, GPT-5 class) are now reliable enough for production agentic workflows in operating businesses. This was not true 18 months ago.</p></div>
+      <div class="card"><div class="card-num">2</div><div class="card-title">CFOs are buying.</div><p class="card-desc">Mid-market budget cycles are now allocating "AI implementation" as a discrete line item. The buyer exists for the first time.</p></div>
+      <div class="card"><div class="card-num">3</div><div class="card-title">Templatization gap.</div><p class="card-desc">Big consultancies don't templatize — they bill hours. We templatize aggressively. As we ship more, our margin expands while incumbents' stay flat.</p></div>
+    </div>
+  </section>
+
+  <!-- 12. Ask -->
+  <section class="slide dark" data-theme="dark">
+    <div class="brand"><div class="brand-mark">R</div><div class="brand-name">Ramped AI</div></div>
+    <span class="slide-no">12</span>
+    <p class="eyebrow">Ask</p>
+    <div class="ask-stack">
+      <div class="ask-num">$XXX K</div>
+      <h1 style="margin-bottom:0;">Pre-seed.</h1>
+      <p class="lede">Targeting an SBA-lite check that gets us from one customer to ten. Use of funds: <strong>(1)</strong> 2 senior hires (one engineering, one delivery), <strong>(2)</strong> templatize the diagnose + build phase to compress engagement cost, <strong>(3)</strong> outbound to mid-market industrials, healthcare practices, and field services in the next two quarters.<br><br>Hit me back with questions: <strong>jon@30dayramp.com</strong> or <strong>30dayramp.com/book</strong>.</p>
+    </div>
+  </section>
+
+</div>
+
+<div class="counter"><span id="cur">1</span> / <span id="total">12</span></div>
+<div class="nav-hint">← → navigate · F fullscreen</div>
+
+<script>
+  (function(){
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+    const curEl = document.getElementById('cur');
+    document.getElementById('total').textContent = total;
+    let idx = 0;
+    function show(i) {
+      idx = Math.max(0, Math.min(total - 1, i));
+      slides.forEach((s, j) => s.classList.toggle('active', j === idx));
+      curEl.textContent = idx + 1;
+      document.body.classList.toggle('light-active', slides[idx].dataset.theme === 'light');
+      history.replaceState(null, '', '#' + (idx + 1));
+    }
+    function next() { show(idx + 1); }
+    function prev() { show(idx - 1); }
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+      else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+      else if (e.key === 'Home') { e.preventDefault(); show(0); }
+      else if (e.key === 'End') { e.preventDefault(); show(total - 1); }
+      else if (e.key === 'f' || e.key === 'F') {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+        else document.exitFullscreen();
+      }
+    });
+    document.querySelector('.stage').addEventListener('click', function(e){
+      if (e.clientX > window.innerWidth * 0.5) next(); else prev();
+    });
+    const hash = parseInt((window.location.hash || '#1').slice(1), 10);
+    if (Number.isFinite(hash) && hash >= 1 && hash <= total) show(hash - 1); else show(0);
+  })();
+</script>
+</body>
+</html>

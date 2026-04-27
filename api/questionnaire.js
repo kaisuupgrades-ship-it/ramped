@@ -9,6 +9,7 @@
 
 import { isValidEmail, truncate, checkRateLimit, getClientIp } from './_lib/validate.js';
 import { signMapToken, isMapTokenConfigured } from './_lib/map-token.js';
+import { wrapEmail, emailHero, emailBody, emailCtaCard, emailInfoCard, emailSignoff } from './_lib/email-design.js';
 
 const SUPABASE_URL  = process.env.SUPABASE_URL;
 const SUPABASE_KEY  = process.env.SUPABASE_SERVICE_KEY;
@@ -453,99 +454,77 @@ export default async function handler(req, res) {
       </div>`
     ).join('') || '';
 
-    await sendEmail(
-      email,
-      `Your automation roadmap is ready, ${firstName}`,
-      `<!DOCTYPE html>
-<html>
-<body style="margin:0;padding:0;background:#F3F4F6;">
-<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:580px;margin:0 auto;">
+    // Build the agent cards block (kept as a custom inner row since it has rich content)
+    const agentsRow = clientAgentsHTML ? `<tr><td style="background:#FFFFFF;padding:0 36px 8px;">
+      <p style="margin:0 0 14px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5B6272;">What we'd build for you</p>
+      ${clientAgentsHTML}
+    </td></tr>` : '';
 
-  <!-- Hero header -->
-  <div style="background:#0B1220;padding:32px 32px 28px;">
-    <div style="display:inline-block;background:#1F4FFF;color:#fff;font-size:11px;font-weight:900;letter-spacing:0.08em;padding:4px 10px;border-radius:6px;margin-bottom:14px;">RAMPED AI</div>
-    <p style="margin:0 0 8px;font-size:26px;font-weight:800;color:#fff;line-height:1.2;">Your automation roadmap<br>is ready, ${esc(firstName)} ✦</p>
-    <p style="margin:0;font-size:14px;color:#9CA3AF;line-height:1.5;">Based on your answers — we'll walk through this together on the call.</p>
-  </div>
+    const summaryRow = roadmap.summary ? `<tr><td style="background:#FFFFFF;padding:0 36px 24px;">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="background:#EEF3FF;border-radius:12px;border-left:4px solid #1F4FFF;">
+        <tr><td style="padding:18px 22px;">
+          <p style="margin:0 0 6px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#1F4FFF;">Your opportunity</p>
+          <p style="margin:0;font-family:'Helvetica Neue',Arial,sans-serif;font-size:14.5px;color:#0B1220;line-height:1.65;font-style:italic;">"${esc(roadmap.summary)}"</p>
+        </td></tr>
+      </table>
+    </td></tr>` : '';
 
-  <!-- Body -->
-  <div style="background:#FAFAFA;padding:28px 32px;">
-
-    ${roadmap.summary ? `
-    <!-- Summary callout -->
-    <div style="background:#fff;border-left:4px solid #1F4FFF;padding:16px 18px;margin-bottom:24px;">
-      <p style="margin:0 0 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#1F4FFF;">YOUR OPPORTUNITY</p>
-      <p style="margin:0;font-size:14px;color:#0B1220;line-height:1.7;font-style:italic;">"${esc(roadmap.summary)}"</p>
-    </div>` : ''}
-
-    <!-- Stats bar -->
-    <table style="width:100%;border-collapse:collapse;margin-bottom:24px;background:#fff;border:1px solid #E5E7EB;">
-      <tr>
-        <td style="text-align:center;padding:16px 8px;border-right:1px solid #E5E7EB;width:33%;">
-          <div style="font-size:28px;font-weight:900;color:#1F4FFF;line-height:1;">${agentCount}</div>
-          <div style="font-size:10px;color:#6B7280;margin-top:4px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">AI Agents</div>
-        </td>
-        <td style="text-align:center;padding:16px 8px;border-right:1px solid #E5E7EB;width:33%;">
-          <div style="font-size:28px;font-weight:900;color:#1F4FFF;line-height:1;">30</div>
-          <div style="font-size:10px;color:#6B7280;margin-top:4px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">Day Go-Live</div>
-        </td>
-        <td style="text-align:center;padding:16px 8px;width:33%;">
-          <div style="font-size:28px;font-weight:900;color:#059669;line-height:1;">$0</div>
-          <div style="font-size:10px;color:#6B7280;margin-top:4px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;">If We Miss It</div>
-        </td>
-      </tr>
-    </table>
-
-    ${clientAgentsHTML ? `
-    <!-- Agent cards -->
-    <p style="font-size:11px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 12px;">What we'd build for you</p>
-    ${clientAgentsHTML}` : ''}
-
-    ${roadmap.week_1_focus ? `
-    <!-- Week 1 focus -->
-    <div style="background:#0B1220;border-radius:12px;padding:20px 22px;margin-bottom:24px;margin-top:16px;">
-      <p style="margin:0 0 8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#1F4FFF;">⚡ WHERE WE'D START</p>
-      <p style="margin:0;font-size:14px;color:#F9FAFB;line-height:1.7;">${esc(roadmap.week_1_focus)}</p>
-    </div>` : ''}
-
-    ${roadmapUrl ? `
-    <!-- View online CTA -->
-    <div style="text-align:center;margin-bottom:20px;">
-      <a href="${esc(roadmapUrl)}" style="display:inline-block;background:#F3F4F6;color:#0B1220;font-size:13px;font-weight:600;text-decoration:none;padding:10px 20px;border-radius:8px;border:1px solid #E5E7EB;">🔗 View this roadmap online →</a>
-    </div>` : ''}
-
-    <!-- Closing note -->
-    <p style="font-size:14px;color:#374151;line-height:1.7;margin:0 0 24px;">This is a starting point — on the call we'll make sure it fits your actual workflow and prioritize what makes the most sense to ship first. No pressure, no pitch.</p>
-
-    <!-- Sign-off card -->
-    <div style="background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:18px 22px;">
-      <table style="width:100%;border-collapse:collapse;">
+    // Three-stat band (agent count, 30 days, $0)
+    const statsRow = `<tr><td style="background:#FFFFFF;padding:0 36px 24px;">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="border:1px solid #E6E4DC;border-radius:12px;background:#FAFAF7;">
         <tr>
-          <td style="width:52px;vertical-align:middle;padding-right:14px;">
-            <div style="width:40px;height:40px;border-radius:50%;background:#1F4FFF;color:#fff;font-size:18px;font-weight:800;text-align:center;line-height:40px;">J</div>
+          <td style="text-align:center;padding:18px 8px;border-right:1px solid #E6E4DC;width:33.33%;">
+            <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:24px;font-weight:900;color:#1F4FFF;line-height:1;">${agentCount}</div>
+            <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:10px;color:#5B6272;margin-top:5px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">AI Agents</div>
           </td>
-          <td style="vertical-align:middle;">
-            <div style="font-size:14px;font-weight:700;color:#0B1220;line-height:1.2;">Jon</div>
-            <div style="font-size:12px;color:#6B7280;">Founder, Ramped AI</div>
+          <td style="text-align:center;padding:18px 8px;border-right:1px solid #E6E4DC;width:33.33%;">
+            <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:24px;font-weight:900;color:#1F4FFF;line-height:1;">30</div>
+            <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:10px;color:#5B6272;margin-top:5px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">Day Go-Live</div>
           </td>
-          <td style="text-align:right;vertical-align:middle;">
-            <a href="mailto:jon@30dayramp.com" style="display:inline-block;background:#1F4FFF;color:#fff;font-size:13px;font-weight:700;text-decoration:none;padding:8px 16px;border-radius:8px;">Reply to Jon</a>
+          <td style="text-align:center;padding:18px 8px;width:33.33%;">
+            <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:24px;font-weight:900;color:#0F7A4B;line-height:1;">$0</div>
+            <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:10px;color:#5B6272;margin-top:5px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;">If We Miss It</div>
           </td>
         </tr>
       </table>
-    </div>
+    </td></tr>`;
 
-  </div>
+    // Week 1 focus block (dark navy, accent eyebrow)
+    const week1Row = roadmap.week_1_focus ? `<tr><td style="background:#FFFFFF;padding:0 36px 24px;">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="background:#0B1220;border-radius:12px;">
+        <tr><td style="padding:20px 22px;">
+          <p style="margin:0 0 8px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#1F4FFF;">⚡ Where we'd start</p>
+          <p style="margin:0;font-family:'Helvetica Neue',Arial,sans-serif;font-size:14px;color:#F9FAFB;line-height:1.65;">${esc(roadmap.week_1_focus)}</p>
+        </td></tr>
+      </table>
+    </td></tr>` : '';
 
-  <!-- Footer -->
-  <div style="padding:16px 32px;text-align:center;">
-    <p style="margin:0;font-size:11px;color:#9CA3AF;">Ramped AI · <a href="https://30dayramp.com" style="color:#9CA3AF;text-decoration:none;">30dayramp.com</a> · Questions? <a href="mailto:jon@30dayramp.com" style="color:#9CA3AF;text-decoration:none;">jon@30dayramp.com</a></p>
-  </div>
+    const innerRows =
+      emailHero({
+        eyebrow: 'Your roadmap',
+        headline: `${esc(firstName)}, your automation roadmap is ready.`,
+        sub: 'Based on your answers — we\'ll walk through this together on the call.',
+      }) +
+      summaryRow +
+      statsRow +
+      agentsRow +
+      week1Row +
+      (roadmapUrl ? emailInfoCard({
+        eyebrow: 'View online',
+        title: 'Open the full roadmap in your browser',
+        body: 'Easier to skim, share with your team, or read on a phone.',
+        ctaHref: esc(roadmapUrl),
+        ctaLabel: 'View roadmap →',
+      }) : '') +
+      emailBody(`This is a starting point — on the call we'll make sure it fits your actual workflow and prioritize what makes the most sense to ship first. No pressure, no pitch.`) +
+      emailSignoff({ name: 'Jon', extra: 'Have a question before the call? Just reply.' });
 
-</div>
-</body>
-</html>`
-    );
+    await sendEmail(email, `Your automation roadmap is ready, ${firstName}`, wrapEmail({
+      subject: `Your automation roadmap is ready, ${firstName}`,
+      preheader: `${agentCount} AI agents · 30-day go-live · full refund if we miss it.`,
+      innerRows,
+      siteUrl: SITE_URL,
+    }));
   }
 
   return res.status(200).json({ success: true, updated: true, grade: grade || null, emails_sent: !!RESEND_KEY });
