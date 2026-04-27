@@ -335,6 +335,27 @@
         </div>
       </section>
 
+      <!-- Support tickets -->
+      <section class="card" id="support-section" style="margin-top:20px;" aria-labelledby="support-h">
+        <div class="card-head">
+          <h2 class="card-title" id="support-h">Support</h2>
+          <button id="new-ticket-btn" class="quick-link" style="margin:0;padding:7px 14px;font-size:13px;border-color:var(--ink);" onclick="toggleNewTicketForm()">+ New ticket</button>
+        </div>
+        <div id="new-ticket-form" style="display:none;margin-top:12px;padding:18px 20px;border:1px solid var(--line);border-radius:12px;background:var(--surface);">
+          <label style="display:block;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Subject</label>
+          <input type="text" id="ticket-subject" maxlength="140" placeholder="What do you need help with?" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:14px;color:var(--ink);background:#fff;margin-bottom:12px;" />
+          <label style="display:block;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Details</label>
+          <textarea id="ticket-body" maxlength="4000" placeholder="Describe what's happening — the more detail, the faster we can help." style="width:100%;min-height:100px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:14px;color:var(--ink);background:#fff;resize:vertical;line-height:1.5;"></textarea>
+          <div style="display:flex;gap:8px;margin-top:12px;">
+            <button id="submit-ticket-btn" onclick="submitTicket()" style="padding:9px 18px;background:var(--ink);color:#fff;border:none;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;">Send ticket</button>
+            <button onclick="toggleNewTicketForm()" style="padding:9px 18px;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;">Cancel</button>
+          </div>
+        </div>
+        <div id="tickets-thread-list" style="margin-top:14px;">
+          <p id="tickets-empty" style="font-size:13.5px;color:var(--muted);line-height:1.6;margin:0;">You haven't opened any tickets yet. Use the button above for anything you need — config questions, integration trouble, scope changes, or just a status check.</p>
+        </div>
+      </section>
+
       <!-- Coming-soon Phase 2 -->
       <div class="coming-soon">
         <strong>Coming with go-live (May 17):</strong>
@@ -400,19 +421,134 @@
 </footer>
 
 <script>
+  // ── Support tickets — only functional when token is present (real customer session) ─────
+  const __portalEsc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const __portalTimeAgo = iso => {
+    if (!iso) return '';
+    const ms = Date.now() - new Date(iso).getTime();
+    if (ms < 60_000)        return 'just now';
+    if (ms < 3_600_000)     return `${Math.floor(ms/60_000)}m ago`;
+    if (ms < 86_400_000)    return `${Math.floor(ms/3_600_000)}h ago`;
+    if (ms < 7*86_400_000)  return `${Math.floor(ms/86_400_000)}d ago`;
+    return new Date(iso).toLocaleDateString();
+  };
+  function __getPortalToken() {
+    const qs = new URLSearchParams(location.search);
+    const id = qs.get('id'), exp = qs.get('exp'), t = qs.get('t');
+    return id && exp && t ? `id=${encodeURIComponent(id)}&exp=${encodeURIComponent(exp)}&t=${encodeURIComponent(t)}` : null;
+  }
+  function toggleNewTicketForm() {
+    const form = document.getElementById('new-ticket-form');
+    if (!form) return;
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    if (form.style.display === 'block') {
+      document.getElementById('ticket-subject')?.focus();
+    }
+  }
+  async function submitTicket() {
+    const tok = __getPortalToken();
+    if (!tok) { alert('This is a preview view. Open your portal from the link in your booking confirmation email to submit tickets.'); return; }
+    const subject = document.getElementById('ticket-subject')?.value?.trim();
+    const body = document.getElementById('ticket-body')?.value?.trim();
+    if (!subject) { alert('Please add a subject.'); return; }
+    if (!body || body.length < 4) { alert('Please add a few details.'); return; }
+    const btn = document.getElementById('submit-ticket-btn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+    try {
+      const res = await fetch(`/api/portal-tickets?${tok}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subject, body }),
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      document.getElementById('ticket-subject').value = '';
+      document.getElementById('ticket-body').value = '';
+      toggleNewTicketForm();
+      await loadPortalTickets();
+    } catch (err) {
+      alert('Failed to send: ' + err.message);
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Send ticket'; }
+    }
+  }
+  async function loadPortalTickets() {
+    const tok = __getPortalToken();
+    if (!tok) return;
+    try {
+      const res = await fetch(`/api/portal-tickets?${tok}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      const tickets = data.tickets || [];
+      const wrap = document.getElementById('tickets-thread-list');
+      const empty = document.getElementById('tickets-empty');
+      if (!wrap) return;
+      if (!tickets.length) {
+        if (empty) empty.style.display = 'block';
+        return;
+      }
+      if (empty) empty.style.display = 'none';
+      wrap.innerHTML = tickets.map(t => {
+        const msgs = (t.messages || []).map(m => `
+          <div style="padding:11px 14px;margin-top:8px;border-radius:10px;font-size:13.5px;line-height:1.6;white-space:pre-wrap;${m.sender === 'admin' ? 'background:#EEF3FF;border:1px solid #C7D2FE;color:#0B1220;' : 'background:var(--surface);border:1px solid var(--line);color:#0B1220;'}">
+            <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;letter-spacing:0.04em;">${m.sender === 'admin' ? 'Ramped AI' : 'You'} · ${__portalTimeAgo(m.created_at)}</div>
+            ${__portalEsc(m.body)}
+          </div>`).join('');
+        const statusColor = { open: '#1a56db', replied: '#065F46', closed: '#6B7280' }[t.status] || '#5B6272';
+        const statusBg = { open: '#EEF3FF', replied: '#ECFDF5', closed: '#F3F4F6' }[t.status] || '#F3F4F6';
+        return `
+          <div style="padding:18px 20px;border:1px solid var(--line);border-radius:12px;margin-bottom:12px;background:#fff;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+              <div style="font-weight:700;font-size:14.5px;color:var(--ink);">${__portalEsc(t.subject)}</div>
+              <span style="padding:2px 10px;border-radius:6px;font-size:10.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:${statusColor};background:${statusBg};">${t.status}</span>
+            </div>
+            <div style="font-size:11.5px;color:var(--muted);margin-top:2px;">Opened ${__portalTimeAgo(t.created_at)}</div>
+            ${msgs}
+            ${t.status !== 'closed' ? `
+              <div style="margin-top:12px;display:flex;gap:8px;">
+                <input id="reply-input-${t.id}" type="text" placeholder="Reply…" maxlength="4000" style="flex:1;padding:9px 12px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:13.5px;color:var(--ink);" />
+                <button onclick="replyToTicketPortal('${t.id}')" style="padding:9px 16px;background:var(--ink);color:#fff;border:none;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;">Send</button>
+              </div>
+            ` : ''}
+          </div>`;
+      }).join('');
+    } catch (e) { console.warn('loadPortalTickets failed:', e.message); }
+  }
+  async function replyToTicketPortal(ticketId) {
+    const tok = __getPortalToken();
+    if (!tok) return;
+    const input = document.getElementById(`reply-input-${ticketId}`);
+    const text = input?.value?.trim();
+    if (!text || text.length < 2) { alert('Reply is empty.'); return; }
+    try {
+      const res = await fetch(`/api/portal-tickets?${tok}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ticketId, body: text }),
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      input.value = '';
+      await loadPortalTickets();
+    } catch (err) {
+      alert('Failed: ' + err.message);
+    }
+  }
+
   // Hydrate the portal with real data when the signed-token endpoint is wired up.
-  // For now this script reads the URL params, calls /api/portal-data, and falls
-  // back to the mock content baked into the HTML if the call fails or the
-  // endpoint isn't deployed yet. That makes the page useful even pre-backend.
+  // - When ?id&exp&t are present and the call succeeds: replace ALL mock content with real data
+  // - When args missing: keep mock content (prototype/preview mode)
+  // - When call fails: keep mock content + console warning
   (async function hydrate() {
     const qs = new URLSearchParams(location.search);
     const id = qs.get('id'), exp = qs.get('exp'), t = qs.get('t');
-    if (!id || !exp || !t) return; // prototype mode — keep the mock data visible
+    if (!id || !exp || !t) return;
     try {
       const r = await fetch(`/api/portal-data?id=${encodeURIComponent(id)}&exp=${encodeURIComponent(exp)}&t=${encodeURIComponent(t)}`);
       if (!r.ok) throw new Error('portal-data ' + r.status);
       const data = await r.json();
       const set = (sel, val) => { const el = document.querySelector(sel); if (el && val != null) el.textContent = val; };
+      const tokenSuffix = `id=${encodeURIComponent(id)}&exp=${encodeURIComponent(exp)}&t=${encodeURIComponent(t)}`;
+
+      // Welcome banner
       const firstName = (data.booking?.name || '').split(/\s+/)[0] || 'there';
       set('#customer-first-name', firstName);
       if (data.booking?.tier) set('#meta-tier', `${data.booking.tier[0].toUpperCase()}${data.booking.tier.slice(1)} tier`);
@@ -420,18 +556,100 @@
       if (data.phase_eyebrow) set('#phase-eyebrow', data.phase_eyebrow);
       if (data.kickoff_date) set('#meta-kickoff', data.kickoff_date);
       if (data.golive_date) set('#meta-golive', data.golive_date);
+
+      // Next call
       if (data.next_call?.when) set('#next-call-when', data.next_call.when);
       if (data.next_call?.what) set('#next-call-what', data.next_call.what);
       const meetA = document.getElementById('next-call-meet');
-      if (meetA && data.next_call?.meet_url) meetA.href = data.next_call.meet_url;
-      // Pass through the signed token to the roadmap link
+      if (meetA) {
+        if (data.next_call?.meet_url) meetA.href = data.next_call.meet_url;
+        else meetA.style.display = 'none';
+      }
+
+      // Implementation timeline — highlight the current step based on phase_step
+      if (typeof data.phase_step === 'number') {
+        const steps = document.querySelectorAll('.timeline .step');
+        steps.forEach((el, i) => {
+          el.classList.remove('done', 'active');
+          el.removeAttribute('aria-current');
+          el.querySelector('.check')?.remove();
+          if (i + 1 < data.phase_step) {
+            el.classList.add('done');
+            const tick = document.createElement('div');
+            tick.className = 'check';
+            tick.setAttribute('aria-label', 'completed');
+            tick.textContent = '✓';
+            el.appendChild(tick);
+          } else if (i + 1 === data.phase_step) {
+            el.classList.add('active');
+            el.setAttribute('aria-current', 'step');
+          }
+        });
+      }
+
+      // Roadmap link passthrough
       const roadmapLink = document.getElementById('roadmap-open-link');
-      if (roadmapLink) roadmapLink.href = `/roadmap?id=${encodeURIComponent(id)}&exp=${encodeURIComponent(exp)}&t=${encodeURIComponent(t)}`;
+      if (roadmapLink) roadmapLink.href = `/roadmap?${tokenSuffix}`;
       const navRoadmap = document.getElementById('open-roadmap-btn');
-      if (navRoadmap) navRoadmap.href = `/roadmap?id=${encodeURIComponent(id)}&exp=${encodeURIComponent(exp)}&t=${encodeURIComponent(t)}`;
-      // Roadmap preview content from automation_map
-      if (data.automation_map?.summary) set('#roadmap-summary', data.automation_map.summary);
-      if (data.automation_map?.week_1_focus) set('#roadmap-headline', data.automation_map.week_1_focus);
+      if (navRoadmap) navRoadmap.href = `/roadmap?${tokenSuffix}`;
+
+      // Roadmap preview — handle three states: ready / building / none-yet
+      const am = data.automation_map;
+      if (am && (am.summary || (am.top_agents && am.top_agents.length))) {
+        if (am.summary) set('#roadmap-summary', am.summary);
+        if (am.top_agents && am.top_agents.length) {
+          set('#roadmap-headline', `${am.top_agents.length} agents identified for your stack.`);
+        }
+      } else {
+        // No roadmap yet — customer hasn't completed the questionnaire or it's still generating
+        set('#roadmap-headline', 'Your roadmap will appear here after your discovery call.');
+        set('#roadmap-summary', 'Once we\'ve mapped your workflows, your custom automation roadmap will be ready to view here. Usually takes a few minutes after the call.');
+        const openBtn = document.getElementById('roadmap-open-link');
+        if (openBtn) openBtn.style.display = 'none';
+      }
+
+      // Agents list — replace mock agents with real ones from automation_map.top_agents,
+      // or with an "in scope" empty state if none have been generated yet.
+      const agentsList = document.getElementById('agents-list');
+      if (agentsList) {
+        const agents = (am && am.top_agents) ? am.top_agents : [];
+        if (agents.length) {
+          agentsList.innerHTML = agents.map((a, i) => `
+            <div class="agent">
+              <div class="agent-icon building">${i + 1}</div>
+              <div>
+                <div class="name">${(a.name || '').replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'})[c])}</div>
+                <div class="desc">${(a.what_it_does || '').replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'})[c])}</div>
+              </div>
+              <span class="pill pill-build">${data.phase === 'Live' ? 'Live' : 'Scoped'}</span>
+            </div>`).join('');
+        } else {
+          agentsList.innerHTML = `<div style="padding:18px 20px;border:1px dashed var(--line);border-radius:12px;background:var(--surface);color:var(--muted);font-size:13.5px;line-height:1.6;">Your agents will be listed here once we've finished discovery and built your roadmap. Usually within a few hours of your call.</div>`;
+        }
+      }
+
+      // Activity feed — clear the mock activity, since we don't have a real activity log yet (Phase 2).
+      // Show a clean "soon" empty state instead of fake build updates.
+      const feed = document.getElementById('activity-feed');
+      if (feed && (!data.activity || data.activity.length === 0)) {
+        feed.innerHTML = `<div style="padding:18px 20px;border:1px dashed var(--line);border-radius:12px;background:var(--surface);color:var(--muted);font-size:13.5px;line-height:1.6;">Activity tracking comes online during the build phase. You'll see every agent action and milestone here.</div>`;
+      }
+
+      // Hide the call card if there's no next-call info (e.g., post-Live with no scheduled monthly call)
+      if (!data.next_call?.when) {
+        const callCard = document.querySelector('.side-card .next-call')?.closest('.side-card');
+        if (callCard) callCard.style.display = 'none';
+      }
+
+      // Fire a portal-visit event for activity monitoring (best-effort; ignored if endpoint missing)
+      try {
+        navigator.sendBeacon
+          ? navigator.sendBeacon(`/api/portal-track?${tokenSuffix}`, new Blob([JSON.stringify({ event: 'view', path: location.pathname })], { type: 'application/json' }))
+          : fetch(`/api/portal-track?${tokenSuffix}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: 'view', path: location.pathname }), keepalive: true });
+      } catch (_) {}
+
+      // Load any existing support tickets the customer has opened
+      loadPortalTickets();
     } catch (e) {
       console.warn('portal-data not available, falling back to mock:', e.message);
     }

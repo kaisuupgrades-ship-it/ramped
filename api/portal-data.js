@@ -13,6 +13,7 @@
 // Phase 3 (todo): fold in Stripe customer + invoices.
 
 import { verifyMapToken, isMapTokenConfigured } from './_lib/map-token.js';
+import { computePhase } from './_lib/phase.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -23,32 +24,6 @@ const ALLOWED_ORIGINS = [
   'https://ramped-git-main-kaisuupgrades-ship-its-projects.vercel.app',
   'http://localhost:3000',
 ];
-
-// Compute which phase a booking is in based on its datetime (kickoff) + days elapsed.
-// 5 phases — matches portal.html timeline:
-//   01 Kickoff      — discovery call happens
-//   02 Discovery    — questionnaire + roadmap delivered
-//   03 Build        — days 5-21
-//   04 QA & UAT     — days 22-27
-//   05 Live         — day 30+
-function computePhase(kickoffISO) {
-  if (!kickoffISO) return { phase: 'Kickoff', dayOfThirty: 0, eyebrow: 'Pre-kickoff' };
-  const kickoff = new Date(kickoffISO);
-  if (isNaN(kickoff)) return { phase: 'Kickoff', dayOfThirty: 0, eyebrow: 'Pre-kickoff' };
-  const now = new Date();
-  const dayOfThirty = Math.max(0, Math.min(30, Math.floor((now - kickoff) / 86400000)));
-  let phase, weekN;
-  if (dayOfThirty < 0) { phase = 'Kickoff'; weekN = 0; }
-  else if (dayOfThirty <= 4)  { phase = 'Kickoff';   weekN = 1; }
-  else if (dayOfThirty <= 7)  { phase = 'Discovery'; weekN = 1; }
-  else if (dayOfThirty <= 21) { phase = 'Build';     weekN = Math.min(4, Math.ceil(dayOfThirty / 7)); }
-  else if (dayOfThirty <= 27) { phase = 'QA';        weekN = 4; }
-  else                        { phase = 'Live';      weekN = 5; }
-  const eyebrow = phase === 'Live'
-    ? 'Live · Hours saved this month'
-    : `Week ${weekN} of 4 · ${phase} phase`;
-  return { phase, dayOfThirty, eyebrow };
-}
 
 function fmtDate(iso) {
   if (!iso) return null;
@@ -122,6 +97,7 @@ export default async function handler(req, res) {
     },
     phase_eyebrow: phaseInfo.eyebrow,
     phase: phaseInfo.phase,
+    phase_step: phaseInfo.step,
     day_of_thirty: phaseInfo.dayOfThirty,
     welcome_sub: welcomeSub,
     kickoff_date: fmtDate(kickoffISO),

@@ -862,6 +862,7 @@
     <div class="tab-bar">
       <button class="tab-btn active" id="tab-bookings"     onclick="switchTab('bookings')">Bookings (0)</button>
       <button class="tab-btn"        id="tab-leads"        onclick="switchTab('leads')">Leads (0)</button>
+      <button class="tab-btn"        id="tab-tickets"      onclick="switchTab('tickets')">Tickets (0)</button>
       <button class="tab-btn"        id="tab-availability" onclick="switchTab('availability')">Availability</button>
       <button class="tab-btn"        id="tab-activity"     onclick="switchTab('activity')">Activity</button>
     </div>
@@ -1039,8 +1040,49 @@
         </table>
       </div>
     </div>
+
+    <!-- Tickets panel — customer support inbox -->
+    <div class="tab-panel" id="panel-tickets">
+      <div class="filter-bar">
+        <select id="tickets-status-filter" onchange="loadTickets()">
+          <option value="">All Tickets</option>
+          <option value="open" selected>Open</option>
+          <option value="replied">Replied</option>
+          <option value="closed">Closed</option>
+        </select>
+        <button class="btn-action" onclick="loadTickets()" style="margin-left:auto;">↻ Refresh</button>
+      </div>
+      <div id="tickets-list" style="display:flex;flex-direction:column;gap:12px;padding:16px 0;">
+        <div class="empty-state" style="padding:40px;text-align:center;color:var(--muted);">Loading tickets…</div>
+      </div>
+    </div>
   </div>
 </div>
+
+<style>
+  /* Tickets tab styling — matches the existing admin design system */
+  .ticket-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px;}
+  .ticket-card.status-open{border-left:3px solid var(--accent);}
+  .ticket-card.status-replied{border-left:3px solid var(--good);}
+  .ticket-card.status-closed{opacity:0.65;}
+  .ticket-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;}
+  .ticket-subject{font-weight:700;font-size:15px;color:var(--ink);letter-spacing:-0.01em;}
+  .ticket-meta{font-size:12px;color:var(--muted);font-family:'Inter',sans-serif;}
+  .ticket-status{padding:2px 9px;border-radius:6px;font-size:10.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;}
+  .ticket-status.open{background:#EEF3FF;color:#1a56db;border:1px solid #C7D2FE;}
+  .ticket-status.replied{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0;}
+  .ticket-status.closed{background:#F3F4F6;color:#6B7280;border:1px solid #D1D5DB;}
+  .ticket-thread{margin:14px 0 0;display:flex;flex-direction:column;gap:10px;}
+  .ticket-msg{padding:11px 14px;border-radius:10px;font-size:13.5px;color:#0B1220;line-height:1.55;white-space:pre-wrap;}
+  .ticket-msg.customer{background:var(--surface);border:1px solid var(--line);}
+  .ticket-msg.admin{background:#EEF3FF;border:1px solid #C7D2FE;align-self:flex-end;max-width:88%;}
+  .ticket-msg-meta{font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:600;}
+  .ticket-reply{margin-top:14px;display:flex;flex-direction:column;gap:8px;}
+  .ticket-reply textarea{width:100%;min-height:80px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:13.5px;color:var(--ink);resize:vertical;}
+  .ticket-reply textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(31,79,255,0.1);}
+  .ticket-reply-actions{display:flex;gap:8px;align-items:center;}
+  .ticket-reply-actions label{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;cursor:pointer;}
+</style>
 
 <script>
   'use strict';
@@ -1155,6 +1197,7 @@
     document.getElementById('panel-' + name).classList.add('active');
     if (name === 'availability') loadAvailability();
     if (name === 'activity') loadActivityData();
+    if (name === 'tickets') loadTickets();
   }
 
   // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -1398,9 +1441,11 @@
             </div>
             ${b.company ? `<div style="color:var(--muted);font-size:12px">${esc(b.company)}</div>` : ''}
             <div style="margin-top:2px"><a href="mailto:${esc(b.email)}" style="color:var(--accent);font-size:12px">${esc(b.email || '')}</a></div>
+            ${b.portal_last_seen_at || b.portal_visit_count ? `<div style="margin-top:3px;font-size:11px;color:var(--muted);font-family:'Inter',sans-serif;">👁 Portal: ${b.portal_last_seen_at ? `last seen ${timeAgo(b.portal_last_seen_at)}` : 'never visited'}${b.portal_visit_count ? ` · ${b.portal_visit_count} visit${b.portal_visit_count === 1 ? '' : 's'}` : ''}</div>` : ''}
           </td>
           <td>
             <div>${tierBadgeHtml(b.tier)}</div>
+            ${b.phase ? `<div style="margin-top:5px;display:inline-block;padding:2px 8px;border-radius:6px;font-size:10.5px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:${b.phase === 'Live' ? '#065F46' : b.phase === 'Pre-kickoff' ? '#5B6272' : '#1a56db'};background:${b.phase === 'Live' ? '#ECFDF5' : b.phase === 'Pre-kickoff' ? '#F5F5F3' : '#EEF3FF'};border:1px solid ${b.phase === 'Live' ? '#A7F3D0' : b.phase === 'Pre-kickoff' ? '#E6E4DC' : '#C7D2FE'};" title="${esc(b.phase_eyebrow || '')}">${esc(b.phase)}${b.day_of_thirty != null && b.phase !== 'Pre-kickoff' && b.phase !== 'Live' ? ` · D${b.day_of_thirty}` : ''}</div>` : ''}
           </td>
           <td>${qCell}</td>
           <td style="padding:8px 14px;">
@@ -1414,6 +1459,7 @@
           <td style="white-space:nowrap;">
             <a href="mailto:${esc(b.email)}" class="btn-action" style="margin-right:4px;" title="Email guest">✉</a>
             ${b.meet_link ? `<a href="${esc(b.meet_link)}" target="_blank" rel="noopener" class="btn-action" style="margin-right:4px;color:var(--good);border-color:#bfe3cf;" title="Open Meet">▶ Meet</a>` : ''}
+            ${b.portal_url ? `<a href="${esc(b.portal_url)}" target="_blank" rel="noopener" class="btn-action" style="margin-right:4px;color:var(--accent);border-color:#C7D2FE;" title="Open this customer's portal in a new tab">🔗 Portal</a><button class="btn-action" onclick="copyPortalLink('${bid}')" style="margin-right:4px;" title="Copy this customer's portal link to clipboard" id="cp-${bid}">📋</button>` : ''}
             ${b.automation_map ? (b.followup_sent_at
               ? `<button class="btn-action" disabled style="margin-right:4px;color:var(--good);border-color:#bfe3cf;opacity:0.7;" title="Follow-up sent ${new Date(b.followup_sent_at).toLocaleDateString()}">✓ Sent</button>`
               : `<button class="btn-action" id="fu-${bid}" onclick="sendFollowup('${bid}')" style="margin-right:4px;color:#7C3AED;border-color:#DDD6FE;" title="Send post-call follow-up email">📧 Follow-up</button>`) : ''}
@@ -1599,6 +1645,126 @@
 
   function closeBookingModal() {
     document.getElementById('booking-modal').classList.remove('open');
+  }
+
+  // ── Support tickets inbox ────────────────────────────────────────────────────
+  let _allTickets = [];
+  function escapeHtml(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function timeAgo(iso) {
+    if (!iso) return '';
+    const ms = Date.now() - new Date(iso).getTime();
+    if (ms < 60_000)        return 'just now';
+    if (ms < 3_600_000)     return `${Math.floor(ms/60_000)}m ago`;
+    if (ms < 86_400_000)    return `${Math.floor(ms/3_600_000)}h ago`;
+    if (ms < 7*86_400_000)  return `${Math.floor(ms/86_400_000)}d ago`;
+    return new Date(iso).toLocaleDateString();
+  }
+  async function loadTickets() {
+    const filter = document.getElementById('tickets-status-filter')?.value || '';
+    const list = document.getElementById('tickets-list');
+    if (!list) return;
+    list.innerHTML = '<div class="empty-state" style="padding:40px;text-align:center;color:var(--muted);">Loading tickets…</div>';
+    try {
+      const url = '/api/admin-tickets' + (filter ? `?status=${encodeURIComponent(filter)}` : '');
+      const res = await adminFetch(url);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      _allTickets = data.tickets || [];
+      const tabBtn = document.getElementById('tab-tickets');
+      if (tabBtn) tabBtn.textContent = `Tickets (${_allTickets.filter(t => t.status === 'open').length})`;
+      renderTickets();
+    } catch (err) {
+      list.innerHTML = `<div class="empty-state" style="padding:40px;text-align:center;color:var(--danger);">Failed to load tickets: ${escapeHtml(err.message)}</div>`;
+    }
+  }
+  function renderTickets() {
+    const list = document.getElementById('tickets-list');
+    if (!list) return;
+    if (!_allTickets.length) {
+      list.innerHTML = '<div class="empty-state" style="padding:40px;text-align:center;color:var(--muted);">No tickets matching this filter.</div>';
+      return;
+    }
+    list.innerHTML = _allTickets.map(t => {
+      const b = t.booking || {};
+      const msgs = (t.messages || []).map(m => `
+        <div class="ticket-msg ${m.sender}">
+          <div class="ticket-msg-meta">${m.sender === 'admin' ? 'You' : escapeHtml(b.name || b.email || 'Customer')} · ${timeAgo(m.created_at)}</div>
+          ${escapeHtml(m.body)}
+        </div>`).join('');
+      return `
+        <div class="ticket-card status-${t.status}" data-id="${t.id}">
+          <div class="ticket-head">
+            <div>
+              <div class="ticket-subject">${escapeHtml(t.subject)}</div>
+              <div class="ticket-meta">${escapeHtml(b.name || '—')}${b.company ? ' · ' + escapeHtml(b.company) : ''} · ${escapeHtml(b.email || '')} · opened ${timeAgo(t.created_at)}</div>
+            </div>
+            <span class="ticket-status ${t.status}">${t.status}</span>
+          </div>
+          <div class="ticket-thread">${msgs}</div>
+          ${t.status !== 'closed' ? `
+          <div class="ticket-reply">
+            <textarea id="reply-${t.id}" placeholder="Type your reply… markdown not supported, just plain text. Customer will get this via email + see it in their portal."></textarea>
+            <div class="ticket-reply-actions">
+              <button class="btn-action" onclick="replyToTicket('${t.id}', false)">Send reply</button>
+              <button class="btn-action" onclick="replyToTicket('${t.id}', true)">Send &amp; close</button>
+              <label><input type="checkbox" id="copy-${t.id}"> Just close (no reply)</label>
+              <button class="btn-action" style="margin-left:auto;color:var(--danger);" onclick="closeTicketOnly('${t.id}')">Close ticket</button>
+            </div>
+          </div>` : ''}
+        </div>`;
+    }).join('');
+  }
+  async function replyToTicket(id, closeAfter) {
+    const ta = document.getElementById(`reply-${id}`);
+    const text = ta?.value?.trim();
+    if (!text || text.length < 2) { alert('Reply is empty.'); return; }
+    try {
+      const res = await adminFetch('/api/admin-tickets', {
+        method: 'POST',
+        body: JSON.stringify({ ticketId: id, body: text, closeAfter }),
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      ta.value = '';
+      await loadTickets();
+    } catch (err) {
+      alert('Failed to send reply: ' + err.message);
+    }
+  }
+  async function closeTicketOnly(id) {
+    if (!await confirmDialog('Close this ticket without replying?')) return;
+    try {
+      const res = await adminFetch('/api/admin-tickets', {
+        method: 'POST',
+        body: JSON.stringify({ ticketId: id, body: '(closed by admin)', closeAfter: true }),
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      await loadTickets();
+    } catch (err) {
+      alert('Failed to close: ' + err.message);
+    }
+  }
+
+  // Copy a customer's signed portal URL to the clipboard.
+  // The URL is already signed server-side (api/admin enrichment) so the secret never reaches the browser.
+  async function copyPortalLink(id) {
+    const b = _allBookings.find(x => String(x.id) === String(id));
+    if (!b || !b.portal_url) { alert('Portal link not available — MAP_LINK_SECRET may not be set on the server.'); return; }
+    const btn = document.getElementById(`cp-${id}`);
+    try {
+      await navigator.clipboard.writeText(b.portal_url);
+      if (btn) { const orig = btn.textContent; btn.textContent = '✓'; btn.style.color = 'var(--good)'; setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 1400); }
+    } catch (err) {
+      // Fallback for older browsers / non-secure contexts
+      const ta = document.createElement('textarea');
+      ta.value = b.portal_url;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch (_) {}
+      document.body.removeChild(ta);
+      if (btn) { btn.textContent = '✓'; setTimeout(() => { btn.textContent = '📋'; }, 1400); }
+    }
   }
 
   async function sendFollowup(id) {
