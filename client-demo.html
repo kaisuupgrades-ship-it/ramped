@@ -121,16 +121,49 @@
   </svg>
   <span class="font-bold text-lg tracking-tight ml-2">Ramped AI</span>
 </a>
-    <nav class="hidden sm:flex items-center gap-3">
+    <nav class="hidden sm:flex items-center gap-3" aria-label="Primary">
+      <a href="/about" class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">About</a>
       <a href="/demo" class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">Demo</a>
       <a href="/comparison" class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">VA vs. AI</a>
       <a href="/book" class="btn-primary whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">Get started →</a>
     </nav>
-    <div class="sm:hidden">
-      <a href="/book" class="btn-primary" style="padding:11px 16px;font-size:13px;min-height:44px;">Get started →</a>
+    <div class="sm:hidden flex items-center gap-2">
+      <a href="/book" class="btn-primary" style="padding:11px 14px;font-size:13px;min-height:44px;">Get started →</a>
+      <button type="button" id="mobile-nav-toggle" aria-expanded="false" aria-controls="mobile-nav-drawer" aria-label="Open menu"
+        style="width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;">
+        <svg width="18" height="14" viewBox="0 0 18 14" aria-hidden="true" focusable="false">
+          <rect y="0"  width="18" height="2" rx="1" fill="currentColor"/>
+          <rect y="6"  width="18" height="2" rx="1" fill="currentColor"/>
+          <rect y="12" width="18" height="2" rx="1" fill="currentColor"/>
+        </svg>
+      </button>
     </div>
   </div>
+  <nav id="mobile-nav-drawer" aria-label="Mobile" hidden class="sm:hidden"
+    style="border-top:1px solid var(--line);background:var(--paper);">
+    <ul style="list-style:none;margin:0;padding:8px 16px 16px;display:flex;flex-direction:column;gap:4px;">
+      <li><a href="/about"      style="display:block;padding:12px 8px;font-size:15px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);text-decoration:none;">About</a></li>
+      <li><a href="/demo"       style="display:block;padding:12px 8px;font-size:15px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);text-decoration:none;">Demo</a></li>
+      <li><a href="/comparison" style="display:block;padding:12px 8px;font-size:15px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);text-decoration:none;">VA vs. AI</a></li>
+      <li><a href="/book"       style="display:block;padding:12px 8px;font-size:15px;font-weight:700;color:var(--accent);text-decoration:none;">Get started →</a></li>
+    </ul>
+  </nav>
 </header>
+<script>
+  (function(){
+    var btn = document.getElementById('mobile-nav-toggle');
+    var drawer = document.getElementById('mobile-nav-drawer');
+    if(!btn || !drawer) return;
+    function setOpen(open){
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      if(open){ drawer.removeAttribute('hidden'); } else { drawer.setAttribute('hidden', ''); }
+    }
+    btn.addEventListener('click', function(){ setOpen(btn.getAttribute('aria-expanded') !== 'true'); });
+    drawer.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ setOpen(false); }); });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape') setOpen(false); });
+  })();
+</script>
 
 <main id="main">
 
@@ -371,6 +404,7 @@
       <nav style="display:flex;flex-wrap:wrap;gap:8px 24px;align-items:center;">
         <a href="/#how-it-works" style="font-size:13px;color:var(--muted);">How it works</a>
         <a href="/#pricing" style="font-size:13px;color:var(--muted);">Pricing</a>
+        <a href="/about" style="font-size:13px;color:var(--muted);">About</a>
         <a href="/demo" style="font-size:13px;color:var(--muted);">Demo</a>
         <a href="/comparison" style="font-size:13px;color:var(--muted);">VA vs. AI</a>
         <a href="/book" style="font-size:13px;color:var(--muted);">Book a call</a>

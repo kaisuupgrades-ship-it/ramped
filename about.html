@@ -1,19 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>About — Ramped AI</title>
   <meta name="description" content="Meet the team behind Ramped AI — operators who built the AI department they wished they'd had."/>
+
+  <!-- OG / Social -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.30dayramp.com/about" />
+  <meta property="og:title" content="About — Ramped AI" />
+  <meta property="og:description" content="Meet the team behind Ramped AI — operators who built the AI department they wished they'd had." />
+  <meta property="og:image" content="https://www.30dayramp.com/og-image.png" />
+  <meta property="og:site_name" content="Ramped AI" />
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="About — Ramped AI">
+  <meta name="twitter:description" content="Meet the team behind Ramped AI — operators who built the AI department they wished they'd had.">
+  <meta name="twitter:image" content="https://www.30dayramp.com/og-image.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="alternate icon" href="/favicon.ico" />
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://www.30dayramp.com/about" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Vercel Analytics -->
+  <script defer src="/_vercel/insights/script.js"></script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet"/>
-  <script src="https://cdn.tailwindcss.com?plugins=typography" defer></script>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/styles.css">
   <style>
     :root {
       --ink:#0B1220; --ink-2:#1A2233;
       --accent:#1F4FFF; --accent-2:#0B2A8C;
-      --muted:#5B6272; --line:#E5E8EF;
-      --paper:#FAFAFA; --surface:#F4F5F7;
+      --muted:#5B6272; --line:#E6E4DC;
+      --paper:#FAFAF7; --surface:#F5F5F3;
     }
     html,body{background:var(--paper);color:var(--ink);font-family:'Inter',ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -52,9 +78,20 @@
     @media (max-width: 768px) {
       .origin-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
     }
+    /* Skip link */
+    .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 14px;border-radius:0 0 8px 0;font-size:13px;font-weight:600;z-index:100;}
+    .skip-link:focus{left:0;}
+    a:focus-visible, button:focus-visible {outline:2px solid var(--accent);outline-offset:2px;border-radius:6px;}
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .ticker-track { animation: none !important; }
+      *, *::before, *::after { transition-duration: 0.001ms !important; animation-duration: 0.001ms !important; }
+    }
   </style>
 </head>
 <body>
+<a href="#main" class="skip-link">Skip to main content</a>
 
 <!-- Ticker -->
 <div class="ticker-bar" aria-hidden="true">
@@ -94,9 +131,48 @@
       <a href="/comparison"    class="btn-ghost whitespace-nowrap" style="padding:9px 14px;font-size:13px;min-height:40px;">VA vs. AI</a>
       <a href="/book"          class="btn-primary whitespace-nowrap" style="padding:9px 16px;font-size:13px;min-height:40px;">Get started →</a>
     </nav>
+    <!-- Mobile CTA -->
+    <div class="sm:hidden" style="display:flex;align-items:center;gap:8px;">
+      <a href="/book" class="btn-primary" style="padding:9px 14px;font-size:13px;min-height:40px;">Get started →</a>
+      <button type="button" id="mobile-nav-toggle" aria-expanded="false" aria-controls="mobile-nav-drawer" aria-label="Open menu"
+        style="width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;">
+        <svg width="18" height="14" viewBox="0 0 18 14" aria-hidden="true" focusable="false">
+          <rect y="0"  width="18" height="2" rx="1" fill="currentColor"/>
+          <rect y="6"  width="18" height="2" rx="1" fill="currentColor"/>
+          <rect y="12" width="18" height="2" rx="1" fill="currentColor"/>
+        </svg>
+      </button>
+    </div>
   </div>
+  <nav id="mobile-nav-drawer" aria-label="Mobile" hidden class="sm:hidden"
+    style="border-top:1px solid var(--line);background:var(--paper);">
+    <ul style="list-style:none;margin:0;padding:8px 16px 16px;display:flex;flex-direction:column;gap:4px;">
+      <li><a href="/#how-it-works" style="display:block;padding:12px 8px;font-size:15px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);text-decoration:none;">How it works</a></li>
+      <li><a href="/#pricing"      style="display:block;padding:12px 8px;font-size:15px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);text-decoration:none;">Pricing</a></li>
+      <li><a href="/about"         style="display:block;padding:12px 8px;font-size:15px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);text-decoration:none;">About</a></li>
+      <li><a href="/demo"          style="display:block;padding:12px 8px;font-size:15px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);text-decoration:none;">Demo</a></li>
+      <li><a href="/comparison"    style="display:block;padding:12px 8px;font-size:15px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);text-decoration:none;">VA vs. AI</a></li>
+      <li><a href="/book"          style="display:block;padding:12px 8px;font-size:15px;font-weight:700;color:var(--accent);text-decoration:none;">Get started →</a></li>
+    </ul>
+  </nav>
 </header>
+<script>
+  (function(){
+    var btn = document.getElementById('mobile-nav-toggle');
+    var drawer = document.getElementById('mobile-nav-drawer');
+    if(!btn || !drawer) return;
+    function setOpen(open){
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      if(open){ drawer.removeAttribute('hidden'); } else { drawer.setAttribute('hidden', ''); }
+    }
+    btn.addEventListener('click', function(){ setOpen(btn.getAttribute('aria-expanded') !== 'true'); });
+    drawer.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ setOpen(false); }); });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape') setOpen(false); });
+  })();
+</script>
 
+<main id="main">
 <!-- Hero -->
 <section class="grid-bg py-20 border-b border-[var(--line)]">
   <div class="section-wrap">
@@ -327,6 +403,8 @@
   </div>
 </section>
 
+</main>
+
 <!-- Footer -->
 <footer class="border-t border-[var(--line)] px-5 py-10">
   <div class="section-wrap" style="display:flex;flex-direction:column;gap:20px;">
@@ -360,5 +438,28 @@
   </div>
 </footer>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "url": "https://www.30dayramp.com/about",
+  "name": "About — Ramped AI",
+  "description": "Meet the team behind Ramped AI — operators who built the AI department they wished they'd had.",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ramped AI",
+    "url": "https://www.30dayramp.com/",
+    "logo": "https://www.30dayramp.com/apple-touch-icon.png"
+  },
+  "mainEntity": {
+    "@type": "Person",
+    "name": "Andrew Yoon",
+    "jobTitle": "Founder & CEO",
+    "worksFor": { "@type": "Organization", "name": "Ramped AI", "url": "https://www.30dayramp.com/" },
+    "alumniOf": { "@type": "CollegeOrUniversity", "name": "Saint Louis University" },
+    "description": "Andrew founded Xtractor Depot in 2016. After running a fast-scaling physical-goods business, he founded Ramped AI to deploy AI departments for operating businesses."
+  }
+}
+</script>
 </body>
 </html>

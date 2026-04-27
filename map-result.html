@@ -780,7 +780,7 @@ if (!mapId) {
       if (res.status === 404) {
         showError('Map not found', 'This link may have expired or the ID is incorrect.', true);
       } else if (!res.ok) {
-        showError('Something went wrong', 'We couldn't load your map. Please try again or contact hello@30dayramp.com.', false);
+        showError('Something went wrong', 'We couldn't load your map. Please try again or contact jon@30dayramp.com.', false);
       } else {
         renderMap(res.data);
       }

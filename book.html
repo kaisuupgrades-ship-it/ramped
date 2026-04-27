@@ -127,7 +127,8 @@
   <span class="font-bold text-lg tracking-tight ml-2">Ramped AI</span>
 </a>
     <!-- Nav links -->
-    <nav class="hidden sm:flex items-center gap-3">
+    <nav class="hidden sm:flex items-center gap-3" aria-label="Primary">
+      <a href="/about" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">About</a>
       <a href="/demo" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">Demo</a>
       <a href="/comparison" class="btn-ghost whitespace-nowrap" style="padding:8px 16px;font-size:13px;">VA vs. AI</a>
       <a href="/" class="btn-primary whitespace-nowrap" style="padding:8px 16px;font-size:13px;">← Home</a>
@@ -148,6 +149,7 @@
   <nav id="mobile-nav-drawer" aria-label="Mobile" hidden class="sm:hidden"
     style="border-top:1px solid var(--line);background:var(--paper);">
     <ul style="list-style:none;margin:0;padding:8px 16px 16px;display:flex;flex-direction:column;gap:4px;">
+      <li><a href="/about"      style="display:block;padding:12px 8px;font-size:15px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);">About</a></li>
       <li><a href="/demo"       style="display:block;padding:12px 8px;font-size:15px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);">Demo</a></li>
       <li><a href="/comparison" style="display:block;padding:12px 8px;font-size:15px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);">VA vs. AI</a></li>
       <li><a href="/"           style="display:block;padding:12px 8px;font-size:15px;font-weight:700;color:var(--accent);">← Home</a></li>
@@ -658,6 +660,7 @@ document.addEventListener('DOMContentLoaded', init);
       <nav style="display:flex;flex-wrap:wrap;gap:8px 24px;align-items:center;">
         <a href="/#how-it-works" style="font-size:13px;color:var(--muted);">How it works</a>
         <a href="/#pricing" style="font-size:13px;color:var(--muted);">Pricing</a>
+        <a href="/about" style="font-size:13px;color:var(--muted);">About</a>
         <a href="/demo" style="font-size:13px;color:var(--muted);">Demo</a>
         <a href="/comparison" style="font-size:13px;color:var(--muted);">VA vs. AI</a>
         <a href="/book" style="font-size:13px;color:var(--muted);">Book a call</a>
