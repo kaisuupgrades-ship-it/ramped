@@ -28,6 +28,10 @@
       "destination": "/about.html"
     },
     {
+      "source": "/resources",
+      "destination": "/resources.html"
+    },
+    {
       "source": "/demo",
       "destination": "/client-demo.html"
     },
