@@ -106,12 +106,111 @@
   .ticker-dot{color:#4ADE80;font-size:7px;line-height:1;}
   @keyframes ticker-scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
   .ticker-bar:hover .ticker-items{animation-play-state:paused;}
-  /* ── Hero stats strip ── */
-  .hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 20px;margin-bottom:32px;}
-  .hero-stat{border-left:2px solid var(--accent);padding-left:10px;}
-  .hero-stat-val{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:700;color:var(--ink);line-height:1;display:block;margin-bottom:4px;}
-  .hero-stat-label{font-size:11px;color:var(--muted);letter-spacing:.03em;white-space:nowrap;display:block;}
-  @media(max-width:480px){.hero-stats{grid-template-columns:repeat(2,1fr);}}
+  /* ── Hero — PR 7 Tier A redesign ── */
+  .hero-section{
+    position:relative;overflow:hidden;
+    background:
+      radial-gradient(1200px 600px at 85% -10%, rgba(31,79,255,0.10), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgba(31,79,255,0.06), transparent 55%),
+      var(--paper);
+  }
+  .hero-section::before{
+    content:'';position:absolute;inset:0;pointer-events:none;
+    background-image:
+      linear-gradient(to right, rgba(11,18,32,0.025) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(11,18,32,0.025) 1px, transparent 1px);
+    background-size:24px 24px;
+    mask-image:radial-gradient(ellipse 100% 80% at 50% 30%, #000 40%, transparent 90%);
+  }
+  .hero-inner{position:relative;padding-top:64px;padding-bottom:72px;}
+  @media(min-width:768px){.hero-inner{padding-top:88px;padding-bottom:96px;}}
+  .hero-eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:6px 14px;margin-bottom:24px;
+    border-radius:999px;border:1px solid rgba(180,83,9,0.25);
+    background:rgba(255,251,235,0.7);backdrop-filter:blur(6px);
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;font-weight:700;letter-spacing:0.06em;
+    color:#92400E;
+  }
+  .hero-h1{
+    font-size:clamp(2.4rem, 5.5vw, 3.8rem);
+    font-weight:800;line-height:1.04;letter-spacing:-.035em;
+    color:var(--ink);max-width:720px;margin-bottom:20px;
+  }
+  .hero-sub{
+    font-size:1.075rem;color:var(--muted);line-height:1.65;
+    max-width:620px;margin-bottom:36px;
+  }
+  .hero-metrics{
+    display:grid;grid-template-columns:repeat(3, minmax(0, 1fr));
+    gap:14px;margin-bottom:32px;max-width:880px;
+  }
+  @media(max-width:640px){.hero-metrics{grid-template-columns:1fr;}}
+  .hero-metric-card{
+    background:#fff;border:1px solid var(--line);border-radius:14px;
+    padding:20px 22px;
+    box-shadow:0 1px 0 rgba(11,18,32,0.04), 0 8px 24px -16px rgba(11,18,32,0.10);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .hero-metric-card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 1px 0 rgba(11,18,32,0.04), 0 16px 36px -18px rgba(11,18,32,0.18);
+  }
+  .hero-metric-val{
+    display:block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:clamp(1.7rem, 3vw, 2.1rem);
+    font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.02em;
+    margin-bottom:8px;
+  }
+  .hero-metric-label{
+    display:block;font-size:13px;color:var(--muted);line-height:1.5;
+  }
+  .hero-cta-row{
+    display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:18px;
+  }
+  .btn-large{padding:15px 26px;font-size:15px;}
+  .hero-founder{
+    font-size:13.5px;color:var(--muted);line-height:1.6;max-width:680px;
+  }
+  .hero-founder strong{color:var(--ink);font-weight:600;}
+  .hero-founder-trust{display:inline-block;margin-left:6px;color:var(--muted);opacity:0.75;}
+
+  /* ── Customer logo strip ── */
+  .customer-strip{
+    background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    padding:36px 0;
+  }
+  .customer-strip-eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted);text-align:center;margin-bottom:22px;
+  }
+  .customer-strip-logos{
+    display:flex;flex-wrap:wrap;gap:36px 56px;
+    align-items:center;justify-content:center;
+    opacity:0.92;
+  }
+  .customer-logo-real{
+    display:inline-flex;align-items:center;gap:10px;
+    text-decoration:none;color:var(--ink);
+    font-weight:600;font-size:15px;letter-spacing:-.01em;
+    transition:opacity .15s ease;
+  }
+  .customer-logo-real:hover{opacity:0.7;}
+  .customer-logo-real img{
+    width:44px;height:44px;border-radius:50%;object-fit:cover;display:block;
+    border:1px solid var(--line);
+  }
+  .customer-logo-placeholder{
+    display:inline-flex;align-items:center;justify-content:center;
+    height:44px;padding:0 24px;
+    border:1.5px dashed var(--line);border-radius:10px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);opacity:0.45;
+  }
   /* Reduced motion — kill ticker, count-up, and hover-lift transforms for users
      who prefer less motion (audit H9). */
   @media (prefers-reduced-motion: reduce) {
@@ -210,64 +309,76 @@
 
 <!-- ─── HERO ──────────────────────────────────────────────────────────────── -->
 <main id="main">
-<section class="grid-bg relative pb-20" id="hero" style="padding-top:48px;">
-  <div class="section-wrap">
+<section class="hero-section" id="hero">
+  <div class="section-wrap hero-inner">
+
+    <!-- Eyebrow pill — surfaces the strongest commitment above the headline -->
+    <div class="hero-eyebrow">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <path d="M7 1L2 3.5v4C2 10.1 4.2 12.6 7 13.5c2.8-.9 5-3.4 5-6V3.5L7 1z" fill="#F59E0B" opacity=".25" stroke="#B45309" stroke-width="1.3"/>
+      </svg>
+      <span>30-DAY GO-LIVE GUARANTEE — OR FULL REFUND</span>
+    </div>
 
     <!-- Headline -->
-    <h1 style="font-size:clamp(2.2rem,5vw,3.4rem);font-weight:800;line-height:1.08;letter-spacing:-.03em;color:var(--ink);max-width:680px;" class="mb-6">
+    <h1 class="hero-h1">
       Your AI department,<br>live in 30 days.
     </h1>
 
-    <!-- Hero stats strip -->
-    <div class="hero-stats mb-10" style="max-width:640px;">
-      <div class="hero-stat">
-        <span class="hero-stat-val">40+ hrs</span>
-        <span class="hero-stat-label">saved per week</span>
+    <!-- Subheadline -->
+    <p class="hero-sub">
+      Done-for-you AI implementation. We build, deploy, and run AI agents inside your operating business — answering calls, routing leads, automating your highest-friction workflows. Flat monthly fee. No technical staff required.
+    </p>
+
+    <!-- Three dominant metric cards — HighLevel-pattern -->
+    <div class="hero-metrics" aria-label="Key results">
+      <div class="hero-metric-card">
+        <span class="hero-metric-val">40+ hrs</span>
+        <span class="hero-metric-label">saved per week, per client</span>
       </div>
-      <div class="hero-stat">
-        <span class="hero-stat-val">$12,000+</span>
-        <span class="hero-stat-label">avg. saved / mo</span>
+      <div class="hero-metric-card">
+        <span class="hero-metric-val">$12,000+</span>
+        <span class="hero-metric-label">avg. saved per month vs. staffing</span>
       </div>
-      <div class="hero-stat">
-        <span class="hero-stat-val">3×</span>
-        <span class="hero-stat-label">faster lead response</span>
-      </div>
-      <div class="hero-stat">
-        <span class="hero-stat-val">5×</span>
-        <span class="hero-stat-label">avg. ROI year 1</span>
-      </div>
-      <div class="hero-stat">
-        <span class="hero-stat-val">30 days</span>
-        <span class="hero-stat-label">go-live guarantee</span>
-      </div>
-      <div class="hero-stat">
-        <span class="hero-stat-val">24/7</span>
-        <span class="hero-stat-label">AI coverage</span>
+      <div class="hero-metric-card">
+        <span class="hero-metric-val">30 days</span>
+        <span class="hero-metric-label">from kickoff to live agent</span>
       </div>
     </div>
 
-    <!-- CTA card + trust signals -->
-    <div class="max-w-md">
-      <div class="card ink-shadow p-6" id="hero-form-wrap">
-        <p style="font-weight:600;font-size:16px;margin-bottom:6px;color:var(--ink);">Start with a free 30-min call</p>
-        <p style="font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.5;">We'll map out what to automate first and what it's worth — no pitch, no pressure.</p>
-        <a href="/book" class="btn-primary w-full justify-center" style="text-decoration:none;font-size:15px;">Book a discovery call →</a>
-        <p style="font-size:12px;color:var(--muted);margin-top:12px;text-align:center;">Free · 30 minutes · No commitment</p>
-      </div>
-      <div class="flex flex-wrap items-center justify-center gap-4 mt-4" style="text-align:center;">
-        <span class="escrow-badge">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M7 1L2 3.5v4C2 10.1 4.2 12.6 7 13.5c2.8-.9 5-3.4 5-6V3.5L7 1z" fill="#F59E0B" opacity=".3" stroke="#F59E0B" stroke-width="1.2"/></svg>
-          30-day money-back guarantee
-        </span>
-        <span class="sectionnum">No lock-in · Cancel anytime</span>
-      </div>
+    <!-- CTA row -->
+    <div class="hero-cta-row">
+      <a href="/book" class="btn-primary btn-large">Book a discovery call →</a>
+      <a href="/demo" class="btn-ghost btn-large">Watch a 2-min demo</a>
     </div>
+
+    <!-- Founder credibility + microcopy -->
+    <p class="hero-founder">
+      Built by <strong>Andrew Yoon</strong> — 10-year operator and founder of Xtractor Depot.
+      <span class="hero-founder-trust">Free · 30 minutes · No commitment.</span>
+    </p>
 
   </div>
 </section>
 
+<!-- ─── CUSTOMER LOGO STRIP ────────────────────────────────────────────────── -->
+<section class="customer-strip">
+  <div class="section-wrap">
+    <p class="customer-strip-eyebrow">Deployed in production at</p>
+    <div class="customer-strip-logos">
+      <a href="/about" class="customer-logo-real" aria-label="Xtractor Depot — read the case study">
+        <img src="/xtractordepot-logo.jpg" alt="Xtractor Depot" width="44" height="44" loading="lazy" decoding="async">
+        <span>Xtractor Depot</span>
+      </a>
+      <span class="customer-logo-placeholder" aria-hidden="true">Your logo</span>
+      <span class="customer-logo-placeholder" aria-hidden="true">Your logo</span>
+      <span class="customer-logo-placeholder" aria-hidden="true">Your logo</span>
+    </div>
+  </div>
+</section>
+
 <!-- FAQ Section -->
-<section class="py-20 border-t border-[var(--line)] grid-bg" id="faq">
+<section class="py-20" id="faq" style="background:var(--paper);">
   <div class="section-wrap">
     <div class="mb-3"><span class="sectionnum">FAQ</span></div>
     <h2 class="text-3xl font-bold tracking-tight mb-3" style="letter-spacing:-.02em;">Common questions</h2>
@@ -341,7 +452,7 @@
 </section>
 
 <!-- ─── INDUSTRY LOGO WALL ─────────────────────────────────────────────── -->
-<section style="padding:24px 0 32px;border-bottom:1px solid var(--line);background:#fff;">
+<section style="padding:36px 0 40px;background:#fff;">
   <div class="section-wrap" style="text-align:center;">
     <p style="font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">Deployed across industries</p>
     <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">
@@ -358,7 +469,7 @@
 </section>
 
 <!-- ─── PROBLEM ───────────────────────────────────────────────────────────── -->
-<section class="py-20 border-t border-[var(--line)]" id="problem">
+<section class="py-20" id="problem" style="background:var(--paper);">
   <div class="section-wrap">
     <div class="mb-12">
       <p class="sectionnum mb-3">The problem</p>
@@ -372,8 +483,8 @@
       <div class="card p-6 hover-lift">
         <div class="pain-icon mb-4">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <circle cx="10" cy="10" r="8" stroke="var(--muted)" stroke-width="1.5"/>
-            <path d="M10 6v4l2.5 2.5" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="10" cy="10" r="8" stroke="var(--accent)" stroke-width="2"/>
+            <path d="M10 6v4l2.5 2.5" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </div>
         <h3 style="font-weight:700;font-size:16px;color:var(--ink);margin-bottom:8px;">You know AI could help — but don't know where to start</h3>
@@ -383,9 +494,9 @@
       <div class="card p-6 hover-lift">
         <div class="pain-icon mb-4">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <rect x="3" y="4" width="14" height="10" rx="2" stroke="var(--muted)" stroke-width="1.5"/>
-            <path d="M7 16h6" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round"/>
-            <path d="M10 14v2" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round"/>
+            <rect x="3" y="4" width="14" height="10" rx="2" stroke="var(--accent)" stroke-width="2"/>
+            <path d="M7 16h6" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+            <path d="M10 14v2" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </div>
         <h3 style="font-weight:700;font-size:16px;color:var(--ink);margin-bottom:8px;">Consultants give you decks, not working software</h3>
@@ -395,7 +506,7 @@
       <div class="card p-6 hover-lift">
         <div class="pain-icon mb-4">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <path d="M4 6h12M4 10h8M4 14h5" stroke="var(--muted)" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M4 6h12M4 10h8M4 14h5" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </div>
         <h3 style="font-weight:700;font-size:16px;color:var(--ink);margin-bottom:8px;">Your team is stuck doing work that should be automated</h3>
@@ -406,7 +517,7 @@
 </section>
 
 <!-- ─── HOW IT WORKS ──────────────────────────────────────────────────────── -->
-<section class="py-20 border-t border-[var(--line)]" id="how-it-works" style="background:#fff;">
+<section class="py-20" id="how-it-works" style="background:#fff;">
   <div class="section-wrap">
     <div class="mb-12">
       <p class="sectionnum mb-3">How it works</p>
@@ -462,7 +573,7 @@
 </section>
 
 <!-- ─── PROOF ─────────────────────────────────────────────────────────────── -->
-<section class="py-20 border-t border-[var(--line)]" id="proof">
+<section class="py-20" id="proof" style="background:linear-gradient(180deg,#F5F8FF 0%,#FFFFFF 100%);">
   <div class="section-wrap">
     <div class="mb-12">
       <p class="sectionnum mb-3">Client results</p>
@@ -509,7 +620,7 @@
 </section>
 
 <!-- ─── PRICING ───────────────────────────────────────────────────────────── -->
-<section class="py-20 border-t border-[var(--line)]" id="pricing" style="background:#fff;">
+<section class="py-20" id="pricing" style="background:#fff;">
   <div class="section-wrap">
     <div class="mb-12">
       <p class="sectionnum mb-3">Pricing</p>
@@ -564,9 +675,9 @@
       </div>
 
       <!-- Growth (featured) -->
-      <div class="card p-7 hover-lift flex flex-col" style="border-color:var(--accent);background:linear-gradient(160deg,#f5f8ff 0%,#fff 60%);">
+      <div class="card p-8 hover-lift flex flex-col" style="border-color:var(--accent);border-width:2px;background:linear-gradient(160deg,#EEF3FF 0%,#fff 60%);box-shadow:0 1px 0 rgba(11,18,32,0.06), 0 18px 48px -20px rgba(31,79,255,0.30), 0 4px 12px -4px rgba(11,18,32,0.10);transform:translateY(-6px);">
         <div class="flex items-center justify-between mb-2">
-          <span style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);background:#EEF3FF;padding:3px 8px;border-radius:4px;">Most popular</span>
+          <span style="font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#fff;background:var(--accent);padding:5px 12px;border-radius:999px;box-shadow:0 4px 12px -4px rgba(31,79,255,0.45);">★ Most popular</span>
         </div>
         <div class="mb-5">
           <p class="mono" style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">Growth</p>
@@ -652,7 +763,7 @@
 
 
 <!-- ─── FINAL CTA ─────────────────────────────────────────────────────────── -->
-<section class="py-20 border-t border-[var(--line)] grid-bg" id="get-started">
+<section class="py-20" id="get-started" style="background:linear-gradient(180deg,var(--paper) 0%,#F5F8FF 100%);">
   <div class="section-wrap">
     <div class="max-w-[640px] mb-10">
       <p class="sectionnum mb-4">Get started</p>

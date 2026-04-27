@@ -54,12 +54,14 @@
     .sectionnum{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
     .grid-bg{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:32px 32px;background-position:-1px -1px;}
 
-    /* Ticker */
+    /* Ticker — unified with homepage (PR 7 Tier A): JetBrains Mono, green dots, same scroll speed */
     .ticker-bar{background:var(--ink);overflow:hidden;height:38px;display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,0.07);}
-    .ticker-track{display:flex;gap:48px;animation:ticker 28s linear infinite;white-space:nowrap;}
-    .ticker-track span{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.55);}
-    .ticker-track span b{color:#fff;}
-    @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+    .ticker-track{display:flex;width:100%;overflow:hidden;mask-image:linear-gradient(to right,transparent 0%,black 6%,black 94%,transparent 100%);}
+    .ticker-items{display:inline-flex;align-items:center;white-space:nowrap;animation:ticker-scroll 36s linear infinite;}
+    .ticker-item{display:inline-flex;align-items:center;gap:9px;padding:0 36px;font-size:11.5px;font-weight:500;color:rgba(255,255,255,0.78);letter-spacing:.045em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;}
+    .ticker-dot{color:#4ADE80;font-size:7px;line-height:1;}
+    @keyframes ticker-scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+    .ticker-bar:hover .ticker-items{animation-play-state:paused;}
 
     /* Team card */
     .team-card{background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden;}
@@ -87,7 +89,7 @@
 
     /* Reduced motion */
     @media (prefers-reduced-motion: reduce) {
-      .ticker-track { animation: none !important; }
+      .ticker-items { animation: none !important; }
       *, *::before, *::after { transition-duration: 0.001ms !important; animation-duration: 0.001ms !important; }
     }
   </style>
@@ -156,21 +158,23 @@
   })();
 </script>
 
-<!-- Ticker -->
-<div class="ticker-bar" aria-hidden="true">
+<!-- Ticker — unified component (matches homepage) -->
+<div class="ticker-bar" role="marquee" aria-label="Key stats">
   <div class="ticker-track">
-    <span>• <b>30-day go-live guarantee</b></span>
-    <span>• Avg. <b>$12,000+</b> saved / mo</span>
-    <span>• <b>40+ hrs</b> saved per week</span>
-    <span>• <b>3×</b> faster lead response</span>
-    <span>• <b>5×</b> avg. ROI in year 1</span>
-    <span>• <b>24/7</b> AI coverage — no sick days</span>
-    <span>• <b>30-day go-live guarantee</b></span>
-    <span>• Avg. <b>$12,000+</b> saved / mo</span>
-    <span>• <b>40+ hrs</b> saved per week</span>
-    <span>• <b>3×</b> faster lead response</span>
-    <span>• <b>5×</b> avg. ROI in year 1</span>
-    <span>• <b>24/7</b> AI coverage — no sick days</span>
+    <span class="ticker-items" aria-hidden="true">
+      <span class="ticker-item"><span class="ticker-dot">●</span>Save 40+ hours per week</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>30-day go-live guarantee</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>3× faster lead response time</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>Avg. $12,000+ / mo saved vs. staffing</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>5× avg. ROI in year 1</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>24/7 AI coverage — no sick days</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>Save 40+ hours per week</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>30-day go-live guarantee</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>3× faster lead response time</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>Avg. $12,000+ / mo saved vs. staffing</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>5× avg. ROI in year 1</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>24/7 AI coverage — no sick days</span>
+    </span>
   </div>
 </div>
 
@@ -240,22 +244,19 @@
                 <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Manual work eliminated</div>
                 <div style="font-size:1.5rem;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ink);line-height:1;">14 hrs/wk</div>
               </div>
-              <span style="background:#F0FDF4;color:#16A34A;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;flex-shrink:0;">Verified</span>
-            </div>
+                          </div>
             <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--line);">
               <div>
                 <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Lead response time</div>
                 <div style="font-size:1.5rem;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ink);line-height:1;">4h → 8m</div>
               </div>
-              <span style="background:#F0FDF4;color:#16A34A;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;flex-shrink:0;">Verified</span>
-            </div>
+                          </div>
             <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;">
               <div>
                 <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Ongoing management required</div>
                 <div style="font-size:1.5rem;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ink);line-height:1;">Zero</div>
               </div>
-              <span style="background:#F0FDF4;color:#16A34A;font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;flex-shrink:0;">Verified</span>
-            </div>
+                          </div>
           </div>
         </div>
 
@@ -315,22 +316,21 @@
         </div>
       </div>
 
-      <!-- Co-founder coming soon -->
-      <div class="team-card" style="border-style:dashed;background:var(--surface);">
-        <div style="width:100%;aspect-ratio:3/2;background:linear-gradient(135deg,var(--surface) 0%,var(--line) 100%);display:flex;align-items:center;justify-content:center;">
-          <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true">
-            <circle cx="28" cy="28" r="27" stroke="var(--line)" stroke-width="2" stroke-dasharray="4 4"/>
-            <line x1="28" y1="18" x2="28" y2="38" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"/>
-            <line x1="18" y1="28" x2="38" y2="28" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"/>
-          </svg>
+      <!-- Engineering + advisor sidebar (replaces dashed COO placeholder — PR 7 Tier A) -->
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="card ink-shadow" style="padding:24px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;">Engineering &amp; Operations</div>
+          <p style="font-size:14px;color:var(--ink);line-height:1.7;margin-bottom:14px;font-weight:500;">A small senior team plus an advisor network. We staff up per engagement based on the integrations and workflows your business needs.</p>
+          <p style="font-size:13.5px;color:var(--muted);line-height:1.7;">Our model: keep the core team senior and small, draw on specialist advisors (LLM ops, data engineering, vertical SMEs) as the scope demands. The result is an AI department on day one — not a 6-month consulting engagement waiting for headcount approval.</p>
         </div>
-        <div style="padding:24px 24px 28px;">
-          <div style="margin-bottom:6px;">
-            <div style="font-size:17px;font-weight:700;color:var(--muted);letter-spacing:-.01em;">Co-Founder · COO</div>
-            <div style="font-size:13px;font-weight:500;color:var(--muted);margin-top:4px;opacity:.7;">Coming soon</div>
+        <div class="card" style="padding:20px;background:var(--surface);">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">Advisor expertise</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            <span style="font-size:12px;font-weight:600;padding:4px 12px;border-radius:999px;background:#fff;color:var(--ink);border:1px solid var(--line);">LLM operations</span>
+            <span style="font-size:12px;font-weight:600;padding:4px 12px;border-radius:999px;background:#fff;color:var(--ink);border:1px solid var(--line);">Data engineering</span>
+            <span style="font-size:12px;font-weight:600;padding:4px 12px;border-radius:999px;background:#fff;color:var(--ink);border:1px solid var(--line);">CRM &amp; integrations</span>
+            <span style="font-size:12px;font-weight:600;padding:4px 12px;border-radius:999px;background:#fff;color:var(--ink);border:1px solid var(--line);">Vertical SMEs</span>
           </div>
-          <div style="width:32px;height:2px;background:var(--line);margin:14px 0;"></div>
-          <p style="font-size:14px;color:var(--muted);line-height:1.8;opacity:.7;">We're growing the team. More to come here soon.</p>
         </div>
       </div>
 
