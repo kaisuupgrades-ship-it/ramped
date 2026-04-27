@@ -20,16 +20,17 @@ const SITE_URL_DEFAULT = 'https://www.30dayramp.com';
 const FROM_NAME = 'Ramped AI';
 const FROM_EMAIL = 'jon@30dayramp.com';
 
-// Bulletproof header with brand-blue R mark + wordmark on dark navy.
+// Bulletproof header with brand-blue bars logo + wordmark on dark navy.
 // Uses table layout so it renders correctly in Gmail / Outlook / Apple Mail.
-export function emailHeader() {
+// The bars PNG is hosted at /assets/email-logo-bars.png — Gmail will proxy-cache it.
+export function emailHeader({ siteUrl = SITE_URL_DEFAULT } = {}) {
   return `<tr><td class="ehead-pad" style="background:#0B1220;border-radius:16px 16px 0 0;padding:24px 36px;">
   <table cellpadding="0" cellspacing="0" border="0" role="presentation">
     <tr>
-      <td style="vertical-align:middle;padding-right:12px;line-height:0;">
-        <table cellpadding="0" cellspacing="0" border="0" role="presentation"><tr><td width="36" height="36" align="center" valign="middle" style="background:#1F4FFF;border-radius:8px;color:#FFFFFF;font-family:'Helvetica Neue',Arial,sans-serif;font-weight:900;font-size:21px;letter-spacing:-1px;line-height:36px;mso-line-height-rule:exactly;">R</td></tr></table>
+      <td style="vertical-align:middle;padding-right:14px;line-height:0;">
+        <img src="${siteUrl}/assets/email-logo-bars.png" width="52" height="44" alt="" style="display:block;border:0;outline:none;text-decoration:none;width:52px;height:44px;">
       </td>
-      <td style="vertical-align:middle;color:#FFFFFF;font-family:'Helvetica Neue',Arial,sans-serif;font-weight:700;font-size:16px;letter-spacing:-0.2px;line-height:36px;mso-line-height-rule:exactly;">Ramped AI</td>
+      <td style="vertical-align:middle;color:#FFFFFF;font-family:'Helvetica Neue',Arial,sans-serif;font-weight:700;font-size:16px;letter-spacing:-0.2px;">Ramped AI</td>
     </tr>
   </table>
 </td></tr>`;
@@ -94,7 +95,7 @@ ${pre}
 <table class="outer-pad" width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="background:#F5F5F3;padding:32px 16px;">
 <tr><td align="center">
 <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="max-width:580px;background:#FFFFFF;border-radius:16px;box-shadow:0 1px 0 rgba(11,18,32,0.04), 0 12px 36px -16px rgba(11,18,32,0.10);">
-${emailHeader()}
+${emailHeader({ siteUrl })}
 ${innerRows}
 ${emailFooter({ siteUrl })}
 </table>
