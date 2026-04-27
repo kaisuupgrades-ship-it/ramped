@@ -1,0 +1,16 @@
+<!-- pain-1-fork.svg — "You know AI could help, but don't know where to start"
+     A figure at a fork in the path, three branches leading forward.
+     Single-color line illustration in brand accent. Uses currentColor for runtime theming. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <!-- Person -->
+  <circle cx="40" cy="22" r="5"/>
+  <path d="M40 27 v14 M33 33 h14 M40 41 l-4 11 M40 41 l4 11"/>
+  <!-- Three diverging paths emerging from below the figure -->
+  <path d="M40 56 L18 72" stroke-dasharray="3 4" opacity="0.55"/>
+  <path d="M40 56 L40 72" stroke-dasharray="3 4" opacity="0.85"/>
+  <path d="M40 56 L62 72" stroke-dasharray="3 4" opacity="0.55"/>
+  <!-- Endpoint dots -->
+  <circle cx="18" cy="72" r="1.6" fill="currentColor" stroke="none" opacity="0.55"/>
+  <circle cx="40" cy="72" r="1.6" fill="currentColor" stroke="none"/>
+  <circle cx="62" cy="72" r="1.6" fill="currentColor" stroke="none" opacity="0.55"/>
+</svg>

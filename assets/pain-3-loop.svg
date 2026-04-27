@@ -1,0 +1,17 @@
+<!-- pain-3-loop.svg — "Your team is stuck doing work that should be automated"
+     A figure at a desk with a stack of papers, plus a circular loop arrow indicating repetition. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <!-- Person at desk -->
+  <circle cx="22" cy="20" r="5"/>
+  <path d="M22 25 v8 M22 33 c-2 6 -2 14 0 20"/>
+  <!-- Desk surface -->
+  <line x1="10" y1="56" x2="56" y2="56"/>
+  <!-- Stack of papers — three sheets piled up -->
+  <rect x="34" y="48" width="20" height="3" rx="0.5"/>
+  <rect x="32" y="44" width="22" height="3" rx="0.5" opacity="0.7"/>
+  <rect x="30" y="40" width="22" height="3" rx="0.5" opacity="0.45"/>
+
+  <!-- Loop arrow above the stack — suggesting "this happens over and over" -->
+  <path d="M62 24 a8 8 0 1 1 -8 -8" stroke-dasharray="0"/>
+  <polyline points="55 14 54 17 57 18"/>
+</svg>

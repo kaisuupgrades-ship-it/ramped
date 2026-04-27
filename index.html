@@ -377,6 +377,35 @@
   </div>
 </section>
 
+<!-- ─── SEE IT IN ACTION ─────────────────────────────────────────────────── -->
+<section class="py-20" id="see-it" style="background:linear-gradient(180deg,#FFFFFF 0%,#F5F8FF 100%);">
+  <div class="section-wrap">
+    <div style="max-width:680px;margin-bottom:32px;">
+      <p class="sectionnum mb-3">See it in action</p>
+      <h2 style="font-size:clamp(1.75rem,4vw,2.5rem);font-weight:800;letter-spacing:-.02em;color:var(--ink);line-height:1.1;">
+        Working software. Not a slide deck.
+      </h2>
+      <p style="font-size:1rem;color:var(--muted);line-height:1.7;margin-top:12px;">
+        Above: an actual Ramped agent handling inbound quote requests for a customer on day 30. It reads the email, looks up the right product and pricing tier, drafts the reply, and waits for one click to send. Five workflows like this go live in 30 days.
+      </p>
+    </div>
+    <div class="agent-figure">
+      <img
+        src="/assets/agent-ui.png"
+        srcset="/assets/agent-ui.png 1x, /assets/agent-ui@2x.png 2x"
+        alt="Ramped AI agent inbox: a prospect's quote request being read, drafted, and queued for one-click send."
+        width="1280" height="720"
+        loading="lazy" decoding="async"
+        style="display:block;width:100%;height:auto;border-radius:14px;box-shadow:0 1px 0 rgba(11,18,32,0.04), 0 36px 72px -32px rgba(11,18,32,0.22), 0 12px 28px -12px rgba(31,79,255,0.18);"
+      >
+    </div>
+    <div style="margin-top:28px;display:flex;flex-wrap:wrap;gap:14px;align-items:center;">
+      <a href="/demo" class="btn-primary">Watch a 2-min demo →</a>
+      <p style="font-size:14px;color:var(--muted);margin:0;">See real workflows for legal, real estate, healthcare, and field services.</p>
+    </div>
+  </div>
+</section>
+
 <!-- FAQ Section -->
 <section class="py-20" id="faq" style="background:var(--paper);">
   <div class="section-wrap">
@@ -479,34 +508,56 @@
     </div>
 
     <div class="grid sm:grid-cols-3 gap-5">
-      <!-- Pain 1 -->
+      <!-- Pain 1 — figure at fork, three diverging paths -->
       <div class="card p-6 hover-lift">
-        <div class="pain-icon mb-4">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <circle cx="10" cy="10" r="8" stroke="var(--accent)" stroke-width="2"/>
-            <path d="M10 6v4l2.5 2.5" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+        <div class="pain-icon mb-4" style="width:64px;height:64px;color:var(--accent);">
+          <svg viewBox="0 0 80 80" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="40" cy="22" r="5"/>
+            <path d="M40 27 v14 M33 33 h14 M40 41 l-4 11 M40 41 l4 11"/>
+            <path d="M40 56 L18 72" stroke-dasharray="3 4" opacity="0.55"/>
+            <path d="M40 56 L40 72" stroke-dasharray="3 4" opacity="0.85"/>
+            <path d="M40 56 L62 72" stroke-dasharray="3 4" opacity="0.55"/>
+            <circle cx="18" cy="72" r="1.6" fill="currentColor" stroke="none" opacity="0.55"/>
+            <circle cx="40" cy="72" r="1.6" fill="currentColor" stroke="none"/>
+            <circle cx="62" cy="72" r="1.6" fill="currentColor" stroke="none" opacity="0.55"/>
           </svg>
         </div>
         <h3 style="font-weight:700;font-size:16px;color:var(--ink);margin-bottom:8px;">You know AI could help — but don't know where to start</h3>
         <p style="font-size:14px;color:var(--muted);line-height:1.6;">Every week you read about AI transforming businesses like yours. Your team is busy. The tools are confusing. And another quarter goes by.</p>
       </div>
-      <!-- Pain 2 -->
+      <!-- Pain 2 — chart on easel above closed laptop with strikethrough -->
       <div class="card p-6 hover-lift">
-        <div class="pain-icon mb-4">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <rect x="3" y="4" width="14" height="10" rx="2" stroke="var(--accent)" stroke-width="2"/>
-            <path d="M7 16h6" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
-            <path d="M10 14v2" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+        <div class="pain-icon mb-4" style="width:64px;height:64px;color:var(--accent);">
+          <svg viewBox="0 0 80 80" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="14" y="10" width="40" height="26" rx="2"/>
+            <line x1="22" y1="30" x2="22" y2="22"/>
+            <line x1="29" y1="30" x2="29" y2="18"/>
+            <line x1="36" y1="30" x2="36" y2="14"/>
+            <line x1="43" y1="30" x2="43" y2="20"/>
+            <line x1="20" y1="36" x2="14" y2="50"/>
+            <line x1="48" y1="36" x2="54" y2="50"/>
+            <line x1="22" y1="44" x2="46" y2="44" opacity="0.5"/>
+            <rect x="20" y="58" width="40" height="6" rx="1"/>
+            <line x1="22" y1="64" x2="58" y2="64" opacity="0.5"/>
+            <line x1="34" y1="58" x2="46" y2="64" opacity="0.4"/>
+            <line x1="46" y1="58" x2="34" y2="64" opacity="0.4"/>
           </svg>
         </div>
         <h3 style="font-weight:700;font-size:16px;color:var(--ink);margin-bottom:8px;">Consultants give you decks, not working software</h3>
         <p style="font-size:14px;color:var(--muted);line-height:1.6;">You've sat through the strategy sessions. You have the roadmap PDF. But nothing in your business actually changed. Deliverables aren't outcomes.</p>
       </div>
-      <!-- Pain 3 -->
+      <!-- Pain 3 — figure with stack of papers + repeating loop -->
       <div class="card p-6 hover-lift">
-        <div class="pain-icon mb-4">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <path d="M4 6h12M4 10h8M4 14h5" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+        <div class="pain-icon mb-4" style="width:64px;height:64px;color:var(--accent);">
+          <svg viewBox="0 0 80 80" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="22" cy="20" r="5"/>
+            <path d="M22 25 v8 M22 33 c-2 6 -2 14 0 20"/>
+            <line x1="10" y1="56" x2="56" y2="56"/>
+            <rect x="34" y="48" width="20" height="3" rx="0.5"/>
+            <rect x="32" y="44" width="22" height="3" rx="0.5" opacity="0.7"/>
+            <rect x="30" y="40" width="22" height="3" rx="0.5" opacity="0.45"/>
+            <path d="M62 24 a8 8 0 1 1 -8 -8"/>
+            <polyline points="55 14 54 17 57 18"/>
           </svg>
         </div>
         <h3 style="font-weight:700;font-size:16px;color:var(--ink);margin-bottom:8px;">Your team is stuck doing work that should be automated</h3>

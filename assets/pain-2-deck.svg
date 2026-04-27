@@ -1,0 +1,22 @@
+<!-- pain-2-deck.svg — "Consultants give you decks, not working software"
+     A presentation slide on an easel above a closed laptop with a blank screen. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <!-- Slide / chart -->
+  <rect x="14" y="10" width="40" height="26" rx="2"/>
+  <!-- Bars on the slide -->
+  <line x1="22" y1="30" x2="22" y2="22"/>
+  <line x1="29" y1="30" x2="29" y2="18"/>
+  <line x1="36" y1="30" x2="36" y2="14"/>
+  <line x1="43" y1="30" x2="43" y2="20"/>
+  <!-- Easel legs -->
+  <line x1="20" y1="36" x2="14" y2="50"/>
+  <line x1="48" y1="36" x2="54" y2="50"/>
+  <line x1="22" y1="44" x2="46" y2="44" opacity="0.5"/>
+
+  <!-- Closed laptop below — strikethrough suggesting "no software shipped" -->
+  <rect x="20" y="58" width="40" height="6" rx="1"/>
+  <line x1="22" y1="64" x2="58" y2="64" opacity="0.5"/>
+  <!-- Subtle X overlay on the laptop to imply "not delivered" -->
+  <line x1="34" y1="58" x2="46" y2="64" opacity="0.4"/>
+  <line x1="46" y1="58" x2="34" y2="64" opacity="0.4"/>
+</svg>
