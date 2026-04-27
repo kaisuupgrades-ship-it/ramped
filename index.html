@@ -508,7 +508,7 @@
           <button id="btn-monthly" onclick="setBilling(false)" style="padding:7px 18px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;background:transparent;color:var(--muted);">Monthly</button>
           <button id="btn-annual" onclick="setBilling(true)" style="padding:7px 18px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.1);">Annual</button>
         </div>
-        <span id="annual-badge" style="font-size:12px;font-weight:700;color:#0F7A4B;background:#ECFDF5;padding:4px 10px;border-radius:20px;">🎁 1 month free</span>
+        <span id="annual-badge" style="font-size:12px;font-weight:700;color:#0F7A4B;background:#ECFDF5;padding:4px 10px;border-radius:20px;">🎁 2 months free</span>
       </div>
     </div>
 
@@ -517,8 +517,8 @@
       <div class="card p-7 hover-lift flex flex-col">
         <div class="mb-5">
           <p class="mono" style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">Starter</p>
-          <p style="font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.02em;"><span id="starter-price">$2,292</span><span id="starter-period" style="font-size:15px;font-weight:500;color:var(--muted);">/yr</span></p>
-          <p id="starter-note" style="font-size:13px;color:var(--muted);margin-top:3px;">billed annually · save $2,500 · + $2,500 onboarding</p>
+          <p style="font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.02em;"><span id="starter-price">$2,083</span><span id="starter-period" style="font-size:15px;font-weight:500;color:var(--muted);">/yr</span></p>
+          <p id="starter-note" style="font-size:13px;color:var(--muted);margin-top:3px;">billed annually · save $5,000 · + $2,500 onboarding</p>
         </div>
         <p style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:12px;">Best for: 5–30 employees</p>
         <ul style="list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:11px;flex:1;">
@@ -553,8 +553,8 @@
         </div>
         <div class="mb-5">
           <p class="mono" style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">Growth</p>
-          <p style="font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.02em;"><span id="growth-price">$4,583</span><span id="growth-period" style="font-size:15px;font-weight:500;color:var(--muted);">/yr</span></p>
-          <p id="growth-note" style="font-size:13px;color:var(--muted);margin-top:3px;">billed annually · save $5,000 · + $3,500 onboarding</p>
+          <p style="font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.02em;"><span id="growth-price">$4,167</span><span id="growth-period" style="font-size:15px;font-weight:500;color:var(--muted);">/yr</span></p>
+          <p id="growth-note" style="font-size:13px;color:var(--muted);margin-top:3px;">billed annually · save $10,000 · + $3,500 onboarding</p>
         </div>
         <p style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:12px;">Best for: 30–100 employees</p>
         <ul style="list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:11px;flex:1;">
@@ -749,12 +749,12 @@
 
   // Billing toggle
   function setBilling(isAnnual) {
-    document.getElementById('starter-price').textContent = isAnnual ? '$2,292' : '$2,500';
+    document.getElementById('starter-price').textContent = isAnnual ? '$2,083' : '$2,500';
     document.getElementById('starter-period').textContent = '/mo';
-    document.getElementById('starter-note').textContent = isAnnual ? 'billed annually \u00b7 save $2,500 \u00b7 + $2,500 onboarding' : '+ $2,500 one-time onboarding';
-    document.getElementById('growth-price').textContent = isAnnual ? '$4,583' : '$5,000';
+    document.getElementById('starter-note').textContent = isAnnual ? 'billed annually \u00b7 save $5,000 \u00b7 + $2,500 onboarding' : '+ $2,500 one-time onboarding';
+    document.getElementById('growth-price').textContent = isAnnual ? '$4,167' : '$5,000';
     document.getElementById('growth-period').textContent = '/mo';
-    document.getElementById('growth-note').textContent = isAnnual ? 'billed annually \u00b7 save $5,000 \u00b7 + $3,500 onboarding' : '+ $3,500 one-time onboarding';
+    document.getElementById('growth-note').textContent = isAnnual ? 'billed annually \u00b7 save $10,000 \u00b7 + $3,500 onboarding' : '+ $3,500 one-time onboarding';
     var badge = document.getElementById('annual-badge');
     badge.style.display = isAnnual ? 'inline' : 'none';
     var ma = document.getElementById('btn-monthly'), aa = document.getElementById('btn-annual');
