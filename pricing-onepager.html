@@ -4,10 +4,6 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Ramped AI — Pricing & Implementation Proposal</title>
-<meta name="robots" content="noindex, nofollow" />
-<meta name="description" content="Pricing tiers and 30-day implementation proposal for Ramped AI." />
-<link rel="canonical" href="https://www.30dayramp.com/pricing-onepager" />
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -498,60 +494,6 @@
     .tiers .tier:last-child { grid-column: 1 / -1; max-width: 360px; justify-self: center; }
   }
 
-  /* ── Billing toggle ── */
-  .billing-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 20px;
-  }
-  .toggle-label {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--muted);
-    transition: color 0.15s;
-  }
-  .toggle-label.active { color: var(--ink); }
-  .toggle-switch {
-    position: relative;
-    width: 44px;
-    height: 24px;
-    cursor: pointer;
-  }
-  .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
-  .toggle-track {
-    position: absolute;
-    inset: 0;
-    background: var(--accent);
-    border-radius: 999px;
-    transition: background 0.2s;
-  }
-  .toggle-thumb {
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 18px;
-    height: 18px;
-    background: #fff;
-    border-radius: 50%;
-    transition: transform 0.2s;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  }
-  .toggle-switch input:not(:checked) ~ .toggle-track { background: var(--line); }
-  .toggle-switch input:not(:checked) ~ .toggle-thumb { transform: translateX(0); }
-  .toggle-switch input:checked ~ .toggle-thumb { transform: translateX(20px); }
-  .annual-badge {
-    display: inline-block;
-    background: #EBF7F2;
-    color: var(--green);
-    font-size: 11px;
-    font-weight: 700;
-    padding: 2px 8px;
-    border-radius: 999px;
-    letter-spacing: 0.03em;
-  }
-
   /* ── Print ── */
   @media print {
     body { font-size: 12px; }
@@ -595,25 +537,14 @@
     <p>Ramped builds and deploys a custom AI agent trained to operate exactly like you do. It handles your inbound, your follow-ups, your reporting, your ops — so you can focus on what only you can do. Live in 30 days, or your money back.</p>
   </div>
 
-  <!-- Billing toggle -->
-  <div class="billing-toggle">
-    <span class="toggle-label" id="label-monthly">Monthly</span>
-    <label class="toggle-switch" title="Toggle billing cycle">
-      <input type="checkbox" id="billing-toggle" checked onchange="setBilling(this.checked)">
-      <div class="toggle-track"></div>
-      <div class="toggle-thumb"></div>
-    </label>
-    <span class="toggle-label active" id="label-annual">Annual <span class="annual-badge">1 month free</span></span>
-  </div>
-
   <!-- Pricing Tiers -->
   <div class="tiers">
 
     <!-- Starter -->
     <div class="tier">
       <div class="tier-name">Starter</div>
-      <div class="tier-price" id="price-starter">$27,500<span>/yr</span></div>
-      <div class="tier-setup" id="setup-starter">12 months for the price of 11 · + $2,500 one-time onboarding</div>
+      <div class="tier-price">$2,500<span>/mo</span></div>
+      <div class="tier-setup">+ $2,500 one-time onboarding</div>
       <div class="tier-target">Best for: 5–30 employees</div>
       <ul class="tier-features">
         <li>Custom AI agent trained to your business</li>
@@ -629,8 +560,8 @@
     <div class="tier featured">
       <div class="tier-badge">Most Popular</div>
       <div class="tier-name">Growth</div>
-      <div class="tier-price" id="price-growth">$55,000<span>/yr</span></div>
-      <div class="tier-setup" id="setup-growth">12 months for the price of 11 · + $3,500 one-time onboarding</div>
+      <div class="tier-price">$5,000<span>/mo</span></div>
+      <div class="tier-setup">+ $3,500 one-time onboarding</div>
       <div class="tier-target">Best for: 30–100 employees</div>
       <ul class="tier-features">
         <li>Custom AI agent — expanded scope</li>
@@ -775,8 +706,8 @@
           <span class="cost-value">$200/mo</span>
         </div>
         <div class="cost-row">
-          <span class="cost-label">Linux VPS (dedicated hosting)</span>
-          <span class="cost-value">$12/mo</span>
+          <span class="cost-label">Linux VPS — Linode (dedicated hosting)</span>
+          <span class="cost-value">$7/mo</span>
         </div>
         <div class="cost-row">
           <span class="cost-label">Misc. (email, integrations)</span>
@@ -784,7 +715,7 @@
         </div>
         <div class="cost-row" style="margin-top:4px; border-top: 1.5px solid var(--line); padding-top:8px;">
           <span class="cost-total">Variable cost per client</span>
-          <span class="cost-total-val">$227/mo</span>
+          <span class="cost-total-val">$215/mo</span>
         </div>
         <div class="cost-row">
           <span class="cost-label" style="font-size:11px;">+ Fixed overhead (Nanoclaw + infra)</span>
@@ -842,42 +773,10 @@
       Ramped AI · <strong>30dayramp.com</strong> · All pricing in USD · 12-month agreements · Prices valid through Q2 2026
     </div>
     <div class="footer-right">
-      Ready to move forward? <a href="https://www.30dayramp.com/book">Book a discovery call →</a>
+      Ready to move forward? <a href="https://30dayramp.com/book">Book a discovery call →</a>
     </div>
   </div>
 
 </div>
-
-<script>
-function setBilling(isAnnual) {
-  var labelMonthly = document.getElementById('label-monthly');
-  var labelAnnual  = document.getElementById('label-annual');
-  var priceStarter = document.getElementById('price-starter');
-  var setupStarter = document.getElementById('setup-starter');
-  var priceGrowth  = document.getElementById('price-growth');
-  var setupGrowth  = document.getElementById('setup-growth');
-
-  if (isAnnual) {
-    labelMonthly.classList.remove('active');
-    labelAnnual.classList.add('active');
-    priceStarter.innerHTML = '$27,500<span>/yr</span>';
-    setupStarter.textContent = '12 months for the price of 11 · + $2,500 one-time onboarding';
-    priceGrowth.innerHTML  = '$55,000<span>/yr</span>';
-    setupGrowth.textContent  = '12 months for the price of 11 · + $3,500 one-time onboarding';
-  } else {
-    labelMonthly.classList.add('active');
-    labelAnnual.classList.remove('active');
-    priceStarter.innerHTML = '$2,500<span>/mo</span>';
-    setupStarter.textContent = '+ $2,500 one-time onboarding';
-    priceGrowth.innerHTML  = '$5,000<span>/mo</span>';
-    setupGrowth.textContent  = '+ $3,500 one-time onboarding';
-  }
-}
-// Default: annual on page load
-document.addEventListener('DOMContentLoaded', function() {
-  document.getElementById('billing-toggle').checked = true;
-  setBilling(true);
-});
-</script>
 </body>
 </html>
