@@ -516,6 +516,19 @@ export default async function handler(req, res) {
         ctaHref: esc(roadmapUrl),
         ctaLabel: 'View roadmap →',
       }) : '') +
+      (isMapTokenConfigured() ? (() => {
+        try {
+          const { exp: pExp, t: pT } = signMapToken(bookingId, 60 * 60 * 24 * 90);
+          const portalUrl = `${SITE_URL}/portal?id=${bookingId}&exp=${pExp}&t=${encodeURIComponent(pT)}`;
+          return emailInfoCard({
+            eyebrow: 'Your client portal',
+            title: 'Track the build, see your agents, watch hours saved',
+            body: 'Bookmark this link — it\'s your dashboard from kickoff through go-live and beyond. Valid 90 days.',
+            ctaHref: esc(portalUrl),
+            ctaLabel: 'Open my portal →',
+          });
+        } catch { return ''; }
+      })() : '') +
       emailBody(`This is a starting point — on the call we'll make sure it fits your actual workflow and prioritize what makes the most sense to ship first. No pressure, no pitch.`) +
       emailSignoff({ name: 'Jon', extra: 'Have a question before the call? Just reply.' });
 

@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="robots" content="noindex,nofollow" />
+<title>Client Portal — Ramped AI</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="stylesheet" href="/styles.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#0B1220; --paper:#FAFAF7; --line:#E6E4DC; --muted:#5B6272;
+    --accent:#1F4FFF; --accent-2:#0B2A8C; --good:#0F7A4B; --warn:#B45309;
+    --surface:#F5F5F3; --ink-2:#1A2233;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{font-family:'Inter',-apple-system,'Segoe UI',sans-serif;background:var(--paper);color:var(--ink);font-size:14px;line-height:1.5;}
+  a{color:inherit;text-decoration:none;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 14px;font-size:13px;font-weight:600;z-index:100;}
+  .skip-link:focus{left:0;}
+
+  /* nav */
+  .portal-nav{position:sticky;top:0;z-index:30;background:rgba(250,250,247,0.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+  .nav-inner{max-width:1240px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+  .nav-brand{display:flex;align-items:center;gap:12px;font-weight:700;font-size:15px;letter-spacing:-0.2px;}
+  .nav-brand .badge{display:inline-block;padding:2px 8px;border-radius:999px;background:var(--surface);color:var(--muted);font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;}
+  .nav-actions{display:flex;align-items:center;gap:8px;}
+  .nav-btn{padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;color:var(--ink);border:1px solid var(--line);background:#fff;}
+  .nav-btn:hover{border-color:var(--ink);}
+  .nav-btn.primary{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .nav-btn.primary:hover{background:#1A2233;}
+
+  /* layout */
+  .wrap{max-width:1240px;margin:0 auto;padding:32px;}
+  .grid-2{display:grid;grid-template-columns:1fr 360px;gap:32px;}
+  @media(max-width:920px){.grid-2{grid-template-columns:1fr;}.wrap{padding:20px;}}
+
+  /* hero / welcome */
+  .welcome{background:linear-gradient(135deg,#0B1220 0%,#1A2748 60%,#1F4FFF 130%);color:#fff;border-radius:20px;padding:36px 40px;margin-bottom:28px;position:relative;overflow:hidden;}
+  .welcome::before{content:"";position:absolute;inset:-30%;background:radial-gradient(40% 40% at 30% 30%, rgba(255,255,255,0.10) 0%, transparent 70%);pointer-events:none;}
+  .welcome .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#9DB5FF;margin-bottom:10px;}
+  .welcome h1{font-size:clamp(1.6rem,3.5vw,2.1rem);font-weight:800;line-height:1.2;letter-spacing:-0.02em;margin:0 0 6px;}
+  .welcome .sub{font-size:15px;color:rgba(255,255,255,0.78);max-width:680px;line-height:1.6;}
+  .welcome .meta{display:flex;flex-wrap:wrap;gap:18px;margin-top:20px;font-size:13px;color:rgba(255,255,255,0.72);}
+  .welcome .meta strong{color:#fff;font-weight:600;}
+
+  /* implementation timeline */
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px 28px;}
+  .card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .card-title{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;}
+  .card-sub{font-size:13px;color:var(--muted);}
+
+  .timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:8px;}
+  .step{position:relative;padding:14px 12px 12px;border-radius:10px;background:var(--surface);border:1px solid var(--line);}
+  .step.done{background:#F0F8F4;border-color:#BFE3CF;}
+  .step.active{background:#EEF3FF;border-color:var(--accent);box-shadow:0 0 0 3px rgba(31,79,255,0.10);}
+  .step .num{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:0.04em;}
+  .step.done .num{color:var(--good);}
+  .step.active .num{color:var(--accent);}
+  .step .name{font-size:13px;font-weight:700;color:var(--ink);margin-top:4px;}
+  .step .when{font-size:11px;color:var(--muted);margin-top:2px;font-family:'JetBrains Mono',monospace;}
+  .step .check{position:absolute;top:10px;right:10px;width:16px;height:16px;border-radius:50%;background:var(--good);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;font-weight:800;}
+  @media(max-width:720px){.timeline{grid-template-columns:1fr;gap:6px;}.step{padding:10px 12px;}}
+
+  /* metrics row */
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-top:14px;}
+  .metric{padding:18px 20px;background:var(--surface);border:1px solid var(--line);border-radius:12px;}
+  .metric .num{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--ink);letter-spacing:-0.02em;line-height:1;}
+  .metric .lab{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-top:8px;}
+  .metric.coming .num{color:var(--muted);font-size:18px;}
+
+  /* agents list */
+  .agents{display:flex;flex-direction:column;gap:10px;margin-top:6px;}
+  .agent{display:grid;grid-template-columns:36px 1fr auto;gap:14px;align-items:center;padding:14px 16px;background:#fff;border:1px solid var(--line);border-radius:12px;}
+  .agent-icon{width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;}
+  .agent-icon.building{background:#FFFBEA;color:#B45309;border:1px solid #F5C842;}
+  .agent-icon.paused{background:var(--surface);color:var(--muted);border:1px solid var(--line);}
+  .agent .name{font-weight:700;font-size:14px;color:var(--ink);}
+  .agent .desc{font-size:12.5px;color:var(--muted);margin-top:2px;line-height:1.4;}
+  .agent .pill{padding:3px 10px;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;}
+  .pill-live{background:#ECFDF5;color:#065F46;border:1px solid #A7F3D0;}
+  .pill-build{background:#FFFBEA;color:#92400E;border:1px solid #FDE68A;}
+  .pill-paused{background:#F3F4F6;color:#6B7280;border:1px solid #D1D5DB;}
+
+  /* activity feed */
+  .feed{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line);margin-top:14px;}
+  .feed-item{display:grid;grid-template-columns:18px 1fr auto;gap:14px;padding:14px 0;border-bottom:1px solid var(--line);align-items:start;}
+  .feed-dot{width:10px;height:10px;border-radius:50%;background:var(--accent);margin-top:6px;}
+  .feed-dot.gray{background:var(--line);}
+  .feed-dot.green{background:var(--good);}
+  .feed-text{font-size:13.5px;color:var(--ink);line-height:1.5;}
+  .feed-text strong{font-weight:600;}
+  .feed-when{font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;white-space:nowrap;}
+  .feed-meta{font-size:12px;color:var(--muted);margin-top:3px;}
+
+  /* sidebar cards */
+  .side-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin-bottom:16px;}
+  .side-card h3{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin:0 0 14px;}
+  .next-call{padding:14px 16px;background:var(--surface);border-radius:10px;}
+  .next-call .when{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--ink);letter-spacing:-0.01em;}
+  .next-call .what{font-size:13px;color:var(--muted);margin-top:4px;}
+  .next-call .meet{display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:8px 14px;background:var(--good);color:#fff;font-weight:700;font-size:13px;border-radius:8px;}
+
+  .team-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);}
+  .team-row:last-child{border-bottom:none;}
+  .team-avatar{width:40px;height:40px;border-radius:50%;background:var(--surface);object-fit:cover;object-position:center 32%;border:1px solid var(--line);flex-shrink:0;}
+  .team-avatar.no-photo{display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent);font-size:14px;}
+  .team-name{font-weight:600;font-size:13.5px;color:var(--ink);}
+  .team-role{font-size:11.5px;color:var(--muted);margin-top:1px;}
+
+  .quick-link{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border:1px solid var(--line);border-radius:10px;font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:8px;background:#fff;}
+  .quick-link:hover{border-color:var(--ink);}
+  .quick-link .arr{color:var(--muted);font-family:'JetBrains Mono',monospace;}
+  .quick-link.disabled{opacity:0.55;pointer-events:none;}
+  .quick-link .soon{font-size:10.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);background:var(--surface);padding:2px 7px;border-radius:6px;border:1px solid var(--line);}
+
+  /* roadmap card */
+  .roadmap-preview{padding:18px 20px;background:linear-gradient(135deg,#EEF3FF 0%,#FFFFFF 100%);border:1px solid #C7D2FE;border-radius:12px;}
+  .roadmap-preview h4{font-size:14px;font-weight:700;color:var(--ink);margin:0 0 8px;}
+  .roadmap-preview p{font-size:13px;color:#374151;line-height:1.6;margin:0;}
+  .roadmap-preview .open{display:inline-block;margin-top:14px;padding:9px 16px;background:var(--ink);color:#fff;font-size:13px;font-weight:600;border-radius:8px;}
+
+  /* coming-soon banner for placeholder sections */
+  .coming-soon{margin-top:28px;padding:20px 24px;background:#FFFBEA;border:1px dashed #F5C842;border-radius:12px;color:#7A4F0A;font-size:13.5px;}
+  .coming-soon strong{display:block;margin-bottom:4px;color:#5B3A05;}
+
+  footer{max-width:1240px;margin:48px auto 32px;padding:0 32px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+  footer a{color:var(--muted);}
+  footer a:hover{color:var(--ink);}
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<header class="portal-nav" role="banner">
+  <div class="nav-inner">
+    <a href="/portal" class="nav-brand">
+      <svg width="24" height="20" viewBox="0 0 26 22" fill="none" aria-hidden="true">
+        <rect x="0"  y="14" width="5" height="8"  rx="1.5" fill="var(--accent)"/>
+        <rect x="7"  y="9"  width="5" height="13" rx="1.5" fill="var(--accent)" opacity=".75"/>
+        <rect x="14" y="4"  width="5" height="18" rx="1.5" fill="var(--accent)" opacity=".55"/>
+        <rect x="21" y="0"  width="5" height="22" rx="1.5" fill="var(--accent)" opacity=".35"/>
+      </svg>
+      <span>Ramped AI</span>
+      <span class="badge">Client portal</span>
+    </a>
+    <nav class="nav-actions" aria-label="Portal actions">
+      <a href="mailto:jon@30dayramp.com" class="nav-btn">Email Jon</a>
+      <a href="#main" id="open-roadmap-btn" class="nav-btn primary">View roadmap →</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="wrap" role="main">
+
+  <!-- Welcome banner -->
+  <section class="welcome" aria-labelledby="welcome-h">
+    <div class="eyebrow" id="phase-eyebrow">Week 2 of 4 · Build phase</div>
+    <h1 id="welcome-h">Hi <span id="customer-first-name">there</span>, your AI department is being built.</h1>
+    <p class="sub" id="welcome-sub">We're <strong>11 days in</strong>. Five agents identified, two prototypes wired, and the first production agent ships next Tuesday. You'll see live data here the moment it's running.</p>
+    <div class="meta">
+      <span><strong id="meta-tier">Growth tier</strong></span>
+      <span aria-hidden="true">·</span>
+      <span>Kickoff <strong id="meta-kickoff">April 17, 2026</strong></span>
+      <span aria-hidden="true">·</span>
+      <span>Go-live <strong id="meta-golive">May 17, 2026</strong></span>
+      <span aria-hidden="true">·</span>
+      <span>Account manager <strong>Jon Roh</strong></span>
+    </div>
+  </section>
+
+  <!-- Implementation status -->
+  <section class="card" aria-labelledby="impl-h" style="margin-bottom:20px;">
+    <div class="card-head">
+      <h2 class="card-title" id="impl-h">Implementation status</h2>
+      <span class="card-sub">Day 11 of 30</span>
+    </div>
+    <div class="timeline" role="list">
+      <div class="step done" role="listitem">
+        <div class="num">01</div>
+        <div class="name">Kickoff</div>
+        <div class="when">Apr 17</div>
+        <div class="check" aria-label="completed">✓</div>
+      </div>
+      <div class="step done" role="listitem">
+        <div class="num">02</div>
+        <div class="name">Discovery</div>
+        <div class="when">Apr 22</div>
+        <div class="check" aria-label="completed">✓</div>
+      </div>
+      <div class="step active" role="listitem" aria-current="step">
+        <div class="num">03</div>
+        <div class="name">Build</div>
+        <div class="when">Now → May 8</div>
+      </div>
+      <div class="step" role="listitem">
+        <div class="num">04</div>
+        <div class="name">QA &amp; UAT</div>
+        <div class="when">May 9 → 14</div>
+      </div>
+      <div class="step" role="listitem">
+        <div class="num">05</div>
+        <div class="name">Live</div>
+        <div class="when">May 17</div>
+      </div>
+    </div>
+
+    <div class="metrics" aria-label="At-a-glance metrics">
+      <div class="metric"><div class="num">5</div><div class="lab">Agents in scope</div></div>
+      <div class="metric"><div class="num">2</div><div class="lab">Prototyped</div></div>
+      <div class="metric coming"><div class="num">— hrs/wk</div><div class="lab">Saved (live in 19 days)</div></div>
+      <div class="metric coming"><div class="num">$0</div><div class="lab">If we miss go-live</div></div>
+    </div>
+  </section>
+
+  <div class="grid-2">
+    <!-- Left column -->
+    <div>
+
+      <!-- Roadmap preview -->
+      <section class="card" style="margin-bottom:20px;" aria-labelledby="roadmap-h">
+        <div class="card-head">
+          <h2 class="card-title" id="roadmap-h">Your roadmap</h2>
+          <span class="card-sub" id="roadmap-sub">Generated Apr 22 · Always available here</span>
+        </div>
+        <div class="roadmap-preview" id="roadmap-preview">
+          <h4 id="roadmap-headline">Inbound RFQ handling, lead qualification, and order-status concierge.</h4>
+          <p id="roadmap-summary">You're losing 14+ hours/week to manual quote workflows and slow lead response. We're building a 5-agent stack that handles inbound from first touch to qualified meeting on your calendar — with quality-controlled drafts your reps approve before send.</p>
+          <a href="/roadmap" id="roadmap-open-link" class="open">Open full roadmap →</a>
+        </div>
+      </section>
+
+      <!-- Agents list -->
+      <section class="card" style="margin-bottom:20px;" aria-labelledby="agents-h">
+        <div class="card-head">
+          <h2 class="card-title" id="agents-h">Your agents</h2>
+          <span class="card-sub">5 in scope</span>
+        </div>
+        <div class="agents" id="agents-list">
+          <div class="agent">
+            <div class="agent-icon">1</div>
+            <div>
+              <div class="name">Inbound Quote Drafter</div>
+              <div class="desc">Reads RFQ emails, pulls product specs from your catalog, drafts a quote with pricing for your rep to review.</div>
+            </div>
+            <span class="pill pill-build">Building</span>
+          </div>
+          <div class="agent">
+            <div class="agent-icon">2</div>
+            <div>
+              <div class="name">Lead Qualifier</div>
+              <div class="desc">Calls back inbound leads within 60 seconds, asks 4 qualifying questions, books a discovery call directly into your calendar.</div>
+            </div>
+            <span class="pill pill-build">Building</span>
+          </div>
+          <div class="agent">
+            <div class="agent-icon building">3</div>
+            <div>
+              <div class="name">Order-Status Concierge</div>
+              <div class="desc">Auto-responds to "where's my order?" emails by querying your shipping system and replying with tracking + ETA.</div>
+            </div>
+            <span class="pill pill-build">In design</span>
+          </div>
+          <div class="agent">
+            <div class="agent-icon building">4</div>
+            <div>
+              <div class="name">Follow-up Cadence Bot</div>
+              <div class="desc">Tracks every open quote, nudges prospects on a 3/7/14/30-day cadence with personalized context.</div>
+            </div>
+            <span class="pill pill-build">In design</span>
+          </div>
+          <div class="agent">
+            <div class="agent-icon building">5</div>
+            <div>
+              <div class="name">AR Reminder Agent</div>
+              <div class="desc">Pulls overdue invoices from your accounting system, sends polite escalating reminders with payment links.</div>
+            </div>
+            <span class="pill pill-build">In design</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Activity feed -->
+      <section class="card" aria-labelledby="activity-h">
+        <div class="card-head">
+          <h2 class="card-title" id="activity-h">Activity</h2>
+          <span class="card-sub">Last 7 days</span>
+        </div>
+        <div class="feed" id="activity-feed">
+          <div class="feed-item">
+            <div class="feed-dot"></div>
+            <div>
+              <div class="feed-text">Prototype <strong>v0.3</strong> of <strong>Inbound Quote Drafter</strong> tested against last quarter's 142 RFQs. Hit rate: 91%.</div>
+              <div class="feed-meta">Andrew · build update</div>
+            </div>
+            <div class="feed-when">Apr 26</div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-dot green"></div>
+            <div>
+              <div class="feed-text"><strong>Lead Qualifier</strong> wired into your Calendly. Test calls scheduled for May 1.</div>
+              <div class="feed-meta">Andrew · integration</div>
+            </div>
+            <div class="feed-when">Apr 25</div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-dot"></div>
+            <div>
+              <div class="feed-text">Discovery call notes uploaded to your documents. Brand voice rules, escalation triggers, and forbidden phrases captured.</div>
+              <div class="feed-meta">Jon · documentation</div>
+            </div>
+            <div class="feed-when">Apr 22</div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-dot"></div>
+            <div>
+              <div class="feed-text">Roadmap delivered. <strong>5 agents</strong>, ranked by hours saved.</div>
+              <div class="feed-meta">System</div>
+            </div>
+            <div class="feed-when">Apr 22</div>
+          </div>
+          <div class="feed-item">
+            <div class="feed-dot gray"></div>
+            <div>
+              <div class="feed-text">Kickoff call completed. 30-min discovery, 12 questions. Quote intake confirmed as #1 pain.</div>
+              <div class="feed-meta">Jon · call note</div>
+            </div>
+            <div class="feed-when">Apr 17</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Coming-soon Phase 2 -->
+      <div class="coming-soon">
+        <strong>Coming with go-live (May 17):</strong>
+        Approvals queue, weekly hours-saved report, billing &amp; invoices, agent pause/resume controls.
+      </div>
+
+    </div>
+
+    <!-- Right sidebar -->
+    <aside aria-label="Sidebar">
+
+      <div class="side-card">
+        <h3>Next call</h3>
+        <div class="next-call">
+          <div class="when" id="next-call-when">Tue, Apr 28 · 10:00 AM CDT</div>
+          <div class="what" id="next-call-what">Weekly check-in · 30 min</div>
+          <a href="#" id="next-call-meet" class="meet" aria-label="Open Google Meet">▶ Open Google Meet</a>
+        </div>
+      </div>
+
+      <div class="side-card">
+        <h3>Your team</h3>
+        <div class="team-row">
+          <img src="/assets/team/andrew.jpg" alt="Andrew Yoon" class="team-avatar" />
+          <div>
+            <div class="team-name">Andrew Yoon</div>
+            <div class="team-role">CEO · Build &amp; integrations</div>
+          </div>
+        </div>
+        <div class="team-row">
+          <img src="/assets/team/jonathan.jpg" alt="Jonathan Roh" class="team-avatar" />
+          <div>
+            <div class="team-name">Jonathan Roh</div>
+            <div class="team-role">COO · Delivery &amp; client</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="side-card">
+        <h3>Quick links</h3>
+        <a href="/roadmap" class="quick-link">Full roadmap <span class="arr">→</span></a>
+        <a href="mailto:jon@30dayramp.com" class="quick-link">Email Jon <span class="arr">→</span></a>
+        <a href="#" class="quick-link disabled" aria-disabled="true">Approvals queue <span class="soon">Soon</span></a>
+        <a href="#" class="quick-link disabled" aria-disabled="true">Reports archive <span class="soon">Soon</span></a>
+        <a href="#" class="quick-link disabled" aria-disabled="true">Billing &amp; invoices <span class="soon">Soon</span></a>
+      </div>
+
+      <div class="side-card">
+        <h3>Documents</h3>
+        <a href="#" class="quick-link">Discovery call notes <span class="arr">→</span></a>
+        <a href="#" class="quick-link">Brand voice rules <span class="arr">→</span></a>
+        <a href="#" class="quick-link">Integrations checklist <span class="arr">→</span></a>
+      </div>
+
+    </aside>
+  </div>
+
+</main>
+
+<footer role="contentinfo">
+  <div>© 2026 Ramped AI · <a href="/privacy">Privacy</a> · <a href="mailto:jon@30dayramp.com">jon@30dayramp.com</a></div>
+  <div>Need to reschedule a call? <a href="mailto:jon@30dayramp.com?subject=Reschedule%20my%20call">Email Jon</a>.</div>
+</footer>
+
+<script>
+  // Hydrate the portal with real data when the signed-token endpoint is wired up.
+  // For now this script reads the URL params, calls /api/portal-data, and falls
+  // back to the mock content baked into the HTML if the call fails or the
+  // endpoint isn't deployed yet. That makes the page useful even pre-backend.
+  (async function hydrate() {
+    const qs = new URLSearchParams(location.search);
+    const id = qs.get('id'), exp = qs.get('exp'), t = qs.get('t');
+    if (!id || !exp || !t) return; // prototype mode — keep the mock data visible
+    try {
+      const r = await fetch(`/api/portal-data?id=${encodeURIComponent(id)}&exp=${encodeURIComponent(exp)}&t=${encodeURIComponent(t)}`);
+      if (!r.ok) throw new Error('portal-data ' + r.status);
+      const data = await r.json();
+      const set = (sel, val) => { const el = document.querySelector(sel); if (el && val != null) el.textContent = val; };
+      const firstName = (data.booking?.name || '').split(/\s+/)[0] || 'there';
+      set('#customer-first-name', firstName);
+      if (data.booking?.tier) set('#meta-tier', `${data.booking.tier[0].toUpperCase()}${data.booking.tier.slice(1)} tier`);
+      if (data.welcome_sub) set('#welcome-sub', data.welcome_sub);
+      if (data.phase_eyebrow) set('#phase-eyebrow', data.phase_eyebrow);
+      if (data.kickoff_date) set('#meta-kickoff', data.kickoff_date);
+      if (data.golive_date) set('#meta-golive', data.golive_date);
+      if (data.next_call?.when) set('#next-call-when', data.next_call.when);
+      if (data.next_call?.what) set('#next-call-what', data.next_call.what);
+      const meetA = document.getElementById('next-call-meet');
+      if (meetA && data.next_call?.meet_url) meetA.href = data.next_call.meet_url;
+      // Pass through the signed token to the roadmap link
+      const roadmapLink = document.getElementById('roadmap-open-link');
+      if (roadmapLink) roadmapLink.href = `/roadmap?id=${encodeURIComponent(id)}&exp=${encodeURIComponent(exp)}&t=${encodeURIComponent(t)}`;
+      const navRoadmap = document.getElementById('open-roadmap-btn');
+      if (navRoadmap) navRoadmap.href = `/roadmap?id=${encodeURIComponent(id)}&exp=${encodeURIComponent(exp)}&t=${encodeURIComponent(t)}`;
+      // Roadmap preview content from automation_map
+      if (data.automation_map?.summary) set('#roadmap-summary', data.automation_map.summary);
+      if (data.automation_map?.week_1_focus) set('#roadmap-headline', data.automation_map.week_1_focus);
+    } catch (e) {
+      console.warn('portal-data not available, falling back to mock:', e.message);
+    }
+  })();
+</script>
+
+</body>
+</html>

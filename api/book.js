@@ -5,6 +5,7 @@
 import { esc, isValidEmail, isFuture, isWithinBookingWindow, isBusinessHours, truncate, checkRateLimit, getClientIp } from './_lib/validate.js';
 import { isConfigured as gcalConfigured, getBusyRanges, createMeetEvent } from './_lib/google-calendar.js';
 import { wrapEmail, emailHero, emailBody, emailCtaCard, emailInfoCard, emailSignoff, emailSpacer } from './_lib/email-design.js';
+import { signMapToken, isMapTokenConfigured } from './_lib/map-token.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -224,6 +225,16 @@ export default async function handler(req, res) {
 
     // ── Prepare-for-your-call email → guest ──────────────────────────────
     const firstName = esc(name.split(/\s+/)[0]);
+    // Mint a 90-day signed portal URL so the customer can bookmark it.
+    let portalUrl = '';
+    if (bookingId && isMapTokenConfigured()) {
+      try {
+        const { exp, t } = signMapToken(bookingId, 60 * 60 * 24 * 90);
+        portalUrl = `${SITE_URL}/portal?id=${bookingId}&exp=${exp}&t=${encodeURIComponent(t)}`;
+      } catch (err) {
+        console.warn('Could not sign portal token:', err.message);
+      }
+    }
     const innerRows =
       emailHero({
         eyebrow: 'You\'re booked',
@@ -244,6 +255,13 @@ export default async function handler(req, res) {
         body: 'A Google Meet invite is also in your calendar.',
         ctaHref: esc(meetLink),
         ctaLabel: '▶ Join Google Meet',
+      }) : '') +
+      (portalUrl ? emailInfoCard({
+        eyebrow: 'Your client portal',
+        title: 'Bookmark this — it\'s your home base',
+        body: 'Live status, your roadmap, and (after go-live) the agents running and time saved. Valid for 90 days, renewed automatically.',
+        ctaHref: esc(portalUrl),
+        ctaLabel: 'Open my portal →',
       }) : '') +
       emailSignoff({
         name: 'Jon',
