@@ -65,7 +65,8 @@
 
     /* Team card */
     .team-card{background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden;}
-    .team-card-photo-placeholder{width:100%;aspect-ratio:3/2;background:linear-gradient(135deg,var(--surface) 0%,#E8EAEF 100%);display:flex;align-items:center;justify-content:center;}
+    .team-card-photo-placeholder{width:100%;aspect-ratio:1/1;background:linear-gradient(135deg,var(--surface) 0%,#E8EAEF 100%);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+    .team-card-photo{display:block;width:100%;aspect-ratio:1/1;object-fit:cover;object-position:center 28%;background:var(--surface);}
 
     /* Stat strip */
     .about-stat{border-left:3px solid var(--accent);padding-left:16px;}
@@ -294,16 +295,9 @@
 
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:28px;max-width:1040px;">
 
-      <!-- Andrew Yoon · Founder & CEO -->
-      <!-- TODO: when user provides /assets/team/andrew.jpg, replace .team-card-photo-placeholder block
-           with <img src="/assets/team/andrew.jpg" alt="Andrew Yoon" class="team-card-photo"> -->
+      <!-- Andrew Yoon · Co-Founder & CEO -->
       <div class="team-card ink-shadow">
-        <div class="team-card-photo-placeholder">
-          <svg width="72" height="72" viewBox="0 0 72 72" fill="none" aria-hidden="true">
-            <circle cx="36" cy="26" r="16" fill="var(--line)"/>
-            <ellipse cx="36" cy="62" rx="26" ry="16" fill="var(--line)"/>
-          </svg>
-        </div>
+        <img src="/assets/team/andrew.jpg" alt="Andrew Yoon, Co-Founder & CEO of Ramped AI" class="team-card-photo" width="600" height="600" loading="lazy" decoding="async">
         <div style="padding:24px 24px 28px;">
           <div style="margin-bottom:6px;">
             <div style="font-size:19px;font-weight:800;color:var(--ink);letter-spacing:-.02em;">Andrew Yoon</div>
@@ -323,24 +317,17 @@
       </div>
 
       <!-- Jonathan Roh · Co-Founder & COO -->
-      <!-- TODO: when user provides /assets/team/jonathan.jpg, replace .team-card-photo-placeholder block
-           with <img src="/assets/team/jonathan.jpg" alt="Jonathan Roh" class="team-card-photo"> -->
       <div class="team-card ink-shadow">
-        <div class="team-card-photo-placeholder">
-          <svg width="72" height="72" viewBox="0 0 72 72" fill="none" aria-hidden="true">
-            <circle cx="36" cy="26" r="16" fill="var(--line)"/>
-            <ellipse cx="36" cy="62" rx="26" ry="16" fill="var(--line)"/>
-          </svg>
-        </div>
+        <img src="/assets/team/jonathan.jpg" alt="Jonathan Roh, Co-Founder & COO of Ramped AI" class="team-card-photo" width="600" height="600" loading="lazy" decoding="async">
         <div style="padding:24px 24px 28px;">
           <div style="margin-bottom:6px;">
             <div style="font-size:19px;font-weight:800;color:var(--ink);letter-spacing:-.02em;">Jonathan Roh</div>
             <div style="font-size:13px;font-weight:600;color:var(--accent);margin-top:4px;">Co-Founder &amp; COO</div>
           </div>
           <div style="width:32px;height:2px;background:var(--line);margin:14px 0;"></div>
-          <p style="font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:14px;">A graduate of the University of Missouri's Robert J. Trulaske, Sr. College of Business (Mizzou), Jonathan earned Dean's List recognition and built a foundation in business operations, finance, and strategy. He started his career in commercial banking, working closely with owner-operators across manufacturing, distribution, and professional services.</p>
-          <p style="font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:14px;">Across hundreds of conversations, he kept seeing the same pattern: manual, high-friction workflows wasting hours every week, delaying customer responses, holding back businesses that were otherwise ready to scale. That insight led him to co-found Ramped AI alongside Andrew — to deliver a working AI department in 30 days, on a flat monthly fee, with guaranteed results.</p>
-          <p style="font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:20px;">As COO, Jonathan owns day-to-day execution, client delivery, and internal systems — making sure every implementation ships clean, runs autonomously, and delivers measurable impact from week one. A Missouri native from the Chesterfield area, he brings the same discipline and efficiency mindset that defined his banking career.</p>
+          <p style="font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:14px;">A graduate of the University of Missouri's Robert J. Trulaske, Sr. College of Business (Mizzou), Jonathan earned Dean's List recognition and built a strong foundation in business operations, finance, and strategy. He started his career in commercial banking, working closely with owner-operators across manufacturing, distribution, and professional services.</p>
+          <p style="font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:14px;">Across hundreds of conversations, he kept seeing the same pattern: manual, high-friction workflows wasting hours every week, delaying customer responses, and holding back businesses that were otherwise ready to scale. That insight led him to co-found Ramped AI alongside Andrew — to deliver a working AI department in 30 days, on a flat monthly fee, with guaranteed results.</p>
+          <p style="font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:20px;">As COO, Jonathan owns day-to-day execution, client delivery, and internal systems — making sure every implementation runs autonomously and delivers measurable impact from week one. A Missouri native from the Chesterfield area, he brings the same discipline and efficiency mindset that defined his banking career.</p>
           <div style="display:flex;flex-wrap:wrap;gap:6px;">
             <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface);color:var(--muted);border:1px solid var(--line);">Operations</span>
             <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface);color:var(--muted);border:1px solid var(--line);">Client Delivery</span>
