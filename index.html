@@ -201,125 +201,133 @@
 
 <!-- ─── HERO ──────────────────────────────────────────────────────────────── -->
 <main id="main">
-<section class="grid-bg relative pb-20" id="hero" style="padding-top:42px;">
+<section class="grid-bg relative pb-20" id="hero" style="padding-top:48px;">
   <div class="section-wrap">
-    <div class="grid md:grid-cols-2 gap-12 items-start">
 
-      <!-- Left col: headline + form -->
-      <div>
-        <h1 style="font-size:clamp(2rem,4.5vw,3rem);font-weight:800;line-height:1.1;letter-spacing:-.03em;color:var(--ink);" class="mb-5">
-          Your AI department,<br> live in 30 days.
-        </h1>
-        <!-- Hero stats strip -->
-        <div class="hero-stats mb-10">
-          <div class="hero-stat">
-            <span class="hero-stat-val">40+ hrs</span>
-            <span class="hero-stat-label">saved per week</span>
-          </div>
-          <div class="hero-stat">
-            <span class="hero-stat-val">$12,000+</span>
-            <span class="hero-stat-label">avg. saved / mo</span>
-          </div>
-          <div class="hero-stat">
-            <span class="hero-stat-val">3×</span>
-            <span class="hero-stat-label">faster lead response</span>
-          </div>
-          <div class="hero-stat">
-            <span class="hero-stat-val">5×</span>
-            <span class="hero-stat-label">avg. ROI year 1</span>
-          </div>
-          <div class="hero-stat">
-            <span class="hero-stat-val">30 days</span>
-            <span class="hero-stat-label">go-live guarantee</span>
-          </div>
-          <div class="hero-stat">
-            <span class="hero-stat-val">24/7</span>
-            <span class="hero-stat-label">AI coverage</span>
-          </div>
-        </div>
+    <!-- Headline -->
+    <h1 style="font-size:clamp(2.2rem,5vw,3.4rem);font-weight:800;line-height:1.08;letter-spacing:-.03em;color:var(--ink);max-width:680px;" class="mb-6">
+      Your AI department,<br>live in 30 days.
+    </h1>
 
-        <!-- Hero form + trust signals -->
-        <div class="max-w-md">
-          <div class="card ink-shadow p-6" id="hero-form-wrap">
-            <p style="font-weight:600;font-size:16px;margin-bottom:6px;color:var(--ink);">Start with a free 30-min call</p>
-            <p style="font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.5;">We'll map out what to automate first and what it's worth — no pitch, no pressure.</p>
-            <a href="/book" class="btn-primary w-full justify-center" style="text-decoration:none;font-size:15px;">Book a discovery call →</a>
-            <p style="font-size:12px;color:var(--muted);margin-top:12px;text-align:center;">Free · 30 minutes · No commitment</p>
-          </div>
-
-          <!-- Trust signals -->
-          <div class="flex flex-wrap items-center justify-center gap-4 mt-4" style="text-align:center;">
-            <span class="escrow-badge">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M7 1L2 3.5v4C2 10.1 4.2 12.6 7 13.5c2.8-.9 5-3.4 5-6V3.5L7 1z" fill="#F59E0B" opacity=".3" stroke="#F59E0B" stroke-width="1.2"/></svg>
-              30-day money-back guarantee
-            </span>
-            <span class="sectionnum">No lock-in · Cancel anytime</span>
-          </div>
-        </div>
+    <!-- Hero stats strip -->
+    <div class="hero-stats mb-10" style="max-width:640px;">
+      <div class="hero-stat">
+        <span class="hero-stat-val">40+ hrs</span>
+        <span class="hero-stat-label">saved per week</span>
       </div>
-
-      <!-- Right col: FAQ -->
-      <div style="padding-top:0;" class="faq-col">
-        <div class="mb-3"><span class="sectionnum">FAQ</span></div>
-        <p style="font-size:1rem;color:var(--muted);line-height:1.7;margin-bottom:20px;">We deploy AI agents into your operating business — answering calls, routing leads, and automating your highest-friction workflows. Flat monthly fee. Go-live guarantee.</p>
-        <h2 class="text-2xl font-bold tracking-tight mb-6" style="letter-spacing:-.02em;">Common questions</h2>
-        <div class="flex flex-col gap-3" id="faq-list">
-
-          <details class="faq-item ink-shadow rounded-xl border border-[var(--line)] bg-white overflow-hidden group">
-            <summary class="flex items-center cursor-pointer px-5 py-5 select-none">
-              <span style="font-weight:600;font-size:15px;color:var(--ink);margin-left:10px;">How is this different from hiring an AI consultant?</span>
-            </summary>
-            <div class="faq-body px-6 pb-5">
-              <p style="color:var(--muted);line-height:1.7;font-size:14px;">We build and run the agents ourselves. You get working software, not a strategy deck.</p>
-            </div>
-          </details>
-
-          <details class="faq-item ink-shadow rounded-xl border border-[var(--line)] bg-white overflow-hidden group">
-            <summary class="flex items-center cursor-pointer px-5 py-5 select-none">
-              <span style="font-weight:600;font-size:15px;color:var(--ink);margin-left:10px;">Do I need technical staff to work with you?</span>
-            </summary>
-            <div class="faq-body px-6 pb-5">
-              <p style="color:var(--muted);line-height:1.7;font-size:14px;">No. We handle everything — setup, integration, training, and maintenance. Your team just uses the results.</p>
-            </div>
-          </details>
-
-          <details class="faq-item ink-shadow rounded-xl border border-[var(--line)] bg-white overflow-hidden group">
-            <summary class="flex items-center cursor-pointer px-5 py-5 select-none">
-              <span style="font-weight:600;font-size:15px;color:var(--ink);margin-left:10px;">What kinds of businesses do you work with?</span>
-            </summary>
-            <div class="faq-body px-6 pb-5">
-              <p style="color:var(--muted);line-height:1.7;font-size:14px;">Established businesses with real workflows to automate. We work best with companies doing $1M+ in revenue that have repetitive, high-volume processes.</p>
-            </div>
-          </details>
-
-          <details class="faq-item ink-shadow rounded-xl border border-[var(--line)] bg-white overflow-hidden group">
-            <summary class="flex items-center cursor-pointer px-5 py-5 select-none">
-              <span style="font-weight:600;font-size:15px;color:var(--ink);margin-left:10px;">What if it doesn't work in 30 days?</span>
-            </summary>
-            <div class="faq-body px-6 pb-5">
-              <p style="color:var(--muted);line-height:1.7;font-size:14px;">You get a full refund. No questions asked.</p>
-            </div>
-          </details>
-
-          <details class="faq-item ink-shadow rounded-xl border border-[var(--line)] bg-white overflow-hidden group">
-            <summary class="flex items-center cursor-pointer px-5 py-5 select-none">
-              <span style="font-weight:600;font-size:15px;color:var(--ink);margin-left:10px;">What does the monthly fee cover?</span>
-            </summary>
-            <div class="faq-body px-6 pb-5">
-              <p style="color:var(--muted);line-height:1.7;font-size:14px;">Uptime, maintenance, iteration, and ongoing improvements. As your business grows, we expand the system without a new engagement.</p>
-            </div>
-          </details>
-
-          <!-- Automation map CTA -->
-          <div style="margin-top:24px;">
-            <a href="/questionnaire" class="btn-primary" style="width:100%;text-align:center;padding:15px 22px;font-size:16px;display:block;">Get your free automation map →</a>
-            <p style="font-size:12px;color:var(--muted);margin-top:10px;text-align:center;line-height:1.5;">2-minute questionnaire · your personalized AI deployment map, free.</p>
-          </div>
-
-        </div>
+      <div class="hero-stat">
+        <span class="hero-stat-val">$12,000+</span>
+        <span class="hero-stat-label">avg. saved / mo</span>
       </div>
+      <div class="hero-stat">
+        <span class="hero-stat-val">3×</span>
+        <span class="hero-stat-label">faster lead response</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-val">5×</span>
+        <span class="hero-stat-label">avg. ROI year 1</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-val">30 days</span>
+        <span class="hero-stat-label">go-live guarantee</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-val">24/7</span>
+        <span class="hero-stat-label">AI coverage</span>
+      </div>
+    </div>
+
+    <!-- CTA card + trust signals -->
+    <div class="max-w-md">
+      <div class="card ink-shadow p-6" id="hero-form-wrap">
+        <p style="font-weight:600;font-size:16px;margin-bottom:6px;color:var(--ink);">Start with a free 30-min call</p>
+        <p style="font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.5;">We'll map out what to automate first and what it's worth — no pitch, no pressure.</p>
+        <a href="/book" class="btn-primary w-full justify-center" style="text-decoration:none;font-size:15px;">Book a discovery call →</a>
+        <p style="font-size:12px;color:var(--muted);margin-top:12px;text-align:center;">Free · 30 minutes · No commitment</p>
+      </div>
+      <div class="flex flex-wrap items-center justify-center gap-4 mt-4" style="text-align:center;">
+        <span class="escrow-badge">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M7 1L2 3.5v4C2 10.1 4.2 12.6 7 13.5c2.8-.9 5-3.4 5-6V3.5L7 1z" fill="#F59E0B" opacity=".3" stroke="#F59E0B" stroke-width="1.2"/></svg>
+          30-day money-back guarantee
+        </span>
+        <span class="sectionnum">No lock-in · Cancel anytime</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-20 border-t border-[var(--line)] grid-bg" id="faq">
+  <div class="section-wrap">
+    <div class="mb-3"><span class="sectionnum">FAQ</span></div>
+    <h2 class="text-3xl font-bold tracking-tight mb-3" style="letter-spacing:-.02em;">Common questions</h2>
+    <p style="font-size:1rem;color:var(--muted);line-height:1.7;margin-bottom:40px;max-width:560px;">We deploy AI agents into your operating business — automating your highest-friction workflows. Flat monthly fee. Go-live guarantee.</p>
+
+    <div class="grid md:grid-cols-2 gap-4" id="faq-list">
+
+      <details class="faq-item ink-shadow rounded-xl border border-[var(--line)] bg-white overflow-hidden group">
+        <summary class="flex items-center cursor-pointer px-5 py-5 select-none">
+          <span style="font-weight:600;font-size:15px;color:var(--ink);margin-left:10px;">How is this different from hiring an AI consultant?</span>
+        </summary>
+        <div class="faq-body px-6 pb-5">
+          <p style="color:var(--muted);line-height:1.7;font-size:14px;">We build and run the agents ourselves. You get working software, not a strategy deck.</p>
+        </div>
+      </details>
+
+      <details class="faq-item ink-shadow rounded-xl border border-[var(--line)] bg-white overflow-hidden group">
+        <summary class="flex items-center cursor-pointer px-5 py-5 select-none">
+          <span style="font-weight:600;font-size:15px;color:var(--ink);margin-left:10px;">Do I need technical staff to work with you?</span>
+        </summary>
+        <div class="faq-body px-6 pb-5">
+          <p style="color:var(--muted);line-height:1.7;font-size:14px;">No. We handle everything — setup, integration, training, and maintenance. Your team just uses the results.</p>
+        </div>
+      </details>
+
+      <details class="faq-item ink-shadow rounded-xl border border-[var(--line)] bg-white overflow-hidden group">
+        <summary class="flex items-center cursor-pointer px-5 py-5 select-none">
+          <span style="font-weight:600;font-size:15px;color:var(--ink);margin-left:10px;">What kinds of businesses do you work with?</span>
+        </summary>
+        <div class="faq-body px-6 pb-5">
+          <p style="color:var(--muted);line-height:1.7;font-size:14px;">Established businesses with real workflows to automate. We work best with companies doing $1M+ in revenue that have repetitive, high-volume processes.</p>
+        </div>
+      </details>
+
+      <details class="faq-item ink-shadow rounded-xl border border-[var(--line)] bg-white overflow-hidden group">
+        <summary class="flex items-center cursor-pointer px-5 py-5 select-none">
+          <span style="font-weight:600;font-size:15px;color:var(--ink);margin-left:10px;">What if it doesn't work in 30 days?</span>
+        </summary>
+        <div class="faq-body px-6 pb-5">
+          <p style="color:var(--muted);line-height:1.7;font-size:14px;">You get a full refund. No questions asked.</p>
+        </div>
+      </details>
+
+      <details class="faq-item ink-shadow rounded-xl border border-[var(--line)] bg-white overflow-hidden group">
+        <summary class="flex items-center cursor-pointer px-5 py-5 select-none">
+          <span style="font-weight:600;font-size:15px;color:var(--ink);margin-left:10px;">What does the monthly fee cover?</span>
+        </summary>
+        <div class="faq-body px-6 pb-5">
+          <p style="color:var(--muted);line-height:1.7;font-size:14px;">Uptime, maintenance, iteration, and ongoing improvements. As your business grows, we expand the system without a new engagement.</p>
+        </div>
+      </details>
+
+      <details class="faq-item ink-shadow rounded-xl border border-[var(--line)] bg-white overflow-hidden group">
+        <summary class="flex items-center cursor-pointer px-5 py-5 select-none">
+          <span style="font-weight:600;font-size:15px;color:var(--ink);margin-left:10px;">How long does onboarding take?</span>
+        </summary>
+        <div class="faq-body px-6 pb-5">
+          <p style="color:var(--muted);line-height:1.7;font-size:14px;">Most clients are live within 30 days. We run a structured onboarding — discovery, build, test, launch — and your first automation is typically running in week two.</p>
+        </div>
+      </details>
 
     </div>
+
+    <!-- Automation map CTA -->
+    <div style="margin-top:40px;text-align:center;">
+      <a href="/questionnaire" class="btn-primary" style="display:inline-block;padding:15px 32px;font-size:16px;">Get your free automation map →</a>
+      <p style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5;">2-minute questionnaire · your personalized AI deployment map, free.</p>
+    </div>
+
   </div>
 </section>
 
