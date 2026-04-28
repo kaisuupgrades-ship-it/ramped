@@ -681,7 +681,6 @@
 
       /* ── Tables — reduce min-width now that columns are hidden ──────────── */
       #bookings-table { min-width: 380px; }
-      #leads-table { min-width: 320px; }
       #panel-activity table { min-width: 360px; }
 
       /* ── Bookings table — hide less-critical columns ─────────────────────── */
@@ -700,10 +699,6 @@
 
       /* Compact the action buttons */
       #bookings-table td:last-child .btn-action { padding: 5px 8px; font-size: 11px; }
-
-      /* ── Leads table — hide Company column ───────────────────────────────── */
-      #leads-table thead th:nth-child(3),
-      #leads-table tbody td:nth-child(3) { display: none; }
 
       /* ── Activity table — hide Type(3) and Duration(5) ───────────────────── */
       #panel-activity table thead th:nth-child(3),
@@ -852,16 +847,11 @@
       <div class="stat-label">Won</div>
       <div class="stat-value" id="stat-won">—</div>
     </div>
-    <div class="stat-card">
-      <div class="stat-label">Leads</div>
-      <div class="stat-value" id="stat-leads">—</div>
-    </div>
   </div>
 
   <div class="dash-body">
     <div class="tab-bar">
       <button class="tab-btn active" id="tab-bookings"     onclick="switchTab('bookings')">Bookings (0)</button>
-      <button class="tab-btn"        id="tab-leads"        onclick="switchTab('leads')">Leads (0)</button>
       <button class="tab-btn"        id="tab-tickets"      onclick="switchTab('tickets')">Tickets (0)</button>
       <button class="tab-btn"        id="tab-availability" onclick="switchTab('availability')">Availability</button>
       <button class="tab-btn"        id="tab-activity"     onclick="switchTab('activity')">Activity</button>
@@ -1019,28 +1009,6 @@
       </div>
     </div>
 
-    <!-- Leads panel -->
-    <div class="tab-panel" id="panel-leads">
-      <div class="table-wrap">
-        <table id="leads-table" class="data-table">
-          <thead>
-            <tr>
-              <th data-col="date" class="sortable">Date</th>
-              <th data-col="name">Name &amp; Email</th>
-              <th data-col="company">Company</th>
-              <th data-col="source">Source</th>
-              <th data-col="grade">Grade</th>
-              <th data-col="status">Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="leads-body">
-            <tr><td colspan="6"><div class="empty-state">Loading…</div></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
     <!-- Tickets panel — customer support inbox -->
     <div class="tab-panel" id="panel-tickets">
       <div class="filter-bar">
@@ -1182,7 +1150,6 @@
       }
 
       renderBookings(data.bookings || []);
-      renderLeads(data.leads || [], data.maps || []);
       return true;
 
     } catch (err) {
@@ -1240,14 +1207,6 @@
     }
   }
 
-  function formatLeadDate(isoStr) {
-    if (!isoStr) return '—';
-    try {
-      const d = new Date(isoStr);
-      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    } catch { return isoStr; }
-  }
-
   function tierBadgeHtml(tier) {
     if (!tier) return '<span style="color:var(--muted)">—</span>';
     const cls = tier === 'enterprise' ? 'tier-enterprise'
@@ -1261,7 +1220,7 @@
   }
 
   // ── Update pipeline stats ────────────────────────────────────────────────────
-  function updateStats(bookings, leads) {
+  function updateStats(bookings) {
     const now = new Date();
     // New: status='new' OR (no status AND datetime in future)
     const newCount  = bookings.filter(b => b.status === 'new' || (!b.status && new Date(b.datetime) > now)).length;
@@ -1271,7 +1230,6 @@
     document.getElementById('stat-new').textContent        = newCount;
     document.getElementById('stat-inprogress').textContent = inprogress;
     document.getElementById('stat-won').textContent        = wonCount;
-    document.getElementById('stat-leads').textContent     = leads.length;
   }
 
   // ── Status change handler ────────────────────────────────────────────────────
@@ -1386,7 +1344,7 @@
   function renderBookings(bookings) {
     _allBookings = bookings;
     document.getElementById('tab-bookings').textContent = `Bookings (${bookings.length})`;
-    updateStats(bookings, []);
+    updateStats(bookings);
 
     // Set default sort header indicator
     document.querySelectorAll('thead th.sortable').forEach(th => {
@@ -1934,97 +1892,6 @@
       submitBtn.textContent = originalLabel;
     }
   });
-
-  // ── Render leads ─────────────────────────────────────────────────────────────
-  function renderLeads(leads, maps) {
-    const GRADE_COLOR = { A:'#15803d', B:'#1a56db', C:'#b45309', D:'#dc2626' };
-    const GRADE_BG    = { A:'#f0fdf4', B:'#eff6ff', C:'#fffbeb', D:'#fef2f2' };
-
-    // Merge contact-form leads and automation-map submissions into one list
-    const allLeads = [
-      ...(leads || []).map(l => ({ ...l, _source: 'form' })),
-      ...(maps  || []).map(m => ({ ...m, _source: 'map',
-        email:   m.email   || (m.map_data && m.map_data.email) || '',
-        message: m.industry ? `Industry: ${m.industry}` : '',
-      })),
-    ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
-    const LEAD_STATUSES = ['new','contacted','qualified','converted','closed'];
-    const LEAD_STATUS_LABELS = { new:'New', contacted:'Contacted', qualified:'Qualified', converted:'Converted', closed:'Closed' };
-
-    document.getElementById('tab-leads').textContent = `Leads (${allLeads.length})`;
-    document.getElementById('stat-leads').textContent = allLeads.length;
-
-    const tbody = document.getElementById('leads-body');
-    if (!allLeads.length) {
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--muted)">No leads yet</td></tr>';
-      return;
-    }
-    tbody.innerHTML = allLeads.map((l, i) => {
-      const dateStr = formatLeadDate(l.created_at);
-      const name    = esc(l.name || '—');
-      const email   = esc(l.email || '');
-      const company = esc(l.company || '—');
-      const source  = l._source === 'map'
-        ? '<span style="background:#e8f0fe;color:#1a56db;font-size:11px;padding:2px 6px;border-radius:4px;font-weight:600">AI Map</span>'
-        : '<span style="background:#f0fdf4;color:#15803d;font-size:11px;padding:2px 6px;border-radius:4px;font-weight:600">Form</span>';
-
-      // Grade badge (AI Map rows only)
-      let gradeBadge = '';
-      let gradeSummaryRow = '';
-      if (l._source === 'map' && l.grade) {
-        const gc = GRADE_COLOR[l.grade] || '#5B6272';
-        const gb = GRADE_BG[l.grade]    || '#f9fafb';
-        gradeBadge = `<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;background:${gb};border:1.5px solid ${gc};font-weight:900;font-size:13px;color:${gc};cursor:pointer;margin-left:6px;" title="${esc(l.grade_summary || '')}" onclick="toggleGradeSummary('gs-${i}')">${l.grade}</span>`;
-        if (l.grade_summary) {
-          gradeSummaryRow = `<tr id="gs-${i}" style="display:none"><td colspan="7" style="padding:8px 16px 12px;background:${gb}"><p style="margin:0;font-size:13px;color:#374151;border-left:3px solid ${gc};padding-left:10px;">${esc(l.grade_summary)}</p></td></tr>`;
-        }
-      }
-
-      const currentStatus = l.status || 'new';
-      const statusSel = `<select class="status-select status-${currentStatus}" onchange="onLeadStatusChange(this,'${l.id}','${l._source}')" style="font-size:12px;padding:2px 6px;border-radius:4px;border:1px solid var(--border)">
-        ${LEAD_STATUSES.map(s => `<option value="${s}"${s===currentStatus?' selected':''}>${LEAD_STATUS_LABELS[s]}</option>`).join('')}
-      </select>`;
-      const mapBtn = l._source === 'map'
-        ? `<a href="/map/${l.id}" target="_blank" class="btn-sm btn-outline" style="font-size:11px;padding:2px 8px">View Map</a> `
-        : '';
-      const emailBtn = email
-        ? `<a href="mailto:${email}" class="btn-sm btn-outline" style="font-size:11px;padding:2px 8px">✉ Email</a> `
-        : '';
-      const deleteBtn = `<button onclick="deleteLead('${l.id}','${l._source}')" class="btn-sm btn-danger" style="font-size:11px;padding:2px 8px">Delete</button>`;
-      return `<tr>
-        <td style="white-space:nowrap;font-size:13px">${dateStr}</td>
-        <td><strong>${name}</strong>${email ? `<br><a href="mailto:${email}" style="font-size:12px;color:var(--accent)">${email}</a>` : ''}</td>
-        <td>${company}</td>
-        <td>${source}</td>
-        <td>${gradeBadge}</td>
-        <td>${statusSel}</td>
-        <td style="white-space:nowrap">${mapBtn}${emailBtn}${deleteBtn}</td>
-      </tr>${gradeSummaryRow}`;
-    }).join('');
-  }
-
-  function toggleGradeSummary(id) {
-    const el = document.getElementById(id);
-    if (el) el.style.display = el.style.display === 'none' ? 'table-row' : 'none';
-  }
-
-  function onLeadStatusChange(sel, id, source) {
-    const status = sel.value;
-    sel.className = `status-select status-${status}`;
-    if (source === 'map') {
-      adminFetch('/api/admin-update', { method: 'POST', body: JSON.stringify({ table: 'automation_maps', id, updates: { status } }) });
-    } else {
-      adminFetch('/api/admin-update', { method: 'POST', body: JSON.stringify({ table: 'leads', id, updates: { status } }) });
-    }
-  }
-
-  async function deleteLead(id, source) {
-    if (!await confirmDialog('Delete this lead? This cannot be undone.')) return;
-    const table = source === 'map' ? 'automation_maps' : 'leads';
-    const r = await adminFetch('/api/admin-delete', { method: 'POST', body: JSON.stringify({ table, id }) });
-    if (r && r.ok) fetchData();
-  }
 
   // ── Message expand/collapse ───────────────────────────────────────────────────
   function expandMsg(id) {
