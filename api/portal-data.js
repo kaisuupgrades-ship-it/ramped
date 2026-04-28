@@ -65,14 +65,24 @@ export default async function handler(req, res) {
     return res.status(403).json({ error: 'This link is invalid or has expired. Email jon@30dayramp.com to get a fresh one.' });
   }
 
-  const r = await fetch(
-    `${SUPABASE_URL}/rest/v1/bookings?id=eq.${encodeURIComponent(id)}&select=id,name,company,email,tier,status,datetime,timezone,meet_link,automation_map,questionnaire,payment_status,onboarding_completed_at,created_at`,
-    { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
-  );
-  if (!r.ok) return res.status(500).json({ error: 'Database error' });
-  const data = await r.json();
-  if (!data?.[0]) return res.status(404).json({ error: 'Booking not found' });
-  const b = data[0];
+  // Query the booking — try the full SELECT first, fall back to a minimal SELECT if migration 004
+  // columns aren't present yet. Keeps the portal working pre-migration.
+  let b;
+  {
+    const fullSel = 'id,name,company,email,tier,status,datetime,timezone,meet_link,automation_map,questionnaire,payment_status,onboarding_completed_at,created_at';
+    const minSel  = 'id,name,company,email,tier,status,datetime,timezone,meet_link,automation_map,questionnaire,created_at';
+    let r = await fetch(`${SUPABASE_URL}/rest/v1/bookings?id=eq.${encodeURIComponent(id)}&select=${fullSel}`,
+      { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } });
+    if (!r.ok) {
+      // Likely missing migration 004 columns — retry with safe subset
+      r = await fetch(`${SUPABASE_URL}/rest/v1/bookings?id=eq.${encodeURIComponent(id)}&select=${minSel}`,
+        { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } });
+    }
+    if (!r.ok) return res.status(500).json({ error: 'Database error' });
+    const data = await r.json();
+    if (!data?.[0]) return res.status(404).json({ error: 'Booking not found' });
+    b = data[0];
+  }
 
   // Pull pending drafts + recent agent activity (best-effort; tables may not exist on older deploys)
   let drafts = [];
