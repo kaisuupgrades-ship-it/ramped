@@ -1146,6 +1146,8 @@
     if (!ok) {
       btn.disabled = false;
       btn.textContent = 'Enter';
+    } else {
+      setupRealtime();
     }
   }
 
@@ -1446,6 +1448,7 @@
           <td>
             <div>${tierBadgeHtml(b.tier)}</div>
             ${b.phase ? `<div style="margin-top:5px;display:inline-block;padding:2px 8px;border-radius:6px;font-size:10.5px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:${b.phase === 'Live' ? '#065F46' : b.phase === 'Pre-kickoff' ? '#5B6272' : '#1a56db'};background:${b.phase === 'Live' ? '#ECFDF5' : b.phase === 'Pre-kickoff' ? '#F5F5F3' : '#EEF3FF'};border:1px solid ${b.phase === 'Live' ? '#A7F3D0' : b.phase === 'Pre-kickoff' ? '#E6E4DC' : '#C7D2FE'};" title="${esc(b.phase_eyebrow || '')}">${esc(b.phase)}${b.day_of_thirty != null && b.phase !== 'Pre-kickoff' && b.phase !== 'Live' ? ` · D${b.day_of_thirty}` : ''}</div>` : ''}
+            ${b.payment_status ? `<div style="margin-top:4px;display:inline-block;padding:2px 8px;border-radius:6px;font-size:10.5px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:${{'subscription_active':'#065F46','onboarding_paid':'#065F46','past_due':'#B45309','cancelled':'#991B1B','unpaid':'#5B6272'}[b.payment_status]||'#5B6272'};background:${{'subscription_active':'#ECFDF5','onboarding_paid':'#ECFDF5','past_due':'#FFFBEA','cancelled':'#FEF2F2','unpaid':'#F5F5F3'}[b.payment_status]||'#F5F5F3'};border:1px solid ${{'subscription_active':'#A7F3D0','onboarding_paid':'#A7F3D0','past_due':'#FDE68A','cancelled':'#FECACA','unpaid':'#E6E4DC'}[b.payment_status]||'#E6E4DC'};" title="Stripe payment status">💳 ${esc(b.payment_status.replace(/_/g, ' '))}</div>` : ''}
           </td>
           <td>${qCell}</td>
           <td style="padding:8px 14px;">
@@ -1460,6 +1463,8 @@
             <a href="mailto:${esc(b.email)}" class="btn-action" style="margin-right:4px;" title="Email guest">✉</a>
             ${b.meet_link ? `<a href="${esc(b.meet_link)}" target="_blank" rel="noopener" class="btn-action" style="margin-right:4px;color:var(--good);border-color:#bfe3cf;" title="Open Meet">▶ Meet</a>` : ''}
             ${b.portal_url ? `<a href="${esc(b.portal_url)}" target="_blank" rel="noopener" class="btn-action" style="margin-right:4px;color:var(--accent);border-color:#C7D2FE;" title="Open this customer's portal in a new tab">🔗 Portal</a><button class="btn-action" onclick="copyPortalLink('${bid}')" style="margin-right:4px;" title="Copy this customer's portal link to clipboard" id="cp-${bid}">📋</button>` : ''}
+            ${!b.stripe_invoice_id ? `<button class="btn-action" onclick="sendStripeInvoice('${bid}')" style="margin-right:4px;color:#7C3AED;border-color:#DDD6FE;" title="Create + send onboarding invoice in Stripe">💳 Invoice</button>` : ''}
+            ${b.stripe_invoice_id && !b.stripe_subscription_id && b.billing_cadence !== 'annual' ? `<button class="btn-action" onclick="startStripeSubscription('${bid}')" style="margin-right:4px;color:#7C3AED;border-color:#DDD6FE;" title="Start the recurring subscription">💳 Subscribe</button>` : ''}
             ${b.automation_map ? (b.followup_sent_at
               ? `<button class="btn-action" disabled style="margin-right:4px;color:var(--good);border-color:#bfe3cf;opacity:0.7;" title="Follow-up sent ${new Date(b.followup_sent_at).toLocaleDateString()}">✓ Sent</button>`
               : `<button class="btn-action" id="fu-${bid}" onclick="sendFollowup('${bid}')" style="margin-right:4px;color:#7C3AED;border-color:#DDD6FE;" title="Send post-call follow-up email">📧 Follow-up</button>`) : ''}
@@ -1742,6 +1747,68 @@
     } catch (err) {
       alert('Failed to close: ' + err.message);
     }
+  }
+
+  // ── Stripe actions ────────────────────────────────────────────────────────────
+  async function sendStripeInvoice(id) {
+    const b = _allBookings.find(x => String(x.id) === String(id));
+    if (!b) return;
+    const tierLabel = b.tier ? b.tier[0].toUpperCase() + b.tier.slice(1) : 'unknown tier';
+    const billingLabel = b.billing_cadence === 'annual' ? 'annual (12mo prepaid)' : 'monthly (first month + onboarding)';
+    if (!await confirmDialog(`Send Stripe invoice to <strong>${escapeHtml(b.name || b.email)}</strong>?<br><br>Tier: <strong>${escapeHtml(tierLabel)}</strong><br>Billing: <strong>${escapeHtml(billingLabel)}</strong><br><br>Stripe will email a hosted invoice link. They have 7 days to pay.`)) return;
+    try {
+      const res = await adminFetch('/api/admin-create-invoice', { method: 'POST', body: JSON.stringify({ bookingId: id }) });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'HTTP ' + res.status);
+      if (data.alreadyCreated) { alert('Invoice was already created for this booking.\nInvoice ID: ' + data.invoiceId); return; }
+      if (data.hostedUrl) {
+        if (await confirmDialog(`Invoice sent! Total: <strong>$${(data.total/100).toFixed(2)}</strong>.<br><br>Open the hosted invoice in a new tab?`)) {
+          window.open(data.hostedUrl, '_blank', 'noopener');
+        }
+      } else {
+        alert('Invoice created. Stripe will email it to the customer.');
+      }
+      await fetchData(_token);
+    } catch (err) {
+      alert('Failed: ' + err.message);
+    }
+  }
+  async function startStripeSubscription(id) {
+    const b = _allBookings.find(x => String(x.id) === String(id));
+    if (!b) return;
+    if (!await confirmDialog(`Start recurring subscription for <strong>${escapeHtml(b.name || b.email)}</strong>?<br><br>The first month is already covered by the onboarding invoice. The subscription will charge automatically starting 30 days from now.`)) return;
+    try {
+      const res = await adminFetch('/api/admin-create-subscription', { method: 'POST', body: JSON.stringify({ bookingId: id }) });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'HTTP ' + res.status);
+      alert(`Subscription started — status: ${data.status || 'active'}.\nSubscription ID: ${data.subscriptionId}`);
+      await fetchData(_token);
+    } catch (err) {
+      alert('Failed: ' + err.message);
+    }
+  }
+
+  // ── Supabase Realtime — auto-refresh on bookings/tickets changes ────────────
+  // Loaded lazily; if the CDN is blocked or NEXT_PUBLIC_SUPABASE_URL isn't exposed, this is a no-op.
+  function setupRealtime() {
+    if (window._rampedRealtimeSetup) return;
+    window._rampedRealtimeSetup = true;
+    // We don't have the supabase publishable key in the admin frontend (and we shouldn't add it).
+    // Instead, poll every 60s as a lightweight pseudo-realtime — good enough for a one-person admin.
+    if (window._rampedPollInterval) clearInterval(window._rampedPollInterval);
+    window._rampedPollInterval = setInterval(() => {
+      const visible = document.visibilityState === 'visible';
+      if (!visible) return;
+      // Only refresh if not actively editing (focus check)
+      const focused = document.activeElement;
+      const editing = focused && (focused.tagName === 'TEXTAREA' || focused.tagName === 'INPUT' || focused.tagName === 'SELECT');
+      if (editing) return;
+      // Refresh quietly — no spinner spam
+      fetchData(_token).catch(() => {});
+      // If the tickets tab is active, refresh it too
+      const ticketsActive = document.getElementById('panel-tickets')?.classList.contains('active');
+      if (ticketsActive) loadTickets().catch(() => {});
+    }, 60000);
   }
 
   // Copy a customer's signed portal URL to the clipboard.

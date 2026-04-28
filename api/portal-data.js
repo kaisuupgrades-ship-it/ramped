@@ -66,13 +66,31 @@ export default async function handler(req, res) {
   }
 
   const r = await fetch(
-    `${SUPABASE_URL}/rest/v1/bookings?id=eq.${encodeURIComponent(id)}&select=id,name,company,email,tier,status,datetime,timezone,meet_link,automation_map,questionnaire,created_at`,
+    `${SUPABASE_URL}/rest/v1/bookings?id=eq.${encodeURIComponent(id)}&select=id,name,company,email,tier,status,datetime,timezone,meet_link,automation_map,questionnaire,payment_status,onboarding_completed_at,created_at`,
     { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
   );
   if (!r.ok) return res.status(500).json({ error: 'Database error' });
   const data = await r.json();
   if (!data?.[0]) return res.status(404).json({ error: 'Booking not found' });
   const b = data[0];
+
+  // Pull pending drafts + recent agent activity (best-effort; tables may not exist on older deploys)
+  let drafts = [];
+  let agents = [];
+  let activity = [];
+  try {
+    const [dr, ar, rr] = await Promise.all([
+      fetch(`${SUPABASE_URL}/rest/v1/agent_drafts?booking_id=eq.${encodeURIComponent(id)}&status=eq.pending&select=id,subject,body,recipient,channel,created_at&order=created_at.desc&limit=20`,
+        { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }),
+      fetch(`${SUPABASE_URL}/rest/v1/agents?booking_id=eq.${encodeURIComponent(id)}&status=neq.archived&select=id,name,channel,description,status&order=created_at.asc`,
+        { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }),
+      fetch(`${SUPABASE_URL}/rest/v1/agent_runs?booking_id=eq.${encodeURIComponent(id)}&select=id,agent_id,action,outcome,hours_saved,created_at&order=created_at.desc&limit=20`,
+        { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }),
+    ]);
+    drafts   = dr.ok ? await dr.json() : [];
+    agents   = ar.ok ? await ar.json() : [];
+    activity = rr.ok ? await rr.json() : [];
+  } catch (_) { /* tables not yet migrated, leave empty */ }
 
   // Kickoff = discovery call datetime. Go-live = +30 days.
   const kickoffISO = b.datetime;
@@ -94,7 +112,10 @@ export default async function handler(req, res) {
       company: b.company || null,
       tier: b.tier || null,
       status: b.status || null,
+      payment_status: b.payment_status || null,
+      onboarding_completed_at: b.onboarding_completed_at || null,
     },
+    payment_status: b.payment_status || null,
     phase_eyebrow: phaseInfo.eyebrow,
     phase: phaseInfo.phase,
     phase_step: phaseInfo.step,
@@ -108,9 +129,8 @@ export default async function handler(req, res) {
       meet_url: b.meet_link || null,
     },
     automation_map: b.automation_map || null,
-    // Phase 2 — populated later when the agent runtime exists
-    agents: [],
-    activity: [],
-    drafts: [],
+    agents,
+    activity,
+    drafts,
   });
 }

@@ -6,6 +6,7 @@ import { esc, isValidEmail, isFuture, isWithinBookingWindow, isBusinessHours, tr
 import { isConfigured as gcalConfigured, getBusyRanges, createMeetEvent } from './_lib/google-calendar.js';
 import { wrapEmail, emailHero, emailBody, emailCtaCard, emailInfoCard, emailSignoff, emailSpacer } from './_lib/email-design.js';
 import { signMapToken, isMapTokenConfigured } from './_lib/map-token.js';
+import { notifyBookingCreated } from './_lib/notify.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -289,6 +290,14 @@ export default async function handler(req, res) {
         </table>
       </div>
     `);
+
+    notifyBookingCreated({
+      name, email, company,
+      when: dtGuest.full,
+      tier: tier || null,
+      siteUrl: SITE_URL,
+      bookingId: bookingId || null,
+    }).catch(() => {});
 
     return res.status(200).json({ success: true, booking_id: bookingId || null, meet_link: meetLink || null });
   }

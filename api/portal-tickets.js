@@ -10,6 +10,7 @@
 
 import { verifyMapToken, isMapTokenConfigured } from './_lib/map-token.js';
 import { wrapEmail, emailHero, emailBody, emailSignoff } from './_lib/email-design.js';
+import { notifyTicketCreated } from './_lib/notify.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -142,6 +143,11 @@ export default async function handler(req, res) {
       innerRows,
       siteUrl: SITE_URL,
     })).catch(() => {});
+
+    notifyTicketCreated({
+      subject, body: text, customerName: custRow?.name || null, customerEmail: custRow?.email || null,
+      ticketId, siteUrl: SITE_URL,
+    }).catch(() => {});
 
     return res.status(201).json({ ticketId });
   }
