@@ -34,17 +34,18 @@ function safeEqual(a, b) {
   return out === 0;
 }
 
-// Prefer Authorization: Bearer <token> header. Fall back to ?token= for
-// legacy bookmarks, but the admin UI no longer uses the query param.
+// Bearer-header auth ONLY. The previous `?token=` query-string fallback was
+// removed in audit H2-5 (2026-04-29). Tokens in URLs leak via Vercel access
+// logs, browser history, Referer headers, screen-sharing, and screenshots —
+// none of which Authorization headers do. The admin UI has used the Bearer
+// header exclusively since the v1 audit.
 export function extractToken(req) {
   const auth = req.headers['authorization'] || req.headers['Authorization'];
   if (auth && typeof auth === 'string') {
     const m = auth.match(/^Bearer\s+(.+)$/i);
     if (m) return m[1].trim();
   }
-  // Backwards-compat fallback — marked deprecated in the admin UI.
-  const qt = req.query && req.query.token;
-  return qt ? String(qt) : '';
+  return '';
 }
 
 // Returns true iff the request carries a valid admin token.

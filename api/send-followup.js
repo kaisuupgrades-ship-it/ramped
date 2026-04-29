@@ -4,6 +4,7 @@
 // constant-time compared in api/_lib/admin-auth.js).
 
 import { setAdminCors, isAuthorized } from './_lib/admin-auth.js';
+import { signMapToken, isMapTokenConfigured } from './_lib/map-token.js';
 
 const SUPABASE_URL  = process.env.SUPABASE_URL;
 const SUPABASE_KEY  = process.env.SUPABASE_SERVICE_KEY;
@@ -75,7 +76,16 @@ export default async function handler(req, res) {
 
   const roadmap    = b.automation_map;
   const firstName  = (b.name || b.email).split(/\s+/)[0];
-  const roadmapUrl = `${SITE_URL}/roadmap?id=${b.id}`;
+  // Audit H2-6 (2026-04-29): the previous unsigned URL always 403'd because
+  // /api/get-roadmap requires an HMAC token. Sign it now so the customer can
+  // actually open the page.
+  let roadmapUrl = '';
+  if (isMapTokenConfigured()) {
+    const { exp, t } = signMapToken(b.id);
+    roadmapUrl = `${SITE_URL}/roadmap?id=${b.id}&exp=${exp}&t=${encodeURIComponent(t)}`;
+  } else {
+    console.warn('MAP_LINK_SECRET not configured — omitting roadmap link from followup email');
+  }
 
   // Top 2 agent cards for the email
   const agentCardsHTML = roadmap.top_agents?.slice(0, 2).map((a, i) =>

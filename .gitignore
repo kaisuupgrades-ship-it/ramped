@@ -1,0 +1,21 @@
+# dependencies
+node_modules/
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Vercel
+.vercel/
+.env.local
+.env*.local
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# misc
+*.log

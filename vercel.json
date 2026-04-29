@@ -29,7 +29,7 @@
     {
       "source": "/dashboard",
       "destination": "/admin",
-      "permanent": false
+      "permanent": true
     }
   ],
   "rewrites": [

@@ -8,7 +8,7 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
       --ink:     #0B1220;
@@ -46,10 +46,12 @@
     }
 
     .auth-card {
+      /* Audit V2-A9 (2026-04-29): replaced neo-brutalist offset shadow with
+         subtle elevation matching the rest of the design system. */
       background: #fff;
       border: 1px solid var(--line);
       border-radius: 16px;
-      box-shadow: 4px 4px 0 var(--ink);
+      box-shadow: 0 4px 16px rgba(11, 18, 32, 0.06);
       padding: 40px 36px;
       width: 100%;
       max-width: 380px;
@@ -757,8 +759,8 @@
       <span style="font-size:16px;font-weight:800;letter-spacing:-0.03em">Admin · Ramped AI</span>
     </div>
     <p class="auth-sub">Enter your admin password to access the dashboard.</p>
-    <label for="password-input">Password</label>
-    <input type="password" id="password-input" placeholder="••••••••••••" autocomplete="current-password" />
+    <label for="password-input">Admin token</label>
+    <input type="password" id="password-input" placeholder="Bearer token" autocomplete="off" spellcheck="false" />
     <div class="auth-error" id="auth-error"></div>
     <button class="btn-primary" id="auth-btn" onclick="doAuth()">Enter</button>
   </div>
@@ -1055,14 +1057,50 @@
 <script>
   'use strict';
 
+  // Audit V2-A5 (2026-04-29): Accessible modal — adds role="dialog", aria-modal,
+  // focus trap, Escape-to-close, return-focus. Caller is responsible for escaping
+  // any HTML inside `msg` (intentionally accepts HTML so admin can use <strong>
+  // for emphasis on confirmation prompts).
   function confirmDialog(msg) {
     return new Promise(function(resolve) {
+      var lastFocus = document.activeElement;
       var bd = document.createElement('div');
       bd.className = 'cdialog-backdrop';
-      bd.innerHTML = '<div class="cdialog-box"><p class="cdialog-msg">' + msg + '</p><div class="cdialog-btns"><button class="cdialog-cancel">Cancel</button><button class="cdialog-confirm">Confirm</button></div></div>';
+      bd.setAttribute('role', 'dialog');
+      bd.setAttribute('aria-modal', 'true');
+      bd.setAttribute('aria-labelledby', 'cdialog-msg-' + Date.now());
+      var msgId = bd.getAttribute('aria-labelledby');
+      bd.innerHTML = '<div class="cdialog-box"><p class="cdialog-msg" id="' + msgId + '"></p><div class="cdialog-btns"><button class="cdialog-cancel" type="button">Cancel</button><button class="cdialog-confirm" type="button">Confirm</button></div></div>';
+      bd.querySelector('.cdialog-msg').innerHTML = msg;
       document.body.appendChild(bd);
-      bd.querySelector('.cdialog-confirm').addEventListener('click', function(){ document.body.removeChild(bd); resolve(true); });
-      bd.querySelector('.cdialog-cancel').addEventListener('click',  function(){ document.body.removeChild(bd); resolve(false); });
+
+      var focusables = bd.querySelectorAll('button');
+      var first = focusables[0];
+      var last  = focusables[focusables.length - 1];
+
+      function close(result) {
+        document.removeEventListener('keydown', onKey, true);
+        if (bd.parentNode) bd.parentNode.removeChild(bd);
+        if (lastFocus && typeof lastFocus.focus === 'function') {
+          try { lastFocus.focus(); } catch (_) {}
+        }
+        resolve(result);
+      }
+      function onKey(e) {
+        if (e.key === 'Escape') { e.preventDefault(); close(false); return; }
+        if (e.key === 'Tab') {
+          // Trap focus inside the dialog
+          if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+          else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+      }
+
+      bd.querySelector('.cdialog-confirm').addEventListener('click', function(){ close(true); });
+      bd.querySelector('.cdialog-cancel').addEventListener('click',  function(){ close(false); });
+      bd.addEventListener('click', function(e){ if (e.target === bd) close(false); });  // backdrop click
+      document.addEventListener('keydown', onKey, true);
+      // Focus the safer (Cancel) button first per WAI-ARIA Authoring Practices
+      bd.querySelector('.cdialog-cancel').focus();
     });
   }
 
@@ -1104,7 +1142,7 @@
     const errEl  = document.getElementById('auth-error');
     const token  = input.value.trim();
 
-    if (!token) { errEl.textContent = 'Please enter a password.'; return; }
+    if (!token) { errEl.textContent = 'Please enter your admin token.'; return; }
 
     errEl.textContent = '';
     btn.disabled = true;
@@ -1132,7 +1170,7 @@
       const res = await adminFetch(`/api/admin`);
 
       if (res.status === 401) {
-        document.getElementById('auth-error').textContent = 'Incorrect password.';
+        document.getElementById('auth-error').textContent = 'Incorrect token.';
         sessionStorage.removeItem(SESSION_KEY);
         _token = null;
         return false;

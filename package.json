@@ -1,0 +1,31 @@
+{
+  "name": "ramped-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Ramped AI — done-for-you AI department, live in 30 days.",
+  "type": "commonjs",
+  "scripts": {
+    "test":             "playwright test",
+    "test:public":      "playwright test --project=public-desktop",
+    "test:protected":   "playwright test --project=protected-desktop",
+    "test:api":         "playwright test --project=api",
+    "test:a11y":        "playwright test --project=a11y",
+    "test:mobile":      "playwright test --project=mobile-iphone --project=mobile-pixel --project=mobile-ipad",
+    "test:lighthouse":  "playwright test --project=lighthouse",
+    "test:smoke":       "bash scripts/e2e-test.sh",
+    "test:report":      "playwright show-report",
+    "test:install":     "playwright install --with-deps chromium",
+    "lint:fonts":       "bash scripts/check-fonts.sh",
+    "lint:tokens":      "bash scripts/check-tokens.sh",
+    "verify":           "npm run lint:fonts && npm run lint:tokens && npm run test:api && npm run test:public"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.47.0",
+    "@axe-core/playwright": "^4.10.0",
+    "axe-core": "^4.10.0",
+    "lighthouse": "^12.2.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

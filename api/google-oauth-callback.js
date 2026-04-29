@@ -10,10 +10,21 @@ const CLIENT_SECRET  = process.env.GOOGLE_CLIENT_SECRET;
 const REDIRECT_HOST  = process.env.OAUTH_REDIRECT_HOST || 'https://www.30dayramp.com';
 const REDIRECT_URI   = `${REDIRECT_HOST}/api/google-oauth-callback`;
 
+// Audit C2-3 (2026-04-29): escape every value before it lands in HTML. The
+// previous code interpolated `error` directly into <pre>, giving an attacker a
+// reflected XSS sink in the admin's own browser (CSP allows 'unsafe-inline').
+function escHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c =>
+    ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+}
+
 export default async function handler(req, res) {
   const { code, state, error } = req.query;
   if (error) {
-    return res.status(400).send(`<h1>Google returned an error</h1><pre>${error}</pre>`);
+    return res
+      .status(400)
+      .setHeader('Content-Type', 'text/html; charset=utf-8')
+      .send(`<h1>Google returned an error</h1><pre>${escHtml(error)}</pre>`);
   }
   if (!state || !ADMIN_TOKEN || state !== ADMIN_TOKEN) {
     return res.status(401).send('Unauthorized (state mismatch)');
@@ -35,12 +46,15 @@ export default async function handler(req, res) {
 
   const tokens = await tokenRes.json();
   if (!tokens.refresh_token) {
+    // Defense-in-depth: escape the token-exchange response before rendering it.
+    // (It's Google-controlled JSON in the happy path, but we treat any value
+    // that flows into HTML as untrusted.)
     return res.status(500).send(
       `<h1>No refresh_token returned</h1>
        <p>Google may have cached prior consent. Revoke access at
        <a href="https://myaccount.google.com/permissions">myaccount.google.com/permissions</a>
        and retry. Full response:</p>
-       <pre>${JSON.stringify(tokens, null, 2)}</pre>`
+       <pre>${escHtml(JSON.stringify(tokens, null, 2))}</pre>`
     );
   }
 
@@ -61,7 +75,7 @@ code,pre{background:#F5F5F3;border:1px solid #E6E4DC;border-radius:6px;padding:1
 h1{font-size:22px;margin:0 0 12px;} .ok{color:#0F7A4B;font-weight:700;}
 .step{margin:18px 0;padding:14px;background:#F5F8FF;border-radius:8px;}
 </style></head><body>
-<h1><span class="ok">✓</span> Google Calendar connected${whoami ? ` as ${whoami}` : ''}</h1>
+<h1><span class="ok">✓</span> Google Calendar connected${whoami ? ` as ${escHtml(whoami)}` : ''}</h1>
 <p>Copy the refresh token below into Vercel as <code>GOOGLE_REFRESH_TOKEN</code>, then redeploy.</p>
 <div class="step">
   <strong>Refresh token:</strong>

@@ -6,6 +6,7 @@
 
 import { wrapEmail, emailHero, emailBody, emailInfoCard, emailSignoff } from './_lib/email-design.js';
 import { signMapToken, isMapTokenConfigured } from './_lib/map-token.js';
+import { isCronAuthorized } from './_lib/cron-auth.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -33,13 +34,11 @@ async function sendEmail(to, subject, html) {
 }
 
 export default async function handler(req, res) {
-  // Vercel Cron sends a `User-Agent: vercel-cron/1.0` and authenticates via the platform.
-  // We do a soft check to ensure manual GETs require either cron header or admin token.
-  const isCron = (req.headers['user-agent'] || '').includes('vercel-cron');
-  if (!isCron) {
-    const auth = req.headers.authorization || '';
-    if (auth !== `Bearer ${process.env.CRON_SECRET || ''}`) return res.status(401).json({ error: 'Unauthorized' });
-  }
+  // Audit H2-2 (2026-04-29): the previous User-Agent fast-path was trivially
+  // bypassable — UA is client-controlled. Both Vercel Cron and manual GETs
+  // must now present Authorization: Bearer ${CRON_SECRET}. Vercel Cron
+  // auto-attaches this header when CRON_SECRET is set on the project.
+  if (!isCronAuthorized(req)) return res.status(401).json({ error: 'Unauthorized' });
   if (!SUPABASE_URL || !SUPABASE_KEY) return res.status(503).json({ error: 'DB not configured' });
 
   const since = new Date(Date.now() - 7 * 86400000).toISOString();

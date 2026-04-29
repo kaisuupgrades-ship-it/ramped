@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="/styles.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <style>
   :root{
     --ink:#0B1220; --paper:#FAFAF7; --line:#E6E4DC; --muted:#5B6272;
@@ -38,11 +38,22 @@
   /* layout */
   .wrap{max-width:1240px;margin:0 auto;padding:32px;}
   .grid-2{display:grid;grid-template-columns:1fr 360px;gap:32px;}
-  @media(max-width:920px){.grid-2{grid-template-columns:1fr;}.wrap{padding:20px;}}
+  /* Audit V2-A11 (2026-04-29): on mobile, pin the sidebar (Next call · Quick links · Team) ABOVE the dense activity stack —
+     "next call" + the meet link are the highest-frequency repeat-visit reasons; pushing them below the feed buries them. */
+  @media(max-width:920px){
+    .grid-2{grid-template-columns:1fr;}
+    .grid-2 > aside{order:-1;}
+    .wrap{padding:20px;}
+  }
 
-  /* hero / welcome */
-  .welcome{background:linear-gradient(135deg,#0B1220 0%,#1A2748 60%,#1F4FFF 130%);color:#fff;border-radius:20px;padding:36px 40px;margin-bottom:28px;position:relative;overflow:hidden;}
-  .welcome::before{content:"";position:absolute;inset:-30%;background:radial-gradient(40% 40% at 30% 30%, rgba(255,255,255,0.10) 0%, transparent 70%);pointer-events:none;}
+  /* hero / welcome
+     Audit V2-A7 (2026-04-29): replaced 3-stop blue gradient with a flat --ink
+     surface that matches the canonical dark treatment used elsewhere (e.g., 404
+     page, email hero blocks, week-1 focus cards). A single restrained radial
+     highlight in the top-right adds depth without inventing a new gradient
+     system. */
+  .welcome{background:var(--ink);color:#fff;border-radius:20px;padding:36px 40px;margin-bottom:28px;position:relative;overflow:hidden;}
+  .welcome::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 60% at 90% 0%, rgba(31,79,255,0.18) 0%, transparent 60%);pointer-events:none;}
   .welcome .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#9DB5FF;margin-bottom:10px;}
   .welcome h1{font-size:clamp(1.6rem,3.5vw,2.1rem);font-weight:800;line-height:1.2;letter-spacing:-0.02em;margin:0 0 6px;}
   .welcome .sub{font-size:15px;color:rgba(255,255,255,0.78);max-width:680px;line-height:1.6;}
@@ -729,17 +740,56 @@
             <tbody>${rows}</tbody>
           </table>`;
         } else {
-          inv.innerHTML = `<div style="padding:11px 14px;background:var(--surface);border:1px dashed var(--line);border-radius:10px;font-size:13px;color:var(--muted);">No invoices yet.</div>`;
+          inv.innerHTML = `<div style="padding:14px 16px;background:var(--surface);border:1px dashed var(--line);border-radius:10px;font-size:13px;color:var(--ink);line-height:1.55;"><strong style="color:var(--ink);font-weight:600;">No invoices yet.</strong> <span style="color:var(--muted);">The first invoice (onboarding + first month) is sent the day after your discovery call. <a href="mailto:jon@30dayramp.com?subject=Question%20about%20billing" style="color:var(--accent);font-weight:600;">Question? Email Jon →</a></span></div>`;
         }
       }
     } catch (e) { console.warn('loadPortalBilling failed:', e.message); }
+  }
+
+  // ── Accessible inline dialog (Audit V2-A6 — replaces native confirm()) ────
+  // Same a11y plumbing as admin.html's confirmDialog: role="dialog", aria-modal,
+  // focus trap, Escape, return-focus. Self-contained — portal doesn't share JS
+  // with admin. Pass plain text only (no HTML).
+  function portalConfirm(text) {
+    return new Promise(function(resolve) {
+      var lastFocus = document.activeElement;
+      var bd = document.createElement('div');
+      bd.style.cssText = 'position:fixed;inset:0;background:rgba(11,18,32,0.45);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px;';
+      bd.setAttribute('role', 'dialog');
+      bd.setAttribute('aria-modal', 'true');
+      var labelId = 'pc-msg-' + Date.now();
+      bd.innerHTML = '<div style="background:#fff;border-radius:14px;padding:24px 26px;max-width:380px;box-shadow:0 24px 64px rgba(11,18,32,0.18);"><p id="' + labelId + '" style="margin:0 0 18px;font-size:14.5px;line-height:1.55;color:var(--ink);"></p><div style="display:flex;gap:8px;justify-content:flex-end;"><button class="pc-cancel" type="button" style="padding:9px 16px;border:1px solid var(--line);background:#fff;color:var(--ink);font-weight:600;font-size:13px;border-radius:8px;cursor:pointer;">Cancel</button><button class="pc-confirm" type="button" style="padding:9px 16px;border:none;background:var(--ink);color:#fff;font-weight:600;font-size:13px;border-radius:8px;cursor:pointer;">Confirm</button></div></div>';
+      bd.setAttribute('aria-labelledby', labelId);
+      bd.querySelector('#' + labelId).textContent = text;
+      document.body.appendChild(bd);
+      var btns = bd.querySelectorAll('button');
+      function close(r) {
+        document.removeEventListener('keydown', onKey, true);
+        if (bd.parentNode) bd.parentNode.removeChild(bd);
+        if (lastFocus && lastFocus.focus) try { lastFocus.focus(); } catch (_) {}
+        resolve(r);
+      }
+      function onKey(e) {
+        if (e.key === 'Escape') { e.preventDefault(); close(false); return; }
+        if (e.key === 'Tab') {
+          if (e.shiftKey && document.activeElement === btns[0]) { e.preventDefault(); btns[1].focus(); }
+          else if (!e.shiftKey && document.activeElement === btns[1]) { e.preventDefault(); btns[0].focus(); }
+        }
+      }
+      bd.querySelector('.pc-confirm').addEventListener('click', function(){ close(true); });
+      bd.querySelector('.pc-cancel').addEventListener('click',  function(){ close(false); });
+      bd.addEventListener('click', function(e){ if (e.target === bd) close(false); });
+      document.addEventListener('keydown', onKey, true);
+      btns[0].focus();
+    });
   }
 
   // ── Customer-initiated agent pause / resume ──────────────────────────────
   async function togglePortalAgent(agentId, action) {
     const tok = __getPortalToken();
     if (!tok) { alert('Open from your portal email link to manage agents.'); return; }
-    if (!confirm(`${action === 'pause' ? 'Pause' : 'Resume'} this agent? You can ${action === 'pause' ? 'resume' : 'pause'} again anytime.`)) return;
+    const ok = await portalConfirm(`${action === 'pause' ? 'Pause' : 'Resume'} this agent? You can ${action === 'pause' ? 'resume' : 'pause'} again anytime.`);
+    if (!ok) return;
     try {
       const r = await fetch(`/api/portal-toggle-agent?${tok}`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ agentId, action }),
@@ -1000,7 +1050,7 @@
               <span class="pill pill-build">${data.phase === 'Live' ? 'Live' : 'Scoped'}</span>
             </div>`).join('');
         } else {
-          agentsList.innerHTML = `<div style="padding:18px 20px;border:1px dashed var(--line);border-radius:12px;background:var(--surface);color:var(--muted);font-size:13.5px;line-height:1.6;">Your agents will be listed here once we've finished discovery and built your roadmap. Usually within a few hours of your call.</div>`;
+          agentsList.innerHTML = `<div style="padding:18px 20px;border:1px dashed var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font-size:13.5px;line-height:1.6;"><strong style="font-weight:600;">Your agents land here after the discovery call.</strong><div style="color:var(--muted);margin-top:4px;">We'll have a draft roadmap with 3–5 named agents within a few hours of the call.</div><a href="mailto:jon@30dayramp.com?subject=Discovery%20call%20question" style="display:inline-block;margin-top:12px;padding:8px 14px;background:var(--ink);color:#fff;font-size:13px;font-weight:600;border-radius:8px;text-decoration:none;">Email Jon →</a></div>`;
         }
       }
 
@@ -1008,7 +1058,7 @@
       // Show a clean "soon" empty state instead of fake build updates.
       const feed = document.getElementById('activity-feed');
       if (feed && (!data.activity || data.activity.length === 0)) {
-        feed.innerHTML = `<div style="padding:18px 20px;border:1px dashed var(--line);border-radius:12px;background:var(--surface);color:var(--muted);font-size:13.5px;line-height:1.6;">Activity tracking comes online during the build phase. You'll see every agent action and milestone here.</div>`;
+        feed.innerHTML = `<div style="padding:18px 20px;border:1px dashed var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font-size:13.5px;line-height:1.6;"><strong style="font-weight:600;">No activity yet.</strong><div style="color:var(--muted);margin-top:4px;">Once your first agent goes live, every action it takes — replies sent, leads qualified, hours saved — lands here in real time. Refresh this page anytime.</div></div>`;
       }
 
       // Hide the call card if there's no next-call info (e.g., post-Live with no scheduled monthly call)

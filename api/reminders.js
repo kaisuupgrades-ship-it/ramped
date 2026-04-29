@@ -9,6 +9,7 @@
 
 import { signMapToken, isMapTokenConfigured } from './_lib/map-token.js';
 import { wrapEmail, emailHero, emailBody, emailCtaCard, emailInfoCard, emailSignoff } from './_lib/email-design.js';
+import { isCronAuthorized } from './_lib/cron-auth.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -99,6 +100,14 @@ function buildSignedRoadmapLink(bookingId) {
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).end();
+
+  // Audit C2-1 (2026-04-29): cron endpoint must be auth-gated. Vercel Cron will
+  // auto-attach Authorization: Bearer ${CRON_SECRET}. Anything else (manual GET,
+  // attacker) gets 401. The reminded_*_at columns prevent duplicate sends, but
+  // an unauthenticated trigger still fires *one* off-schedule reminder per
+  // booking — that one email is enough to torch sender reputation and customer
+  // trust.
+  if (!isCronAuthorized(req)) return res.status(401).json({ error: 'Unauthorized' });
 
   const now    = Date.now();
   const WINDOW = 15 * 60 * 1000; // ±15 min — cron runs every 30 min so each booking hits exactly once

