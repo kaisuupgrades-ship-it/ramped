@@ -240,31 +240,30 @@ export default async function handler(req, res) {
     return res.status(200).json({ success: true, updated: false });
   }
 
-  // Find the booking. Prefer booking_id (passed from book.html post-confirmation
-  // flow). Fall back to most-recent-by-email only for legacy callers; this is the
-  // ambiguous path the audit flagged — log it loudly so we can spot stragglers.
-  let findResult;
-  if (booking_id) {
-    findResult = await supabase(
-      'GET',
-      `/bookings?id=eq.${encodeURIComponent(booking_id)}&select=id,name,company,notes,tier,email`
-    );
-    // Defense-in-depth: ensure the email on the looked-up booking matches the
-    // submitted email. Stops anyone from forcing a questionnaire onto a stranger's
-    // booking by guessing a UUID.
-    if (findResult.ok && Array.isArray(findResult.data) && findResult.data.length) {
-      const found = findResult.data[0];
-      if (found.email && found.email.toLowerCase() !== email.toLowerCase()) {
-        console.warn('Booking_id email mismatch — refusing to attach questionnaire', { booking_id, email });
-        return res.status(403).json({ error: 'Booking does not match the submitted email.' });
-      }
+  // Audit HIGH-4 (2026-04-29): booking_id is now REQUIRED. The email-only
+  // fallback was an attack vector — anyone could submit a questionnaire for any
+  // email and trigger a Claude call + Resend email + grade alert to the owner
+  // inbox. Anonymous prospects who want a roadmap without booking should use
+  // /api/free-roadmap (M1-4) — that surface is rate-limited harder and writes
+  // to a separate `automation_maps` row instead of mutating an existing booking.
+  if (!booking_id) {
+    return res.status(400).json({
+      error: 'booking_id is required. Submit the questionnaire from the booking confirmation page, or use /free-roadmap if you don\'t have a booking yet.',
+    });
+  }
+  let findResult = await supabase(
+    'GET',
+    `/bookings?id=eq.${encodeURIComponent(booking_id)}&select=id,name,company,notes,tier,email`
+  );
+  // Defense-in-depth: the email submitted with the questionnaire must match the
+  // email on the looked-up booking. Stops a UUID-guessing attacker from forcing
+  // questionnaire data onto someone else's booking.
+  if (findResult.ok && Array.isArray(findResult.data) && findResult.data.length) {
+    const found = findResult.data[0];
+    if (found.email && found.email.toLowerCase() !== email.toLowerCase()) {
+      console.warn('Booking_id email mismatch — refusing to attach questionnaire', { booking_id, email });
+      return res.status(403).json({ error: 'Booking does not match the submitted email.' });
     }
-  } else {
-    console.warn('Questionnaire submitted without booking_id — falling back to email lookup', { email });
-    findResult = await supabase(
-      'GET',
-      `/bookings?email=eq.${encodeURIComponent(email)}&order=created_at.desc&limit=1&select=id,name,company,notes,tier,email`
-    );
   }
 
   if (!findResult.ok || !Array.isArray(findResult.data) || !findResult.data.length) {

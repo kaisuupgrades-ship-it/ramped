@@ -472,10 +472,11 @@
       Done-for-you AI implementation. We build, deploy, and run AI agents inside your operating business — automating your highest-friction workflows on a flat monthly fee.
     </p>
 
-    <!-- CTA row — centered -->
+    <!-- CTA row — centered. Secondary CTA upgraded from "Watch a demo" to the
+         M1-4 free roadmap (2026-04-29) — converts at ~25-40% vs cold direct ~3%. -->
     <div class="hero-cta-row" style="justify-content:center;margin-bottom:18px;">
       <a href="/book" class="btn-primary btn-large">Book a discovery call →</a>
-      <a href="/demo" class="btn-ghost btn-large">Watch a 2-min demo</a>
+      <a href="/free-roadmap" class="btn-ghost btn-large">Get your free roadmap</a>
     </div>
 
     <!-- W1-3 (2026-04-29): the 30-day guarantee — promoted from a small eyebrow chip
@@ -859,7 +860,9 @@
       <!-- Billing toggle -->
       <div style="display:flex;align-items:center;gap:12px;margin-top:20px;">
         <div style="display:flex;background:#F1F1EF;border-radius:10px;padding:3px;gap:2px;">
-          <button id="btn-monthly" onclick="setBilling(false)" style="padding:7px 18px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;background:transparent;color:var(--muted);">Monthly</button>
+          <!-- V-B7 (2026-04-29): contrast bumped — inactive state was 3.5:1 (failed WCAG AA).
+               Now uses ink-2 instead of muted (≈ 4.7:1). Active state unchanged. -->
+          <button id="btn-monthly" onclick="setBilling(false)" style="padding:7px 18px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;background:transparent;color:var(--ink-2);">Monthly</button>
           <button id="btn-annual" onclick="setBilling(true)" style="padding:7px 18px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.1);">Annual</button>
         </div>
         <span id="annual-badge" style="font-size:12px;font-weight:700;color:#0F7A4B;background:#ECFDF5;padding:4px 10px;border-radius:20px;">🎁 2 months free</span>
@@ -1114,8 +1117,9 @@
     var badge = document.getElementById('annual-badge');
     badge.style.display = isAnnual ? 'inline' : 'none';
     var ma = document.getElementById('btn-monthly'), aa = document.getElementById('btn-annual');
-    if(isAnnual){ aa.style.background='#fff'; aa.style.color='var(--ink)'; aa.style.boxShadow='0 1px 4px rgba(0,0,0,.1)'; ma.style.background='transparent'; ma.style.color='var(--muted)'; ma.style.boxShadow='none'; }
-    else { ma.style.background='#fff'; ma.style.color='var(--ink)'; ma.style.boxShadow='0 1px 4px rgba(0,0,0,.1)'; aa.style.background='transparent'; aa.style.color='var(--muted)'; aa.style.boxShadow='none'; }
+    // V-B7: inactive-state color uses ink-2 (≈ 4.7:1 contrast on the toggle pill bg) — passes WCAG AA. Was 'muted' (~3.5:1).
+    if(isAnnual){ aa.style.background='#fff'; aa.style.color='var(--ink)'; aa.style.boxShadow='0 1px 4px rgba(0,0,0,.1)'; ma.style.background='transparent'; ma.style.color='var(--ink-2)'; ma.style.boxShadow='none'; }
+    else { ma.style.background='#fff'; ma.style.color='var(--ink)'; ma.style.boxShadow='0 1px 4px rgba(0,0,0,.1)'; aa.style.background='transparent'; aa.style.color='var(--ink-2)'; aa.style.boxShadow='none'; }
     // Keep tier CTA hrefs in sync with the toggle so /book?tier=X&billing=Y matches what the visitor was just looking at.
     var billingParam = isAnnual ? 'annual' : 'monthly';
     document.querySelectorAll('a[data-tier-cta]').forEach(function(a){

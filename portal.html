@@ -534,7 +534,7 @@
   }
   async function saveOnboarding(complete) {
     const tok = __getPortalToken();
-    if (!tok) { alert('Open this from your portal email link to save changes.'); return; }
+    if (!tok) { portalToast('Open this from your portal email link to save changes.', 'info'); return; }
     const payload = {
       brand_voice_notes:    document.getElementById('onb-brand-voice')?.value || '',
       forbidden_phrases:    document.getElementById('onb-forbidden')?.value || '',
@@ -561,7 +561,7 @@
   }
   async function uploadOnboardingFiles(e) {
     const tok = __getPortalToken();
-    if (!tok) { alert('Open from your portal email link to upload.'); return; }
+    if (!tok) { portalToast('Open from your portal email link to upload.', 'info'); return; }
     const files = Array.from(e.target.files || []);
     for (const file of files) {
       try {
@@ -583,7 +583,7 @@
         });
         if (!r2.ok) throw new Error('Upload failed: ' + r2.status);
       } catch (err) {
-        alert(`Couldn't upload ${file.name}: ${err.message}`);
+        portalToast(`Couldn't upload ${file.name}: ${err.message}`, 'error');
       }
     }
     e.target.value = '';
@@ -619,7 +619,7 @@
   }
   async function saveProfile() {
     const tok = __getPortalToken();
-    if (!tok) { alert('Open from your portal email link to save changes.'); return; }
+    if (!tok) { portalToast('Open from your portal email link to save changes.', 'info'); return; }
     const prefs = {};
     ['weekly_digest','ticket_replies','billing','agent_drafts','milestones'].forEach(k => {
       const el = document.getElementById('pref-' + k);
@@ -746,6 +746,50 @@
     } catch (e) { console.warn('loadPortalBilling failed:', e.message); }
   }
 
+  // ── Inline toast (Audit V-B5, 2026-04-29 — replaces alert() across portal) ──
+  // Renders a short-lived banner at the top of the viewport instead of blocking
+  // the user with native alert(). Three styles: error · info · success. Auto-
+  // dismisses after 5 seconds. Manual dismiss via the × button.
+  function portalToast(message, type) {
+    type = (type === 'error' || type === 'success' || type === 'info') ? type : 'info';
+    var stack = document.getElementById('portal-toast-stack');
+    if (!stack) {
+      stack = document.createElement('div');
+      stack.id = 'portal-toast-stack';
+      stack.style.cssText = 'position:fixed;top:14px;right:14px;z-index:300;display:flex;flex-direction:column;gap:8px;max-width:min(420px,calc(100vw - 28px));pointer-events:none;';
+      document.body.appendChild(stack);
+    }
+    var palette = {
+      error:   { bg: '#FEE2E2', border: '#FCA5A5', fg: '#991B1B', icon: '⚠' },
+      info:    { bg: '#EEF3FF', border: '#C7D2FE', fg: '#1a56db', icon: 'ℹ' },
+      success: { bg: '#ECFDF5', border: '#A7F3D0', fg: '#065F46', icon: '✓' },
+    }[type];
+    var el = document.createElement('div');
+    el.setAttribute('role', type === 'error' ? 'alert' : 'status');
+    el.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
+    el.style.cssText = 'display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:' + palette.bg + ';border:1px solid ' + palette.border + ';border-radius:10px;font-size:13.5px;color:' + palette.fg + ';line-height:1.5;box-shadow:0 8px 24px -12px rgba(11,18,32,0.18);pointer-events:auto;animation:portal-toast-in 0.18s ease-out;';
+    el.innerHTML = '<span aria-hidden="true" style="font-size:14px;font-weight:700;line-height:1;flex-shrink:0;">' + palette.icon + '</span>' +
+                   '<span style="flex:1;">' + __portalEsc(String(message)) + '</span>' +
+                   '<button type="button" aria-label="Dismiss" style="flex-shrink:0;background:transparent;border:none;color:inherit;opacity:0.6;cursor:pointer;font-size:16px;line-height:1;padding:0 0 0 4px;">×</button>';
+    var dismissed = false;
+    function dismiss() {
+      if (dismissed) return; dismissed = true;
+      el.style.transition = 'opacity 0.18s, transform 0.18s';
+      el.style.opacity = '0'; el.style.transform = 'translateY(-6px)';
+      setTimeout(function(){ if (el.parentNode) el.parentNode.removeChild(el); }, 200);
+    }
+    el.querySelector('button').addEventListener('click', dismiss);
+    stack.appendChild(el);
+    setTimeout(dismiss, 5000);
+    return dismiss;
+  }
+  // Animation keyframe for toast entry (added once)
+  if (!document.getElementById('portal-toast-style')) {
+    var st = document.createElement('style'); st.id = 'portal-toast-style';
+    st.textContent = '@keyframes portal-toast-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }';
+    document.head.appendChild(st);
+  }
+
   // ── Accessible inline dialog (Audit V2-A6 — replaces native confirm()) ────
   // Same a11y plumbing as admin.html's confirmDialog: role="dialog", aria-modal,
   // focus trap, Escape, return-focus. Self-contained — portal doesn't share JS
@@ -787,7 +831,7 @@
   // ── Customer-initiated agent pause / resume ──────────────────────────────
   async function togglePortalAgent(agentId, action) {
     const tok = __getPortalToken();
-    if (!tok) { alert('Open from your portal email link to manage agents.'); return; }
+    if (!tok) { portalToast('Open from your portal email link to manage agents.', 'info'); return; }
     const ok = await portalConfirm(`${action === 'pause' ? 'Pause' : 'Resume'} this agent? You can ${action === 'pause' ? 'resume' : 'pause'} again anytime.`);
     if (!ok) return;
     try {
@@ -797,7 +841,7 @@
       if (!r.ok) { const j = await r.json().catch(()=>({})); throw new Error(j.error || 'HTTP ' + r.status); }
       // Reload to pick up the new status
       location.reload();
-    } catch (err) { alert('Failed: ' + err.message); }
+    } catch (err) { portalToast('Failed: ' + err.message, 'error'); }
   }
 
   // ── Approvals queue — render pending drafts + customer decision actions ─────
@@ -833,7 +877,7 @@
     if (decision === 'edit') {
       const ta = document.getElementById(`draft-body-${draftId}`);
       payload.edited_body = ta?.value || '';
-      if (!payload.edited_body || payload.edited_body.length < 2) { alert('Body is empty.'); return; }
+      if (!payload.edited_body || payload.edited_body.length < 2) { portalToast('Body is empty.', 'error'); return; }
     }
     try {
       const r = await fetch(`/api/portal-approve-draft?${tok}`, {
@@ -842,7 +886,7 @@
       if (!r.ok) throw new Error('HTTP ' + r.status);
       // Re-fetch portal data to refresh drafts list
       location.reload();
-    } catch (err) { alert('Failed: ' + err.message); }
+    } catch (err) { portalToast('Failed: ' + err.message, 'error'); }
   }
 
   // ── Support tickets — only functional when token is present (real customer session) ─────
@@ -871,11 +915,11 @@
   }
   async function submitTicket() {
     const tok = __getPortalToken();
-    if (!tok) { alert('This is a preview view. Open your portal from the link in your booking confirmation email to submit tickets.'); return; }
+    if (!tok) { portalToast('This is a preview view. Open your portal from the link in your booking confirmation email to submit tickets.', 'info'); return; }
     const subject = document.getElementById('ticket-subject')?.value?.trim();
     const body = document.getElementById('ticket-body')?.value?.trim();
-    if (!subject) { alert('Please add a subject.'); return; }
-    if (!body || body.length < 4) { alert('Please add a few details.'); return; }
+    if (!subject) { portalToast('Please add a subject.', 'error'); return; }
+    if (!body || body.length < 4) { portalToast('Please add a few details.', 'error'); return; }
     const btn = document.getElementById('submit-ticket-btn');
     if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
     try {
@@ -890,7 +934,7 @@
       toggleNewTicketForm();
       await loadPortalTickets();
     } catch (err) {
-      alert('Failed to send: ' + err.message);
+      portalToast('Failed to send: ' + err.message, 'error');
     } finally {
       if (btn) { btn.disabled = false; btn.textContent = 'Send ticket'; }
     }
@@ -942,7 +986,7 @@
     if (!tok) return;
     const input = document.getElementById(`reply-input-${ticketId}`);
     const text = input?.value?.trim();
-    if (!text || text.length < 2) { alert('Reply is empty.'); return; }
+    if (!text || text.length < 2) { portalToast('Reply is empty.', 'error'); return; }
     try {
       const res = await fetch(`/api/portal-tickets?${tok}`, {
         method: 'POST',
@@ -953,7 +997,7 @@
       input.value = '';
       await loadPortalTickets();
     } catch (err) {
-      alert('Failed: ' + err.message);
+      portalToast('Failed: ' + err.message, 'error');
     }
   }
 
@@ -977,6 +1021,19 @@
       set('#customer-first-name', firstName);
       if (data.booking?.tier) set('#meta-tier', `${data.booking.tier[0].toUpperCase()}${data.booking.tier.slice(1)} tier`);
       if (data.welcome_sub) set('#welcome-sub', data.welcome_sub);
+      // V-B8 (2026-04-29): phase-aware headline. Pre-Live phases read as "being built";
+      // Live phase reads as "up and running" — the difference matters once a customer
+      // is post-go-live and the same banner started feeling stale.
+      const wh = document.getElementById('welcome-h');
+      if (wh && data.phase) {
+        const fn = document.getElementById('customer-first-name');
+        const firstName = fn ? fn.textContent : 'there';
+        const isLive = data.phase === 'Live';
+        wh.innerHTML = (
+          'Hi <span id="customer-first-name">' + __portalEsc(firstName) + '</span>, your AI department is ' +
+          (isLive ? '<strong style="color:#3DDC84;">up and running.</strong>' : 'being built.')
+        );
+      }
       if (data.phase_eyebrow) set('#phase-eyebrow', data.phase_eyebrow);
       if (data.kickoff_date) set('#meta-kickoff', data.kickoff_date);
       if (data.golive_date) set('#meta-golive', data.golive_date);

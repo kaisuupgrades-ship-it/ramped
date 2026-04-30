@@ -6,6 +6,7 @@
 //        body: { id }
 
 import { setAdminCors, isAuthorized } from './_lib/admin-auth.js';
+import { logAdminAction } from './_lib/audit-log.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -78,7 +79,15 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'DB write failed', detail: t.slice(0, 300) });
     }
     const out = await r.json();
-    return res.status(200).json({ ok: true, agent: out?.[0] || null });
+    const agent = out?.[0] || null;
+    logAdminAction(req, {
+      action: body.id ? 'agent.update' : 'agent.create',
+      target_table: 'agents',
+      target_id: agent?.id || body.id || null,
+      payload: { booking_id: bookingId, name: row.name, status: row.status, channel: row.channel },
+      result_status: 200,
+    }).catch(() => {});
+    return res.status(200).json({ ok: true, agent });
   }
 
   if (req.method === 'DELETE') {
@@ -90,6 +99,7 @@ export default async function handler(req, res) {
       headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
       body: JSON.stringify({ status: 'archived', updated_at: new Date().toISOString() }),
     });
+    logAdminAction(req, { action: 'agent.archive', target_table: 'agents', target_id: id, result_status: 200 }).catch(() => {});
     return res.status(200).json({ ok: true });
   }
 

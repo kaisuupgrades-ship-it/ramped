@@ -107,13 +107,45 @@ export default async function handler(req, res) {
   const goliveISO = kickoffISO ? new Date(new Date(kickoffISO).getTime() + 30 * 86400000).toISOString() : null;
   const phaseInfo = computePhase(kickoffISO);
 
-  // Build the welcome subhead from automation_map summary if available; otherwise a fallback.
+  // V-B8 (2026-04-29): phase-aware welcome subhead. Pre-launch the banner reads
+  // as a build status; post-go-live it reads as an operational summary. The
+  // client also picks a phase-appropriate headline (pre-launch → "is being built",
+  // post-launch → "is up and running").
   const agentCount = b.automation_map?.top_agents?.length || 0;
-  const welcomeSub = b.automation_map?.summary
-    ? b.automation_map.summary
-    : (agentCount
-        ? `${agentCount} agents identified, build kicked off. You'll see live data here the moment they're running.`
-        : `We're scoping your AI department. Discovery call coming up.`);
+  const liveAgents = (Array.isArray(agents) ? agents.filter(a => a.status === 'live').length : 0);
+  const totalHoursSaved = Array.isArray(activity)
+    ? activity.reduce((sum, r) => sum + (Number(r.hours_saved) || 0), 0)
+    : 0;
+
+  let welcomeSub;
+  switch (phaseInfo.phase) {
+    case 'Pre-kickoff':
+      welcomeSub = b.automation_map?.summary
+        || `We're scoping your AI department. ${agentCount > 0 ? `${agentCount} agents identified so far.` : 'Discovery call coming up.'}`;
+      break;
+    case 'Kickoff':
+      welcomeSub = `Day 1. We just met. Roadmap lands in your inbox within a few hours.`;
+      break;
+    case 'Discovery':
+      welcomeSub = b.automation_map?.summary
+        || `Roadmap delivered. ${agentCount} agents on the build queue. First prototype lands this week.`;
+      break;
+    case 'Build':
+      welcomeSub = agentCount
+        ? `${agentCount} agents in build. ${liveAgents} live so far. Live data appears here the moment each one ships.`
+        : `Build phase. Agents being wired into your stack. Live data appears here as they ship.`;
+      break;
+    case 'QA':
+      welcomeSub = `Final QA against your real data. Agents go live in a few days.`;
+      break;
+    case 'Live':
+      welcomeSub = totalHoursSaved > 0
+        ? `${liveAgents || agentCount} agents running. ${totalHoursSaved.toFixed(1)} hours saved this month and counting.`
+        : `${liveAgents || agentCount} agents running. Live activity appears below as it happens.`;
+      break;
+    default:
+      welcomeSub = b.automation_map?.summary || `We're scoping your AI department.`;
+  }
 
   return res.status(200).json({
     booking: {

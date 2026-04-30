@@ -6,6 +6,7 @@
 
 import { setAdminCors, isAuthorized } from './_lib/admin-auth.js';
 import { isStripeConfigured, createMonthlySubscription, createOrFindCustomer } from './_lib/stripe.js';
+import { logAdminAction } from './_lib/audit-log.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -69,9 +70,17 @@ export default async function handler(req, res) {
         payment_status: 'subscription_active',
       }),
     });
+    logAdminAction(req, {
+      action: 'subscription.create',
+      target_table: 'bookings',
+      target_id: bookingId,
+      payload: { tier, billing, subscriptionId: sub.id, status: sub.status },
+      result_status: 200,
+    }).catch(() => {});
     return res.status(200).json({ ok: true, subscriptionId: sub.id, status: sub.status });
   } catch (err) {
     console.error('admin-create-subscription failed:', err.message, err.stripeError || err.stripe || null);
+    logAdminAction(req, { action: 'subscription.create', target_table: 'bookings', target_id: bookingId, payload: { tier, billing, error: err.message }, result_status: 500 }).catch(() => {});
     return res.status(500).json({ error: err.message, stripe: err.stripeError || err.stripe || null });
   }
 }

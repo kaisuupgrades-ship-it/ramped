@@ -102,6 +102,10 @@
       "destination": "/questionnaire.html"
     },
     {
+      "source": "/free-roadmap",
+      "destination": "/free-roadmap.html"
+    },
+    {
       "source": "/map/(.*)",
       "destination": "/map-result.html"
     }

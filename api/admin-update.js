@@ -3,6 +3,7 @@
 // Body: { id, status?, admin_notes?, name?, email?, company?, datetime?, notes?, tier?, timezone? }
 
 import { setAdminCors, isAuthorized } from './_lib/admin-auth.js';
+import { logAdminAction } from './_lib/audit-log.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -59,8 +60,10 @@ export default async function handler(req, res) {
 
   if (!patchRes.ok) {
     console.error('Supabase PATCH error:', patchRes.status, await patchRes.text());
+    logAdminAction(req, { action: 'booking.update', target_table: 'bookings', target_id: id, payload: patch, result_status: 500 }).catch(() => {});
     return res.status(500).json({ error: 'Failed to update booking' });
   }
 
+  logAdminAction(req, { action: 'booking.update', target_table: 'bookings', target_id: id, payload: patch, result_status: 200 }).catch(() => {});
   return res.status(200).json({ success: true });
 }

@@ -2,6 +2,7 @@
 // POST /api/admin-delete   Body: { id }
 
 import { setAdminCors, isAuthorized } from './_lib/admin-auth.js';
+import { logAdminAction } from './_lib/audit-log.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -31,8 +32,10 @@ export default async function handler(req, res) {
 
   if (!r.ok) {
     console.error('Supabase DELETE error:', r.status, await r.text());
+    logAdminAction(req, { action: 'booking.delete', target_table: 'bookings', target_id: id, result_status: 500 }).catch(() => {});
     return res.status(500).json({ error: 'Failed to delete booking' });
   }
 
+  logAdminAction(req, { action: 'booking.delete', target_table: 'bookings', target_id: id, result_status: 200 }).catch(() => {});
   return res.status(200).json({ success: true });
 }

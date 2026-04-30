@@ -6,6 +6,7 @@
 
 import { setAdminCors, isAuthorized } from './_lib/admin-auth.js';
 import { isStripeConfigured, getTierPricing, createOrFindCustomer, createOnboardingPlusFirstInvoice } from './_lib/stripe.js';
+import { logAdminAction } from './_lib/audit-log.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -82,6 +83,13 @@ export default async function handler(req, res) {
       }),
     });
 
+    logAdminAction(req, {
+      action: 'invoice.create',
+      target_table: 'bookings',
+      target_id: bookingId,
+      payload: { tier, billing, invoiceId: invoice.id, total: invoice.total },
+      result_status: 200,
+    }).catch(() => {});
     return res.status(200).json({
       ok: true,
       invoiceId: invoice.id,
@@ -91,6 +99,7 @@ export default async function handler(req, res) {
     });
   } catch (err) {
     console.error('admin-create-invoice failed:', err.message, err.stripeError || err.stripe || null);
+    logAdminAction(req, { action: 'invoice.create', target_table: 'bookings', target_id: bookingId, payload: { tier, billing, error: err.message }, result_status: 500 }).catch(() => {});
     return res.status(500).json({ error: err.message, stripe: err.stripeError || err.stripe || null });
   }
 }

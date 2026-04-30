@@ -332,8 +332,15 @@
     .avail-blocked-chip button { background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;padding:0;line-height:1; }
 
     /* ── Table wrapper ────────────────────────────────────────────────────── */
+    /* V-B6 (2026-04-29): scroll-friendly admin tables.
+       - .table-wrap caps height + adds vertical scroll, so thead stays sticky as the user scrolls rows
+       - thead uses position:sticky (better scannability at >50 bookings)
+       - tbody zebra striping was already in place
+       - per-row hover state added for fast scanning */
     .table-wrap {
       overflow-x: auto;
+      overflow-y: auto;
+      max-height: 70vh;
       border-radius: 12px;
       border: 1px solid var(--line);
       background: #fff;
@@ -356,13 +363,18 @@
       color: var(--muted);
       border-bottom: 1px solid var(--line);
       white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 2;
     }
 
-    tbody tr { border-bottom: 1px solid var(--line); }
+    tbody tr { border-bottom: 1px solid var(--line); transition: background 0.12s; }
     tbody tr:last-child { border-bottom: none; }
 
     tbody tr:nth-child(even) td { background: var(--paper); }
     tbody tr:nth-child(odd)  td { background: #fff; }
+    tbody tr:hover td { background: #EEF3FF; }
+    tbody tr.q-panel:hover td, tbody tr.notes-row:hover td { background: inherit; }
 
     tbody td {
       padding: 11px 14px;
@@ -694,6 +706,22 @@
       #bookings-table tbody td:nth-child(4),
       #bookings-table tbody td:nth-child(5),
       #bookings-table tbody td:nth-child(6) { display: none; }
+
+      /* V-B4 (2026-04-29): tighter mobile reflow on the bookings table.
+         At <480px, drop the Date column too, stack actions vertically, reduce
+         padding. The table now fits a 360px viewport without horizontal scroll. */
+      #bookings-table thead th, #bookings-table tbody td { padding: 8px 10px; font-size: 12px; }
+      #bookings-table tbody td:last-child { padding: 6px 8px; }
+      #bookings-table tbody td:last-child .btn-action { padding: 4px 7px; font-size: 10.5px; }
+    }
+    @media (max-width: 480px) {
+      /* At very narrow viewports, also hide the Date column — Status + Name + Actions only.
+         The full date is still in the row-detail (q-panel) when expanded. */
+      #bookings-table thead th:nth-child(2),
+      #bookings-table tbody td:nth-child(2) { display: none; }
+      #bookings-table { min-width: 280px; }
+      /* Stack actions vertically when there are multiple */
+      #bookings-table tbody td:last-child { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px; }
 
       /* Questionnaire panel still spans all cols — use colspan trick via width */
       #bookings-table tbody tr.q-panel td,
