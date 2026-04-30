@@ -1,6 +1,6 @@
 {
   "_comment": "Internal artifact manifest. Renders in /admin → Materials tab. To add a repo-tracked entry: drop the file in the repo, add a row here, commit + push. (Browser uploads via the admin UI go through /api/admin-materials and live in Supabase.)",
-  "updated_at": "2026-04-29",
+  "updated_at": "2026-04-30",
   "categories": [
     {
       "id": "strategy",
@@ -13,15 +13,15 @@
           "type": "markdown",
           "size_kb": 12,
           "updated": "2026-04-29",
-          "description": "Prioritized backlog synthesized from all 4 audit docs. Every item has effort + source + definition-of-done. Single highest-leverage move: senior implementation manager hire (Q1)."
+          "description": "Prioritized backlog synthesized from all 4 audit docs. Single highest-leverage move: senior implementation manager hire (Q1)."
         },
         {
-          "title": "Audit v2 — Consolidated changelog (commit-style summary across all 5 phases)",
+          "title": "Audit v2 — Consolidated changelog",
           "path": "/CHANGELOG-AUDIT-V2.md",
           "type": "markdown",
           "size_kb": 11,
           "updated": "2026-04-29",
-          "description": "Walks through every file touched in the engagement, organized by phase. ~70 files, ~2,800 lines, 3 SQL migrations, 1 strategy deck, 139 Playwright tests. Useful as a release-notes artifact."
+          "description": "Walks through every file touched in the engagement. ~70 files, ~2,800 lines, 3 SQL migrations, 1 strategy deck, 139 Playwright tests."
         },
         {
           "title": "Business Strategy v2 — Slide deck",
@@ -66,7 +66,7 @@
           "path": "/VISUAL-AUDIT.md",
           "type": "markdown",
           "updated": "2026-04-29",
-          "description": "Nielsen heuristics + premium SaaS comparison. Tier A/B/C action plan. v2 covers protected pages (admin, dashboard, portal) + Lindy/Gumloop competitors."
+          "description": "Nielsen heuristics + premium SaaS comparison. Tier A/B/C action plan."
         },
         {
           "title": "Mobile Audit",
@@ -80,28 +80,28 @@
     {
       "id": "ops",
       "name": "Operations & Architecture",
-      "description": "Persistent rules · deploy guides · architecture docs — read these before changing anything",
+      "description": "Persistent rules · deploy guides · architecture docs",
       "items": [
         {
           "title": "CLAUDE.md — Persistent rules for AI coworkers",
           "path": "/CLAUDE.md",
           "type": "markdown",
           "updated": "2026-04-27",
-          "description": "Standards every AI/human contributor follows: tokens, fonts, CTA copy, pricing-everywhere rule, security headers, file-handling rules."
+          "description": "Standards every AI/human contributor follows."
         },
         {
           "title": "Client Portal — Plan & Architecture",
           "path": "/CLIENT-PORTAL-PLAN.md",
           "type": "markdown",
           "updated": "2026-04-27",
-          "description": "Why the portal exists, what's in each phase, auth model (HMAC-signed URL tokens), data model for agents/runs/drafts."
+          "description": "Why the portal exists, what's in each phase, auth model (HMAC-signed URL tokens), data model."
         },
         {
           "title": "Deploy Guide — PR 1.5 / 2 / 3 / 5",
           "path": "/DEPLOY.md",
           "type": "markdown",
           "updated": "2026-04-27",
-          "description": "One-shot deploy checklist for the original audit batches. Vercel env, Supabase migrations, smoke test."
+          "description": "One-shot deploy checklist for the original audit batches."
         },
         {
           "title": "Deploy Guide — Stripe + Onboarding + Agents",
@@ -144,7 +144,7 @@
           "type": "png",
           "size_kb": 215,
           "updated": "2026-04-27",
-          "description": "Social-share preview image — shows in LinkedIn / Slack / iMessage cards."
+          "description": "Social-share preview image."
         },
         {
           "title": "Open Graph image @2x (Retina)",
@@ -159,21 +159,21 @@
           "path": "/assets/agent-ui.png",
           "type": "png",
           "updated": "2026-04-27",
-          "description": "Embedded in homepage hero showcase — the static layer under the V2-B6 live overlay."
+          "description": "Embedded in homepage hero showcase."
         },
         {
           "title": "Email logo bars",
           "path": "/assets/email-logo-bars.png",
           "type": "png",
           "updated": "2026-04-27",
-          "description": "Used in the dark-navy email header across booking confirmation, roadmap, weekly digest, reminders."
+          "description": "Used in the dark-navy email header."
         }
       ]
     },
     {
       "id": "sales",
       "name": "Sales & Playbooks",
-      "description": "Talk tracks · objection handling · prospect materials — keep this in lockstep with the homepage",
+      "description": "Talk tracks · objection handling · prospect materials",
       "items": [
         {
           "title": "Sales Playbook v1 — Discovery call script",
@@ -181,7 +181,154 @@
           "type": "markdown",
           "size_kb": 5,
           "updated": "2026-04-29",
-          "description": "Opener · core pitch · concrete example · urgency · the offer · 4 objection responses. Numbers cited match /comparison + homepage — update in lockstep."
+          "description": "Opener · core pitch · concrete example · urgency · the offer · 4 objection responses."
+        }
+      ]
+    },
+    {
+      "id": "marketing",
+      "name": "Marketing & Brand Pack",
+      "description": "Multi-channel campaign pack: 16 copy decks · 6 ad creatives · brand voice guide · positioning vs competitors · 12-week content calendar. Built 2026-04-30.",
+      "items": [
+        {
+          "title": "Marketing Pack — Master index (start here)",
+          "path": "/Marketing-Pack/INDEX.md",
+          "type": "markdown",
+          "updated": "2026-04-30",
+          "description": "Navigation entry point. Lists all 18 files in the pack with one-line summaries + suggested reading order."
+        },
+        {
+          "title": "Marketing Pack — README (overview)",
+          "path": "/Marketing-Pack/README.md",
+          "type": "markdown",
+          "updated": "2026-04-30",
+          "description": "Tour of the pack: which file for which channel, the 5 voice rules, when to update."
+        },
+        {
+          "title": "Brand Style Guide — voice + visual rules",
+          "path": "/Marketing-Pack/BRAND-STYLE-GUIDE.md",
+          "type": "markdown",
+          "updated": "2026-04-30",
+          "description": "5 voice rules, words to never use, words that ARE us, color/type tokens, CTA rules. Read first before writing for Ramped."
+        },
+        {
+          "title": "Founder Narrative — Andrew Yoon's origin story",
+          "path": "/Marketing-Pack/FOUNDER-NARRATIVE.md",
+          "type": "markdown",
+          "updated": "2026-04-30",
+          "description": "4 lengths of the same story: 30s, 60s, 5min, blog post outline. Plus press soundbites."
+        },
+        {
+          "title": "Positioning Matrix — vs Viktor / Lindy / Gumloop / Zapier AI / UiPath",
+          "path": "/Marketing-Pack/POSITIONING-MATRIX.md",
+          "type": "markdown",
+          "updated": "2026-04-30",
+          "description": "Profiles of every direct competitor + substrate threats. Pricing comparison. Differentiation talking points."
+        },
+        {
+          "title": "LinkedIn Posts — 12 founder-voice drafts",
+          "path": "/Marketing-Pack/LINKEDIN-POSTS.md",
+          "type": "markdown",
+          "updated": "2026-04-30",
+          "description": "12 drafts across founder origin, contrarian takes, demos, customer stories. 4-week rotation schedule."
+        },
+        {
+          "title": "Twitter / X — 25 tweets across 5 themes",
+          "path": "/Marketing-Pack/TWITTER-X-POSTS.md",
+          "type": "markdown",
+          "updated": "2026-04-30",
+          "description": "Hot takes · numbers · threads · demos · brand. Founder + company-account split."
+        },
+        {
+          "title": "Instagram Captions — static · carousel · reels · stories",
+          "path": "/Marketing-Pack/INSTAGRAM-CAPTIONS.md",
+          "type": "markdown",
+          "updated": "2026-04-30",
+          "description": "Format-specific captions + sample 30-day content schedule."
+        },
+        {
+          "title": "Cold Email Outbound — 4 sequences × 4 emails (16 total)",
+          "path": "/Marketing-Pack/EMAIL-OUTBOUND.md",
+          "type": "markdown",
+          "updated": "2026-04-30",
+          "description": "Sequence A (ops pain), B (VA replacement), C (AI fatigue), D (post-funding). Reply handling."
+        },
+        {
+          "title": "Onboarding Emails — 7-email drip for /book prospects",
+          "path": "/Marketing-Pack/ONBOARDING-EMAILS.md",
+          "type": "markdown",
+          "updated": "2026-04-30",
+          "description": "Confirmation → prep → post-call follow-up → story → benchmark → re-engage → break-up."
+        },
+        {
+          "title": "Ad Copy Library — LinkedIn / Twitter / Meta / Google / Display",
+          "path": "/Marketing-Pack/AD-COPY-LIBRARY.md",
+          "type": "markdown",
+          "updated": "2026-04-30",
+          "description": "Headline + body variants per channel. A/B test protocol, channel budget mix, performance targets."
+        },
+        {
+          "title": "Objection Responses — 15 sales objections + replies",
+          "path": "/Marketing-Pack/OBJECTION-RESPONSES.md",
+          "type": "markdown",
+          "updated": "2026-04-30",
+          "description": "Pricing · skepticism · competitive · process · alignment. Empathy-first reframes."
+        },
+        {
+          "title": "Case Study Template — reusable customer story format",
+          "path": "/Marketing-Pack/CASE-STUDY-TEMPLATE.md",
+          "type": "markdown",
+          "updated": "2026-04-30",
+          "description": "8-section template + visual elements + pre-publish checklist + library plan."
+        },
+        {
+          "title": "Landing Page Copy — homepage A/B variants",
+          "path": "/Marketing-Pack/LANDING-PAGE-COPY.md",
+          "type": "markdown",
+          "updated": "2026-04-30",
+          "description": "Variants for hero h1, subhead, CTA, numbers section. 12-week test roadmap."
+        },
+        {
+          "title": "Content Calendar — 12-week rolling schedule",
+          "path": "/Marketing-Pack/CONTENT-CALENDAR.md",
+          "type": "markdown",
+          "updated": "2026-04-30",
+          "description": "Weekly cadence per channel · 12-week themes · production pipeline · metrics + targets."
+        },
+        {
+          "title": "Press Release — newswire-format launch",
+          "path": "/Marketing-Pack/PRESS-RELEASE.md",
+          "type": "markdown",
+          "updated": "2026-04-30",
+          "description": "Standard release + short version + tweet version + LinkedIn version. Distribution checklist."
+        },
+        {
+          "title": "Video Strategy — what we learned + path forward",
+          "path": "/Marketing-Pack/VIDEO-STRATEGY.md",
+          "type": "markdown",
+          "updated": "2026-04-30",
+          "description": "Three video strategies (pure AI, real product, hybrid). Higgsfield + ElevenLabs setup. Asset roadmap."
+        },
+        {
+          "title": "Marketing Visuals Pack — 6 ad creatives (open in browser)",
+          "path": "/Marketing-Pack/MARKETING-VISUALS.html",
+          "type": "html",
+          "updated": "2026-04-30",
+          "description": "Pixel-perfect HTML mockups: LinkedIn 1200×627 · IG 1080×1080 · Twitter 1600×900 · Display 300×600 · Email signature 600×200 · Logo lockup sheet."
+        },
+        {
+          "title": "Claude Design Log — generated visual assets",
+          "path": "/Marketing-Pack/CLAUDE-DESIGN-LOG.md",
+          "type": "markdown",
+          "updated": "2026-04-30",
+          "description": "Log of every Claude Design generation: 3 ads rendered, prompts saved, queued next assets."
+        },
+        {
+          "title": "ChatCut / Seedance Log — generated videos",
+          "path": "/Marketing-Pack/CHATCUT-LOG.md",
+          "type": "markdown",
+          "updated": "2026-04-30",
+          "description": "Log of video generations + lessons learned. Credit usage tracking."
         }
       ]
     }
