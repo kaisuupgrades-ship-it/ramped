@@ -198,6 +198,20 @@
           "description": "Navigation entry point. Lists all 18 files in the pack with one-line summaries + suggested reading order."
         },
         {
+          "title": "Agent Library — Live Slack demos (4 scenarios)",
+          "path": "/agent-library",
+          "type": "html",
+          "updated": "2026-04-30",
+          "description": "Public page at /agent-library showing Ramped Bot working in 4 real Slack workflows — Ops, Sales, Finance, Customer Support. Each scenario has anchor link + persona context + outcome stats. Embed in LinkedIn posts, sales emails, or screen-record for video ads."
+        },
+        {
+          "title": "Launch Content Roadmap — full production plan",
+          "path": "/Marketing-Pack/LAUNCH-CONTENT-ROADMAP.md",
+          "type": "markdown",
+          "updated": "2026-04-30",
+          "description": "Tier A/B/C breakdown of every asset Ramped needs for launch + first 60 days. Per-item: tool used, status, dependencies. Channel-by-channel content cadence."
+        },
+        {
           "title": "Marketing Pack — README (overview)",
           "path": "/Marketing-Pack/README.md",
           "type": "markdown",

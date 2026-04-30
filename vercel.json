@@ -106,6 +106,10 @@
       "destination": "/free-roadmap.html"
     },
     {
+      "source": "/agent-library",
+      "destination": "/agent-library.html"
+    },
+    {
       "source": "/map/(.*)",
       "destination": "/map-result.html"
     }
