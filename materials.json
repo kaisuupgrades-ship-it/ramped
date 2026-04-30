@@ -1,0 +1,173 @@
+{
+  "_comment": "Internal artifact manifest. Renders in /admin → Materials tab. To add a repo-tracked entry: drop the file in the repo, add a row here, commit + push. (Browser uploads via the admin UI go through /api/admin-materials and live in Supabase.)",
+  "updated_at": "2026-04-29",
+  "categories": [
+    {
+      "id": "strategy",
+      "name": "Strategy & Business",
+      "description": "Internal strategic docs · audits · benchmark assets",
+      "items": [
+        {
+          "title": "Business Strategy v2 — Slide deck",
+          "path": "/Ramped-Strategy-v2.pptx",
+          "type": "pptx",
+          "size_kb": 615,
+          "updated": "2026-04-29",
+          "description": "16-slide PowerPoint: pricing tiers, 10-competitor matrix, SWOT, action plan, metrics dashboard, risk register."
+        },
+        {
+          "title": "Business Strategy v2 — PDF",
+          "path": "/Ramped-Strategy-v2.pdf",
+          "type": "pdf",
+          "size_kb": 343,
+          "updated": "2026-04-29",
+          "description": "Read-only PDF export of the strategy deck — for sharing without PowerPoint."
+        },
+        {
+          "title": "Business Strategy v2 — Markdown source",
+          "path": "/BUSINESS-STRATEGY.md",
+          "type": "markdown",
+          "size_kb": 23,
+          "updated": "2026-04-29",
+          "description": "Full text version: 10 sections, complete competitor matrix, full SWOT, sequenced recommendations."
+        }
+      ]
+    },
+    {
+      "id": "audits",
+      "name": "Audits & Reviews",
+      "description": "Security · visual · mobile · performance audits — kept honest with v1/v2 history",
+      "items": [
+        {
+          "title": "Security Audit — v1 + v2",
+          "path": "/AUDIT.md",
+          "type": "markdown",
+          "updated": "2026-04-29",
+          "description": "OWASP Top 10 review across 22 HTML pages and 31 API endpoints. v2 adds 5 Critical · 8 High · 12 Medium · 6 Low findings + ready-to-apply fix snippets."
+        },
+        {
+          "title": "Visual / UX Audit — v1 + v2",
+          "path": "/VISUAL-AUDIT.md",
+          "type": "markdown",
+          "updated": "2026-04-29",
+          "description": "Nielsen heuristics + premium SaaS comparison. Tier A/B/C action plan. v2 covers protected pages (admin, dashboard, portal) + Lindy/Gumloop competitors."
+        },
+        {
+          "title": "Mobile Audit",
+          "path": "/MOBILE-AUDIT.md",
+          "type": "markdown",
+          "updated": "2026-04-27",
+          "description": "iPhone 12 / 390×844 viewport pass across all customer pages. Critical /comparison fix shipped."
+        }
+      ]
+    },
+    {
+      "id": "ops",
+      "name": "Operations & Architecture",
+      "description": "Persistent rules · deploy guides · architecture docs — read these before changing anything",
+      "items": [
+        {
+          "title": "CLAUDE.md — Persistent rules for AI coworkers",
+          "path": "/CLAUDE.md",
+          "type": "markdown",
+          "updated": "2026-04-27",
+          "description": "Standards every AI/human contributor follows: tokens, fonts, CTA copy, pricing-everywhere rule, security headers, file-handling rules."
+        },
+        {
+          "title": "Client Portal — Plan & Architecture",
+          "path": "/CLIENT-PORTAL-PLAN.md",
+          "type": "markdown",
+          "updated": "2026-04-27",
+          "description": "Why the portal exists, what's in each phase, auth model (HMAC-signed URL tokens), data model for agents/runs/drafts."
+        },
+        {
+          "title": "Deploy Guide — PR 1.5 / 2 / 3 / 5",
+          "path": "/DEPLOY.md",
+          "type": "markdown",
+          "updated": "2026-04-27",
+          "description": "One-shot deploy checklist for the original audit batches. Vercel env, Supabase migrations, smoke test."
+        },
+        {
+          "title": "Deploy Guide — Stripe + Onboarding + Agents",
+          "path": "/DEPLOY-FULL-STACK.md",
+          "type": "markdown",
+          "updated": "2026-04-27",
+          "description": "Stripe setup, webhook config, onboarding bucket, env vars for the full-stack feature ships."
+        },
+        {
+          "title": "README — Project overview",
+          "path": "/README.md",
+          "type": "markdown",
+          "updated": "2026-04-29",
+          "description": "Stack, repo layout, env-var matrix, run instructions, audit pointers, deploy steps."
+        }
+      ]
+    },
+    {
+      "id": "design",
+      "name": "Design & Customer-facing Collateral",
+      "description": "Brand assets · design prompts · public-facing PDFs",
+      "items": [
+        {
+          "title": "Claude Design — Asset prompts",
+          "path": "/CLAUDE-DESIGN-PROMPTS.md",
+          "type": "markdown",
+          "updated": "2026-04-27",
+          "description": "Paste-ready prompts for Claude Design: OG image, favicon, apple-touch-icon, pain illustrations, agent-UI mockup."
+        },
+        {
+          "title": "Ramped one-pager (PDF, customer-facing)",
+          "path": "/assets/ramped-onepager.pdf",
+          "type": "pdf",
+          "updated": "2026-04-25",
+          "description": "Public sales one-pager — used as a leave-behind after discovery calls."
+        },
+        {
+          "title": "Open Graph image (1200×630)",
+          "path": "/og-image.png",
+          "type": "png",
+          "size_kb": 215,
+          "updated": "2026-04-27",
+          "description": "Social-share preview image — shows in LinkedIn / Slack / iMessage cards."
+        },
+        {
+          "title": "Open Graph image @2x (Retina)",
+          "path": "/og-image@2x.png",
+          "type": "png",
+          "size_kb": 566,
+          "updated": "2026-04-27",
+          "description": "Higher-resolution variant for crisp 4K previews."
+        },
+        {
+          "title": "Hero agent-UI screenshot (1280×720)",
+          "path": "/assets/agent-ui.png",
+          "type": "png",
+          "updated": "2026-04-27",
+          "description": "Embedded in homepage hero showcase — the static layer under the V2-B6 live overlay."
+        },
+        {
+          "title": "Email logo bars",
+          "path": "/assets/email-logo-bars.png",
+          "type": "png",
+          "updated": "2026-04-27",
+          "description": "Used in the dark-navy email header across booking confirmation, roadmap, weekly digest, reminders."
+        }
+      ]
+    },
+    {
+      "id": "sales",
+      "name": "Sales & Playbooks",
+      "description": "Talk tracks · objection handling · prospect materials — keep this in lockstep with the homepage",
+      "items": [
+        {
+          "title": "Sales Playbook v1 — Discovery call script",
+          "path": "/SALES-PLAYBOOK.md",
+          "type": "markdown",
+          "size_kb": 5,
+          "updated": "2026-04-29",
+          "description": "Opener · core pitch · concrete example · urgency · the offer · 4 objection responses. Numbers cited match /comparison + homepage — update in lockstep."
+        }
+      ]
+    }
+  ]
+}

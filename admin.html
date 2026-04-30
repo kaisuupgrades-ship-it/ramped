@@ -857,6 +857,7 @@
       <button class="tab-btn"        id="tab-tickets"      onclick="switchTab('tickets')">Tickets (0)</button>
       <button class="tab-btn"        id="tab-availability" onclick="switchTab('availability')">Availability</button>
       <button class="tab-btn"        id="tab-activity"     onclick="switchTab('activity')">Activity</button>
+      <button class="tab-btn"        id="tab-materials"    onclick="switchTab('materials')">Materials</button>
     </div>
 
     <!-- Bookings panel -->
@@ -1026,6 +1027,106 @@
         <div class="empty-state" style="padding:40px;text-align:center;color:var(--muted);">Loading tickets…</div>
       </div>
     </div>
+
+    <!-- Materials panel — internal library (repo manifest + admin uploads via /api/admin-materials) -->
+    <div class="tab-panel" id="panel-materials">
+      <div class="materials-intro">
+        <div>
+          <p class="mat-eyebrow">INTERNAL LIBRARY</p>
+          <p class="mat-headline">Every doc, deck, and asset Ramped has shipped.</p>
+          <p class="mat-sub"><strong style="color:var(--ink);">Repo items</strong> (audits, strategy docs) come from <code>materials.json</code> — read-only, version-controlled in git. <strong style="color:var(--ink);">Uploads</strong> are anything you drag in here — full edit/delete control.</p>
+        </div>
+        <div class="materials-actions">
+          <button class="btn-action" onclick="openUploadModal()" style="background:var(--accent);color:#fff;border-color:var(--accent);">+ Upload</button>
+          <button class="btn-action" onclick="loadMaterials(true)" title="Re-fetch the library">↻ Refresh</button>
+        </div>
+      </div>
+
+      <!-- Drag-drop zone — visible when no drag is active, becomes a target on drag-over -->
+      <div id="mat-dropzone" class="mat-dropzone" tabindex="0"
+           role="button" aria-label="Drag files here or click to browse"
+           onclick="document.getElementById('mat-fileinput').click()"
+           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('mat-fileinput').click();}">
+        <span class="mat-dropzone-icon" aria-hidden="true">⬆</span>
+        <span class="mat-dropzone-text"><strong>Drag a file here</strong> or click to browse · Max 25 MB · PDF, PPTX, DOCX, XLSX, PNG, JPG, MD, JSON, ZIP</span>
+        <input type="file" id="mat-fileinput" style="display:none;" onchange="onMatFileChosen(event)">
+      </div>
+
+      <div id="materials-grid" style="margin-top:18px;">
+        <div class="empty-state" style="padding:40px;text-align:center;color:var(--muted);">Loading materials…</div>
+      </div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div class="modal-overlay" id="mat-upload-modal" onclick="if(event.target===this)closeUploadModal()">
+      <div class="modal-card">
+        <button class="btn-close-modal" onclick="closeUploadModal()">&times;</button>
+        <h2 id="mat-upload-title">Upload to library</h2>
+        <form id="mat-upload-form" onsubmit="event.preventDefault();submitMatUpload();">
+          <div class="modal-field">
+            <label>File *</label>
+            <div id="mat-upload-filename" style="padding:9px 12px;background:var(--surface);border:1px dashed var(--line);border-radius:8px;font-size:13px;color:var(--muted);">No file selected</div>
+          </div>
+          <div class="modal-field">
+            <label>Title *</label>
+            <input id="mat-upload-title-input" required maxlength="200" placeholder="e.g. Q3 Board Update">
+          </div>
+          <div class="modal-field">
+            <label>Description</label>
+            <textarea id="mat-upload-desc" rows="2" maxlength="1000" placeholder="One-line description of what this is and when to use it."></textarea>
+          </div>
+          <div class="modal-field">
+            <label>Category *</label>
+            <select id="mat-upload-cat" required>
+              <option value="strategy">Strategy &amp; Business</option>
+              <option value="audits">Audits &amp; Reviews</option>
+              <option value="ops">Operations &amp; Architecture</option>
+              <option value="design">Design &amp; Customer-facing Collateral</option>
+              <option value="sales">Sales &amp; Playbooks</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div id="mat-upload-error" style="display:none;color:#dc2626;font-size:13px;margin-top:8px;"></div>
+          <div id="mat-upload-progress" style="display:none;margin-top:10px;font-size:12px;color:var(--muted);">
+            <div style="height:6px;background:var(--surface);border-radius:3px;overflow:hidden;"><div id="mat-upload-bar" style="height:100%;background:var(--accent);width:0%;transition:width .2s;"></div></div>
+            <div id="mat-upload-status" style="margin-top:6px;">Uploading…</div>
+          </div>
+          <div class="modal-actions">
+            <button type="submit" class="btn-primary" id="mat-upload-submit" style="margin-top:0;flex:1;">Upload</button>
+            <button type="button" class="btn-signout" onclick="closeUploadModal()" style="margin-top:0;">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal-overlay" id="mat-edit-modal" onclick="if(event.target===this)closeEditModal()">
+      <div class="modal-card">
+        <button class="btn-close-modal" onclick="closeEditModal()">&times;</button>
+        <h2>Edit material</h2>
+        <form id="mat-edit-form" onsubmit="event.preventDefault();submitMatEdit();">
+          <input type="hidden" id="mat-edit-id">
+          <div class="modal-field"><label>Title *</label><input id="mat-edit-title" required maxlength="200"></div>
+          <div class="modal-field"><label>Description</label><textarea id="mat-edit-desc" rows="2" maxlength="1000"></textarea></div>
+          <div class="modal-field">
+            <label>Category</label>
+            <select id="mat-edit-cat">
+              <option value="strategy">Strategy &amp; Business</option>
+              <option value="audits">Audits &amp; Reviews</option>
+              <option value="ops">Operations &amp; Architecture</option>
+              <option value="design">Design &amp; Customer-facing Collateral</option>
+              <option value="sales">Sales &amp; Playbooks</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div id="mat-edit-error" style="display:none;color:#dc2626;font-size:13px;margin-top:8px;"></div>
+          <div class="modal-actions">
+            <button type="submit" class="btn-primary" style="margin-top:0;flex:1;">Save</button>
+            <button type="button" class="btn-signout" onclick="closeEditModal()" style="margin-top:0;">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1052,6 +1153,66 @@
   .ticket-reply textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(31,79,255,0.1);}
   .ticket-reply-actions{display:flex;gap:8px;align-items:center;}
   .ticket-reply-actions label{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;cursor:pointer;}
+
+  /* ── Materials tab — internal library ──────────────────────────────────── */
+  .materials-intro{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;padding:20px 22px;background:#fff;border:1px solid var(--line);border-radius:12px;flex-wrap:wrap;}
+  .materials-intro .mat-eyebrow{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);}
+  .materials-intro .mat-headline{margin:0 0 6px;font-size:18px;font-weight:700;color:var(--ink);letter-spacing:-0.01em;}
+  .materials-intro .mat-sub{margin:0;font-size:13px;color:var(--muted);max-width:680px;line-height:1.55;}
+  .materials-intro .mat-sub code{background:var(--surface);padding:1px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink);}
+  .materials-actions{display:flex;gap:8px;flex-shrink:0;}
+  .materials-actions .btn-action{display:inline-flex;align-items:center;gap:4px;text-decoration:none;}
+
+  .mat-cat{margin-top:24px;}
+  .mat-cat-head{display:flex;align-items:baseline;gap:12px;margin:0 0 12px;padding:0 4px;}
+  .mat-cat-head h3{margin:0;font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink);}
+  .mat-cat-head .mat-cat-count{font-size:11px;font-weight:600;color:var(--muted);font-family:'JetBrains Mono',monospace;background:var(--surface);padding:2px 8px;border-radius:10px;}
+  .mat-cat-head .mat-cat-desc{font-size:12.5px;color:var(--muted);margin-left:auto;font-style:italic;}
+  .mat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;}
+  .mat-card{display:flex;flex-direction:column;gap:6px;padding:16px 18px;background:#fff;border:1px solid var(--line);border-radius:10px;transition:border-color .15s,transform .15s,box-shadow .15s;}
+  .mat-card:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:0 6px 18px -8px rgba(11,18,32,0.12);}
+  .mat-card-head{display:flex;align-items:flex-start;gap:10px;}
+  .mat-type-pill{flex-shrink:0;padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;border:1px solid;}
+  .mat-type-pill.markdown{background:var(--surface);color:var(--muted);border-color:var(--line);}
+  .mat-type-pill.pptx{background:#FEF3C7;color:#92400E;border-color:#F5C842;}
+  .mat-type-pill.pdf{background:#FEE2E2;color:#991B1B;border-color:#FCA5A5;}
+  .mat-type-pill.png,.mat-type-pill.jpg,.mat-type-pill.svg{background:#EEF3FF;color:#1a56db;border-color:#C7D2FE;}
+  .mat-card-title{font-size:14px;font-weight:600;color:var(--ink);line-height:1.35;flex:1;}
+  .mat-card-desc{font-size:12.5px;color:var(--muted);line-height:1.5;}
+  .mat-card-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px;padding-top:10px;border-top:1px solid var(--line);}
+  .mat-card-meta{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+  .mat-card-actions{display:flex;gap:6px;}
+  .mat-card-link{display:inline-flex;align-items:center;gap:4px;padding:5px 10px;font-size:12px;font-weight:600;color:var(--accent);background:#EEF3FF;border:1px solid #C7D2FE;border-radius:6px;text-decoration:none;}
+  .mat-card-link:hover{background:var(--accent);color:#fff;}
+  .mat-card-link.secondary{background:#fff;color:var(--ink);border-color:var(--line);}
+  .mat-card-link.secondary:hover{background:var(--ink);color:#fff;border-color:var(--ink);}
+  @media (max-width:640px){
+    .materials-intro{flex-direction:column;align-items:stretch;}
+    .materials-actions{justify-content:flex-start;}
+    .mat-grid{grid-template-columns:1fr;}
+  }
+
+  /* Drop-zone */
+  .mat-dropzone{margin-top:14px;padding:22px 20px;background:var(--surface);border:2px dashed var(--line);border-radius:12px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:border-color .15s,background .15s;}
+  .mat-dropzone:hover,.mat-dropzone:focus{outline:none;border-color:var(--accent);background:#EEF3FF;}
+  .mat-dropzone.drag-over{border-color:var(--accent);background:#EEF3FF;border-style:solid;}
+  .mat-dropzone-icon{flex-shrink:0;width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;}
+  .mat-dropzone-text{font-size:13px;color:var(--ink);line-height:1.5;}
+  .mat-dropzone-text strong{color:var(--ink);}
+
+  /* Source pill (REPO / UPLOADED) */
+  .mat-source-pill{flex-shrink:0;padding:1px 7px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:0.06em;font-family:'JetBrains Mono',monospace;border:1px solid;align-self:flex-start;margin-top:1px;}
+  .mat-source-pill.repo{background:var(--surface);color:var(--muted);border-color:var(--line);}
+  .mat-source-pill.upload{background:#ECFDF5;color:#065F46;border-color:#A7F3D0;}
+
+  /* Card buttons (uploads have Edit + Delete; reuse mat-card-link styles, add danger variant + cursor) */
+  .mat-card-link{cursor:pointer;font-family:inherit;}
+  .mat-card-link.danger{background:#FEE2E2;color:#991B1B;border:1px solid #FCA5A5;}
+  .mat-card-link.danger:hover{background:#991B1B;color:#fff;border-color:#991B1B;}
+  button.mat-card-link{font-size:12px;}
+
+  /* Edit/upload modal styling — reuses booking-modal styles via .modal-overlay/.modal-card */
+  #mat-upload-modal,#mat-edit-modal{display:none;}
 </style>
 
 <script>
@@ -1205,6 +1366,309 @@
     if (name === 'availability') loadAvailability();
     if (name === 'activity') loadActivityData();
     if (name === 'tickets') loadTickets();
+    if (name === 'materials') loadMaterials();
+  }
+
+  // ── Materials tab — internal library backed by /api/admin-materials ──────
+  // Combines repo-sourced items (read-only, from materials.json) with admin
+  // uploads (full CRUD, in material_uploads table + Supabase Storage bucket).
+  const MAT_CATS = {
+    strategy: { name: 'Strategy & Business',                 desc: 'Internal strategic docs · audits · benchmark assets' },
+    audits:   { name: 'Audits & Reviews',                    desc: 'Security · visual · mobile · performance reviews' },
+    ops:      { name: 'Operations & Architecture',           desc: 'Persistent rules · deploy guides · architecture docs' },
+    design:   { name: 'Design & Customer-facing Collateral', desc: 'Brand assets · design prompts · public-facing PDFs' },
+    sales:    { name: 'Sales & Playbooks',                   desc: 'Talk tracks · objection handling · prospect materials' },
+    other:    { name: 'Other',                               desc: 'Unscoped — categorize when convenient' },
+  };
+  let _materialsItems = [];
+
+  async function loadMaterials(force) {
+    const grid = document.getElementById('materials-grid');
+    if (!grid) return;
+    if (!force && _materialsItems.length) {
+      renderMaterials(_materialsItems);
+      return;
+    }
+    grid.innerHTML = '<div class="empty-state" style="padding:40px;text-align:center;color:var(--muted);">Loading materials…</div>';
+    try {
+      const r = await adminFetch('/api/admin-materials');
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const data = await r.json();
+      _materialsItems = Array.isArray(data.items) ? data.items : [];
+      renderMaterials(_materialsItems);
+    } catch (err) {
+      grid.innerHTML = '<div class="empty-state" style="padding:40px;text-align:center;color:var(--danger);">Failed to load materials: ' + esc(err.message) + '</div>';
+    }
+  }
+
+  function renderMaterials(items) {
+    const grid = document.getElementById('materials-grid');
+    if (!grid) return;
+    if (!items.length) {
+      grid.innerHTML = '<div class="empty-state" style="padding:40px;text-align:center;color:var(--muted);">No materials yet. Drop a file in the upload zone above to add one.</div>';
+      return;
+    }
+    // Group by category
+    const groups = {};
+    items.forEach(it => {
+      const k = it.category || 'other';
+      (groups[k] = groups[k] || []).push(it);
+    });
+    const order = ['strategy', 'audits', 'ops', 'design', 'sales', 'other'];
+    const html = order.filter(k => groups[k] && groups[k].length).map(k => {
+      const cat = MAT_CATS[k] || { name: k, desc: '' };
+      const cards = groups[k].map(matCardHTML).join('');
+      return (
+        '<section class="mat-cat" data-cat="' + esc(k) + '">' +
+          '<header class="mat-cat-head">' +
+            '<h3>' + esc(cat.name) + '</h3>' +
+            '<span class="mat-cat-count">' + groups[k].length + ' item' + (groups[k].length === 1 ? '' : 's') + '</span>' +
+            (cat.desc ? '<span class="mat-cat-desc">' + esc(cat.desc) + '</span>' : '') +
+          '</header>' +
+          '<div class="mat-grid">' + cards + '</div>' +
+        '</section>'
+      );
+    }).join('');
+    grid.innerHTML = html;
+  }
+
+  function matCardHTML(it) {
+    const t = (it.type_pill || 'file').toLowerCase();
+    const meta = [];
+    if (it.updated_at) {
+      const d = String(it.updated_at).slice(0, 10);
+      meta.push('Updated ' + esc(d));
+    }
+    if (typeof it.size_bytes === 'number' && it.size_bytes > 0) {
+      meta.push(esc(Math.round(it.size_bytes / 1024)) + ' KB');
+    }
+    if (it.source === 'repo') meta.push('repo');
+
+    const opensInBrowser = ['markdown', 'md', 'txt', 'json', 'png', 'jpg', 'jpeg', 'svg', 'pdf', 'gif', 'webp'].includes(t);
+    let openHref = '#';
+    let downloadAction = '';
+    if (it.source === 'repo') {
+      openHref = '/' + String(it.path || '').replace(/^\//, '');
+      downloadAction = 'href="' + esc(openHref) + '" download';
+    } else {
+      // upload: must fetch a signed URL on click
+      openHref = "javascript:void(0)";
+      downloadAction = 'href="javascript:void(0)" onclick="downloadUpload(\'' + esc(it.id) + '\');return false;"';
+    }
+    const repoBadge = it.source === 'repo'
+      ? '<span class="mat-source-pill repo" title="Repo-committed file (edit via materials.json)">REPO</span>'
+      : '<span class="mat-source-pill upload" title="Uploaded from admin">UPLOADED</span>';
+    const actions = it.source === 'upload'
+      ? ('<button class="mat-card-link secondary" onclick="openEditModal(\'' + esc(it.id) + '\')">✎ Edit</button>' +
+         '<button class="mat-card-link danger" onclick="deleteUpload(\'' + esc(it.id) + '\', ' + JSON.stringify(it.title || '') + ')">✕ Delete</button>')
+      : '';
+    return (
+      '<div class="mat-card" data-id="' + esc(it.id) + '" data-source="' + esc(it.source) + '">' +
+        '<div class="mat-card-head">' +
+          '<span class="mat-type-pill ' + esc(t) + '">' + esc(t) + '</span>' +
+          '<div class="mat-card-title">' + esc(it.title || '(untitled)') + '</div>' +
+          repoBadge +
+        '</div>' +
+        (it.description ? '<div class="mat-card-desc">' + esc(it.description) + '</div>' : '') +
+        '<div class="mat-card-foot">' +
+          '<span class="mat-card-meta">' + meta.join(' · ') + '</span>' +
+          '<span class="mat-card-actions">' +
+            (it.source === 'repo' && opensInBrowser
+              ? '<a class="mat-card-link" href="' + esc(openHref) + '" target="_blank" rel="noopener">Open ↗</a>'
+              : (it.source === 'upload'
+                  ? '<button class="mat-card-link" onclick="downloadUpload(\'' + esc(it.id) + '\', true)">Open ↗</button>'
+                  : '')) +
+            (it.source === 'repo'
+              ? '<a class="mat-card-link secondary" ' + downloadAction + '>↓ Download</a>'
+              : '<button class="mat-card-link secondary" onclick="downloadUpload(\'' + esc(it.id) + '\')">↓ Download</button>') +
+            actions +
+          '</span>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  // ── Upload flow ───────────────────────────────────────────────────────────
+  let _matPendingFile = null;
+  function openUploadModal(file) {
+    _matPendingFile = file || null;
+    const fnEl = document.getElementById('mat-upload-filename');
+    fnEl.textContent = file ? (file.name + ' · ' + Math.round(file.size / 1024) + ' KB') : 'No file selected';
+    document.getElementById('mat-upload-title-input').value = file ? file.name.replace(/\.[^.]+$/, '') : '';
+    document.getElementById('mat-upload-desc').value = '';
+    document.getElementById('mat-upload-cat').value = guessCategory(file ? file.name : '');
+    document.getElementById('mat-upload-error').style.display = 'none';
+    document.getElementById('mat-upload-progress').style.display = 'none';
+    document.getElementById('mat-upload-bar').style.width = '0%';
+    document.getElementById('mat-upload-submit').disabled = false;
+    document.getElementById('mat-upload-submit').textContent = 'Upload';
+    document.getElementById('mat-upload-modal').style.display = 'flex';
+    setTimeout(() => document.getElementById('mat-upload-title-input').focus(), 60);
+  }
+  function closeUploadModal() {
+    document.getElementById('mat-upload-modal').style.display = 'none';
+    _matPendingFile = null;
+    document.getElementById('mat-fileinput').value = '';
+  }
+  function guessCategory(filename) {
+    const f = (filename || '').toLowerCase();
+    if (/audit/.test(f)) return 'audits';
+    if (/strategy|business|deck|pitch|onepager/.test(f)) return 'strategy';
+    if (/deploy|setup|claude|portal|readme|architecture|migration/.test(f)) return 'ops';
+    if (/og-|favicon|logo|brand|design|email|hero|banner|illustration/.test(f)) return 'design';
+    if (/sales|playbook|objection|talk-?track|script|opener/.test(f)) return 'sales';
+    return 'other';
+  }
+  function onMatFileChosen(ev) {
+    const f = ev.target.files && ev.target.files[0];
+    if (!f) return;
+    if (f.size > 25 * 1024 * 1024) { alert('File exceeds 25 MB.'); ev.target.value = ''; return; }
+    openUploadModal(f);
+  }
+  async function submitMatUpload() {
+    const errEl = document.getElementById('mat-upload-error');
+    const progEl = document.getElementById('mat-upload-progress');
+    const barEl = document.getElementById('mat-upload-bar');
+    const statusEl = document.getElementById('mat-upload-status');
+    const submitBtn = document.getElementById('mat-upload-submit');
+    errEl.style.display = 'none';
+    if (!_matPendingFile) { errEl.textContent = 'No file selected.'; errEl.style.display = 'block'; return; }
+    const title = document.getElementById('mat-upload-title-input').value.trim();
+    const desc = document.getElementById('mat-upload-desc').value.trim();
+    const category = document.getElementById('mat-upload-cat').value;
+    if (!title) { errEl.textContent = 'Title is required.'; errEl.style.display = 'block'; return; }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Initializing…';
+    progEl.style.display = 'block';
+    barEl.style.width = '4%';
+    statusEl.textContent = 'Requesting signed URL…';
+
+    try {
+      // Step 1: init — creates the row + signed PUT URL
+      const initR = await adminFetch('/api/admin-materials', {
+        method: 'POST',
+        body: JSON.stringify({
+          category, title, description: desc,
+          filename: _matPendingFile.name,
+          mime: _matPendingFile.type || 'application/octet-stream',
+          size_bytes: _matPendingFile.size,
+        }),
+      });
+      const initJ = await initR.json();
+      if (!initR.ok) throw new Error(initJ.error || ('Init failed: ' + initR.status));
+
+      // Step 2: PUT the file directly to Supabase Storage
+      barEl.style.width = '20%';
+      statusEl.textContent = 'Uploading to storage…';
+      const putR = await fetch(initJ.uploadUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': _matPendingFile.type || 'application/octet-stream' },
+        body: _matPendingFile,
+      });
+      if (!putR.ok) throw new Error('Storage upload failed: ' + putR.status + ' (the metadata row was created — refresh to delete it)');
+
+      barEl.style.width = '100%';
+      statusEl.textContent = 'Done.';
+      submitBtn.textContent = '✓ Uploaded';
+      setTimeout(() => {
+        closeUploadModal();
+        loadMaterials(true);
+      }, 600);
+    } catch (err) {
+      errEl.textContent = err.message || String(err);
+      errEl.style.display = 'block';
+      progEl.style.display = 'none';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Upload';
+    }
+  }
+
+  // ── Drag-drop handlers (window-wide so the user can drop anywhere on the panel) ──
+  (function setupDropzone() {
+    const dz = document.getElementById('mat-dropzone');
+    if (!dz) return;
+    function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+    ['dragenter','dragover','dragleave','drop'].forEach(evt => {
+      dz.addEventListener(evt, preventDefaults, false);
+    });
+    ['dragenter','dragover'].forEach(evt => dz.addEventListener(evt, () => dz.classList.add('drag-over')));
+    ['dragleave','drop'].forEach(evt => dz.addEventListener(evt, () => dz.classList.remove('drag-over')));
+    dz.addEventListener('drop', (e) => {
+      const files = e.dataTransfer && e.dataTransfer.files;
+      if (!files || !files.length) return;
+      const f = files[0];
+      if (f.size > 25 * 1024 * 1024) { alert('File exceeds 25 MB.'); return; }
+      openUploadModal(f);
+    });
+  })();
+
+  // ── Edit / delete / download flows ────────────────────────────────────────
+  function openEditModal(id) {
+    const it = _materialsItems.find(x => x.id === id);
+    if (!it) return;
+    document.getElementById('mat-edit-id').value = id;
+    document.getElementById('mat-edit-title').value = it.title || '';
+    document.getElementById('mat-edit-desc').value = it.description || '';
+    document.getElementById('mat-edit-cat').value = it.category || 'other';
+    document.getElementById('mat-edit-error').style.display = 'none';
+    document.getElementById('mat-edit-modal').style.display = 'flex';
+    setTimeout(() => document.getElementById('mat-edit-title').focus(), 60);
+  }
+  function closeEditModal() { document.getElementById('mat-edit-modal').style.display = 'none'; }
+  async function submitMatEdit() {
+    const id = document.getElementById('mat-edit-id').value;
+    const errEl = document.getElementById('mat-edit-error');
+    errEl.style.display = 'none';
+    try {
+      const r = await adminFetch('/api/admin-materials?id=' + encodeURIComponent(id), {
+        method: 'PATCH',
+        body: JSON.stringify({
+          title: document.getElementById('mat-edit-title').value.trim(),
+          description: document.getElementById('mat-edit-desc').value.trim(),
+          category: document.getElementById('mat-edit-cat').value,
+        }),
+      });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error || ('Update failed: ' + r.status));
+      closeEditModal();
+      loadMaterials(true);
+    } catch (err) {
+      errEl.textContent = err.message || String(err);
+      errEl.style.display = 'block';
+    }
+  }
+  async function deleteUpload(id, title) {
+    const ok = await confirmDialog('Delete <strong>' + esc(title || 'this material') + '</strong>?<br><br>The file is removed from storage. This action cannot be undone.');
+    if (!ok) return;
+    try {
+      const r = await adminFetch('/api/admin-materials?id=' + encodeURIComponent(id), { method: 'DELETE' });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error || ('Delete failed: ' + r.status));
+      loadMaterials(true);
+    } catch (err) {
+      alert('Failed to delete: ' + err.message);
+    }
+  }
+  async function downloadUpload(id, openInTab) {
+    try {
+      const r = await adminFetch('/api/admin-materials?id=' + encodeURIComponent(id) + '&action=download');
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error || ('Could not get URL: ' + r.status));
+      if (openInTab) {
+        window.open(j.url, '_blank', 'noopener');
+      } else {
+        // trigger a real download via a temporary anchor
+        const a = document.createElement('a');
+        a.href = j.url;
+        a.download = j.filename || '';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
+    } catch (err) {
+      alert('Failed: ' + err.message);
+    }
   }
 
   // ── Helpers ──────────────────────────────────────────────────────────────────
