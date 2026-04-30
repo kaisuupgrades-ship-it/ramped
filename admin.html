@@ -1037,6 +1037,16 @@
           <p class="mat-sub"><strong style="color:var(--ink);">Repo items</strong> (audits, strategy docs) come from <code>materials.json</code> — read-only, version-controlled in git. <strong style="color:var(--ink);">Uploads</strong> are anything you drag in here — full edit/delete control.</p>
         </div>
         <div class="materials-actions">
+          <div class="mat-view-toggle" role="group" aria-label="View mode">
+            <button type="button" class="mat-view-btn" data-view="grid" onclick="setMatView('grid')" title="Grid view" aria-label="Grid view">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><rect x="1" y="1" width="5" height="5" rx="1" fill="currentColor"/><rect x="8" y="1" width="5" height="5" rx="1" fill="currentColor"/><rect x="1" y="8" width="5" height="5" rx="1" fill="currentColor"/><rect x="8" y="8" width="5" height="5" rx="1" fill="currentColor"/></svg>
+              <span>Grid</span>
+            </button>
+            <button type="button" class="mat-view-btn" data-view="list" onclick="setMatView('list')" title="List view" aria-label="List view">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><rect x="1" y="2" width="2" height="2" rx="0.5" fill="currentColor"/><rect x="5" y="2.5" width="8" height="1" rx="0.5" fill="currentColor"/><rect x="1" y="6" width="2" height="2" rx="0.5" fill="currentColor"/><rect x="5" y="6.5" width="8" height="1" rx="0.5" fill="currentColor"/><rect x="1" y="10" width="2" height="2" rx="0.5" fill="currentColor"/><rect x="5" y="10.5" width="8" height="1" rx="0.5" fill="currentColor"/></svg>
+              <span>List</span>
+            </button>
+          </div>
           <button class="btn-action" onclick="openUploadModal()" style="background:var(--accent);color:#fff;border-color:var(--accent);">+ Upload</button>
           <button class="btn-action" onclick="loadMaterials(true)" title="Re-fetch the library">↻ Refresh</button>
         </div>
@@ -1190,6 +1200,37 @@
     .materials-intro{flex-direction:column;align-items:stretch;}
     .materials-actions{justify-content:flex-start;}
     .mat-grid{grid-template-columns:1fr;}
+  }
+
+  /* View-mode toggle (Grid / List) — segmented-control style */
+  .mat-view-toggle{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:8px;background:#fff;padding:2px;gap:0;}
+  .mat-view-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;font-size:12px;font-weight:600;color:var(--muted);background:transparent;border:none;border-radius:6px;cursor:pointer;font-family:inherit;}
+  .mat-view-btn:hover{color:var(--ink);}
+  .mat-view-btn.active{background:var(--ink);color:#fff;}
+  .mat-view-btn svg{flex-shrink:0;}
+
+  /* List view — dense single-column rows; sections (categories) preserved */
+  .mat-grid.list-view{display:flex;flex-direction:column;gap:0;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .mat-grid.list-view .mat-row{display:grid;grid-template-columns:48px minmax(0,1fr) 130px 110px 70px auto;gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);font-size:13px;}
+  .mat-grid.list-view .mat-row:last-child{border-bottom:none;}
+  .mat-grid.list-view .mat-row:hover{background:var(--surface);}
+  .mat-grid.list-view .mat-row.head{background:var(--surface);font-size:10.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);padding:8px 16px;}
+  .mat-grid.list-view .mat-row.head > div{padding:0;}
+  .mat-list-type{display:inline-flex;justify-content:center;}
+  .mat-list-title{display:flex;flex-direction:column;gap:2px;min-width:0;}
+  .mat-list-title-line{display:flex;align-items:center;gap:8px;}
+  .mat-list-title-line strong{font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .mat-list-desc{font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .mat-list-cat{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+  .mat-list-meta{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;white-space:nowrap;}
+  .mat-list-actions{display:inline-flex;gap:4px;justify-content:flex-end;}
+  .mat-list-actions .mat-card-link{padding:4px 8px;font-size:11.5px;}
+  @media (max-width:900px){
+    .mat-grid.list-view .mat-row{grid-template-columns:32px minmax(0,1fr) auto;gap:10px;}
+    .mat-grid.list-view .mat-row .mat-list-cat,
+    .mat-grid.list-view .mat-row .mat-list-meta{display:none;}
+    .mat-grid.list-view .mat-row.head > .mat-list-cat,
+    .mat-grid.list-view .mat-row.head > .mat-list-meta{display:none;}
   }
 
   /* Drop-zone */
@@ -1372,6 +1413,22 @@
   // ── Materials tab — internal library backed by /api/admin-materials ──────
   // Combines repo-sourced items (read-only, from materials.json) with admin
   // uploads (full CRUD, in material_uploads table + Supabase Storage bucket).
+  // View modes: 'grid' (cards) | 'list' (dense rows). Persisted in localStorage.
+  const MAT_VIEW_KEY = 'ramped_materials_view';
+  function getMatView() {
+    try { return localStorage.getItem(MAT_VIEW_KEY) === 'list' ? 'list' : 'grid'; } catch (_) { return 'grid'; }
+  }
+  function setMatView(mode) {
+    const next = mode === 'list' ? 'list' : 'grid';
+    try { localStorage.setItem(MAT_VIEW_KEY, next); } catch (_) {}
+    // Update toggle button active state
+    document.querySelectorAll('.mat-view-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.view === next);
+    });
+    // Re-render with the new mode
+    if (_materialsItems.length) renderMaterials(_materialsItems);
+  }
+
   const MAT_CATS = {
     strategy: { name: 'Strategy & Business',                 desc: 'Internal strategic docs · audits · benchmark assets' },
     audits:   { name: 'Audits & Reviews',                    desc: 'Security · visual · mobile · performance reviews' },
@@ -1385,6 +1442,12 @@
   async function loadMaterials(force) {
     const grid = document.getElementById('materials-grid');
     if (!grid) return;
+    // Sync the view-mode toggle on first show (defensive — covers the case
+    // where the user opens the Materials tab before any render has run).
+    const view = getMatView();
+    document.querySelectorAll('.mat-view-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.view === view);
+    });
     if (!force && _materialsItems.length) {
       renderMaterials(_materialsItems);
       return;
@@ -1419,6 +1482,11 @@
       grid.innerHTML = '<div class="empty-state" style="padding:40px;text-align:center;color:var(--muted);">No materials yet. Drop a file in the upload zone above to add one.</div>';
       return;
     }
+    const view = getMatView();
+    // Sync toggle buttons in case render fires before init (defensive)
+    document.querySelectorAll('.mat-view-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.view === view);
+    });
     // Group by category
     const groups = {};
     items.forEach(it => {
@@ -1428,7 +1496,12 @@
     const order = ['strategy', 'audits', 'ops', 'design', 'sales', 'other'];
     const html = order.filter(k => groups[k] && groups[k].length).map(k => {
       const cat = MAT_CATS[k] || { name: k, desc: '' };
-      const cards = groups[k].map(matCardHTML).join('');
+      const body = view === 'list'
+        ? ('<div class="mat-grid list-view">' +
+             '<div class="mat-row head"><div></div><div>Title</div><div class="mat-list-cat">Source</div><div class="mat-list-meta">Updated</div><div class="mat-list-meta">Size</div><div></div></div>' +
+             groups[k].map(matRowHTML).join('') +
+           '</div>')
+        : ('<div class="mat-grid">' + groups[k].map(matCardHTML).join('') + '</div>');
       return (
         '<section class="mat-cat" data-cat="' + esc(k) + '">' +
           '<header class="mat-cat-head">' +
@@ -1436,11 +1509,50 @@
             '<span class="mat-cat-count">' + groups[k].length + ' item' + (groups[k].length === 1 ? '' : 's') + '</span>' +
             (cat.desc ? '<span class="mat-cat-desc">' + esc(cat.desc) + '</span>' : '') +
           '</header>' +
-          '<div class="mat-grid">' + cards + '</div>' +
+          body +
         '</section>'
       );
     }).join('');
     grid.innerHTML = html;
+  }
+
+  // ── List-view row renderer ────────────────────────────────────────────────
+  // Dense horizontal layout: [type pill] · title + 1-line desc · source · updated · size · actions
+  function matRowHTML(it) {
+    const t = (it.type_pill || 'file').toLowerCase();
+    const updated = it.updated_at ? String(it.updated_at).slice(0, 10) : '—';
+    const size = (typeof it.size_bytes === 'number' && it.size_bytes > 0)
+      ? Math.round(it.size_bytes / 1024) + ' KB'
+      : '—';
+    const sourceLabel = it.source === 'repo' ? 'repo' : 'upload';
+
+    // Action buttons mirror the card view
+    let actions = '';
+    if (it.source === 'repo') {
+      const url = '/' + String(it.path || '').replace(/^\//, '');
+      const opensInBrowser = ['markdown', 'md', 'txt', 'json', 'png', 'jpg', 'jpeg', 'svg', 'pdf', 'gif', 'webp'].includes(t);
+      if (opensInBrowser) actions += '<a class="mat-card-link" href="' + esc(url) + '" target="_blank" rel="noopener">Open ↗</a>';
+      actions += '<a class="mat-card-link secondary" href="' + esc(url) + '" download>↓</a>';
+    } else {
+      actions += '<button class="mat-card-link" onclick="downloadUpload(\'' + esc(it.id) + '\', true)">Open ↗</button>';
+      actions += '<button class="mat-card-link secondary" onclick="downloadUpload(\'' + esc(it.id) + '\')">↓</button>';
+      actions += '<button class="mat-card-link secondary" onclick="openEditModal(\'' + esc(it.id) + '\')" title="Edit">✎</button>';
+      actions += '<button class="mat-card-link danger" onclick="deleteUpload(\'' + esc(it.id) + '\', ' + JSON.stringify(it.title || '') + ')" title="Delete">✕</button>';
+    }
+
+    return (
+      '<div class="mat-row" data-id="' + esc(it.id) + '">' +
+        '<div class="mat-list-type"><span class="mat-type-pill ' + esc(t) + '">' + esc(t) + '</span></div>' +
+        '<div class="mat-list-title">' +
+          '<div class="mat-list-title-line"><strong>' + esc(it.title || '(untitled)') + '</strong></div>' +
+          (it.description ? '<div class="mat-list-desc">' + esc(it.description) + '</div>' : '') +
+        '</div>' +
+        '<div class="mat-list-cat">' + esc(sourceLabel) + '</div>' +
+        '<div class="mat-list-meta">' + esc(updated) + '</div>' +
+        '<div class="mat-list-meta">' + esc(size) + '</div>' +
+        '<div class="mat-list-actions">' + actions + '</div>' +
+      '</div>'
+    );
   }
 
   function matCardHTML(it) {

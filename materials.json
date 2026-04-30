@@ -8,6 +8,22 @@
       "description": "Internal strategic docs · audits · benchmark assets",
       "items": [
         {
+          "title": "Roadmap — 1-week / 30-day / quarter punchlist",
+          "path": "/ROADMAP.md",
+          "type": "markdown",
+          "size_kb": 12,
+          "updated": "2026-04-29",
+          "description": "Prioritized backlog synthesized from all 4 audit docs. Every item has effort + source + definition-of-done. Single highest-leverage move: senior implementation manager hire (Q1)."
+        },
+        {
+          "title": "Audit v2 — Consolidated changelog (commit-style summary across all 5 phases)",
+          "path": "/CHANGELOG-AUDIT-V2.md",
+          "type": "markdown",
+          "size_kb": 11,
+          "updated": "2026-04-29",
+          "description": "Walks through every file touched in the engagement, organized by phase. ~70 files, ~2,800 lines, 3 SQL migrations, 1 strategy deck, 139 Playwright tests. Useful as a release-notes artifact."
+        },
+        {
           "title": "Business Strategy v2 — Slide deck",
           "path": "/Ramped-Strategy-v2.pptx",
           "type": "pptx",

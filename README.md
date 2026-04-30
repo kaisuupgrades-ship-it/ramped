@@ -145,7 +145,9 @@ See `DEPLOY.md` and `DEPLOY-FULL-STACK.md` for per-feature step-by-steps.
 
 ## Roadmap
 
-The 1/2/4-week prioritized backlog lives in [ROADMAP.md](./ROADMAP.md). Phase 5 of the 2026-04-29 audit pass writes that file; until then, the audit `Open issues` table is the source of truth.
+The 1-week / 30-day / quarter prioritized backlog lives in **[ROADMAP.md](./ROADMAP.md)** — pulls every open item from `AUDIT.md`, `VISUAL-AUDIT.md`, `MOBILE-AUDIT.md`, and `BUSINESS-STRATEGY.md` with effort estimates, source citations, and definitions of done.
+
+For a consolidated walk-through of everything that shipped during the 5-phase audit/strategy engagement (~70 files, ~2,800 lines, 3 SQL migrations, 1 strategy deck, 139 Playwright tests), see **[CHANGELOG-AUDIT-V2.md](./CHANGELOG-AUDIT-V2.md)**.
 
 ## Conventions
 

@@ -21,5 +21,7 @@ Disallow: /README.md
 Disallow: /Ramped-Strategy-v2.pptx
 Disallow: /Ramped-Strategy-v2.pdf
 Disallow: /SALES-PLAYBOOK.md
+Disallow: /ROADMAP.md
+Disallow: /CHANGELOG-AUDIT-V2.md
 
 Sitemap: https://www.30dayramp.com/sitemap.xml
