@@ -371,29 +371,28 @@
 </noscript>
 <a href="#main" class="skip-link">Skip to main content</a>
 
-<!-- ─── NAV ─────────────────────────────────────────────────────────────── -->
-<header class="border-b border-[var(--line)] bg-[var(--paper)]/85 backdrop-blur sticky top-0 z-40">
+<!-- ─── MASTHEAD (canonical — keep byte-identical across pages) ──────────── -->
+<div class="site-masthead" style="position:sticky;top:0;z-index:40;">
+<header class="border-b border-[var(--line)] bg-[var(--paper)]/90 backdrop-blur">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
-    <!-- Logo -->
-    <a href="/" class="flex items-center gap-2 shrink-0">
-  <svg width="26" height="22" viewBox="0 0 26 22" fill="none" aria-hidden="true">
-    <rect x="0" y="14" width="5" height="8" rx="1.5" fill="var(--accent)"/>
-    <rect x="7" y="9" width="5" height="13" rx="1.5" fill="var(--accent)" opacity=".75"/>
-    <rect x="14" y="4" width="5" height="18" rx="1.5" fill="var(--accent)" opacity=".55"/>
-    <rect x="21" y="0" width="5" height="22" rx="1.5" fill="var(--accent)" opacity=".35"/>
-  </svg>
-  <span class="font-bold text-lg tracking-tight ml-2">Ramped AI</span>
-</a>
-    <!-- Nav links -->
+    <a href="/" class="flex items-center gap-2 shrink-0" aria-label="Ramped AI — home">
+      <svg width="26" height="22" viewBox="0 0 26 22" fill="none" aria-hidden="true">
+        <rect x="0" y="14" width="5" height="8" rx="1.5" fill="var(--accent)"/>
+        <rect x="7" y="9" width="5" height="13" rx="1.5" fill="var(--accent)" opacity=".75"/>
+        <rect x="14" y="4" width="5" height="18" rx="1.5" fill="var(--accent)" opacity=".55"/>
+        <rect x="21" y="0" width="5" height="22" rx="1.5" fill="var(--accent)" opacity=".35"/>
+      </svg>
+      <span class="font-bold text-lg tracking-tight ml-2">Ramped AI</span>
+    </a>
     <nav class="hidden sm:flex items-center gap-3" aria-label="Primary">
-      <a href="/about" class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">About</a>
-      <a href="/demo" class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">Demo</a>
-      <a href="/comparison" class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">VA vs. AI</a>
-      <a href="/book" class="btn-primary whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">Get started →</a>
+      <a href="/about"      class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">About</a>
+      <a href="/demo"       class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">Demo</a>
+      <a href="/#pricing"   class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">Pricing</a>
+      <a href="/comparison" class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">Compare</a>
+      <a href="/book"       class="btn-primary whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">Book a call →</a>
     </nav>
-    <!-- Mobile CTA -->
     <div class="sm:hidden flex items-center gap-2">
-      <a href="/book" class="btn-primary" style="padding:11px 14px;font-size:13px;min-height:44px;">Get started →</a>
+      <a href="/book" class="btn-primary" style="padding:11px 14px;font-size:13px;min-height:44px;">Book a call →</a>
       <button type="button" id="mobile-nav-toggle" aria-expanded="false" aria-controls="mobile-nav-drawer" aria-label="Open menu"
         style="width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;">
         <svg width="18" height="14" viewBox="0 0 18 14" aria-hidden="true" focusable="false">
@@ -407,29 +406,15 @@
   <nav id="mobile-nav-drawer" aria-label="Mobile" hidden class="sm:hidden"
     style="border-top:1px solid var(--line);background:var(--paper);">
     <ul style="list-style:none;margin:0;padding:8px 16px 16px;display:flex;flex-direction:column;gap:4px;">
-      <li><a href="/demo"       style="display:block;padding:12px 8px;font-size:15px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);">Demo</a></li>
-      <li><a href="/comparison" style="display:block;padding:12px 8px;font-size:15px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);">VA vs. AI</a></li>
-      <li><a href="/book"       style="display:block;padding:12px 8px;font-size:15px;font-weight:700;color:var(--accent);">Get started →</a></li>
+      <li><a href="/about"      style="display:block;padding:12px 8px;font-size:15px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);text-decoration:none;">About</a></li>
+      <li><a href="/demo"       style="display:block;padding:12px 8px;font-size:15px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);text-decoration:none;">Demo</a></li>
+      <li><a href="/#pricing"   style="display:block;padding:12px 8px;font-size:15px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);text-decoration:none;">Pricing</a></li>
+      <li><a href="/comparison" style="display:block;padding:12px 8px;font-size:15px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);text-decoration:none;">Compare</a></li>
+      <li><a href="/book"       style="display:block;padding:12px 8px;font-size:15px;font-weight:700;color:var(--accent);text-decoration:none;">Book a call →</a></li>
     </ul>
   </nav>
 </header>
-<script>
-  (function(){
-    var btn = document.getElementById('mobile-nav-toggle');
-    var drawer = document.getElementById('mobile-nav-drawer');
-    if(!btn || !drawer) return;
-    function setOpen(open){
-      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-      if(open){ drawer.removeAttribute('hidden'); } else { drawer.setAttribute('hidden', ''); }
-    }
-    btn.addEventListener('click', function(){ setOpen(btn.getAttribute('aria-expanded') !== 'true'); });
-    drawer.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ setOpen(false); }); });
-    document.addEventListener('keydown', function(e){ if(e.key === 'Escape') setOpen(false); });
-  })();
-</script>
-
-<!-- ─── STATS TICKER ─────────────────────────────────────────────────────── -->
+<!-- Stats ticker (sticks WITH the nav) -->
 <div class="ticker-bar" role="marquee" aria-label="Key stats">
   <div class="ticker-track">
     <span class="ticker-items" aria-hidden="true">
@@ -448,6 +433,22 @@
     </span>
   </div>
 </div>
+</div>
+<script>
+  (function(){
+    var btn = document.getElementById('mobile-nav-toggle');
+    var drawer = document.getElementById('mobile-nav-drawer');
+    if(!btn || !drawer) return;
+    function setOpen(open){
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      if(open){ drawer.removeAttribute('hidden'); } else { drawer.setAttribute('hidden', ''); }
+    }
+    btn.addEventListener('click', function(){ setOpen(btn.getAttribute('aria-expanded') !== 'true'); });
+    drawer.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ setOpen(false); }); });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape') setOpen(false); });
+  })();
+</script>
 
 <!-- ─── HERO — centered text + agent UI showcase (B+C hybrid) ──────────────── -->
 <main id="main">

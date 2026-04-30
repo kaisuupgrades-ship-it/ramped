@@ -92,6 +92,7 @@
 8. **Don't ship a customer-visible change after 5pm Friday.** Cron and email side-effects can spill over the weekend.
 9. **For backend changes, run `bash scripts/e2e-test.sh` against the preview URL.** Don't merge if it fails.
 10. **For frontend changes, do the manual smoke test in the audit's "Re-test Instructions" section** at minimum.
+11. **When you ship a new strategy doc / deck / brand asset, add an entry to `materials.json`.** That manifest is the source-of-truth for the `/admin → Materials` tab. Every internal artifact gets a row: title, path, type, updated date, one-line description. Don't ship a new audit report or one-pager without registering it there.
 
 ## Files to handle with extra care
 
