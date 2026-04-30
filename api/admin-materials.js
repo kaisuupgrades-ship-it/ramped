@@ -140,29 +140,44 @@ export default async function handler(req, res) {
   // ── LIST ──────────────────────────────────────────────────────────────────
   if (req.method === 'GET') {
     const repo = loadRepoManifest();
+    // Query uploads, but tolerate the table not existing yet (pre-migration 008).
+    // PostgREST returns 404 (relation does not exist) or 400 in some cases when the
+    // table is missing; we degrade to "repo items only" so the tab is useful immediately
+    // after deploy, even before the operator runs the SQL migration.
     const upR  = await sb('GET', `/material_uploads?select=*&order=uploaded_at.desc&limit=500`);
-    if (!upR.ok)                              return res.status(500).json({ error: 'DB read failed', detail: upR.status });
-    const uploads = (upR.data || []).map(u => ({
-      source:      'upload',
-      id:          u.id,
-      category:    u.category,
-      title:       u.title,
-      description: u.description,
-      filename:    u.filename,
-      type_pill:   u.type_pill || pillFromMime(u.mime, u.filename),
-      mime:        u.mime,
-      size_bytes:  u.size_bytes,
-      uploaded_at: u.uploaded_at,
-      updated_at:  u.updated_at,
-      editable:    true,
-      deletable:   true,
-    }));
+    let uploads = [];
+    let uploadsWarn = null;
+    if (upR.ok) {
+      uploads = (upR.data || []).map(u => ({
+        source:      'upload',
+        id:          u.id,
+        category:    u.category,
+        title:       u.title,
+        description: u.description,
+        filename:    u.filename,
+        type_pill:   u.type_pill || pillFromMime(u.mime, u.filename),
+        mime:        u.mime,
+        size_bytes:  u.size_bytes,
+        uploaded_at: u.uploaded_at,
+        updated_at:  u.updated_at,
+        editable:    true,
+        deletable:   true,
+      }));
+    } else if (upR.status === 404 || upR.status === 400) {
+      // Almost certainly: table material_uploads does not exist yet.
+      uploadsWarn = 'material_uploads table not found — run db/migrations/008_admin_materials.sql to enable uploads.';
+      console.warn('[admin-materials]', uploadsWarn, 'Supabase status:', upR.status);
+    } else {
+      // A genuine DB error (auth, connection, etc.) — surface it.
+      return res.status(500).json({ error: 'DB read failed', detail: upR.status });
+    }
     return res.status(200).json({
       ok: true,
       bucket: BUCKET,
       repo_ok: repo.ok,
       repo_count: repo.items.length,
       upload_count: uploads.length,
+      uploads_warning: uploadsWarn,
       items: [...repo.items, ...uploads],
     });
   }

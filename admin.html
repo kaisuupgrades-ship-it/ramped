@@ -1396,6 +1396,17 @@
       const data = await r.json();
       _materialsItems = Array.isArray(data.items) ? data.items : [];
       renderMaterials(_materialsItems);
+      // If the API tells us uploads are disabled (mig 008 not run yet), show
+      // a clear amber banner above the grid with copy-paste deploy instructions.
+      const existing = document.getElementById('mat-uploads-warn');
+      if (existing) existing.remove();
+      if (data.uploads_warning) {
+        const warn = document.createElement('div');
+        warn.id = 'mat-uploads-warn';
+        warn.style.cssText = 'margin-top:14px;padding:14px 18px;background:#FFFBEA;border:1px solid #F5C842;border-radius:10px;color:#7A4F0A;font-size:13.5px;line-height:1.55;';
+        warn.innerHTML = '<strong style="color:#5B3A05;">Uploads aren\'t enabled yet.</strong> ' + esc(data.uploads_warning) + ' Repo items below still work.';
+        grid.parentNode.insertBefore(warn, grid);
+      }
     } catch (err) {
       grid.innerHTML = '<div class="empty-state" style="padding:40px;text-align:center;color:var(--danger);">Failed to load materials: ' + esc(err.message) + '</div>';
     }
