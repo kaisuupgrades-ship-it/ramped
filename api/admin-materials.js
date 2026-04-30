@@ -26,7 +26,7 @@ const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const BUCKET       = process.env.MATERIALS_BUCKET || 'materials';
 
-const ALLOWED_CATEGORIES = new Set(['strategy', 'audits', 'ops', 'design', 'other']);
+const ALLOWED_CATEGORIES = new Set(['strategy', 'audits', 'ops', 'design', 'sales', 'marketing', 'other']);
 const MAX_BYTES          = 25 * 1024 * 1024;  // 25 MB
 const ALLOWED_MIME = /^(application\/(pdf|json|zip|msword|vnd\.(openxmlformats-officedocument\.[a-z]+|ms-excel|ms-powerpoint))|image\/(png|jpe?g|gif|webp|svg\+xml)|text\/(plain|markdown|csv))$/i;
 

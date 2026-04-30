@@ -1458,12 +1458,13 @@
   }
 
   const MAT_CATS = {
-    strategy: { name: 'Strategy & Business',                 desc: 'Internal strategic docs · audits · benchmark assets' },
-    audits:   { name: 'Audits & Reviews',                    desc: 'Security · visual · mobile · performance reviews' },
-    ops:      { name: 'Operations & Architecture',           desc: 'Persistent rules · deploy guides · architecture docs' },
-    design:   { name: 'Design & Customer-facing Collateral', desc: 'Brand assets · design prompts · public-facing PDFs' },
-    sales:    { name: 'Sales & Playbooks',                   desc: 'Talk tracks · objection handling · prospect materials' },
-    other:    { name: 'Other',                               desc: 'Unscoped — categorize when convenient' },
+    strategy:  { name: 'Strategy & Business',                 desc: 'Internal strategic docs · audits · benchmark assets' },
+    audits:    { name: 'Audits & Reviews',                    desc: 'Security · visual · mobile · performance reviews' },
+    ops:       { name: 'Operations & Architecture',           desc: 'Persistent rules · deploy guides · architecture docs' },
+    design:    { name: 'Design & Customer-facing Collateral', desc: 'Brand assets · design prompts · public-facing PDFs' },
+    sales:     { name: 'Sales & Playbooks',                   desc: 'Talk tracks · objection handling · prospect materials' },
+    marketing: { name: 'Marketing & Brand Pack',              desc: 'Multi-channel campaign assets · ad creatives · brand voice · copy decks' },
+    other:     { name: 'Other',                               desc: 'Unscoped — categorize when convenient' },
   };
   let _materialsItems = [];
 
@@ -1521,7 +1522,7 @@
       const k = it.category || 'other';
       (groups[k] = groups[k] || []).push(it);
     });
-    const order = ['strategy', 'audits', 'ops', 'design', 'sales', 'other'];
+    const order = ['strategy', 'audits', 'ops', 'design', 'sales', 'marketing', 'other'];
     const html = order.filter(k => groups[k] && groups[k].length).map(k => {
       const cat = MAT_CATS[k] || { name: k, desc: '' };
       const body = view === 'list'
