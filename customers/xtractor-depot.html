@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Xtractor Depot — Customer Story | Ramped AI</title>
+  <meta name="description" content="How Xtractor Depot replaced 2 operations VAs in 30 days and cut quote response time from 4 hours to 14 seconds with Ramped AI agents."/>
+
+  <!-- OG / Social -->
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://www.30dayramp.com/customers/xtractor-depot" />
+  <meta property="og:title" content="Xtractor Depot — Customer Story | Ramped AI" />
+  <meta property="og:description" content="How Xtractor Depot replaced 2 operations VAs in 30 days and cut quote response time from 4 hours to 14 seconds with Ramped AI agents." />
+  <meta property="og:image" content="https://www.30dayramp.com/og-image.png" />
+  <meta property="og:site_name" content="Ramped AI" />
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Xtractor Depot — Customer Story | Ramped AI">
+  <meta name="twitter:description" content="How Xtractor Depot replaced 2 operations VAs in 30 days and cut quote response time from 4 hours to 14 seconds.">
+  <meta name="twitter:image" content="https://www.30dayramp.com/og-image.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="alternate icon" href="/favicon.ico" />
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://www.30dayramp.com/customers/xtractor-depot" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Vercel Analytics -->
+  <script defer src="/_vercel/insights/script.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    :root {
+      --ink:#0B1220; --ink-2:#1A2233;
+      --accent:#1F4FFF; --accent-2:#0B2A8C;
+      --muted:#5B6272; --line:#E6E4DC;
+      --paper:#FAFAF7; --surface:#F5F5F3;
+      --good:#0F7A4B;
+    }
+    html,body{background:var(--paper);color:var(--ink);font-family:'Inter',ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.6;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    .section-wrap{max-width:1120px;margin:0 auto;padding:0 24px;}
+    @media(min-width:768px){.section-wrap{padding:0 32px;}}
+    .btn-primary{background:var(--ink);color:#fff;padding:13px 22px;border-radius:10px;font-weight:600;font-size:15px;display:inline-flex;align-items:center;gap:8px;transition:transform .12s ease,opacity .12s ease;cursor:pointer;border:none;text-decoration:none;}
+    .btn-primary:hover{opacity:.88;transform:translateY(-1px);}
+    .btn-ghost{padding:13px 18px;border-radius:10px;font-weight:600;font-size:15px;color:var(--ink);border:1px solid var(--line);background:#fff;cursor:pointer;transition:background .12s ease;text-decoration:none;display:inline-flex;align-items:center;}
+    .btn-ghost:hover{background:var(--surface);}
+
+    /* Ticker styles (masthead) */
+    .ticker-bar{background:var(--ink);overflow:hidden;height:38px;display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,0.07);}
+    .ticker-track{display:flex;width:100%;overflow:hidden;mask-image:linear-gradient(to right,transparent 0%,black 6%,black 94%,transparent 100%);}
+    .ticker-items{display:inline-flex;align-items:center;white-space:nowrap;animation:ticker-scroll 36s linear infinite;}
+    .ticker-item{display:inline-flex;align-items:center;gap:9px;padding:0 36px;font-size:11.5px;font-weight:500;color:rgba(255,255,255,0.78);letter-spacing:.045em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;}
+    .ticker-dot{color:#4ADE80;font-size:7px;line-height:1;}
+    @keyframes ticker-scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+    .ticker-bar:hover .ticker-items{animation-play-state:paused;}
+    @media (prefers-reduced-motion: reduce){.ticker-items{animation:none !important;}}
+
+    /* Skip link */
+    .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 14px;border-radius:0 0 8px 0;font-size:13px;font-weight:600;z-index:100;}
+    .skip-link:focus{left:0;}
+    a:focus-visible, button:focus-visible {outline:2px solid var(--accent);outline-offset:2px;border-radius:6px;}
+
+    .sectionnum{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+
+    /* Case study layout */
+    .cs-hero{
+      background-image:radial-gradient(900px 500px at 90% 0%, rgba(31,79,255,0.08), transparent 60%),
+                       linear-gradient(var(--line) 1px, transparent 1px),
+                       linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      background-size:auto, 32px 32px, 32px 32px;
+      background-color:var(--paper);
+      padding:72px 0 64px;
+      border-bottom:1px solid var(--line);
+    }
+    .cs-eyebrow{
+      display:inline-flex;align-items:center;gap:8px;
+      font-family:'JetBrains Mono',monospace;
+      font-size:11px;font-weight:700;letter-spacing:.14em;
+      text-transform:uppercase;color:var(--muted);
+      margin-bottom:20px;
+    }
+    .cs-eyebrow::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);}
+    .cs-title{
+      font-size:clamp(2rem, 4.5vw, 3.2rem);
+      font-weight:800;letter-spacing:-.03em;line-height:1.05;
+      color:var(--ink);max-width:880px;margin-bottom:22px;
+    }
+    .cs-deck{
+      font-size:1.075rem;color:var(--muted);line-height:1.65;
+      max-width:680px;
+    }
+    .cs-deck strong{color:var(--ink);font-weight:600;}
+    .cs-meta{
+      display:flex;flex-wrap:wrap;gap:32px;
+      margin-top:32px;padding-top:24px;
+      border-top:1px solid var(--line);
+    }
+    .cs-meta-item{font-size:13px;color:var(--muted);}
+    .cs-meta-item strong{display:block;color:var(--ink);font-weight:700;font-size:14px;letter-spacing:-.01em;margin-top:2px;}
+
+    /* Stat strip */
+    .stat-strip{
+      background:var(--ink);color:#fff;
+      padding:56px 0;
+    }
+    .stat-grid{
+      display:grid;grid-template-columns:repeat(4, 1fr);gap:24px;
+    }
+    .stat{padding-left:18px;border-left:3px solid var(--accent);}
+    .stat-val{
+      font-family:'JetBrains Mono',monospace;
+      font-size:2.4rem;font-weight:700;line-height:1;
+      color:#fff;display:block;margin-bottom:8px;
+      letter-spacing:-.02em;
+    }
+    .stat-val small{font-size:1rem;font-weight:500;color:rgba(255,255,255,.55);letter-spacing:0;}
+    .stat-label{font-size:13px;color:rgba(255,255,255,.65);line-height:1.4;}
+    @media(max-width:768px){.stat-grid{grid-template-columns:repeat(2, 1fr);gap:32px;}}
+
+    /* Body content */
+    .cs-body{padding:80px 0 96px;}
+    .cs-section{max-width:760px;margin:0 auto 56px;}
+    .cs-section h2{
+      font-size:clamp(1.5rem, 3vw, 1.85rem);
+      font-weight:800;letter-spacing:-.02em;line-height:1.2;
+      color:var(--ink);margin-bottom:18px;
+    }
+    .cs-section h3{
+      font-size:1.05rem;font-weight:700;color:var(--ink);
+      margin:28px 0 10px;letter-spacing:-.01em;
+    }
+    .cs-section p{
+      font-size:16.5px;color:var(--ink-2);line-height:1.75;
+      margin-bottom:18px;
+    }
+    .cs-section p strong{color:var(--ink);font-weight:600;}
+    .cs-section ul{margin:0 0 18px 24px;}
+    .cs-section li{font-size:16.5px;color:var(--ink-2);line-height:1.75;margin-bottom:6px;}
+
+    /* Pull quote */
+    .pull-quote{
+      margin:48px auto;padding:32px;
+      background:var(--surface);
+      border-left:4px solid var(--accent);
+      border-radius:8px;
+    }
+    .pull-quote q{
+      display:block;font-size:1.25rem;line-height:1.5;
+      color:var(--ink);font-weight:500;font-style:italic;
+      margin-bottom:14px;
+      quotes:"\201C" "\201D";
+    }
+    .pull-quote q::before{content:open-quote;}
+    .pull-quote q::after{content:close-quote;}
+    .pull-quote cite{
+      display:block;font-style:normal;font-size:14px;
+      color:var(--muted);font-weight:600;
+    }
+
+    /* Before/after table */
+    .ba-table{
+      width:100%;border-collapse:collapse;
+      margin:24px 0 32px;
+      border:1px solid var(--line);border-radius:10px;overflow:hidden;
+    }
+    .ba-table thead{background:var(--surface);}
+    .ba-table th, .ba-table td{
+      padding:14px 18px;text-align:left;
+      font-size:14.5px;border-bottom:1px solid var(--line);
+    }
+    .ba-table th{font-weight:700;color:var(--ink);font-size:13px;text-transform:uppercase;letter-spacing:.05em;}
+    .ba-table td:nth-child(2){color:var(--muted);}
+    .ba-table td:nth-child(3){color:var(--ink);font-weight:600;}
+    .ba-table td:nth-child(4){color:var(--good);font-weight:700;}
+    .ba-table tr:last-child td{border-bottom:none;}
+
+    /* Slack mockup (mini) */
+    .slack-mock{
+      background:#fff;border:1px solid var(--line);
+      border-radius:12px;padding:18px;margin:32px 0;
+      box-shadow:0 8px 24px -10px rgba(11,18,32,0.12);
+    }
+    .slack-mock-msg{display:flex;gap:10px;align-items:flex-start;margin-bottom:14px;}
+    .slack-mock-msg:last-child{margin-bottom:0;}
+    .slack-avatar{width:32px;height:32px;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:11px;letter-spacing:-.02em;}
+    .slack-avatar-cust{background:linear-gradient(135deg,#D97706,#92400E);}
+    .slack-avatar-bot{background:linear-gradient(135deg,#1F4FFF,#0B2A8C);}
+    .slack-mock-name{font-weight:800;font-size:13.5px;color:var(--ink);}
+    .slack-mock-badge{background:#E8E8E8;color:var(--muted);padding:1px 5px;border-radius:3px;font-size:9.5px;font-weight:800;letter-spacing:.02em;margin-left:5px;}
+    .slack-mock-time{font-size:11px;color:var(--muted);margin-left:6px;font-weight:500;}
+    .slack-mock-text{font-size:13.5px;line-height:1.5;color:var(--ink);margin-top:3px;}
+
+    /* CTA section */
+    .cs-cta{
+      background:var(--ink);color:#fff;
+      padding:72px 0;text-align:center;
+    }
+    .cs-cta h2{
+      font-size:clamp(1.75rem, 3.5vw, 2.4rem);
+      font-weight:800;letter-spacing:-.025em;line-height:1.1;
+      color:#fff;margin-bottom:14px;
+    }
+    .cs-cta p{
+      font-size:1.05rem;color:rgba(255,255,255,.65);
+      margin-bottom:32px;max-width:560px;margin-left:auto;margin-right:auto;
+    }
+    .cs-cta .btn-primary{background:#fff;color:var(--ink);}
+    .cs-cta .btn-primary:hover{background:rgba(255,255,255,.92);}
+
+    /* Footer */
+    footer{padding:64px 0;border-top:1px solid var(--line);background:var(--paper);}
+    footer .row{display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:flex-start;}
+    footer .col{display:flex;flex-direction:column;gap:8px;}
+    footer a{font-size:13px;color:var(--muted);text-decoration:none;}
+    footer a:hover{color:var(--ink);}
+    footer .copy{font-size:12px;color:var(--muted);margin-top:32px;padding-top:24px;border-top:1px solid var(--line);}
+  </style>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<!-- ─── MASTHEAD (canonical — keep byte-identical across pages) ──────────── -->
+<div class="site-masthead" style="position:sticky;top:0;z-index:40;">
+<header class="border-b border-[var(--line)] bg-[var(--paper)]/90 backdrop-blur">
+  <div style="max-width:1120px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+    <a href="/" class="flex items-center gap-2 shrink-0" aria-label="Ramped AI — home">
+      <svg width="26" height="22" viewBox="0 0 26 22" fill="none" aria-hidden="true">
+        <rect x="0" y="14" width="5" height="8" rx="1.5" fill="var(--accent)"/>
+        <rect x="7" y="9" width="5" height="13" rx="1.5" fill="var(--accent)" opacity=".75"/>
+        <rect x="14" y="4" width="5" height="18" rx="1.5" fill="var(--accent)" opacity=".55"/>
+        <rect x="21" y="0" width="5" height="22" rx="1.5" fill="var(--accent)" opacity=".35"/>
+      </svg>
+      <span class="font-bold text-lg tracking-tight ml-2">Ramped AI</span>
+    </a>
+    <nav class="hidden sm:flex items-center gap-3" aria-label="Primary">
+      <a href="/about"      class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">About</a>
+      <a href="/demo"       class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">Demo</a>
+      <a href="/#pricing"   class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">Pricing</a>
+      <a href="/comparison" class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">Compare</a>
+      <a href="/book"       class="btn-primary whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">Book a call →</a>
+    </nav>
+    <div class="sm:hidden flex items-center gap-2">
+      <a href="/book" class="btn-primary" style="padding:11px 14px;font-size:13px;min-height:44px;">Book a call →</a>
+    </div>
+  </div>
+</header>
+<div class="ticker-bar" role="marquee" aria-label="Key stats">
+  <div class="ticker-track">
+    <span class="ticker-items" aria-hidden="true">
+      <span class="ticker-item"><span class="ticker-dot">●</span>Save 40+ hours per week</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>30-day go-live guarantee</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>3× faster lead response time</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>Avg. $12,000+ / mo saved vs. staffing</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>5× avg. ROI in year 1</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>24/7 AI coverage — no sick days</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>Save 40+ hours per week</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>30-day go-live guarantee</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>3× faster lead response time</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>Avg. $12,000+ / mo saved vs. staffing</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>5× avg. ROI in year 1</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>24/7 AI coverage — no sick days</span>
+    </span>
+  </div>
+</div>
+</div>
+
+<main id="main">
+
+<!-- ─── HERO ───────────────────────────────────────────────────────────────── -->
+<section class="cs-hero">
+  <div class="section-wrap">
+    <div class="cs-eyebrow">Customer Story · Logistics & Distribution</div>
+    <h1 class="cs-title">Xtractor Depot replaced 2 ops VAs in 30 days &mdash; and cut quote response time from 4 hours to 14 seconds.</h1>
+    <p class="cs-deck">A 10-year-old precision lab equipment supplier serving customers from cannabis operators to <strong>SpaceX</strong> and <strong>Lucid Motors</strong>. Four virtual assistants. $14,400 per month in operations overhead. Quote requests piling up. They didn't need more people &mdash; they needed someone to <strong>own the AI</strong>.</p>
+    <div class="cs-meta">
+      <div class="cs-meta-item">Industry<strong>Lab equipment supply</strong></div>
+      <div class="cs-meta-item">Founded<strong>2016</strong></div>
+      <div class="cs-meta-item">Stack<strong>Gmail · ERP · Slack</strong></div>
+      <div class="cs-meta-item">Tier<strong>Growth — $5,000/mo</strong></div>
+      <div class="cs-meta-item">Live in<strong>27 days from kickoff</strong></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── STAT STRIP ─────────────────────────────────────────────────────────── -->
+<section class="stat-strip">
+  <div class="section-wrap">
+    <div class="stat-grid">
+      <div class="stat">
+        <span class="stat-val">312<small>/mo</small></span>
+        <span class="stat-label">Quote requests handled by Ramped Bot in month 1</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val">14s</span>
+        <span class="stat-label">Average response time (down from 4.2 hours)</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val">2</span>
+        <span class="stat-label">Operations VAs replaced (4 down to 2)</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val">11</span>
+        <span class="stat-label">Shipping / pricing errors caught before going out the door</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── BODY ──────────────────────────────────────────────────────────────── -->
+<section class="cs-body">
+  <div class="section-wrap">
+
+    <div class="cs-section">
+      <p class="sectionnum">The problem</p>
+      <h2>Four VAs doing the same email, every day, for different reasons.</h2>
+      <p>By 2024, Xtractor Depot was a fast-scaling supplier of precision lab equipment, with customers ranging from regional cannabis labs to multi-billion-dollar manufacturers like SpaceX and Lucid Motors. Order volume was up. Margins were healthy. The team was tired.</p>
+      <p>The bottleneck wasn't sales. It was operations &mdash; specifically the repetitive, semi-structured work that piles up in any growing physical-goods business:</p>
+      <ul>
+        <li><strong>Quote intake</strong> &mdash; emails arriving from across multiple industries, each requiring SKU lookup, stock check, and a personalized response</li>
+        <li><strong>Follow-up emails</strong> &mdash; chasing customers who'd gone quiet on a quote</li>
+        <li><strong>Status updates</strong> &mdash; "where's my shipment" pings into a busy inbox</li>
+        <li><strong>Lead qualification</strong> &mdash; sorting genuine prospects from the noise</li>
+      </ul>
+      <p>The fix Xtractor Depot tried first was the same one most operators try: <strong>hire VAs</strong>. By Q3 2024, four virtual assistants were on the team. Combined cost: <strong>$14,400 / month, fully loaded</strong>. Three of them were doing the same email every day, just for different segments of the business.</p>
+      <p>Andrew &mdash; founder and operator &mdash; tried what most founders try next: AI tools. Lindy. Zapier AI. Gumloop. Each worked for a weekend. Each broke when the ERP updated an API or the email format changed. None had a maintainer.</p>
+      <p>That's when he started building the system that became Ramped.</p>
+    </div>
+
+    <div class="cs-section">
+      <p class="sectionnum">The deployment</p>
+      <h2>Day 1 to Day 27. One workflow at a time.</h2>
+      <p>Ramped's deployment at Xtractor Depot followed the standard 30-day playbook. Three agents went live in production:</p>
+
+      <h3>Agent 1: Quote Intake Bot &mdash; live on day 18</h3>
+      <p>Reads inbound quote emails in Gmail. Cross-references SKU + stock + pricing in the ERP. Drafts a personalized quote response. Posts to a <code>#sales-quotes</code> Slack channel for one-click approval.</p>
+
+      <div class="slack-mock" aria-label="Example exchange in Slack">
+        <div class="slack-mock-msg">
+          <div class="slack-avatar slack-avatar-cust" aria-hidden="true">JK</div>
+          <div>
+            <span class="slack-mock-name">Justin K.</span><span class="slack-mock-time">9:42 AM</span>
+            <div class="slack-mock-text">New quote request from Acme Cannabis Co. — 8x DR-204 extraction units. Rush.</div>
+          </div>
+        </div>
+        <div class="slack-mock-msg">
+          <div class="slack-avatar slack-avatar-bot" aria-hidden="true">
+            <svg width="14" height="11" viewBox="0 0 26 22" fill="none">
+              <rect x="0" y="14" width="5" height="8" rx="1.5" fill="#fff"/>
+              <rect x="7" y="9" width="5" height="13" rx="1.5" fill="#fff" opacity=".75"/>
+              <rect x="14" y="4" width="5" height="18" rx="1.5" fill="#fff" opacity=".55"/>
+              <rect x="21" y="0" width="5" height="22" rx="1.5" fill="#fff" opacity=".35"/>
+            </svg>
+          </div>
+          <div>
+            <span class="slack-mock-name">Ramped Bot</span><span class="slack-mock-badge">APP</span><span class="slack-mock-time">9:42 AM</span>
+            <div class="slack-mock-text">8 × DR-204 in stock at LA warehouse. Quote drafted at $14,720 with rush surcharge. ⚠ Heads up — Acme Cannabis is on Net 60 terms but flagged for late payment last invoice. Drafted reply with prepayment ask. Send?</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Agent 2: Follow-up Bot &mdash; live on day 23</h3>
+      <p>Watches the quote pipeline. If a quote is sent and the customer hasn't responded in 5 business days, drafts a personalized check-in (referencing the specific SKU and any hints from prior conversations), surfaces it for one-click approval. Cuts revival time from "whenever Andrew remembers" to <strong>same-day, automatically</strong>.</p>
+
+      <h3>Agent 3: Shipment Status Bot &mdash; live on day 27</h3>
+      <p>Customer asks "where's my order?" via email or Slack. Bot pulls UPS / FedEx tracking, ERP fulfillment status, and warehouse pick-pack timestamps. Replies with the consolidated answer and proactively flags address mismatches when shipping addresses don't match what's on the customer's most recent invoice.</p>
+    </div>
+
+    <div class="cs-section">
+      <p class="sectionnum">The numbers</p>
+      <h2>Before / after, 60 days in.</h2>
+      <table class="ba-table">
+        <thead>
+          <tr><th>Metric</th><th>Before Ramped</th><th>After 60 days</th><th>Change</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Avg. quote response time</td><td>4.2 hrs</td><td>14 seconds</td><td>−99.9%</td></tr>
+          <tr><td>Quote requests handled / month</td><td>~180 (manual)</td><td>312 (Ramped)</td><td>+73%</td></tr>
+          <tr><td>Operations VAs employed</td><td>4 ($14,400/mo)</td><td>2 supervisors ($7,200/mo)</td><td>−$7,200/mo</td></tr>
+          <tr><td>Errors caught before shipment</td><td>~3/mo missed</td><td>11 caught, 0 missed</td><td>100% catch rate</td></tr>
+          <tr><td>Ramped retainer</td><td>—</td><td>$5,000/mo (Growth)</td><td>—</td></tr>
+          <tr><td><strong>Net monthly cost change</strong></td><td><strong>$14,400</strong></td><td><strong>$12,200</strong></td><td><strong>−$2,200/mo (−15%)</strong></td></tr>
+        </tbody>
+      </table>
+      <p>The savings are real, but the bigger story is what the remaining team does now. The two VAs that stayed got <strong>promoted to AI agent supervisors</strong> &mdash; reviewing approvals, training the bots on edge cases, and freeing Andrew's focus for sales calls and product expansion.</p>
+    </div>
+
+    <div class="pull-quote">
+      <q>Three agents. Twenty-seven days. Same monthly cost as one VA replaced. The wild part is the agents catch errors we didn't know we were missing.</q>
+      <cite>— Andrew Yoon, Founder, Xtractor Depot</cite>
+    </div>
+
+    <div class="cs-section">
+      <p class="sectionnum">What surprised them</p>
+      <h2>The bot caught errors humans had been missing for years.</h2>
+      <p>The VAs at Xtractor Depot were sharp. They'd been doing the work for months. But manual cross-referencing has a ceiling &mdash; and when a customer's shipping address gets updated mid-engagement, or pricing changes mid-quarter, those edge cases are exactly where humans get tired and miss things.</p>
+      <p>In its first 60 days, Ramped Bot caught:</p>
+      <ul>
+        <li><strong>3 stale shipping addresses</strong> &mdash; customers had relocated; outdated address still on file</li>
+        <li><strong>4 SKU mismatches</strong> &mdash; product code in customer's PO didn't match the current SKU after a Q2 inventory update</li>
+        <li><strong>2 net-payment-terms violations</strong> &mdash; customers on Net 60 attempting to place orders while flagged for late payment</li>
+        <li><strong>2 incorrect tax-zone calculations</strong> &mdash; new state-tax rules that had been silently applied wrong on three prior shipments</li>
+      </ul>
+      <p>Each one of those, on average, would have cost between $300 and $4,200 to fix downstream &mdash; rerouting fees, customer goodwill, refund processing. <strong>Net catch value: ~$23,000 in avoided errors over 60 days.</strong> [VERIFY this figure with full Q4 financials before publishing]</p>
+    </div>
+
+    <div class="cs-section">
+      <p class="sectionnum">What's next</p>
+      <h2>Quarter 2: Inventory forecasting + margin analysis.</h2>
+      <p>With the operational tier humming, Xtractor Depot is now scoping the next two agents:</p>
+      <ul>
+        <li><strong>Inventory Forecasting Bot</strong> &mdash; reads sales velocity + supplier lead times + seasonal patterns, surfaces low-stock SKUs to the procurement Slack channel <strong>before</strong> they hit reorder threshold</li>
+        <li><strong>Margin Analysis Bot</strong> &mdash; pulls weekly P&amp;L from QuickBooks, flags products whose net margin has dropped below the 22% threshold, drafts a memo for management review</li>
+      </ul>
+      <p>Both will be scoped on the next quarterly strategy call. Estimated time-to-live: 30 days each. Estimated incremental value: hard to quantify, but Andrew's expectation is "another VA's worth of leverage, without another VA."</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─── CTA ───────────────────────────────────────────────────────────────── -->
+<section class="cs-cta">
+  <div class="section-wrap">
+    <h2>Want results like this in your business?</h2>
+    <p>Book a 30-minute discovery call. We'll map your top three workflows and show you exactly which agents we'd build first.</p>
+    <a href="/book" class="btn-primary" style="font-size:16px;padding:15px 28px;">Book a discovery call →</a>
+  </div>
+</section>
+
+<!-- ─── FOOTER ────────────────────────────────────────────────────────────── -->
+<footer>
+  <div class="section-wrap">
+    <div class="row">
+      <div class="col">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <svg width="22" height="18" viewBox="0 0 26 22" fill="none">
+            <rect x="0" y="14" width="5" height="8" rx="1.5" fill="var(--accent)"/>
+            <rect x="7" y="9" width="5" height="13" rx="1.5" fill="var(--accent)" opacity=".75"/>
+            <rect x="14" y="4" width="5" height="18" rx="1.5" fill="var(--accent)" opacity=".55"/>
+            <rect x="21" y="0" width="5" height="22" rx="1.5" fill="var(--accent)" opacity=".35"/>
+          </svg>
+          <span style="font-weight:700;font-size:14px;color:var(--ink);">Ramped AI</span>
+        </div>
+        <p style="font-size:13px;color:var(--muted);max-width:280px;line-height:1.5;">Done-for-you AI agents in your operating business. Live in 30 days. Or it's free.</p>
+      </div>
+      <div class="col">
+        <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px;">Product</div>
+        <a href="/about">About</a>
+        <a href="/demo">Demo</a>
+        <a href="/comparison" style="font-size:13px;color:var(--muted);">Compare</a>
+        <a href="/book">Book a call</a>
+      </div>
+      <div class="col">
+        <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px;">Company</div>
+        <a href="/about">Team</a>
+        <a href="mailto:jon@30dayramp.com">jon@30dayramp.com</a>
+        <a href="/privacy">Privacy</a>
+      </div>
+    </div>
+    <div class="copy">© 2026 Ramped AI. All rights reserved. · 30dayramp.com</div>
+  </div>
+</footer>
+
+</main>
+</body>
+</html>
