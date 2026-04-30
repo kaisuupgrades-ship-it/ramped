@@ -177,6 +177,31 @@
   .hero-founder strong{color:var(--ink);font-weight:600;}
   .hero-founder-trust{display:inline-block;margin-left:6px;color:var(--muted);opacity:0.75;}
 
+  /* ── Hero guarantee badge (W1-3 · 2026-04-29) ──
+     Promotes the 30-day guarantee from the small eyebrow chip to a co-equal
+     element in the hero. Sits right after the CTA row — at the decision point.
+     Amber palette pulled from the email guarantee strip + admin warn theme. */
+  .hero-guarantee{
+    display:inline-flex;align-items:center;gap:14px;
+    margin:0 auto 22px;padding:14px 22px;
+    max-width:680px;
+    background:#FFFBEA;border:1.5px solid #F5C842;border-radius:14px;
+    box-shadow:0 4px 16px -4px rgba(180,83,9,0.14);
+    text-align:left;
+  }
+  .hero-guarantee-icon{
+    flex-shrink:0;width:36px;height:36px;border-radius:50%;
+    background:#FEF3C7;border:1px solid #F5C842;
+    display:inline-flex;align-items:center;justify-content:center;
+  }
+  .hero-guarantee-text{font-size:14.5px;color:var(--ink);line-height:1.5;}
+  .hero-guarantee-text strong{display:block;font-weight:700;font-size:16px;color:var(--ink);letter-spacing:-0.005em;margin-bottom:2px;}
+  .hero-guarantee-text small{display:block;font-size:12.5px;color:#7A4F0A;font-weight:500;}
+  @media (max-width:640px){
+    .hero-guarantee{flex-direction:column;align-items:flex-start;text-align:left;padding:14px 18px;}
+    .hero-guarantee-text strong{font-size:15px;}
+  }
+
   /* ── Customer logo strip ── */
   .customer-strip{
     background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
@@ -453,7 +478,23 @@
       <a href="/demo" class="btn-ghost btn-large">Watch a 2-min demo</a>
     </div>
 
-    <!-- Founder credibility + microcopy — centered -->
+    <!-- W1-3 (2026-04-29): the 30-day guarantee — promoted from a small eyebrow chip
+         to a prominent co-equal hero element. Sits at the decision point, right
+         after the CTAs and before the founder credit. -->
+    <div class="hero-guarantee" role="note" aria-label="30-day go-live guarantee">
+      <span class="hero-guarantee-icon" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 14 14" fill="none">
+          <path d="M7 1L2 3.5v4C2 10.1 4.2 12.6 7 13.5c2.8-.9 5-3.4 5-6V3.5L7 1z" fill="#F59E0B" opacity=".25" stroke="#B45309" stroke-width="1.4"/>
+          <path d="M5 7l1.4 1.4L9 5.8" stroke="#B45309" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+      </span>
+      <span class="hero-guarantee-text">
+        <strong>30-day go-live guarantee — full refund if we miss.</strong>
+        <small>No fine print. No partial payments. No questions.</small>
+      </span>
+    </div>
+
+    <!-- Founder credibility — centered -->
     <p class="hero-founder" style="max-width:680px;margin:0 auto;">
       Built by <strong>Andrew Yoon</strong> — 10-year operator and founder of Xtractor Depot.
       <span class="hero-founder-trust">Free · 30 minutes · No commitment.</span>
@@ -899,8 +940,9 @@
       <div class="card p-7 hover-lift flex flex-col">
         <div class="mb-5">
           <p class="mono" style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">Enterprise</p>
-          <p style="font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.02em;">Custom</p>
-          <p style="font-size:13px;color:var(--muted);margin-top:3px;">Scoped per engagement</p>
+          <!-- W1-4 (2026-04-29): explicit floor instead of "Custom" — primes anchoring + signals seriousness. -->
+          <p style="font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.02em;">From $10K<span style="font-size:15px;font-weight:500;color:var(--muted);">/mo</span></p>
+          <p style="font-size:13px;color:var(--muted);margin-top:3px;">Scoped on call · Custom SLA</p>
         </div>
         <p style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:12px;">Best for: 100+ employees</p>
         <ul style="list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:11px;flex:1;">

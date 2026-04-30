@@ -370,8 +370,8 @@ function showForm(){
   var d = new Date(selectedDate+'T12:00:00');
   var dateLabel = d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
   var tierLabels = selectedBilling === 'annual'
-    ? {starter:'Starter · $2,083/mo (billed annually · save $5,000)', growth:'Growth · $4,167/mo (billed annually · save $10,000)', enterprise:'Enterprise · Custom'}
-    : {starter:'Starter · $2,500/mo', growth:'Growth · $5,000/mo', enterprise:'Enterprise · Custom'};
+    ? {starter:'Starter · $2,083/mo (billed annually · save $5,000)', growth:'Growth · $4,167/mo (billed annually · save $10,000)', enterprise:'Enterprise · from $10K/mo · scoped on call'}
+    : {starter:'Starter · $2,500/mo', growth:'Growth · $5,000/mo', enterprise:'Enterprise · from $10K/mo · scoped on call'};
   var tierBadge = selectedTier ? '<div style="background:#EEF3FF;border:1px solid #c7d2fe;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:13px;color:var(--accent);font-weight:600;">📋 Plan interest: '+(tierLabels[selectedTier.toLowerCase()]||selectedTier)+'</div>' : '';
   stepDiv.innerHTML =
     '<button class="back-btn" id="back-to-slots">\u2190 '+dateLabel+' at '+selectedSlot.label+'</button>' +
