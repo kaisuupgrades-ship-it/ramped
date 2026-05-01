@@ -425,9 +425,11 @@
     content:"✓";color:#2E7D32;font-weight:900;
   }
 
-  /* Top-right LIVE badge over the whole demo, unchanged from V2-B6 spirit */
+  /* Top-right LIVE badge — vertically centered in the 49px channel head (which sits below
+     the 30px chrome bar), so its center is at chrome(30) + channelHead/2(24.5) = 54.5px.
+     Pill is ~24px tall, so top edge = 54.5 - 12 = 42.5 → top:43px. */
   .nano-live-pill{
-    position:absolute;top:50px;right:18px;z-index:5;
+    position:absolute;top:43px;right:18px;z-index:5;
     display:inline-flex;align-items:center;gap:7px;
     padding:6px 11px;border-radius:999px;
     background:rgba(11,18,32,0.86);backdrop-filter:blur(6px);
@@ -536,10 +538,12 @@
     67%,100% {background:#3DDC84;transform:scale(1.4);box-shadow:0 0 8px rgba(61,220,132,0.6);}
   }
 
-  /* Animated cursor — per-scenario coordinates measured live at:
-     S1 "Send draft": btn center (343, 314) → top 59%, left 31%
-     S2 "Send":       btn center (327, 314) → top 59%, left 30%
-     S3 "Open deck":  btn center (344, 291) → top 55%, left 32% (shorter content) */
+  /* Animated cursor — coords pinned to exact button centers (JS-measured against live DOM).
+     Cursor SVG tip is at (2,1) in its 18×22 box, so element top = btn_center_y - 1.
+     Demo height 510px, demo width ~1055px at desktop.
+     S1 "Send draft" btn center (343, 314) → tip at top:61.4%, left:32.3%
+     S2 "Send"       btn center (327, 314) → tip at top:61.4%, left:30.8%
+     S3 "Open deck"  btn center (344, 291) → tip at top:56.9%, left:32.4% */
   .nano-cursor{
     position:absolute;
     width:18px;height:22px;z-index:5;
@@ -549,27 +553,27 @@
     filter:drop-shadow(0 2px 4px rgba(0,0,0,0.22));
     opacity:0;
     animation:nano-cursor-loop 30s infinite ease-in-out;
-    left:31%;top:59%;
+    left:32.3%;top:61.4%;
   }
   @keyframes nano-cursor-loop{
-    /* Scenario 1 "Send draft" — top 59%, left 31% */
-    0%,21%   {opacity:0;top:59%;left:31%;transform:translate(60px,12px) scale(0.9);}
-    23%      {opacity:1;top:59%;left:31%;transform:translate(0,0) scale(1);}
-    25%      {opacity:1;top:59%;left:31%;transform:translate(0,0) scale(0.82);}
-    26%      {opacity:1;top:59%;left:31%;transform:translate(0,0) scale(1);}
-    29%      {opacity:0;top:59%;left:31%;transform:translate(60px,12px) scale(0.9);}
-    /* Scenario 2 "Send" — top 59%, left 30% */
-    53%      {opacity:0;top:59%;left:30%;transform:translate(60px,12px) scale(0.9);}
-    55%      {opacity:1;top:59%;left:30%;transform:translate(0,0) scale(1);}
-    57%      {opacity:1;top:59%;left:30%;transform:translate(0,0) scale(0.82);}
-    58%      {opacity:1;top:59%;left:30%;transform:translate(0,0) scale(1);}
-    62%      {opacity:0;top:59%;left:30%;transform:translate(60px,12px) scale(0.9);}
-    /* Scenario 3 "Open deck" — top 55% (shorter content), left 32% */
-    86%      {opacity:0;top:55%;left:32%;transform:translate(60px,12px) scale(0.9);}
-    88%      {opacity:1;top:55%;left:32%;transform:translate(0,0) scale(1);}
-    90%      {opacity:1;top:55%;left:32%;transform:translate(0,0) scale(0.82);}
-    91%      {opacity:1;top:55%;left:32%;transform:translate(0,0) scale(1);}
-    95%,100% {opacity:0;top:55%;left:32%;transform:translate(60px,12px) scale(0.9);}
+    /* Scenario 1 "Send draft" — tip at (343, 314) */
+    0%,21%   {opacity:0;top:61.4%;left:32.3%;transform:translate(60px,12px) scale(0.9);}
+    23%      {opacity:1;top:61.4%;left:32.3%;transform:translate(0,0) scale(1);}
+    25%      {opacity:1;top:61.4%;left:32.3%;transform:translate(0,0) scale(0.82);}
+    26%      {opacity:1;top:61.4%;left:32.3%;transform:translate(0,0) scale(1);}
+    29%      {opacity:0;top:61.4%;left:32.3%;transform:translate(60px,12px) scale(0.9);}
+    /* Scenario 2 "Send" — tip at (327, 314) */
+    53%      {opacity:0;top:61.4%;left:30.8%;transform:translate(60px,12px) scale(0.9);}
+    55%      {opacity:1;top:61.4%;left:30.8%;transform:translate(0,0) scale(1);}
+    57%      {opacity:1;top:61.4%;left:30.8%;transform:translate(0,0) scale(0.82);}
+    58%      {opacity:1;top:61.4%;left:30.8%;transform:translate(0,0) scale(1);}
+    62%      {opacity:0;top:61.4%;left:30.8%;transform:translate(60px,12px) scale(0.9);}
+    /* Scenario 3 "Open deck" — tip at (344, 291) — shorter content shifts button up */
+    86%      {opacity:0;top:56.9%;left:32.4%;transform:translate(60px,12px) scale(0.9);}
+    88%      {opacity:1;top:56.9%;left:32.4%;transform:translate(0,0) scale(1);}
+    90%      {opacity:1;top:56.9%;left:32.4%;transform:translate(0,0) scale(0.82);}
+    91%      {opacity:1;top:56.9%;left:32.4%;transform:translate(0,0) scale(1);}
+    95%,100% {opacity:0;top:56.9%;left:32.4%;transform:translate(60px,12px) scale(0.9);}
   }
 
   /* Click ripple — centered on each scenario's button (offset -14px to compensate for ripple radius) */
@@ -579,25 +583,26 @@
     border:2px solid #1F4FFF;z-index:4;
     pointer-events:none;
     opacity:0;
-    left:30%;top:58%;
+    left:31.2%;top:58.8%;
     animation:nano-ripple-loop 30s infinite linear;
   }
   @keyframes nano-ripple-loop{
-    /* Scenario 1: top 58%, left 30% (centered on Send draft) */
-    0%,24%   {opacity:0;top:58%;left:30%;transform:scale(0.4);}
-    25%      {opacity:0.7;top:58%;left:30%;transform:scale(0.4);}
-    27%      {opacity:0;top:58%;left:30%;transform:scale(1.6);}
-    28%      {opacity:0;top:58%;left:30%;}
-    /* Scenario 2: top 58%, left 29% */
-    56%      {opacity:0;top:58%;left:29%;transform:scale(0.4);}
-    57%      {opacity:0.7;top:58%;left:29%;transform:scale(0.4);}
-    59%      {opacity:0;top:58%;left:29%;transform:scale(1.6);}
-    60%      {opacity:0;top:58%;left:29%;}
-    /* Scenario 3: top 54%, left 31% */
-    89%      {opacity:0;top:54%;left:31%;transform:scale(0.4);}
-    90%      {opacity:0.7;top:54%;left:31%;transform:scale(0.4);}
-    92%      {opacity:0;top:54%;left:31%;transform:scale(1.6);}
-    93%,100% {opacity:0;top:54%;left:31%;}
+    /* Ripple is 28×28 — element top/left = btn_center - 14. Centered on each button. */
+    /* Scenario 1: btn (343, 314) → ripple top:58.8%, left:31.2% */
+    0%,24%   {opacity:0;top:58.8%;left:31.2%;transform:scale(0.4);}
+    25%      {opacity:0.7;top:58.8%;left:31.2%;transform:scale(0.4);}
+    27%      {opacity:0;top:58.8%;left:31.2%;transform:scale(1.6);}
+    28%      {opacity:0;top:58.8%;left:31.2%;}
+    /* Scenario 2: btn (327, 314) → ripple top:58.8%, left:29.7% */
+    56%      {opacity:0;top:58.8%;left:29.7%;transform:scale(0.4);}
+    57%      {opacity:0.7;top:58.8%;left:29.7%;transform:scale(0.4);}
+    59%      {opacity:0;top:58.8%;left:29.7%;transform:scale(1.6);}
+    60%      {opacity:0;top:58.8%;left:29.7%;}
+    /* Scenario 3: btn (344, 291) → ripple top:54.3%, left:31.3% */
+    89%      {opacity:0;top:54.3%;left:31.3%;transform:scale(0.4);}
+    90%      {opacity:0.7;top:54.3%;left:31.3%;transform:scale(0.4);}
+    92%      {opacity:0;top:54.3%;left:31.3%;transform:scale(1.6);}
+    93%,100% {opacity:0;top:54.3%;left:31.3%;}
   }
 
   /* Reduced motion — show the end-state only, skip the typing intermediate */
