@@ -546,8 +546,10 @@
     filter:drop-shadow(0 2px 4px rgba(0,0,0,0.22));
     opacity:0;
     animation:nano-cursor-loop 30s infinite ease-in-out;
-    /* Resting position — over the bot's primary action button (~Send draft / Approve / Open deck) */
-    left:31%;top:55%;
+    /* Resting position — over the bot's primary action button (~Send draft / Send / Open deck).
+       Calibrated against demo geometry: chrome 30px + channel head 49px + 2 messages stacked ≈
+       buttons land around 235-260px from top of demo, total height ~559px → ~44%. */
+    left:31%;top:44%;
   }
   @keyframes nano-cursor-loop{
     /* Scenario 1: bot reply 18-29% → cursor 23-28% */
@@ -575,7 +577,7 @@
     border:2px solid #1F4FFF;z-index:4;
     pointer-events:none;
     opacity:0;
-    left:29%;top:55%;
+    left:29%;top:44%;
     animation:nano-ripple-loop 30s infinite linear;
   }
   @keyframes nano-ripple-loop{
