@@ -1,0 +1,315 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   Ramped AI — Brand v3 dark theme (2026-05-01)
+
+   Shared stylesheet for cross-page v3 dark mode. Linked from every customer-
+   facing page so the masthead, footer, sections, cards, FAQ, pricing, and
+   utility classes all render dark consistently.
+
+   Page-specific styles (demo-shell on index, hero quirks) stay inline on
+   their owning pages. Add new SHARED rules here.
+
+   Important: this file is loaded AFTER each page's inline <style> block.
+   That means the rules here win the cascade for same-specificity selectors,
+   which is what lets us dark-mode the v2 cream pages without rewriting them.
+   ───────────────────────────────────────────────────────────────────────── */
+
+/* ─── v3 design tokens ─────────────────────────────────────────────────── */
+:root{
+  --bg-0:#07090d; --bg-1:#0b0f17; --bg-2:#11161f; --bg-3:#161c27; --bg-4:#1c2331;
+  --v3-line:#1f2735; --v3-line-2:#2a3344;
+  --text-0:#f4f6fa; --text-1:#c5cdd9; --text-2:#8b94a3; --text-3:#5a6373;
+  --blue:#3b82f6; --blue-2:#60a5fa; --blue-glow:rgba(59,130,246,0.35);
+  --orange:#fb923c; --orange-2:#fdba74; --orange-glow:rgba(251,146,60,0.3);
+  --v3-green:#34d399;
+  --radius-sm:8px; --radius-md:12px; --radius-lg:16px; --radius-xl:24px;
+}
+
+/* ─── Body background — dark with ambient blue + orange radial glows ──── */
+html, body{
+  background:var(--bg-0)!important;
+  color:var(--text-0)!important;
+  font-feature-settings:"ss01","cv11";
+}
+body{
+  background:
+    radial-gradient(1200px 600px at 50% -200px, rgba(59,130,246,0.18), transparent 60%),
+    radial-gradient(900px 500px at 90% 10%, rgba(251,146,60,0.10), transparent 60%),
+    var(--bg-0)!important;
+}
+
+/* ─── Heading + body color flips ───────────────────────────────────────── */
+body h1, body h2, body h3, body h4, body h5, body h6{color:var(--text-0)!important;}
+body p, body li{color:var(--text-1);}
+body section{color:var(--text-1);}
+body section .sectionnum{color:var(--text-3)!important;}
+body section [style*="color:var(--ink)"]:not(.v3-h1):not(.nano-msg-name):not(.demo-shell *):not(.demo-shell){color:var(--text-0)!important;}
+body section [style*="color:var(--ink-2)"]{color:var(--text-1)!important;}
+body section [style*="color:var(--muted)"]{color:var(--text-2)!important;}
+
+/* ─── Section background overrides for v2 inline styles ────────────────── */
+section[style*="background:var(--paper)"],
+section[style*="background:#fff"],
+section[style*="background:#FFFFFF"]{background:transparent!important;}
+section[style*="linear-gradient(180deg,#FFFFFF 0%,#F5F8FF 100%)"],
+section[style*="linear-gradient(180deg,#F5F8FF 0%,#FFFFFF 100%)"],
+section[style*="linear-gradient(180deg,var(--paper) 0%,#F5F8FF 100%)"]{
+  background:
+    radial-gradient(900px 500px at 50% 0%, rgba(59,130,246,0.10), transparent 60%),
+    transparent!important;
+}
+
+/* ─── Card → dark glass panel ─────────────────────────────────────────── */
+.card{
+  background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005))!important;
+  border:1px solid var(--v3-line)!important;
+  color:var(--text-0)!important;
+  border-radius:16px;
+}
+.ink-shadow{box-shadow:0 1px 0 rgba(0,0,0,0.4), 0 16px 40px -16px rgba(0,0,0,0.5)!important;}
+.hover-lift:hover{transform:translateY(-2px);box-shadow:0 18px 40px -16px rgba(0,0,0,0.6), 0 0 0 1px var(--v3-line-2)!important;}
+
+/* Generic step output / informational boxes that used --paper bg */
+div[style*="background:var(--paper)"][style*="border:1px solid var(--line)"]{
+  background:rgba(255,255,255,0.03)!important;
+  border-color:var(--v3-line)!important;
+  color:var(--text-1)!important;
+}
+
+/* Pain icons — dark surface with blue accent */
+.pain-icon{background:rgba(59,130,246,0.08)!important;border-color:rgba(59,130,246,0.25)!important;color:var(--blue-2)!important;}
+
+/* Industry chips — dark pill */
+span[style*="border-radius:999px"][style*="border:1px solid var(--line)"][style*="background:var(--paper)"]{
+  background:rgba(255,255,255,0.03)!important;
+  border-color:var(--v3-line)!important;
+  color:var(--text-1)!important;
+}
+
+/* ─── FAQ — dark accordion ─────────────────────────────────────────────── */
+details.faq-item{
+  background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005))!important;
+  border:1px solid var(--v3-line)!important;
+  border-radius:12px;
+}
+details.faq-item summary span{color:var(--text-0)!important;}
+details.faq-item .faq-body p{color:var(--text-2)!important;}
+
+/* ─── Pricing — dark cards with orange CTAs and blue-glow featured tier ── */
+#pricing .card{
+  background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005))!important;
+  border:1px solid var(--v3-line)!important;color:var(--text-0)!important;border-radius:16px;
+}
+#pricing .card[style*="border-color:var(--accent)"]{
+  background:
+    radial-gradient(600px 300px at 50% -50%, rgba(59,130,246,0.18), transparent 60%),
+    linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01))!important;
+  border:2px solid var(--blue)!important;
+  box-shadow:0 1px 0 rgba(0,0,0,0.3),0 24px 60px -20px rgba(59,130,246,0.35),0 4px 14px -4px rgba(0,0,0,0.4)!important;
+}
+#pricing .card[style*="border-color:var(--accent)"] span[style*="background:var(--accent)"]{
+  background:linear-gradient(180deg,var(--orange-2),var(--orange))!important;color:#1a0e05!important;
+  box-shadow:0 6px 16px -4px var(--orange-glow)!important;
+}
+#pricing ul li svg circle[fill="#ECFDF5"]{fill:rgba(52,211,153,0.15)!important;}
+#pricing ul li svg path[stroke="var(--good)"]{stroke:var(--v3-green)!important;}
+#pricing a.btn-primary[data-tier-cta]{
+  background:linear-gradient(180deg,var(--orange-2),var(--orange))!important;
+  color:#1a0e05!important;border:none!important;
+  box-shadow:0 1px 0 rgba(0,0,0,0.15),0 6px 18px -4px var(--orange-glow)!important;
+}
+#pricing div[style*="background:#F1F1EF"]{background:rgba(255,255,255,0.04)!important;border:1px solid var(--v3-line)!important;}
+#pricing button#btn-monthly, #pricing button#btn-annual{color:var(--text-1)!important;}
+#pricing button#btn-annual[style*="background:#fff"]{background:var(--bg-3)!important;color:var(--text-0)!important;}
+#pricing #annual-badge{background:rgba(52,211,153,0.12)!important;color:var(--v3-green)!important;}
+#pricing div[style*="border:2px solid var(--ink)"][style*="background:#FFFBEB"]{
+  background:linear-gradient(180deg,rgba(251,146,60,0.10),rgba(251,146,60,0.03))!important;
+  border:2px solid rgba(251,146,60,0.35)!important;
+}
+#pricing div[style*="background:#FEF3C7"][style*="border:2px solid #F59E0B"]{
+  background:rgba(251,146,60,0.20)!important;
+}
+#pricing [style*="color:#92400E"]{color:#fbbf24!important;}
+#pricing a[style*="color:var(--accent)"]{color:var(--orange-2)!important;}
+
+/* FAQ CTA */
+#faq a.btn-primary{
+  background:linear-gradient(180deg,var(--orange-2),var(--orange))!important;
+  color:#1a0e05!important;border:none!important;
+  box-shadow:0 1px 0 rgba(0,0,0,0.15),0 6px 18px -4px var(--orange-glow)!important;
+}
+
+/* ─── Masthead — dark glass, sticky ─────────────────────────────────────── */
+.site-masthead{background:transparent!important;}
+.site-masthead > header{
+  background:rgba(11,15,23,0.55)!important;
+  backdrop-filter:blur(18px) saturate(1.6)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(1.6)!important;
+  border-bottom:1px solid var(--v3-line)!important;
+}
+.site-masthead .font-bold{color:var(--text-0)!important;}
+.site-masthead nav[aria-label="Primary"] a.btn-ghost{
+  background:transparent!important;
+  border-color:var(--v3-line-2)!important;
+  color:var(--text-1)!important;
+}
+.site-masthead nav[aria-label="Primary"] a.btn-ghost:hover{
+  background:rgba(255,255,255,0.05)!important;
+  border-color:var(--blue)!important;
+  color:var(--text-0)!important;
+}
+.site-masthead a.btn-primary{
+  background:linear-gradient(180deg,var(--orange-2),var(--orange))!important;
+  color:#1a0e05!important;
+  border:none!important;
+  box-shadow:0 1px 0 rgba(0,0,0,0.15),0 6px 18px -4px var(--orange-glow)!important;
+}
+#mobile-nav-toggle{
+  background:rgba(255,255,255,0.04)!important;
+  border-color:var(--v3-line-2)!important;
+  color:var(--text-0)!important;
+}
+#mobile-nav-drawer{
+  background:var(--bg-1)!important;
+  border-top-color:var(--v3-line)!important;
+}
+#mobile-nav-drawer a{
+  color:var(--text-1)!important;
+  border-bottom-color:var(--v3-line)!important;
+}
+
+/* Ticker — dark with subtle line below */
+.ticker-bar{
+  background:var(--bg-1)!important;
+  border-bottom:1px solid var(--v3-line)!important;
+}
+.ticker-bar *{color:var(--text-2);}
+
+/* ─── Footer — dark with ambient blue/orange glow + grid backdrop ──────── */
+body > footer{
+  position:relative;
+  background:
+    radial-gradient(800px 400px at 12% 110%, rgba(59,130,246,0.18), transparent 60%),
+    radial-gradient(800px 400px at 88% 110%, rgba(251,146,60,0.16), transparent 60%),
+    var(--bg-1)!important;
+  border-top:1px solid var(--v3-line)!important;
+  overflow:hidden;
+}
+body > footer::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.022) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.022) 1px, transparent 1px);
+  background-size:48px 48px;
+  -webkit-mask-image:radial-gradient(ellipse 80% 90% at 50% 50%, #000 30%, transparent 80%);
+  mask-image:radial-gradient(ellipse 80% 90% at 50% 50%, #000 30%, transparent 80%);
+}
+body > footer::after{
+  content:"";position:absolute;top:0;left:0;right:0;height:1px;pointer-events:none;
+  background:linear-gradient(90deg, transparent 0%, var(--blue) 25%, var(--orange) 75%, transparent 100%);
+  opacity:0.5;
+}
+body > footer > *{position:relative;}
+body > footer *{color:var(--text-2)!important;}
+body > footer span[style*="color:var(--ink)"]{color:var(--text-0)!important;}
+body > footer a:hover{color:var(--text-0)!important;}
+
+/* ─── v3 utility classes (eyebrows, CTAs, trust strip, sections) ───────── */
+.v3-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;padding:6px 12px 6px 8px;
+  border-radius:999px;
+  background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.25);
+  font-size:12px;color:var(--blue-2);font-weight:600;letter-spacing:.005em;
+}
+.v3-eyebrow .dot{
+  width:6px;height:6px;border-radius:50%;background:var(--v3-green);
+  box-shadow:0 0 0 0 rgba(52,211,153,0.6);
+  animation:v3-pulse 1.8s ease-out infinite;
+}
+@keyframes v3-pulse{
+  0%{box-shadow:0 0 0 0 rgba(52,211,153,0.55);}
+  70%{box-shadow:0 0 0 8px rgba(52,211,153,0);}
+  100%{box-shadow:0 0 0 0 rgba(52,211,153,0);}
+}
+
+.v3-section{position:relative;}
+.v3-section-h2{
+  font-size:clamp(28px,4.6vw,52px);line-height:1.04;letter-spacing:-.035em;
+  font-weight:700;color:var(--text-0)!important;margin:14px auto;max-width:780px;text-wrap:balance;
+}
+.v3-section-h2 .accent,
+.v3-h1-accent{
+  background:linear-gradient(120deg,var(--blue-2) 0%,var(--orange) 90%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.v3-section-lede{
+  font-size:17px;color:var(--text-1)!important;max-width:600px;margin:0 auto;line-height:1.55;
+}
+
+.v3-cta-row{display:inline-flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:8px;}
+.v3-btn-primary{
+  background:linear-gradient(180deg,var(--orange-2),var(--orange));color:#1a0e05;
+  padding:13px 22px;border-radius:10px;font-weight:700;font-size:14.5px;
+  display:inline-flex;align-items:center;gap:8px;
+  box-shadow:0 1px 0 rgba(0,0,0,0.15),0 6px 18px -4px var(--orange-glow);
+  transition:transform .12s ease,box-shadow .12s ease;
+  text-decoration:none;border:none;cursor:pointer;
+}
+.v3-btn-primary:hover{transform:translateY(-1px);box-shadow:0 1px 0 rgba(0,0,0,0.15),0 10px 24px -4px var(--orange-glow);}
+.v3-btn-ghost{
+  padding:13px 18px;border-radius:10px;font-weight:600;font-size:14.5px;
+  color:var(--text-1)!important;border:1px solid var(--v3-line-2);
+  background:rgba(255,255,255,0.02);text-decoration:none;
+  display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+  transition:background .12s ease,border-color .12s ease;
+}
+.v3-btn-ghost:hover{background:rgba(255,255,255,0.05);border-color:var(--blue);}
+.v3-trust{
+  display:inline-flex;flex-wrap:wrap;justify-content:center;gap:10px 24px;
+  font-size:13px;color:var(--text-2);margin-top:32px;
+}
+.v3-trust span{display:inline-flex;align-items:center;gap:8px;}
+.v3-trust span::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--v3-green);}
+
+/* ─── Reusable CTA card with dual-radial gradients (e.g. final CTA) ────── */
+.v3-final-cta{
+  position:relative;max-width:1100px;margin:0 auto;padding:80px 56px;
+  border-radius:28px;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(59,130,246,0.28), transparent 55%),
+    radial-gradient(circle at 88% 100%, rgba(251,146,60,0.22), transparent 55%),
+    linear-gradient(180deg,var(--bg-2),var(--bg-1));
+  border:1px solid var(--v3-line-2);overflow:hidden;text-align:center;
+}
+.v3-final-cta::before{
+  content:"";position:absolute;inset:0;
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size:48px 48px;
+  -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 50%, #000 30%, transparent 75%);
+  mask-image:radial-gradient(ellipse 70% 60% at 50% 50%, #000 30%, transparent 75%);
+  pointer-events:none;
+}
+.v3-final-cta > *{position:relative;}
+.v3-final-cta h2{
+  font-size:clamp(36px,5.6vw,64px)!important;line-height:1.04;letter-spacing:-.035em;
+  font-weight:700;color:var(--text-0)!important;margin:18px auto;max-width:780px;
+}
+.v3-final-cta h2 .accent{
+  background:linear-gradient(120deg,var(--blue-2) 0%,var(--orange) 90%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.v3-final-cta .v3-final-lede{
+  font-size:17px;color:var(--text-1);max-width:600px;margin:0 auto 36px;line-height:1.55;
+}
+@media(max-width:680px){.v3-final-cta{padding:48px 24px;}}
+
+/* ─── Customer logo strip dark ──────────────────────────────────────────── */
+.customer-strip{background:transparent!important;border-color:var(--v3-line)!important;}
+.customer-strip-eyebrow{color:var(--text-2)!important;}
+.customer-logo-real{color:var(--text-1)!important;}
+
+/* ─── Reduced motion ────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce){
+  .v3-eyebrow .dot{animation:none;}
+}

@@ -1531,9 +1531,13 @@
 
   /* Masthead — dark glass */
   .site-masthead{background:transparent!important;}
+  /* Sticky dark-glass header — more obvious frostiness so it reads as glass on
+     the dark theme. Color/saturation lift so anything that scrolls under it
+     (orange glows, blue accents) bleeds through subtly. */
   .site-masthead > header{
-    background:rgba(7,9,13,0.72)!important;
-    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    background:rgba(11,15,23,0.55)!important;
+    backdrop-filter:blur(18px) saturate(1.6)!important;
+    -webkit-backdrop-filter:blur(18px) saturate(1.6)!important;
     border-bottom:1px solid var(--v3-line)!important;
   }
   .site-masthead .font-bold{color:var(--text-0)!important;}
