@@ -275,7 +275,7 @@
   .nano-traffic span:nth-child(3){background:#28C840;}
   .nano-titlebar{color:rgba(255,255,255,0.7);font-size:12px;font-weight:500;}
 
-  .nano-body{display:flex;height:480px;}
+  .nano-body{display:flex;height:380px;}
 
   /* Aubergine sidebar */
   .nano-sidebar{
@@ -327,6 +327,40 @@
 
   /* Main channel area */
   .nano-main{flex:1;display:flex;flex-direction:column;background:#fff;min-width:0;}
+
+  /* Slack-style message composer at bottom of the channel — fills empty space, looks authentic */
+  .nano-msg-input{
+    flex-shrink:0;
+    padding:0 20px 16px;
+    background:#fff;
+  }
+  .nano-msg-input-bar{
+    border:1px solid #BBBABB;
+    border-radius:8px;
+    padding:10px 12px 10px 14px;
+    display:flex;align-items:center;gap:10px;
+    background:#fff;
+    box-shadow:0 1px 0 rgba(0,0,0,0.02);
+  }
+  .nano-msg-input-add{
+    width:22px;height:22px;border:1.4px solid #ADADAD;
+    border-radius:5px;display:flex;align-items:center;justify-content:center;
+    font-size:15px;font-weight:600;color:#7A7A7A;line-height:0;
+    flex-shrink:0;
+  }
+  .nano-msg-input-placeholder{
+    flex:1;font-size:14px;color:#9E9E9E;font-weight:400;
+  }
+  .nano-msg-input-icons{
+    display:flex;gap:14px;align-items:center;
+    color:#7A7A7A;font-size:14px;
+  }
+  .nano-msg-input-icons span{cursor:default;line-height:1;}
+  .nano-msg-input-send{
+    background:#007a5a;color:#fff;border-radius:5px;
+    width:26px;height:26px;display:flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:800;
+  }
   .nano-channel-head{
     height:49px;flex-shrink:0;
     border-bottom:1px solid #DDDDDD;
@@ -478,23 +512,23 @@
      slots cleanly under the customer message — no phantom gap. */
   .nano-msg-typing{overflow:hidden;}
 
-  /* Scenario 1 — visible window 0-33% (0-10s) */
-  @keyframes nano-cust-1   {0%,5%   {opacity:0;transform:translateY(8px);} 6%,29%   {opacity:1;transform:translateY(0);} 31%,100%{opacity:0;}}
-  @keyframes nano-typing-1 {0%,11%  {opacity:0;max-height:0;margin-bottom:0;padding:0;transform:translateY(8px);} 12%,15%  {opacity:1;max-height:60px;margin-bottom:8px;padding:4px 0;transform:translateY(0);} 16%,100%{opacity:0;max-height:0;margin-bottom:0;padding:0;}}
-  @keyframes nano-reply-1  {0%,17%  {opacity:0;transform:translateY(8px);} 18%,29%  {opacity:1;transform:translateY(0);} 31%,100%{opacity:0;}}
-  @keyframes nano-replied-1{0%,23%  {opacity:0;transform:translateY(4px) scale(0.96);} 24%,29%{opacity:1;transform:translateY(0) scale(1);} 31%,100%{opacity:0;}}
+  /* Scenario 1 — visible window 0-33%. Messages stay visible until S2 takes over (no blank gap). */
+  @keyframes nano-cust-1   {0%,3%   {opacity:0;transform:translateY(8px);} 5%,33%   {opacity:1;transform:translateY(0);} 35%,100%{opacity:0;}}
+  @keyframes nano-typing-1 {0%,10%  {opacity:0;max-height:0;margin-bottom:0;padding:0;transform:translateY(8px);} 11%,14%  {opacity:1;max-height:60px;margin-bottom:8px;padding:4px 0;transform:translateY(0);} 15%,100%{opacity:0;max-height:0;margin-bottom:0;padding:0;}}
+  @keyframes nano-reply-1  {0%,15%  {opacity:0;transform:translateY(8px);} 17%,33%  {opacity:1;transform:translateY(0);} 35%,100%{opacity:0;}}
+  @keyframes nano-replied-1{0%,23%  {opacity:0;transform:translateY(4px) scale(0.96);} 24%,33%{opacity:1;transform:translateY(0) scale(1);} 35%,100%{opacity:0;}}
 
-  /* Scenario 2 — visible window 33-66% (10-20s) */
-  @keyframes nano-cust-2   {0%,38%  {opacity:0;transform:translateY(8px);} 39%,62%  {opacity:1;transform:translateY(0);} 64%,100%{opacity:0;}}
-  @keyframes nano-typing-2 {0%,44%  {opacity:0;max-height:0;margin-bottom:0;padding:0;transform:translateY(8px);} 45%,48%  {opacity:1;max-height:60px;margin-bottom:8px;padding:4px 0;transform:translateY(0);} 49%,100%{opacity:0;max-height:0;margin-bottom:0;padding:0;}}
-  @keyframes nano-reply-2  {0%,50%  {opacity:0;transform:translateY(8px);} 51%,62%  {opacity:1;transform:translateY(0);} 64%,100%{opacity:0;}}
-  @keyframes nano-replied-2{0%,56%  {opacity:0;transform:translateY(4px) scale(0.96);} 57%,62%{opacity:1;transform:translateY(0) scale(1);} 64%,100%{opacity:0;}}
+  /* Scenario 2 — visible window 33-66%. Picks up exactly where S1 fades. */
+  @keyframes nano-cust-2   {0%,33%  {opacity:0;transform:translateY(8px);} 36%,66%  {opacity:1;transform:translateY(0);} 68%,100%{opacity:0;}}
+  @keyframes nano-typing-2 {0%,43%  {opacity:0;max-height:0;margin-bottom:0;padding:0;transform:translateY(8px);} 44%,47%  {opacity:1;max-height:60px;margin-bottom:8px;padding:4px 0;transform:translateY(0);} 48%,100%{opacity:0;max-height:0;margin-bottom:0;padding:0;}}
+  @keyframes nano-reply-2  {0%,48%  {opacity:0;transform:translateY(8px);} 50%,66%  {opacity:1;transform:translateY(0);} 68%,100%{opacity:0;}}
+  @keyframes nano-replied-2{0%,56%  {opacity:0;transform:translateY(4px) scale(0.96);} 57%,66%{opacity:1;transform:translateY(0) scale(1);} 68%,100%{opacity:0;}}
 
-  /* Scenario 3 — visible window 66-100% (20-30s) */
-  @keyframes nano-cust-3   {0%,71%  {opacity:0;transform:translateY(8px);} 72%,95%  {opacity:1;transform:translateY(0);} 97%,100%{opacity:0;}}
-  @keyframes nano-typing-3 {0%,77%  {opacity:0;max-height:0;margin-bottom:0;padding:0;transform:translateY(8px);} 78%,81%  {opacity:1;max-height:60px;margin-bottom:8px;padding:4px 0;transform:translateY(0);} 82%,100%{opacity:0;max-height:0;margin-bottom:0;padding:0;}}
-  @keyframes nano-reply-3  {0%,83%  {opacity:0;transform:translateY(8px);} 84%,95%  {opacity:1;transform:translateY(0);} 97%,100%{opacity:0;}}
-  @keyframes nano-replied-3{0%,89%  {opacity:0;transform:translateY(4px) scale(0.96);} 90%,95%{opacity:1;transform:translateY(0) scale(1);} 97%,100%{opacity:0;}}
+  /* Scenario 3 — visible window 66-100%. Picks up exactly where S2 fades. */
+  @keyframes nano-cust-3   {0%,66%  {opacity:0;transform:translateY(8px);} 69%,99%  {opacity:1;transform:translateY(0);} 99.5%,100%{opacity:0;}}
+  @keyframes nano-typing-3 {0%,76%  {opacity:0;max-height:0;margin-bottom:0;padding:0;transform:translateY(8px);} 77%,80%  {opacity:1;max-height:60px;margin-bottom:8px;padding:4px 0;transform:translateY(0);} 81%,100%{opacity:0;max-height:0;margin-bottom:0;padding:0;}}
+  @keyframes nano-reply-3  {0%,81%  {opacity:0;transform:translateY(8px);} 83%,99%  {opacity:1;transform:translateY(0);} 99.5%,100%{opacity:0;}}
+  @keyframes nano-replied-3{0%,89%  {opacity:0;transform:translateY(4px) scale(0.96);} 90%,99%{opacity:1;transform:translateY(0) scale(1);} 99.5%,100%{opacity:0;}}
 
   /* ── V3-NC2: Polish layer — animated cursor, progress dots, pulsing glow ──── */
 
@@ -1331,6 +1365,17 @@
             </div>
 
           </div>
+          <!-- Slack-style composer at bottom of channel — authentic placeholder, fills the empty space -->
+          <footer class="nano-msg-input" aria-hidden="true">
+            <div class="nano-msg-input-bar">
+              <span class="nano-msg-input-add" aria-hidden="true">+</span>
+              <span class="nano-msg-input-placeholder">Message #support</span>
+              <span class="nano-msg-input-icons" aria-hidden="true">
+                <span>@</span><span>:)</span><span>Aa</span>
+                <span class="nano-msg-input-send">↑</span>
+              </span>
+            </div>
+          </footer>
         </main>
       </div>
     </div>
