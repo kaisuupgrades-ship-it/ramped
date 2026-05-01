@@ -57,6 +57,24 @@ section[style*="linear-gradient(180deg,var(--paper) 0%,#F5F8FF 100%)"]{
     radial-gradient(900px 500px at 50% 0%, rgba(59,130,246,0.10), transparent 60%),
     transparent!important;
 }
+/* Catch any section that uses background-color:var(--paper) inline (e.g. about hero
+   uses a multi-background image+color combo where my exact-string match misses) */
+section[style*="background-color:var(--paper)"],
+section[style*="background-color:#FAFAF7"]{background-color:transparent!important;}
+
+/* ─── .grid-bg — about page hero uses cream paper + light gridlines via class
+   AND inline style. Reset both so the hero shows the body's dark glow + a
+   white-tinted gridline instead of cream-on-cream. ────────────────────── */
+.grid-bg,
+section.grid-bg{
+  background-color:transparent!important;
+  background-image:
+    radial-gradient(1100px 600px at 95% -5%, rgba(59,130,246,0.18), transparent 60%),
+    radial-gradient(800px 500px at -5% 105%, rgba(251,146,60,0.12), transparent 55%),
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)!important;
+  background-size:auto, auto, 32px 32px, 32px 32px!important;
+}
 
 /* ─── Card → dark glass panel ─────────────────────────────────────────── */
 .card{
@@ -177,12 +195,13 @@ details.faq-item .faq-body p{color:var(--text-2)!important;}
   border-bottom-color:var(--v3-line)!important;
 }
 
-/* Ticker — dark with subtle line below */
+/* Ticker — dark with subtle line below; preserve green dots across all pages */
 .ticker-bar{
   background:var(--bg-1)!important;
   border-bottom:1px solid var(--v3-line)!important;
 }
-.ticker-bar *{color:var(--text-2);}
+.ticker-bar .ticker-item{color:var(--text-2)!important;}
+.ticker-bar .ticker-dot{color:var(--v3-green)!important;}
 
 /* ─── Footer — dark with ambient blue/orange glow + grid backdrop ──────── */
 body > footer{
@@ -362,6 +381,24 @@ body > footer a:hover{color:var(--text-0)!important;}
   border:1px solid var(--v3-line)!important;
   color:var(--text-0)!important;
 }
+/* book.html booking-shell box-shadow uses var(--ink) which is invisible on dark.
+   Replace with a soft glass shadow plus a faint blue glow so the card has presence. */
+.booking-shell{
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.04),
+    0 24px 60px -20px rgba(0,0,0,0.6),
+    0 0 0 1px var(--v3-line)!important;
+}
+/* Force readable text inside the booking shell — child rules use --ink/--muted */
+.booking-shell h1,
+.booking-shell h2,
+.booking-shell h3{color:var(--text-0)!important;}
+.booking-shell p,
+.booking-shell li{color:var(--text-1)!important;}
+.booking-shell .subtitle,
+.booking-shell .panel-label,
+.booking-shell .cal-header,
+.booking-shell .back-btn{color:var(--text-2)!important;}
 .team-card-avatar{
   background:rgba(255,255,255,0.04)!important;
   box-shadow:0 0 0 1px var(--v3-line-2)!important;
