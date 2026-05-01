@@ -125,6 +125,75 @@
   /* Trimmed top padding (was 64/88) — eyebrow badge removed, H1 now sits closer to ticker */
   .hero-inner{position:relative;padding-top:36px;padding-bottom:72px;}
   @media(min-width:768px){.hero-inner{padding-top:48px;padding-bottom:96px;}}
+
+  /* ─── Hero 2-column grid (desktop) ──────────────────────────────────── */
+  /* Mobile: stacked, centered. ≥1024px: text left, demo right at 5fr / 7fr. */
+  .hero-grid{
+    display:grid;grid-template-columns:1fr;gap:32px;align-items:start;
+  }
+  .hero-text{text-align:center;display:flex;flex-direction:column;align-items:center;}
+  @media(min-width:1024px){
+    .hero-grid{grid-template-columns:5fr 7fr;gap:48px;align-items:center;}
+    .hero-text{text-align:left;align-items:flex-start;}
+    .hero-text .hero-h1{margin-left:0;margin-right:0;}
+    .hero-text .hero-sub{margin-left:0;margin-right:0;}
+    .hero-text .hero-cta-row{justify-content:flex-start;}
+    .hero-text .hero-guarantee{margin-left:0;margin-right:0;}
+    .hero-text .hero-founder{margin-left:0;margin-right:0;}
+    .hero-text .hero-h1{font-size:clamp(2.4rem,4.4vw,3.8rem);}
+    /* Demo can shrink down — adjust its inner grid for narrower column */
+    .hero-grid .demo-shell{margin:0;max-width:none;min-height:580px;}
+    .hero-grid .demo-shell .chat-stream{max-height:460px;}
+  }
+  @media(min-width:1280px){
+    .hero-grid{gap:64px;}
+    .hero-grid .demo-shell{min-height:620px;}
+  }
+
+  /* ─── Hero legibility fixes for dark theme ─────────────────────────────── */
+  .hero-section{
+    background:transparent!important;
+  }
+  .hero-section::before{
+    /* Soften light-grid overlay on dark bg */
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px)!important;
+  }
+  .hero-h1{color:var(--text-0)!important;}
+  .hero-sub{color:var(--text-1)!important;}
+  .hero-founder{color:var(--text-2)!important;}
+  .hero-founder strong{color:var(--text-0)!important;}
+  .hero-founder-trust{color:var(--text-3)!important;opacity:1!important;}
+
+  /* Hero CTAs — v3 orange primary, dark-glass ghost */
+  .hero-cta-row .btn-primary{
+    background:linear-gradient(180deg,var(--orange-2),var(--orange))!important;
+    color:#1a0e05!important;border:none!important;
+    box-shadow:0 1px 0 rgba(0,0,0,0.15),0 6px 18px -4px var(--orange-glow)!important;
+  }
+  .hero-cta-row .btn-ghost{
+    background:rgba(255,255,255,0.03)!important;
+    color:var(--text-1)!important;
+    border:1px solid var(--v3-line-2)!important;
+  }
+  .hero-cta-row .btn-ghost:hover{
+    background:rgba(255,255,255,0.06)!important;border-color:var(--blue)!important;
+  }
+
+  /* Hero guarantee — dark amber tint instead of cream/yellow */
+  .hero-guarantee{
+    background:linear-gradient(180deg,rgba(251,146,60,0.10),rgba(251,146,60,0.03))!important;
+    border:1.5px solid rgba(251,146,60,0.35)!important;
+    box-shadow:0 4px 16px -4px rgba(251,146,60,0.12)!important;
+  }
+  .hero-guarantee-icon{
+    background:rgba(251,146,60,0.18)!important;
+    border:1px solid rgba(251,146,60,0.45)!important;
+  }
+  .hero-guarantee-text{color:var(--text-1)!important;}
+  .hero-guarantee-text strong{color:var(--text-0)!important;}
+  .hero-guarantee-text small{color:var(--orange-2)!important;}
   .hero-eyebrow{
     display:inline-flex;align-items:center;gap:8px;
     padding:6px 14px;margin-bottom:24px;
@@ -1615,7 +1684,9 @@
 <!-- ─── HERO — centered text + agent UI showcase (B+C hybrid) ──────────────── -->
 <main id="main">
 <section class="hero-section" id="hero">
-  <div class="section-wrap hero-inner" style="text-align:center;">
+  <div class="section-wrap hero-inner">
+    <div class="hero-grid">
+      <div class="hero-text">
 
     <!-- Headline — gradient accent on second clause, ported from Claude Design prototype -->
     <h1 class="hero-h1" style="font-size:clamp(2.8rem, 7vw, 5rem);line-height:1.02;letter-spacing:-.04em;max-width:1000px;margin:0 auto 24px;">
@@ -1655,6 +1726,8 @@
       Built by <strong>Andrew Yoon</strong> — 10-year operator and founder of Xtractor Depot.
       <span class="hero-founder-trust">Free · 30 minutes · No commitment.</span>
     </p>
+
+      </div><!-- /.hero-text -->
 
     <!-- Ramped Bot Slack demo — V4-INT (2026-05-01).
          Interactive demo ported from the Claude Design prototype.
@@ -1736,7 +1809,8 @@
           </div>
         </div>
       </section>
-    </div>
+    </div><!-- /.demo-shell -->
+    </div><!-- /.hero-grid -->
 
   </div>
 </section>
