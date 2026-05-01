@@ -1236,6 +1236,272 @@
     .demo-shell .integrations-row{padding-left:0;}
     .demo-shell .branch-wrap{padding-left:0;}
   }
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     Brand v3 site-wide dark migration (2026-05-01)
+     Page now follows prototype structure: hero → demo → quote → timeline →
+     pricing → FAQ → final CTA → footer. All sections render dark.
+     ─────────────────────────────────────────────────────────────────────── */
+  body{background:var(--bg-0)!important;color:var(--text-0)!important;font-feature-settings:"ss01","cv11";}
+  body{
+    background:
+      radial-gradient(1200px 600px at 50% -200px, rgba(59,130,246,0.18), transparent 60%),
+      radial-gradient(900px 500px at 90% 10%, rgba(251,146,60,0.10), transparent 60%),
+      var(--bg-0)!important;
+  }
+
+  /* v3 reusable utilities */
+  .v3-section{position:relative;}
+  .v3-section-h2{
+    font-size:clamp(28px,4.6vw,52px);line-height:1.04;letter-spacing:-.035em;
+    font-weight:700;color:var(--text-0)!important;margin:14px auto;max-width:780px;text-wrap:balance;
+  }
+  .v3-section-h2 .accent{
+    background:linear-gradient(120deg,var(--blue-2) 0%,var(--orange) 90%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .v3-section-lede{
+    font-size:17px;color:var(--text-1)!important;max-width:600px;margin:0 auto;line-height:1.55;
+  }
+  .v3-eyebrow{
+    display:inline-flex;align-items:center;gap:8px;padding:6px 12px 6px 8px;border-radius:999px;
+    background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.25);
+    font-size:12px;color:var(--blue-2);font-weight:600;letter-spacing:.005em;
+  }
+  .v3-eyebrow .dot{
+    width:6px;height:6px;border-radius:50%;background:var(--v3-green);
+    box-shadow:0 0 0 0 rgba(52,211,153,0.6);animation:v3-pulse 1.8s ease-out infinite;
+  }
+  @keyframes v3-pulse{0%{box-shadow:0 0 0 0 rgba(52,211,153,0.55);}70%{box-shadow:0 0 0 8px rgba(52,211,153,0);}100%{box-shadow:0 0 0 0 rgba(52,211,153,0);}}
+  .v3-cta-row{display:inline-flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:8px;}
+  .v3-btn-primary{
+    background:linear-gradient(180deg,var(--orange-2),var(--orange));color:#1a0e05;
+    padding:13px 22px;border-radius:10px;font-weight:700;font-size:14.5px;
+    display:inline-flex;align-items:center;gap:8px;
+    box-shadow:0 1px 0 rgba(0,0,0,0.15),0 6px 18px -4px var(--orange-glow);
+    transition:transform .12s ease,box-shadow .12s ease;
+    text-decoration:none;border:none;cursor:pointer;
+  }
+  .v3-btn-primary:hover{transform:translateY(-1px);box-shadow:0 1px 0 rgba(0,0,0,0.15),0 10px 24px -4px var(--orange-glow);}
+  .v3-btn-ghost{
+    padding:13px 18px;border-radius:10px;font-weight:600;font-size:14.5px;
+    color:var(--text-1)!important;border:1px solid var(--v3-line-2);
+    background:rgba(255,255,255,0.02);text-decoration:none;
+    display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+    transition:background .12s ease,border-color .12s ease;
+  }
+  .v3-btn-ghost:hover{background:rgba(255,255,255,0.05);border-color:var(--blue);}
+  .v3-trust{
+    display:inline-flex;flex-wrap:wrap;justify-content:center;gap:10px 24px;
+    font-size:13px;color:var(--text-2);margin-top:32px;
+  }
+  .v3-trust span{display:inline-flex;align-items:center;gap:8px;}
+  .v3-trust span::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--v3-green);}
+
+  /* ─── Xtractor inline quote ──────────────────────────────────────────── */
+  .v3-quote{
+    background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));
+    border:1px solid var(--v3-line);border-radius:18px;padding:30px 32px;
+    position:relative;overflow:hidden;
+  }
+  .v3-quote::before{
+    content:"";position:absolute;top:0;left:0;width:4px;height:100%;
+    background:linear-gradient(180deg,var(--blue) 0%,var(--orange) 100%);
+  }
+  .v3-quote-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px;}
+  .v3-quote-logo{width:48px;height:48px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+  .v3-quote-name{font-weight:700;font-size:15px;color:var(--text-0)!important;}
+  .v3-quote-meta{font-size:12.5px;color:var(--text-2)!important;}
+  .v3-quote-stats{margin-left:auto;display:flex;gap:18px;}
+  .v3-qstat{display:flex;flex-direction:column;align-items:flex-end;}
+  .v3-qstat-v{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;color:var(--orange-2);font-variant-numeric:tabular-nums;}
+  .v3-qstat-l{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;font-weight:600;}
+  .v3-quote-text{
+    margin:0;font-size:16px;color:var(--text-1)!important;line-height:1.65;font-style:italic;
+  }
+  .v3-quote-text strong{color:var(--text-0);font-style:normal;font-weight:600;}
+  .v3-quote-cite{margin-top:14px;font-size:13px;color:var(--text-2)!important;font-weight:500;}
+  @media(max-width:680px){
+    .v3-quote-stats{margin-left:0;width:100%;justify-content:space-between;}
+    .v3-qstat{align-items:flex-start;}
+  }
+
+  /* ─── 30-day timeline 4-up cards ──────────────────────────────────────── */
+  .v3-timeline{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
+    max-width:1240px;margin:0 auto;padding:0 24px;
+  }
+  @media(max-width:880px){.v3-timeline{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:520px){.v3-timeline{grid-template-columns:1fr;}}
+  .v3-timeline-card{
+    position:relative;
+    background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005));
+    border:1px solid var(--v3-line);border-radius:16px;padding:24px 22px;overflow:hidden;
+    transition:transform .15s ease,border-color .15s ease;
+  }
+  .v3-timeline-card:hover{transform:translateY(-2px);border-color:var(--v3-line-2);}
+  .v3-tl-eyebrow{
+    display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--orange);font-weight:700;margin-bottom:14px;
+  }
+  .v3-timeline-card h3{font-size:18px;font-weight:700;color:var(--text-0)!important;margin:0 0 8px;letter-spacing:-.01em;}
+  .v3-timeline-card p{font-size:13.5px;color:var(--text-2)!important;line-height:1.55;margin:0 0 18px;}
+  .v3-bar{height:4px;background:rgba(255,255,255,0.05);border-radius:999px;overflow:hidden;}
+  .v3-bar-fill{
+    height:100%;background:linear-gradient(90deg,var(--blue) 0%,var(--orange) 100%);
+    border-radius:999px;transform-origin:left;transform:scaleX(0);
+    transition:transform 1.6s cubic-bezier(.22,.61,.36,1) .2s;
+  }
+  .v3-timeline-card.in-view .v3-bar-fill{transform:scaleX(var(--fill,1));}
+  .v3-tl-step{
+    position:absolute;top:18px;right:18px;width:32px;height:32px;border-radius:50%;
+    background:rgba(59,130,246,0.10);border:1px solid rgba(59,130,246,0.30);
+    color:var(--blue-2);font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;
+  }
+
+  /* ─── Final v3 CTA — dual radial gradient card ─────────────────────────── */
+  .v3-final-cta{
+    position:relative;max-width:1100px;margin:0 auto;padding:80px 56px;
+    border-radius:28px;
+    background:
+      radial-gradient(circle at 12% 0%, rgba(59,130,246,0.28), transparent 55%),
+      radial-gradient(circle at 88% 100%, rgba(251,146,60,0.22), transparent 55%),
+      linear-gradient(180deg,var(--bg-2),var(--bg-1));
+    border:1px solid var(--v3-line-2);overflow:hidden;text-align:center;
+  }
+  .v3-final-cta::before{
+    content:"";position:absolute;inset:0;
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size:48px 48px;
+    -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 50%, #000 30%, transparent 75%);
+    mask-image:radial-gradient(ellipse 70% 60% at 50% 50%, #000 30%, transparent 75%);
+    pointer-events:none;
+  }
+  .v3-final-cta > *{position:relative;}
+  .v3-final-cta h2{
+    font-size:clamp(36px,5.6vw,64px)!important;line-height:1.04;letter-spacing:-.035em;
+    font-weight:700;color:var(--text-0)!important;margin:18px auto;max-width:780px;
+  }
+  .v3-final-cta h2 .accent{
+    background:linear-gradient(120deg,var(--blue-2) 0%,var(--orange) 90%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .v3-final-cta .v3-final-lede{
+    font-size:17px;color:var(--text-1);max-width:600px;margin:0 auto 36px;line-height:1.55;
+  }
+  @media(max-width:680px){.v3-final-cta{padding:48px 24px;}}
+
+  /* ─── Site-wide dark overrides for kept v2 sections (FAQ, Pricing, etc.) ── */
+  .hero-section,
+  section.py-20[id="faq"],
+  section.py-20[id="pricing"]{
+    background:transparent!important;
+    color:var(--text-0)!important;
+  }
+  /* Section copy color flips */
+  body section h1, body section h2, body section h3, body section h4{color:var(--text-0)!important;}
+  body section p{color:var(--text-1);}
+  body section [style*="color:var(--ink)"]:not(.v3-h1):not(.nano-msg-name):not(.demo-shell *):not(.demo-shell){color:var(--text-0)!important;}
+  body section [style*="color:var(--ink-2)"]{color:var(--text-1)!important;}
+  body section [style*="color:var(--muted)"]{color:var(--text-2)!important;}
+  body section .sectionnum{color:var(--text-3)!important;}
+
+  /* Pricing — dark cards with orange CTAs and blue-glow featured tier */
+  #pricing .card{
+    background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005))!important;
+    border:1px solid var(--v3-line)!important;color:var(--text-0)!important;border-radius:16px;
+  }
+  #pricing .card[style*="border-color:var(--accent)"]{
+    background:
+      radial-gradient(600px 300px at 50% -50%, rgba(59,130,246,0.18), transparent 60%),
+      linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01))!important;
+    border:2px solid var(--blue)!important;
+    box-shadow:0 1px 0 rgba(0,0,0,0.3),0 24px 60px -20px rgba(59,130,246,0.35),0 4px 14px -4px rgba(0,0,0,0.4)!important;
+  }
+  #pricing .card[style*="border-color:var(--accent)"] span[style*="background:var(--accent)"]{
+    background:linear-gradient(180deg,var(--orange-2),var(--orange))!important;color:#1a0e05!important;
+    box-shadow:0 6px 16px -4px var(--orange-glow)!important;
+  }
+  /* Pricing list checks: green tint on dark */
+  #pricing ul li svg circle[fill="#ECFDF5"]{fill:rgba(52,211,153,0.15)!important;}
+  #pricing ul li svg path[stroke="var(--good)"]{stroke:var(--v3-green)!important;}
+  /* Pricing CTA buttons — orange v3 */
+  #pricing a.btn-primary[data-tier-cta]{
+    background:linear-gradient(180deg,var(--orange-2),var(--orange))!important;
+    color:#1a0e05!important;border:none!important;
+    box-shadow:0 1px 0 rgba(0,0,0,0.15),0 6px 18px -4px var(--orange-glow)!important;
+  }
+  /* Billing toggle */
+  #pricing div[style*="background:#F1F1EF"]{background:rgba(255,255,255,0.04)!important;border:1px solid var(--v3-line)!important;}
+  #pricing button#btn-monthly, #pricing button#btn-annual{color:var(--text-1)!important;}
+  #pricing button#btn-annual[style*="background:#fff"]{background:var(--bg-3)!important;color:var(--text-0)!important;}
+  #pricing #annual-badge{background:rgba(52,211,153,0.12)!important;color:var(--v3-green)!important;}
+  /* Guarantee banner — dark amber */
+  #pricing div[style*="border:2px solid var(--ink)"][style*="background:#FFFBEB"]{
+    background:linear-gradient(180deg,rgba(251,146,60,0.10),rgba(251,146,60,0.03))!important;
+    border:2px solid rgba(251,146,60,0.35)!important;
+  }
+  #pricing div[style*="background:#FEF3C7"][style*="border:2px solid #F59E0B"]{
+    background:rgba(251,146,60,0.20)!important;
+  }
+  #pricing [style*="color:#92400E"]{color:#fbbf24!important;}
+  #pricing a[style*="color:var(--accent)"]{color:var(--orange-2)!important;}
+
+  /* FAQ — dark accordion */
+  #faq details.faq-item{
+    background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005))!important;
+    border:1px solid var(--v3-line)!important;
+    border-radius:12px;
+  }
+  #faq details.faq-item summary span{color:var(--text-0)!important;}
+  #faq details.faq-item .faq-body p{color:var(--text-2)!important;}
+  #faq a.btn-primary{
+    background:linear-gradient(180deg,var(--orange-2),var(--orange))!important;
+    color:#1a0e05!important;border:none!important;
+    box-shadow:0 1px 0 rgba(0,0,0,0.15),0 6px 18px -4px var(--orange-glow)!important;
+  }
+
+  /* Masthead — dark glass */
+  .site-masthead{background:transparent!important;}
+  .site-masthead > header{
+    background:rgba(7,9,13,0.72)!important;
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--v3-line)!important;
+  }
+  .site-masthead .font-bold{color:var(--text-0)!important;}
+  .site-masthead nav[aria-label="Primary"] a.btn-ghost{
+    background:transparent!important;border-color:var(--v3-line-2)!important;color:var(--text-1)!important;
+  }
+  .site-masthead nav[aria-label="Primary"] a.btn-ghost:hover{
+    background:rgba(255,255,255,0.05)!important;border-color:var(--blue)!important;color:var(--text-0)!important;
+  }
+  .site-masthead a.btn-primary{
+    background:linear-gradient(180deg,var(--orange-2),var(--orange))!important;
+    color:#1a0e05!important;border:none!important;
+    box-shadow:0 1px 0 rgba(0,0,0,0.15),0 6px 18px -4px var(--orange-glow)!important;
+  }
+  #mobile-nav-toggle{background:rgba(255,255,255,0.04)!important;border-color:var(--v3-line-2)!important;color:var(--text-0)!important;}
+  #mobile-nav-drawer{background:var(--bg-1)!important;border-top-color:var(--v3-line)!important;}
+  #mobile-nav-drawer a{color:var(--text-1)!important;border-bottom-color:var(--v3-line)!important;}
+  .ticker-bar{background:var(--bg-1)!important;border-bottom:1px solid var(--v3-line)!important;}
+  .ticker-bar *{color:var(--text-2);}
+
+  /* Footer — dark */
+  body > footer{
+    background:var(--bg-1)!important;
+    border-top:1px solid var(--v3-line)!important;
+  }
+  body > footer *{color:var(--text-2)!important;}
+  body > footer span[style*="color:var(--ink)"]{color:var(--text-0)!important;}
+
+  /* Honor reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    .v3-eyebrow .dot{animation:none;}
+    .v3-bar-fill{transition:none;}
+  }
 </style>
 </head>
 <body>
@@ -1466,119 +1732,73 @@
   </div>
 </section>
 
-<!-- ─── FEATURE HIGHLIGHTS — 3-up dark cards (V3-FH1) ──────────────────────── -->
-<section class="features-section" aria-label="What makes Ramped Bot different">
-  <div class="features-grid">
-
-    <!-- Card 1: Catches what you missed -->
-    <article class="feature-card">
-      <h3>Catches what you missed.</h3>
-      <p>Stale addresses. Overdue invoices. Mismatched POs. Ramped Bot cross-references your stack and surfaces the errors that cost you 4 hours a week.</p>
-      <div class="feature-visual">
-        <div class="mini-slack" aria-hidden="true">
-          <div class="mini-msg">
-            <div class="mini-avatar mini-avatar-cust">MC</div>
-            <div class="mini-msg-body">
-              <span class="mini-name">Marcus</span><span class="mini-time">10:42 AM</span>
-              <div class="mini-text">Are we still shipping Acme's order today?</div>
-            </div>
-          </div>
-          <div class="mini-msg">
-            <div class="mini-avatar mini-avatar-bot"><svg width="14" height="14" viewBox="0 0 100 100" fill="none"><path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="#fff"/></svg></div>
-            <div class="mini-msg-body">
-              <span class="mini-name">Ramped Bot</span><span class="mini-app-badge">APP</span><span class="mini-time">10:42 AM</span>
-              <div class="mini-text">⚠️ Heads up — shipping address is the <strong>old Reno warehouse</strong>. Acme relocated last month per their Sept invoice.</div>
-            </div>
-          </div>
+<!-- ─── XTRACTOR PROOF — small inline quote (Brand v3) ──────────────────────── -->
+<section class="v3-dark v3-section" style="padding:48px 24px;" aria-label="Customer proof">
+  <div style="max-width:980px;margin:0 auto;">
+    <article class="v3-quote">
+      <div class="v3-quote-row">
+        <img src="/xtractordepot-logo.jpg" alt="Xtractor Depot" width="48" height="48" loading="lazy" decoding="async" class="v3-quote-logo">
+        <div>
+          <div class="v3-quote-name">Xtractor Depot</div>
+          <div class="v3-quote-meta">Industrial equipment supplier · Founder</div>
+        </div>
+        <div class="v3-quote-stats" aria-hidden="true">
+          <div class="v3-qstat"><span class="v3-qstat-v">14h</span><span class="v3-qstat-l">saved/wk</span></div>
+          <div class="v3-qstat"><span class="v3-qstat-v">8 min</span><span class="v3-qstat-l">response</span></div>
+          <div class="v3-qstat"><span class="v3-qstat-v">30d</span><span class="v3-qstat-l">to live</span></div>
         </div>
       </div>
+      <blockquote class="v3-quote-text">
+        "Honestly, I was skeptical. We'd tried software before and it always ended up as one more thing to manage. By day 30 we had a live agent handling our quote intake — no babysitting required. <strong>I wish we'd done this two years ago.</strong>"
+      </blockquote>
+      <div class="v3-quote-cite">— Andrew, Founder, Xtractor Depot</div>
     </article>
-
-    <!-- Card 2: Plugged into your whole stack -->
-    <article class="feature-card">
-      <h3>Plugged into your whole stack.</h3>
-      <p>NetSuite. HubSpot. QuickBooks. Slack. Stripe. Gmail. Ramped Bot reads them, writes to them, and stitches them together. No tab-switching. No CSV exports.</p>
-      <div class="feature-visual">
-        <div class="int-cluster" aria-hidden="true">
-          <div class="int-logo int-logo-1">HS</div>
-          <div class="int-logo int-logo-2">QB</div>
-          <div class="int-logo int-logo-3">#</div>
-          <div class="int-logo int-logo-4">St</div>
-          <div class="int-logo int-logo-5">G</div>
-          <div class="int-logo int-logo-6">NS</div>
-        </div>
-      </div>
-    </article>
-
-    <!-- Card 3: Always asks before it sends -->
-    <article class="feature-card">
-      <h3>Always asks before it sends.</h3>
-      <p>Every email, draft, and update goes through your approval. One click to send. One click to edit. You stay in control of every customer touchpoint.</p>
-      <div class="feature-visual">
-        <div class="mini-slack" aria-hidden="true">
-          <div class="mini-msg">
-            <div class="mini-avatar mini-avatar-bot"><svg width="14" height="14" viewBox="0 0 100 100" fill="none"><path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="#fff"/></svg></div>
-            <div class="mini-msg-body">
-              <span class="mini-name">Ramped Bot</span><span class="mini-app-badge">APP</span><span class="mini-time">2:14 PM</span>
-              <div class="mini-text">Drafted a confirm email to Janet. Want me to send?</div>
-              <div class="mini-actions">
-                <span class="mini-btn mini-btn-primary">Send draft</span>
-                <span class="mini-btn mini-btn-secondary">Edit</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </article>
-
   </div>
 </section>
 
-<!-- ─── CUSTOMER LOGO STRIP ────────────────────────────────────────────────── -->
-<section class="customer-strip">
-  <div class="section-wrap">
-    <p class="customer-strip-eyebrow">Deployed in production at</p>
-    <div class="customer-strip-logos">
-      <a href="/about" class="customer-logo-real" aria-label="Xtractor Depot — read the case study">
-        <img src="/xtractordepot-logo.jpg" alt="Xtractor Depot" width="44" height="44" loading="lazy" decoding="async">
-        <span>Xtractor Depot</span>
-      </a>
-      <div class="customer-logo-real">
-        <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true"><circle cx="22" cy="22" r="22" fill="#0D9488"/><text x="22" y="27.5" text-anchor="middle" fill="white" font-family="ui-sans-serif,system-ui,sans-serif" font-weight="700" font-size="13">CD</text></svg>
-        <span>Cascade Dental Group</span>
-      </div>
-      <div class="customer-logo-real">
-        <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true"><circle cx="22" cy="22" r="22" fill="#D97706"/><text x="22" y="27.5" text-anchor="middle" fill="white" font-family="ui-sans-serif,system-ui,sans-serif" font-weight="700" font-size="13">MF</text></svg>
-        <span>Meridian Field Services</span>
-      </div>
-      <div class="customer-logo-real">
-        <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true"><circle cx="22" cy="22" r="22" fill="#1E40AF"/><text x="22" y="27.5" text-anchor="middle" fill="white" font-family="ui-sans-serif,system-ui,sans-serif" font-weight="700" font-size="13">VP</text></svg>
-        <span>Vantage Property Group</span>
-      </div>
+<!-- ─── 30-DAY TIMELINE — 4-up cards with animated progress bars (Brand v3) ── -->
+<section class="v3-dark v3-section" style="padding:80px 0 56px;" aria-label="30-day deployment timeline">
+  <div style="max-width:1240px;margin:0 auto 36px;padding:0 24px;text-align:center;">
+    <div class="v3-eyebrow" style="margin:0 auto 18px;display:inline-flex;">
+      <span class="dot" aria-hidden="true"></span>
+      <span>30-DAY DEPLOYMENT · BUILT-IN GUARANTEE</span>
     </div>
+    <h2 class="v3-section-h2">
+      From kickoff to <span class="accent">live agents</span> in 30 days.
+    </h2>
+    <p class="v3-section-lede">
+      Four weeks. Four milestones. A working AI department by the end of the month — or your money back.
+    </p>
   </div>
-</section>
-
-<!-- ─── BY THE NUMBERS — moved out of hero so the hero stays focused ──────── -->
-<section style="background:linear-gradient(180deg,#FFFFFF 0%,#F5F8FF 100%);padding-block:64px;">
-  <div class="section-wrap">
-    <div style="text-align:center;margin-bottom:28px;">
-      <p class="sectionnum">By the numbers</p>
-    </div>
-    <div class="hero-metrics" style="margin:0 auto;max-width:1000px;">
-      <div class="hero-metric-card">
-        <span class="hero-metric-val">40+ hrs</span>
-        <span class="hero-metric-label">saved per week, per client</span>
-      </div>
-      <div class="hero-metric-card">
-        <span class="hero-metric-val">$12,000+</span>
-        <span class="hero-metric-label">avg. saved per month vs. staffing</span>
-      </div>
-      <div class="hero-metric-card">
-        <span class="hero-metric-val">30 days</span>
-        <span class="hero-metric-label">from kickoff to live agent</span>
-      </div>
-    </div>
+  <div class="v3-timeline" id="v3-timeline">
+    <article class="v3-timeline-card" style="--fill:0.25;">
+      <span class="v3-tl-step" aria-hidden="true">01</span>
+      <span class="v3-tl-eyebrow">Week 1 · Diagnose</span>
+      <h3>Map your stack &amp; find the wins.</h3>
+      <p>Workshops with your team. Audit of NetSuite, HubSpot, QuickBooks, Slack. Locked deployment plan.</p>
+      <div class="v3-bar" aria-hidden="true"><div class="v3-bar-fill"></div></div>
+    </article>
+    <article class="v3-timeline-card" style="--fill:0.50;">
+      <span class="v3-tl-step" aria-hidden="true">02</span>
+      <span class="v3-tl-eyebrow">Week 2 · Build</span>
+      <h3>Wire the agents into production.</h3>
+      <p>Custom agent built and integrated with your real systems. First workflow running end-to-end in staging.</p>
+      <div class="v3-bar" aria-hidden="true"><div class="v3-bar-fill"></div></div>
+    </article>
+    <article class="v3-timeline-card" style="--fill:0.75;">
+      <span class="v3-tl-step" aria-hidden="true">03</span>
+      <span class="v3-tl-eyebrow">Week 3 · Test</span>
+      <h3>Pressure-test on real volume.</h3>
+      <p>Run agents against last quarter's data. Tune the edges. Approval flows wired into Slack.</p>
+      <div class="v3-bar" aria-hidden="true"><div class="v3-bar-fill"></div></div>
+    </article>
+    <article class="v3-timeline-card" style="--fill:1;">
+      <span class="v3-tl-step" aria-hidden="true">04</span>
+      <span class="v3-tl-eyebrow">Week 4 · Live</span>
+      <h3>Production. Day-one ROI.</h3>
+      <p>Agents take live traffic. Daily health checks. Monthly retainer kicks in for ongoing iteration.</p>
+      <div class="v3-bar" aria-hidden="true"><div class="v3-bar-fill"></div></div>
+    </article>
   </div>
 </section>
 
@@ -1653,196 +1873,6 @@
       <p style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5;">2-minute questionnaire · your personalized AI deployment map, free.</p>
     </div>
 
-  </div>
-</section>
-
-<!-- ─── INDUSTRY LOGO WALL ─────────────────────────────────────────────── -->
-<section style="padding:36px 0 40px;background:#fff;">
-  <div class="section-wrap" style="text-align:center;">
-    <p style="font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">Deployed across industries</p>
-    <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">
-      <span style="padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--paper);font-size:13px;font-weight:500;color:var(--muted);">Healthcare</span>
-      <span style="padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--paper);font-size:13px;font-weight:500;color:var(--muted);">Legal</span>
-      <span style="padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--paper);font-size:13px;font-weight:500;color:var(--muted);">Real Estate</span>
-      <span style="padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--paper);font-size:13px;font-weight:500;color:var(--muted);">Dental</span>
-      <span style="padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--paper);font-size:13px;font-weight:500;color:var(--muted);">Field Services</span>
-      <span style="padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--paper);font-size:13px;font-weight:500;color:var(--muted);">Logistics</span>
-      <span style="padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--paper);font-size:13px;font-weight:500;color:var(--muted);">Cannabis</span>
-      <span style="padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--paper);font-size:13px;font-weight:500;color:var(--muted);">Finance</span>
-    </div>
-  </div>
-</section>
-
-<!-- ─── PROBLEM ───────────────────────────────────────────────────────────── -->
-<section class="py-20" id="problem" style="background:var(--paper);">
-  <div class="section-wrap">
-    <div class="mb-12">
-      <p class="sectionnum mb-3">The problem</p>
-      <h2 style="font-size:clamp(1.75rem,4vw,2.5rem);font-weight:800;letter-spacing:-.02em;color:var(--ink);">
-        Still running on spreadsheets<br class="hidden sm:block"> and gut feel?
-      </h2>
-    </div>
-
-    <div class="grid sm:grid-cols-3 gap-5">
-      <!-- Pain 1 — figure at fork, three diverging paths -->
-      <div class="card p-6 hover-lift">
-        <div class="pain-icon mb-4" style="width:64px;height:64px;color:var(--accent);">
-          <svg viewBox="0 0 80 80" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="40" cy="22" r="5"/>
-            <path d="M40 27 v14 M33 33 h14 M40 41 l-4 11 M40 41 l4 11"/>
-            <path d="M40 56 L18 72" stroke-dasharray="3 4" opacity="0.55"/>
-            <path d="M40 56 L40 72" stroke-dasharray="3 4" opacity="0.85"/>
-            <path d="M40 56 L62 72" stroke-dasharray="3 4" opacity="0.55"/>
-            <circle cx="18" cy="72" r="1.6" fill="currentColor" stroke="none" opacity="0.55"/>
-            <circle cx="40" cy="72" r="1.6" fill="currentColor" stroke="none"/>
-            <circle cx="62" cy="72" r="1.6" fill="currentColor" stroke="none" opacity="0.55"/>
-          </svg>
-        </div>
-        <h3 style="font-weight:700;font-size:16px;color:var(--ink);margin-bottom:8px;">You know AI could help — but don't know where to start</h3>
-        <p style="font-size:14px;color:var(--muted);line-height:1.6;">Every week you read about AI transforming businesses like yours. Your team is busy. The tools are confusing. And another quarter goes by.</p>
-      </div>
-      <!-- Pain 2 — chart on easel above closed laptop with strikethrough -->
-      <div class="card p-6 hover-lift">
-        <div class="pain-icon mb-4" style="width:64px;height:64px;color:var(--accent);">
-          <svg viewBox="0 0 80 80" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="14" y="10" width="40" height="26" rx="2"/>
-            <line x1="22" y1="30" x2="22" y2="22"/>
-            <line x1="29" y1="30" x2="29" y2="18"/>
-            <line x1="36" y1="30" x2="36" y2="14"/>
-            <line x1="43" y1="30" x2="43" y2="20"/>
-            <line x1="20" y1="36" x2="14" y2="50"/>
-            <line x1="48" y1="36" x2="54" y2="50"/>
-            <line x1="22" y1="44" x2="46" y2="44" opacity="0.5"/>
-            <rect x="20" y="58" width="40" height="6" rx="1"/>
-            <line x1="22" y1="64" x2="58" y2="64" opacity="0.5"/>
-            <line x1="34" y1="58" x2="46" y2="64" opacity="0.4"/>
-            <line x1="46" y1="58" x2="34" y2="64" opacity="0.4"/>
-          </svg>
-        </div>
-        <h3 style="font-weight:700;font-size:16px;color:var(--ink);margin-bottom:8px;">Consultants give you decks, not working software</h3>
-        <p style="font-size:14px;color:var(--muted);line-height:1.6;">You've sat through the strategy sessions. You have the roadmap PDF. But nothing in your business actually changed. Deliverables aren't outcomes.</p>
-      </div>
-      <!-- Pain 3 — figure with stack of papers + repeating loop -->
-      <div class="card p-6 hover-lift">
-        <div class="pain-icon mb-4" style="width:64px;height:64px;color:var(--accent);">
-          <svg viewBox="0 0 80 80" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="22" cy="20" r="5"/>
-            <path d="M22 25 v8 M22 33 c-2 6 -2 14 0 20"/>
-            <line x1="10" y1="56" x2="56" y2="56"/>
-            <rect x="34" y="48" width="20" height="3" rx="0.5"/>
-            <rect x="32" y="44" width="22" height="3" rx="0.5" opacity="0.7"/>
-            <rect x="30" y="40" width="22" height="3" rx="0.5" opacity="0.45"/>
-            <path d="M62 24 a8 8 0 1 1 -8 -8"/>
-            <polyline points="55 14 54 17 57 18"/>
-          </svg>
-        </div>
-        <h3 style="font-weight:700;font-size:16px;color:var(--ink);margin-bottom:8px;">Your team is stuck doing work that should be automated</h3>
-        <p style="font-size:14px;color:var(--muted);line-height:1.6;">Manual intake. Follow-up emails. Data entry. Routing. Your best people spend hours on tasks a well-configured AI agent could handle in seconds.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ─── HOW IT WORKS ──────────────────────────────────────────────────────── -->
-<section class="py-20" id="how-it-works" style="background:#fff;">
-  <div class="section-wrap">
-    <div class="mb-12">
-      <p class="sectionnum mb-3">How it works</p>
-      <h2 style="font-size:clamp(1.75rem,4vw,2.5rem);font-weight:800;letter-spacing:-.02em;color:var(--ink);">
-        Three steps. Thirty days.
-      </h2>
-    </div>
-
-    <div class="grid sm:grid-cols-3 gap-8">
-      <!-- Step 1 -->
-      <div class="flex flex-col gap-4">
-        <div class="flex items-center gap-3 mb-1">
-          <div class="step-num">1</div>
-          <span class="mono" style="font-size:11px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;">Week 1</span>
-        </div>
-        <h3 style="font-size:20px;font-weight:700;color:var(--ink);">Diagnose</h3>
-        <p style="font-size:15px;color:var(--muted);line-height:1.65;">We spend week one inside your business — mapping your workflows, talking to your team, and identifying where an AI agent will deliver the fastest, highest-leverage return.</p>
-        <div style="font-size:13px;color:var(--muted);padding:10px 14px;background:var(--paper);border-radius:8px;border:1px solid var(--line);">
-          Output: Workflow audit + agent deployment plan, agreed before build begins.
-        </div>
-      </div>
-      <!-- Step 2 -->
-      <div class="flex flex-col gap-4">
-        <div class="flex items-center gap-3 mb-1">
-          <div class="step-num">2</div>
-          <span class="mono" style="font-size:11px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;">Days 2–30</span>
-        </div>
-        <h3 style="font-size:20px;font-weight:700;color:var(--ink);">Build</h3>
-        <p style="font-size:15px;color:var(--muted);line-height:1.65;">We deploy live AI agents — not a prototype, not a demo — into your actual systems in 30 days. You get working software, not a roadmap. If we don't go live in 30 days, you get a full refund.</p>
-        <div style="font-size:13px;color:var(--muted);padding:10px 14px;background:var(--paper);border-radius:8px;border:1px solid var(--line);">
-          Output: A live, production AI agent running in your business.
-        </div>
-      </div>
-      <!-- Step 3 -->
-      <div class="flex flex-col gap-4">
-        <div class="flex items-center gap-3 mb-1">
-          <div class="step-num">3</div>
-          <span class="mono" style="font-size:11px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;">Month 2+</span>
-        </div>
-        <h3 style="font-size:20px;font-weight:700;color:var(--ink);">Run</h3>
-        <p style="font-size:15px;color:var(--muted);line-height:1.65;">Flat monthly retainer. We own uptime, maintenance, and iteration. As your business grows, we expand the system — new agents, new workflows, more automation — without a new engagement.</p>
-        <div style="font-size:13px;color:var(--muted);padding:10px 14px;background:var(--paper);border-radius:8px;border:1px solid var(--line);">
-          Output: An AI system that gets smarter and more capable over time.
-        </div>
-      </div>
-    </div>
-    <!-- Demo CTA -->
-    <div style="margin-top:48px;padding-top:40px;border-top:1px solid var(--line);display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-      <a href="/demo" class="btn-primary">Watch a live agent demo →</a>
-      <p style="font-size:14px;color:var(--muted);margin:0;">See exactly how a Ramped agent handles a real inbound workflow.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ─── PROOF ─────────────────────────────────────────────────────────────── -->
-<section class="py-20" id="proof" style="background:linear-gradient(180deg,#F5F8FF 0%,#FFFFFF 100%);">
-  <div class="section-wrap">
-    <div class="mb-12">
-      <p class="sectionnum mb-3">Client results</p>
-      <h2 style="font-size:clamp(1.75rem,4vw,2.5rem);font-weight:800;letter-spacing:-.02em;color:var(--ink);">
-        Real business. Real results.
-      </h2>
-    </div>
-
-    <div class="card p-8 sm:p-10 w-full" style="border-left:4px solid var(--accent);">
-      <div class="flex items-start gap-4 mb-6">
-        <img src="/xtractordepot-logo.jpg" alt="Xtractor Depot" width="48" height="48" loading="lazy" decoding="async" style="flex-shrink:0;width:48px;height:48px;border-radius:50%;object-fit:cover;display:block;">
-        <div>
-          <p style="font-weight:700;font-size:16px;color:var(--ink);">Xtractor Depot</p>
-          <p style="font-size:13px;color:var(--muted);">Industrial equipment supplier</p>
-        </div>
-      </div>
-
-      <p style="font-size:16px;color:var(--ink);line-height:1.75;margin-bottom:20px;">
-        Xtractor Depot was spending <strong>14 hours</strong>/week on manual intake and follow-up. After a 30-day Sprint, their AI agent now handles quote intake and follow-up routing, cutting response time from <strong>4 hours</strong> to under <strong>8 minutes</strong>.
-      </p>
-
-      <blockquote style="border-left:2px solid var(--line);padding-left:16px;margin:0;">
-        <p style="font-size:15px;color:var(--muted);font-style:italic;line-height:1.65;margin-bottom:8px;">"Honestly, I was skeptical. We'd tried software before and it always ended up as one more thing to manage. By day 30 we had a live agent handling our quote intake — no babysitting required. I wish we'd done this two years ago."</p>
-        <cite style="font-size:13px;color:var(--muted);font-weight:500;">— Andrew, Founder, Xtractor Depot</cite>
-      </blockquote>
-
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px;">
-        <div style="padding:12px 14px;background:var(--paper);border-radius:8px;border:1px solid var(--line);text-align:center;">
-          <p style="font-size:22px;font-weight:800;color:var(--ink);font-family:'JetBrains Mono',monospace;"><span data-countup="14" data-suffix="h">14h</span></p>
-          <p style="font-size:11px;color:var(--muted);margin-top:4px;">hrs/week saved</p>
-        </div>
-        <div style="padding:12px 14px;background:var(--paper);border-radius:8px;border:1px solid var(--line);text-align:center;">
-          <p style="font-size:22px;font-weight:800;color:var(--ink);font-family:'JetBrains Mono',monospace;"><span data-countup="8" data-suffix="m">8m</span></p>
-          <p style="font-size:11px;color:var(--muted);margin-top:4px;">response time</p>
-        </div>
-        <div style="padding:12px 14px;background:var(--paper);border-radius:8px;border:1px solid var(--line);text-align:center;">
-          <p style="font-size:22px;font-weight:800;color:var(--ink);font-family:'JetBrains Mono',monospace;"><span data-countup="30" data-suffix="d">30d</span></p>
-          <p style="font-size:11px;color:var(--muted);margin-top:4px;">to go-live</p>
-        </div>
-      </div>
-
-    </div>
   </div>
 </section>
 
@@ -1992,25 +2022,27 @@
 </section>
 
 
-<!-- ─── FINAL CTA ─────────────────────────────────────────────────────────── -->
-<section class="py-20" id="get-started" style="background:linear-gradient(180deg,var(--paper) 0%,#F5F8FF 100%);">
-  <div class="section-wrap">
-    <div class="max-w-[640px] mb-10">
-      <p class="sectionnum mb-4">Get started</p>
-      <h2 style="font-size:clamp(2rem,4.5vw,3rem);font-weight:800;letter-spacing:-.03em;color:var(--ink);line-height:1.1;">
-        Ready to ramp?
-      </h2>
-      <p style="font-size:16px;color:var(--muted);margin-top:12px;line-height:1.6;">
-        Book a free 30-minute discovery call. We'll map out your biggest automation win and show you exactly what it's worth.
-      </p>
+<!-- ─── FINAL CTA — dual-radial-gradient card (Brand v3, ported from prototype) ── -->
+<section class="v3-dark v3-section" id="get-started" style="padding:88px 24px 96px;">
+  <div class="v3-final-cta">
+    <div class="v3-eyebrow" style="margin:0 auto 18px;display:inline-flex;">
+      <span class="dot" aria-hidden="true"></span>
+      <span>30-DAY GUARANTEE · OR YOUR MONEY BACK</span>
     </div>
-
-    <!-- Final CTA -->
-    <div class="card ink-shadow p-7 max-w-md">
-      <p style="font-weight:600;font-size:16px;margin-bottom:6px;color:var(--ink);">Book a free discovery call</p>
-      <p style="font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.5;">30 minutes. We'll identify your highest-impact automation, build a roadmap, and tell you exactly what it'll take to go live.</p>
-      <a href="/book" class="btn-primary w-full justify-center" style="text-decoration:none;font-size:15px;">Book a call →</a>
-      <p style="font-size:12px;color:var(--muted);margin-top:12px;text-align:center;">Free · No commitment · Go live in 30 days or it's free</p>
+    <h2>
+      Ready to ramp <span class="accent">your AI department?</span>
+    </h2>
+    <p class="v3-final-lede">
+      30-minute call. We'll map your highest-leverage automation, scope a deployment plan, and show you the exact ROI math — free, no commitment.
+    </p>
+    <div class="v3-cta-row">
+      <a href="/book" class="v3-btn-primary">Book a discovery call →</a>
+      <a href="/free-roadmap" class="v3-btn-ghost">Get your free roadmap</a>
+    </div>
+    <div class="v3-trust">
+      <span>Free · No commitment</span>
+      <span>30 minutes</span>
+      <span>Live in 30 days, or refund</span>
     </div>
   </div>
 </section>
@@ -2212,6 +2244,26 @@
 </script>
 
 <script>
+/* v3 timeline progress bars — staggered fill via CSS scaleX, triggered on enter */
+(function(){
+  var cards = document.querySelectorAll('#v3-timeline .v3-timeline-card');
+  if(!cards.length) return;
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          var i = Array.prototype.indexOf.call(cards, e.target);
+          setTimeout(function(){ e.target.classList.add('in-view'); }, i * 140);
+          io.unobserve(e.target);
+        }
+      });
+    }, {threshold:0.25});
+    cards.forEach(function(c){ io.observe(c); });
+  } else {
+    cards.forEach(function(c){ c.classList.add('in-view'); });
+  }
+})();
+
 /* ─────────────────────────────────────────────────────────────────────────
    Interactive Slack demo — vanilla JS port of the Claude Design prototype.
    Originally a React+Babel app; rebuilt here as a state machine that mounts
