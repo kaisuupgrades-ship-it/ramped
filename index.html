@@ -126,30 +126,6 @@
   .hero-inner{position:relative;padding-top:36px;padding-bottom:72px;}
   @media(min-width:768px){.hero-inner{padding-top:48px;padding-bottom:96px;}}
 
-  /* ─── Hero 2-column grid (desktop) ──────────────────────────────────── */
-  /* Mobile: stacked, centered. ≥1024px: text left, demo right at 5fr / 7fr. */
-  .hero-grid{
-    display:grid;grid-template-columns:1fr;gap:32px;align-items:start;
-  }
-  .hero-text{text-align:center;display:flex;flex-direction:column;align-items:center;}
-  @media(min-width:1024px){
-    .hero-grid{grid-template-columns:5fr 7fr;gap:48px;align-items:center;}
-    .hero-text{text-align:left;align-items:flex-start;}
-    .hero-text .hero-h1{margin-left:0;margin-right:0;}
-    .hero-text .hero-sub{margin-left:0;margin-right:0;}
-    .hero-text .hero-cta-row{justify-content:flex-start;}
-    .hero-text .hero-guarantee{margin-left:0;margin-right:0;}
-    .hero-text .hero-founder{margin-left:0;margin-right:0;}
-    .hero-text .hero-h1{font-size:clamp(2.4rem,4.4vw,3.8rem);}
-    /* Demo can shrink down — adjust its inner grid for narrower column */
-    .hero-grid .demo-shell{margin:0;max-width:none;min-height:580px;}
-    .hero-grid .demo-shell .chat-stream{max-height:460px;}
-  }
-  @media(min-width:1280px){
-    .hero-grid{gap:64px;}
-    .hero-grid .demo-shell{min-height:620px;}
-  }
-
   /* ─── Hero legibility fixes for dark theme ─────────────────────────────── */
   .hero-section{
     background:transparent!important;
@@ -1687,9 +1663,7 @@
 <!-- ─── HERO — centered text + agent UI showcase (B+C hybrid) ──────────────── -->
 <main id="main">
 <section class="hero-section" id="hero">
-  <div class="section-wrap hero-inner">
-    <div class="hero-grid">
-      <div class="hero-text">
+  <div class="section-wrap hero-inner" style="text-align:center;">
 
     <!-- Headline — gradient accent on second clause, ported from Claude Design prototype -->
     <h1 class="hero-h1" style="font-size:clamp(2.8rem, 7vw, 5rem);line-height:1.02;letter-spacing:-.04em;max-width:1000px;margin:0 auto 24px;">
@@ -1728,8 +1702,6 @@
     <p class="hero-founder" style="max-width:680px;margin:0 auto;">
       Built by <strong>Andrew Yoon</strong> — 10-year operator and founder of Xtractor Depot.
     </p>
-
-      </div><!-- /.hero-text -->
 
     <!-- Ramped Bot Slack demo — V4-INT (2026-05-01).
          Interactive demo ported from the Claude Design prototype.
@@ -1812,7 +1784,6 @@
         </div>
       </section>
     </div><!-- /.demo-shell -->
-    </div><!-- /.hero-grid -->
 
   </div>
 </section>
