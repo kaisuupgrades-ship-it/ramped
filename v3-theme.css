@@ -50,6 +50,37 @@ body section [style*="color:var(--muted)"]{color:var(--text-2)!important;}
 section[style*="background:var(--paper)"],
 section[style*="background:#fff"],
 section[style*="background:#FFFFFF"]{background:transparent!important;}
+
+/* Tailwind .bg-white class — used by about (team + final CTA), comparison
+   (multiple sections), client-demo, etc. These were the LAST major remaining
+   white slabs across the site. */
+.bg-white{background-color:transparent!important;}
+section.bg-white{background:transparent!important;}
+
+/* Inline white/cream/surface backgrounds on DIVs (not sections) — covers
+   things like comparison.html's "Bottom line" callout div and about.html's
+   inline-styled team-card surrogates */
+div[style*="background:#fff"],
+div[style*="background:#FFFFFF"],
+div[style*="background-color:#fff"],
+div[style*="background-color:#FFFFFF"]{
+  background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005))!important;
+  border-color:var(--v3-line)!important;
+  color:var(--text-0)!important;
+}
+/* Inline cream surface backgrounds (book.html guarantee strip uses
+   var(--surface) which is cream paper #F5F5F3). Replace with dark amber
+   tint that reads as the v3 "guarantee" treatment site-wide. */
+[style*="background:var(--surface)"]{
+  background-color:rgba(251,146,60,0.10)!important;
+  background-image:none!important;
+  border-color:rgba(251,146,60,0.35)!important;
+}
+/* Make text inside dark amber surface boxes readable */
+[style*="background:var(--surface)"] p,
+[style*="background:var(--surface)"] span{color:var(--text-1)!important;}
+[style*="background:var(--surface)"] p[style*="font-weight:600"],
+[style*="background:var(--surface)"] strong{color:var(--text-0)!important;}
 section[style*="linear-gradient(180deg,#FFFFFF 0%,#F5F8FF 100%)"],
 section[style*="linear-gradient(180deg,#F5F8FF 0%,#FFFFFF 100%)"],
 section[style*="linear-gradient(180deg,var(--paper) 0%,#F5F8FF 100%)"]{
@@ -656,15 +687,39 @@ hr{background:var(--v3-line)!important;}
 .loading-step.active .step-dot{background:var(--blue)!important;}
 
 /* ─── Comparison table — cream/pale-blue cells become dark with accents ── */
-.cmp-table td{border-top-color:var(--v3-line)!important;}
+.cmp-table td{border-top-color:var(--v3-line)!important;color:var(--text-1)!important;}
+.cmp-table th{color:var(--text-0)!important;}
 .cmp-table tbody tr:hover td{background:rgba(255,255,255,0.03)!important;}
 .cmp-table .col-va{background:rgba(248,113,113,0.05)!important;color:var(--text-2)!important;}
 .cmp-table .col-ramp{background:rgba(59,130,246,0.05)!important;color:var(--text-0)!important;}
-.cmp-table .col-ramp-win{background:rgba(52,211,153,0.05)!important;}
+.cmp-table .col-ramp-win{background:rgba(52,211,153,0.05)!important;color:var(--text-0)!important;}
+.cmp-table th.col-va{background:rgba(248,113,113,0.10)!important;color:#f87171!important;}
+.cmp-table th.col-ramp{background:rgba(59,130,246,0.10)!important;color:var(--blue-2)!important;}
 .cmp-table .label-col{color:var(--text-0)!important;background:transparent!important;}
 .math-bar-track{background:var(--v3-line)!important;}
 .table-scroll::after{
   background:linear-gradient(90deg,rgba(7,9,13,0) 0%,var(--bg-0) 100%)!important;
+}
+
+/* Comparison "vs DIY tools" section header card (has inline border + bg styling) */
+section#vs-diy{background:transparent!important;border-top-color:var(--v3-line)!important;}
+section#vs-diy .rounded-xl[style*="background:#fff"]{
+  background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005))!important;
+  border-color:var(--v3-line)!important;
+}
+
+/* Reasons / why-it-works section cards on comparison.html */
+section#reasons .card,
+section#comparison .card{
+  background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005))!important;
+  border:1px solid var(--v3-line)!important;
+  color:var(--text-0)!important;
+}
+
+/* "Things we hear from founders" Q&A cards on comparison.html */
+section#vs-diy + section,
+section[style*="linear-gradient(180deg,#F5F8FF 0%,var(--paper) 100%)"]{
+  background:transparent!important;
 }
 
 /* ─── Agent-library lib-hero gridline tweak (cream linework on dark) ───── */
