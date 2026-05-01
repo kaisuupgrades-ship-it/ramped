@@ -124,8 +124,8 @@ export default async function handler(req, res) {
 <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:580px;margin:0 auto;">
 
   <!-- Hero -->
-  <div style="background:#0B1220;padding:32px 32px 28px;">
-    <div style="display:inline-block;background:#1F4FFF;color:#fff;font-size:11px;font-weight:900;letter-spacing:0.08em;padding:4px 10px;border-radius:6px;margin-bottom:14px;">RAMPED AI</div>
+  <div style="background:#0A2540;padding:32px 32px 28px;">
+    <div style="display:inline-block;background:#006BD6;color:#fff;font-size:11px;font-weight:900;letter-spacing:0.08em;padding:4px 10px;border-radius:6px;margin-bottom:14px;">RAMPED AI</div>
     <p style="margin:0 0 8px;font-size:24px;font-weight:800;color:#fff;line-height:1.2;">Great talking with you, ${esc(firstName)} 👋</p>
     <p style="margin:0;font-size:14px;color:#9CA3AF;line-height:1.5;">Here's a summary of what we covered and the clearest path forward.</p>
   </div>
