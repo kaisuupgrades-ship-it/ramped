@@ -605,15 +605,123 @@
     93%,100% {opacity:0;top:54.3%;left:31.3%;}
   }
 
+  /* ── V3-NC3: Preview overlays — Email / HubSpot / Slide deck slide in after each click.
+     They cover the message area (right of sidebar, below channel head) for ~5% of the loop
+     so viewers see the actual artifact the bot just created. */
+  .nano-preview{
+    position:absolute;
+    top:79px; left:230px; right:0; bottom:0;
+    background:#fff;
+    z-index:6;
+    opacity:0;
+    transform:translateX(100%);
+    font-family:'Lato','Slack-Lato',-apple-system,sans-serif;
+    pointer-events:none;
+    overflow:hidden;
+    display:flex;flex-direction:column;
+    box-shadow:-12px 0 32px -16px rgba(0,0,0,0.18);
+  }
+  .nano-preview-bar{
+    background:#F5F5F5;
+    border-bottom:1px solid #E1E1E1;
+    padding:9px 18px;
+    display:flex;align-items:center;gap:10px;
+    font-size:12px;color:#5B5B5B;flex-shrink:0;
+  }
+  .nano-preview-icon{font-size:13px;color:#1264A3;}
+  .nano-preview-app{font-weight:800;color:#1D1C1D;}
+  .nano-preview-status{margin-left:auto;font-style:italic;font-size:11.5px;color:#888;}
+  .nano-preview-status-good{color:#0F7A4B;font-weight:700;font-style:normal;}
+  .nano-preview-content{padding:18px 24px;flex:1;overflow:hidden;}
+
+  /* Email composer (S1) */
+  .nano-email-meta{border-bottom:1px solid #EEE;padding-bottom:10px;margin-bottom:12px;}
+  .nano-email-row{display:flex;padding:5px 0;font-size:13px;}
+  .nano-email-label{width:64px;color:#888;flex-shrink:0;}
+  .nano-email-value{flex:1;color:#1D1C1D;font-weight:500;}
+  .nano-email-body{font-size:13.5px;line-height:1.6;color:#1D1C1D;margin-bottom:14px;}
+  .nano-email-body strong{font-weight:800;}
+  .nano-email-actions{display:flex;gap:8px;}
+  .nano-email-btn{padding:7px 18px;border-radius:4px;font-size:13px;font-weight:700;border:1px solid #DADCE0;background:#fff;color:#1D1C1D;display:inline-flex;align-items:center;}
+  .nano-email-btn-primary{background:#1264A3;color:#fff;border-color:#1264A3;}
+
+  /* HubSpot record (S2) */
+  .nano-hs-header{display:flex;gap:14px;align-items:center;margin-bottom:16px;}
+  .nano-hs-avatar{width:42px;height:42px;border-radius:8px;background:linear-gradient(135deg,#FF7A59,#BB3F1A);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;flex-shrink:0;}
+  .nano-hs-name{font-weight:900;font-size:15px;color:#1D1C1D;letter-spacing:-.01em;}
+  .nano-hs-meta{font-size:12px;color:#5B5B5B;margin-top:2px;}
+  .nano-hs-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px;background:#FAFAFA;border:1px solid #EFEFEF;border-radius:8px;margin-bottom:14px;}
+  .nano-hs-cell-label{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#888;}
+  .nano-hs-cell-value{font-size:13px;color:#1D1C1D;margin-top:3px;line-height:1.4;}
+  .nano-hs-strong{font-weight:900;font-size:15px;}
+  .nano-hs-pos{color:#0F7A4B;font-weight:900;font-size:15px;}
+  .nano-hs-cta{font-size:12px;color:#1264A3;font-weight:700;}
+
+  /* Slide deck (S3) */
+  .nano-deck-slide{
+    background:linear-gradient(135deg,#0A2540 0%,#0E5BD8 65%,#006BD6 100%);
+    color:#fff;padding:26px 32px !important;
+    position:relative;overflow:hidden;
+  }
+  .nano-deck-slide::before{
+    content:"";position:absolute;
+    top:-40px;right:-40px;width:200px;height:200px;
+    background:radial-gradient(circle,rgba(0,212,255,0.3) 0%,transparent 70%);
+    pointer-events:none;
+  }
+  .nano-deck-eyebrow{font-size:10px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:#00D4FF;margin-bottom:8px;position:relative;}
+  .nano-deck-title{font-size:26px;font-weight:900;margin-bottom:18px;letter-spacing:-.025em;position:relative;}
+  .nano-deck-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;position:relative;}
+  .nano-deck-stat{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);border-radius:8px;padding:14px 16px;backdrop-filter:blur(4px);}
+  .nano-deck-num{font-size:22px;font-weight:900;letter-spacing:-.02em;margin-bottom:5px;color:#fff;font-family:'JetBrains Mono',monospace;}
+  .nano-deck-label{font-size:10.5px;color:rgba(255,255,255,0.75);line-height:1.45;}
+  .nano-deck-trend{font-weight:800;color:#6EE7B7;display:block;margin-top:3px;font-size:10.5px;}
+  .nano-deck-warn{color:#FCD34D;}
+
+  /* Slide-in animations — each preview appears right after its scenario's cursor click */
+  .nano-preview-1{animation:nano-prev-1 30s infinite cubic-bezier(0.22,1,0.36,1);}
+  .nano-preview-2{animation:nano-prev-2 30s infinite cubic-bezier(0.22,1,0.36,1);}
+  .nano-preview-3{animation:nano-prev-3 30s infinite cubic-bezier(0.22,1,0.36,1);}
+
+  @keyframes nano-prev-1{
+    /* Click at 25% → preview slides in 26-28%, holds 28-31%, slides out 31-33% */
+    0%,25%   {opacity:0;transform:translateX(100%);}
+    27%      {opacity:1;transform:translateX(0);}
+    31%      {opacity:1;transform:translateX(0);}
+    33%,100% {opacity:0;transform:translateX(100%);}
+  }
+  @keyframes nano-prev-2{
+    /* Click at 57% → preview 58-65% */
+    0%,57%   {opacity:0;transform:translateX(100%);}
+    59%      {opacity:1;transform:translateX(0);}
+    63%      {opacity:1;transform:translateX(0);}
+    65%,100% {opacity:0;transform:translateX(100%);}
+  }
+  @keyframes nano-prev-3{
+    /* Click at 90% → preview 91-99% (longest hold to land the closing impression) */
+    0%,90%   {opacity:0;transform:translateX(100%);}
+    92%      {opacity:1;transform:translateX(0);}
+    98%      {opacity:1;transform:translateX(0);}
+    99%,100% {opacity:0;transform:translateX(100%);}
+  }
+
+  /* Mobile — hide previews on narrow screens (sidebar collapses anyway) */
+  @media(max-width:768px){
+    .nano-preview{left:0;}
+    .nano-deck-stats{grid-template-columns:repeat(3,1fr);gap:6px;}
+    .nano-deck-stat{padding:8px 10px;}
+    .nano-deck-num{font-size:18px;}
+  }
+
   /* Reduced motion — show the end-state only, skip the typing intermediate */
   @media (prefers-reduced-motion: reduce){
-    .nano-msg, .nano-replied, .nano-live-pill-dot, .nano-demo, .nano-progress-dot, .nano-cursor, .nano-cursor-ripple{
+    .nano-msg, .nano-replied, .nano-live-pill-dot, .nano-demo, .nano-progress-dot, .nano-cursor, .nano-cursor-ripple, .nano-preview{
       animation:none !important;
       opacity:1 !important;
       transform:none !important;
     }
     .nano-msg-typing{display:none;}
-    .nano-cursor, .nano-cursor-ripple{display:none;}
+    .nano-cursor, .nano-cursor-ripple, .nano-preview{display:none;}
   }
 
   /* Mobile — collapse the sidebar, tighten the body */
@@ -952,6 +1060,86 @@
       <!-- Animated cursor + click ripple — appears during each bot reply phase -->
       <div class="nano-cursor-ripple" aria-hidden="true"></div>
       <div class="nano-cursor" aria-hidden="true"></div>
+
+      <!-- ─── Preview overlays — slide in after the cursor clicks each scenario's button.
+           Show the actual artifact the bot just opened: drafted email, HubSpot record, deck slide. -->
+
+      <!-- S1 → Email composer (Gmail-style) -->
+      <div class="nano-preview nano-preview-1" aria-hidden="true">
+        <div class="nano-preview-bar">
+          <span class="nano-preview-icon" aria-hidden="true">✉</span>
+          <span class="nano-preview-app">Gmail · New Message</span>
+          <span class="nano-preview-status">Draft auto-saved</span>
+        </div>
+        <div class="nano-preview-content">
+          <div class="nano-email-meta">
+            <div class="nano-email-row"><span class="nano-email-label">To</span><span class="nano-email-value">janet@acme.com</span></div>
+            <div class="nano-email-row"><span class="nano-email-label">Subject</span><span class="nano-email-value">Order #2847 — confirming new shipping address</span></div>
+          </div>
+          <div class="nano-email-body">
+            Hi Janet,<br><br>
+            Quick follow-up on order <strong>#2847</strong> — picked &amp; packed yesterday, UPS Ground, ETA <strong>Wed Nov 12</strong>.<br><br>
+            Heads up: the address on file is your old Reno warehouse. Per your Sept invoice you've relocated — want me to update shipping to the new location before it goes out?<br><br>
+            — Marcus
+          </div>
+          <div class="nano-email-actions">
+            <span class="nano-email-btn nano-email-btn-primary">Send</span>
+            <span class="nano-email-btn">Save draft</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- S2 → HubSpot lead record -->
+      <div class="nano-preview nano-preview-2" aria-hidden="true">
+        <div class="nano-preview-bar">
+          <span class="nano-preview-icon" aria-hidden="true">⚡</span>
+          <span class="nano-preview-app">HubSpot · Acme Industrial</span>
+          <span class="nano-preview-status nano-preview-status-good">✓ Meeting booked</span>
+        </div>
+        <div class="nano-preview-content">
+          <div class="nano-hs-header">
+            <div class="nano-hs-avatar">AI</div>
+            <div>
+              <div class="nano-hs-name">Acme Industrial</div>
+              <div class="nano-hs-meta">87 employees · $12M ARR · Manufacturing</div>
+            </div>
+          </div>
+          <div class="nano-hs-grid">
+            <div class="nano-hs-cell"><div class="nano-hs-cell-label">ICP Score</div><div class="nano-hs-cell-value nano-hs-strong">9 / 10</div></div>
+            <div class="nano-hs-cell"><div class="nano-hs-cell-label">Pipeline</div><div class="nano-hs-cell-value nano-hs-pos">+$120K</div></div>
+            <div class="nano-hs-cell"><div class="nano-hs-cell-label">Form notes</div><div class="nano-hs-cell-value"><em>"replacing 2 inside reps"</em></div></div>
+            <div class="nano-hs-cell"><div class="nano-hs-cell-label">Meeting</div><div class="nano-hs-cell-value">Wed 2pm · 30 min · Cal.com</div></div>
+          </div>
+          <div class="nano-hs-cta">→ Intro reply sent · Meeting on calendar · Tagged @Sarah</div>
+        </div>
+      </div>
+
+      <!-- S3 → Slide deck preview (October close) -->
+      <div class="nano-preview nano-preview-3" aria-hidden="true">
+        <div class="nano-preview-bar">
+          <span class="nano-preview-icon" aria-hidden="true">▣</span>
+          <span class="nano-preview-app">Google Slides · October-Close.pptx</span>
+          <span class="nano-preview-status">Slide 1 of 8</span>
+        </div>
+        <div class="nano-preview-content nano-deck-slide">
+          <div class="nano-deck-eyebrow">FINANCIAL SUMMARY</div>
+          <div class="nano-deck-title">October 2026</div>
+          <div class="nano-deck-stats">
+            <div class="nano-deck-stat">
+              <div class="nano-deck-num">$1.24M</div>
+              <div class="nano-deck-label">Revenue<br><span class="nano-deck-trend">+18% MoM</span></div>
+            </div>
+            <div class="nano-deck-stat">
+              <div class="nano-deck-num">$87K</div>
+              <div class="nano-deck-label">Cloud infra<br><span class="nano-deck-trend nano-deck-warn">+32% · flag</span></div>
+            </div>
+            <div class="nano-deck-stat">
+              <div class="nano-deck-num">$42K</div>
+              <div class="nano-deck-label">AR &gt;60d<br><span class="nano-deck-trend nano-deck-warn">3 invoices</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- Mac-style window chrome -->
       <div class="nano-chrome">
