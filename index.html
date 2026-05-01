@@ -41,7 +41,6 @@
 <link rel="stylesheet" href="/styles.css">
   <style>
   :root{
-    /* v2 (legacy — used by sections below the hero, untouched in this migration phase) */
     --ink:#0B1220;
     --ink-2:#1A2233;
     --paper:#FAFAF7;
@@ -51,364 +50,7 @@
     --accent-2:#0B2A8C;
     --warn:#B45309;
     --good:#0F7A4B;
-    /* v3 (new dark mode — used by hero + masthead in this phase, expanding to whole site over follow-up sessions) */
-    --bg-0:#07090d; --bg-1:#0b0f17; --bg-2:#11161f; --bg-3:#161c27; --bg-4:#1c2331;
-    --v3-line:#1f2735; --v3-line-2:#2a3344;
-    --text-0:#f4f6fa; --text-1:#c5cdd9; --text-2:#8b94a3; --text-3:#5a6373;
-    --blue:#3b82f6; --blue-2:#60a5fa; --blue-glow:rgba(59,130,246,0.35);
-    --orange:#fb923c; --orange-2:#fdba74; --orange-glow:rgba(251,146,60,0.3);
-    --v3-green:#34d399;
-    --radius-sm:8px; --radius-md:12px; --radius-lg:16px; --radius-xl:24px;
   }
-  /* v3 hero + masthead theme — scoped to .v3-dark sections so v2 light sections below stay intact */
-  .v3-dark{
-    background:
-      radial-gradient(1200px 600px at 50% -200px, rgba(59,130,246,0.18), transparent 60%),
-      radial-gradient(900px 500px at 90% 10%, rgba(251,146,60,0.10), transparent 60%),
-      var(--bg-0);
-    color:var(--text-0);
-    font-feature-settings:"ss01","cv11";
-  }
-  .v3-dark a{color:var(--text-1);}
-  .v3-dark .btn-primary{background:linear-gradient(180deg,var(--orange-2),var(--orange));color:#1a0e05;border:none;padding:12px 22px;border-radius:10px;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:8px;box-shadow:0 1px 0 rgba(0,0,0,0.15),0 6px 18px -4px var(--orange-glow);transition:transform .12s ease, box-shadow .12s ease;cursor:pointer;text-decoration:none;}
-  .v3-dark .btn-primary:hover{transform:translateY(-1px);box-shadow:0 1px 0 rgba(0,0,0,0.15),0 10px 24px -4px var(--orange-glow);}
-  .v3-dark .btn-ghost{padding:12px 18px;border-radius:10px;font-weight:600;font-size:14px;color:var(--text-1);border:1px solid var(--v3-line-2);background:rgba(255,255,255,0.02);cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none;transition:background .12s ease,border-color .12s ease;}
-  .v3-dark .btn-ghost:hover{background:rgba(255,255,255,0.05);border-color:var(--blue);}
-  /* Eyebrow pill with pulsing dot */
-  .v3-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 12px 6px 8px;border-radius:999px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.25);font-size:12px;color:var(--blue-2);font-weight:600;letter-spacing:.005em;}
-  .v3-eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--v3-green);box-shadow:0 0 0 0 rgba(52,211,153,0.6);animation:v3-pulse 1.8s ease-out infinite;}
-  @keyframes v3-pulse{0%{box-shadow:0 0 0 0 rgba(52,211,153,0.55);}70%{box-shadow:0 0 0 8px rgba(52,211,153,0);}100%{box-shadow:0 0 0 0 rgba(52,211,153,0);}}
-  /* Animated grid bg behind hero */
-  .v3-hero{position:relative;padding:96px 0 72px;overflow:hidden;}
-  .v3-hero::before{
-    content:"";position:absolute;inset:0;
-    background-image:
-      linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px);
-    background-size:64px 64px;
-    -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 35%, #000 30%, transparent 70%);
-    mask-image:radial-gradient(ellipse 70% 60% at 50% 35%, #000 30%, transparent 70%);
-    pointer-events:none;
-  }
-  .v3-hero-inner{position:relative;max-width:1240px;margin:0 auto;padding:0 24px;text-align:center;}
-  .v3-h1{
-    font-size:clamp(40px, 6.4vw, 76px);
-    line-height:1.02;letter-spacing:-0.035em;
-    font-weight:700;text-wrap:balance;
-    color:var(--text-0);
-    margin:24px auto 24px;max-width:980px;
-  }
-  .v3-h1 .accent{
-    background:linear-gradient(120deg, var(--blue-2) 0%, var(--orange) 90%);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-  }
-  .v3-lede{
-    font-size:clamp(16px,1.4vw,18px);line-height:1.55;color:var(--text-1);
-    max-width:720px;margin:0 auto 36px;
-  }
-  .v3-cta-row{display:inline-flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:32px;}
-  .v3-trust{display:inline-flex;flex-wrap:wrap;justify-content:center;gap:10px 24px;font-size:13px;color:var(--text-2);}
-  .v3-trust span{display:inline-flex;align-items:center;gap:8px;}
-  .v3-trust span::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--v3-green);}
-  /* 4-up animated stats grid */
-  .v3-stats{
-    display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
-    max-width:1100px;margin:64px auto 0;
-  }
-  @media(max-width:880px){.v3-stats{grid-template-columns:repeat(2,1fr);}}
-  .v3-stat{
-    position:relative;
-    background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005));
-    border:1px solid var(--v3-line);
-    border-radius:16px;
-    padding:22px 20px;
-    overflow:hidden;
-    text-align:left;
-  }
-  .v3-stat::before{
-    content:"";position:absolute;top:-30px;right:-30px;width:120px;height:120px;
-    background:radial-gradient(circle, var(--blue-glow) 0%, transparent 70%);
-    pointer-events:none;
-  }
-  .v3-stat-num{
-    font-size:clamp(32px,3.6vw,44px);font-weight:800;letter-spacing:-0.03em;
-    color:var(--text-0);font-variant-numeric:tabular-nums;line-height:1;
-    display:flex;align-items:baseline;gap:6px;margin-bottom:8px;
-    position:relative;
-  }
-  .v3-stat-unit{color:var(--orange);font-size:0.65em;font-weight:700;}
-  .v3-stat-label{font-size:13px;color:var(--text-2);font-weight:500;letter-spacing:.005em;line-height:1.4;position:relative;}
-  /* v3 masthead — dark glass, sticky over the hero */
-  .v3-mast{
-    position:sticky;top:0;z-index:40;
-    background:rgba(7,9,13,0.65);
-    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-    border-bottom:1px solid var(--v3-line);
-  }
-  .v3-mast-inner{max-width:1240px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
-  .v3-mast-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text-0);font-weight:800;font-size:17px;letter-spacing:-.02em;}
-  .v3-mast-brand svg{filter:drop-shadow(0 0 12px var(--blue-glow));}
-  .v3-mast-nav{display:flex;align-items:center;gap:4px;}
-  .v3-mast-nav a{padding:9px 14px;font-size:13.5px;font-weight:600;color:var(--text-1);border-radius:8px;text-decoration:none;transition:background .12s ease,color .12s ease;}
-  .v3-mast-nav a:hover{background:rgba(255,255,255,0.04);color:var(--text-0);}
-  @media(max-width:768px){.v3-mast-nav a{display:none;} .v3-mast-nav .v3-mast-cta{display:inline-flex;}}
-  /* Reduced motion */
-  @media (prefers-reduced-motion: reduce){
-    .v3-eyebrow .dot{animation:none;}
-    .v3-stat-num{animation:none !important;}
-  }
-
-  /* ─────────────────────────────────────────────────────────────────────────
-     Brand v3 site-wide dark override (2026-05-01)
-     Flips body + every existing v2 section to dark theme without rewriting
-     each section's inline styles individually. Where a section uses
-     style="background:#fff" or "background:var(--paper)" or a light gradient,
-     we override with a dark surface using attribute selectors. Cards, FAQ
-     details, pricing tables, and tags get dark variants too.
-     ─────────────────────────────────────────────────────────────────────── */
-  body{background:var(--bg-0)!important;color:var(--text-0)!important;}
-  /* Section background overrides — match the inline gradient/color strings used in markup */
-  section[style*="background:var(--paper)"],
-  section[style*="background:#fff"],
-  section[style*="background:#FFFFFF"]{background:var(--bg-0)!important;}
-  section[style*="linear-gradient(180deg,#FFFFFF 0%,#F5F8FF 100%)"],
-  section[style*="linear-gradient(180deg,#F5F8FF 0%,#FFFFFF 100%)"],
-  section[style*="linear-gradient(180deg,var(--paper) 0%,#F5F8FF 100%)"]{
-    background:
-      radial-gradient(900px 500px at 50% 0%, rgba(59,130,246,0.10), transparent 60%),
-      var(--bg-0)!important;
-  }
-  /* Generic card → dark glass panel */
-  .card{
-    background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005))!important;
-    border:1px solid var(--v3-line)!important;
-    color:var(--text-0)!important;
-    border-radius:16px;
-  }
-  .ink-shadow{box-shadow:0 1px 0 rgba(0,0,0,0.4), 0 16px 40px -16px rgba(0,0,0,0.5)!important;}
-  .hover-lift:hover{transform:translateY(-2px);box-shadow:0 18px 40px -16px rgba(0,0,0,0.6), 0 0 0 1px var(--v3-line-2)!important;}
-
-  /* Headings + body inside dark sections */
-  body h1, body h2, body h3, body h4{color:var(--text-0)!important;}
-  body p{color:var(--text-1);}
-  body .sectionnum{color:var(--text-2)!important;}
-
-  /* Pain icons — dark surface with blue accent */
-  .pain-icon{background:rgba(59,130,246,0.08)!important;border-color:rgba(59,130,246,0.25)!important;color:var(--blue-2)!important;}
-
-  /* Industry chips — dark pill */
-  span[style*="border-radius:999px"][style*="border:1px solid var(--line)"][style*="background:var(--paper)"]{
-    background:rgba(255,255,255,0.03)!important;
-    border-color:var(--v3-line)!important;
-    color:var(--text-1)!important;
-  }
-
-  /* By-the-numbers metric cards */
-  .hero-metric-card{
-    background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005))!important;
-    border:1px solid var(--v3-line)!important;
-    color:var(--text-0)!important;
-  }
-  .hero-metric-val{color:var(--text-0)!important;}
-  .hero-metric-label{color:var(--text-2)!important;}
-
-  /* Step output boxes (How it works) */
-  div[style*="background:var(--paper)"][style*="border:1px solid var(--line)"]{
-    background:rgba(255,255,255,0.03)!important;
-    border-color:var(--v3-line)!important;
-    color:var(--text-1)!important;
-  }
-
-  /* FAQ details */
-  details.faq-item{
-    background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005))!important;
-    border:1px solid var(--v3-line)!important;
-  }
-  details.faq-item summary span{color:var(--text-0)!important;}
-  details.faq-item .faq-body p{color:var(--text-2)!important;}
-
-  /* Mute color overrides for inline-styled muted text */
-  body [style*="color:var(--muted)"]{color:var(--text-2)!important;}
-  body [style*="color:var(--ink)"]:not(.v3-h1):not(.nano-msg-name){color:var(--text-0)!important;}
-  body [style*="color:var(--ink-2)"]{color:var(--text-1)!important;}
-  body [style*="color:#92400E"]{color:#fbbf24!important;}
-
-  /* Pricing — blue check icons stay green-tinted but lighter; pill stays accent */
-  div[style*="background:#F1F1EF"]{background:rgba(255,255,255,0.04)!important;border:1px solid var(--v3-line)!important;}
-  button[id="btn-monthly"], button[id="btn-annual"]{color:var(--text-1)!important;}
-
-  /* Pricing card — dark glass + blue glow on featured */
-  .card[style*="border-color:var(--accent)"]{
-    background:
-      radial-gradient(600px 300px at 50% -50%, rgba(59,130,246,0.18), transparent 60%),
-      linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01))!important;
-    border:2px solid var(--blue)!important;
-    box-shadow:0 1px 0 rgba(0,0,0,0.3), 0 24px 60px -20px rgba(59,130,246,0.35), 0 4px 14px -4px rgba(0,0,0,0.4)!important;
-  }
-  .card[style*="border-color:var(--accent)"] span[style*="background:var(--accent)"]{
-    background:linear-gradient(180deg,var(--orange-2),var(--orange))!important;
-    color:#1a0e05!important;
-    box-shadow:0 6px 16px -4px var(--orange-glow)!important;
-  }
-
-  /* Pricing list item check svgs background → dark */
-  ul li svg circle[fill="#ECFDF5"]{fill:rgba(52,211,153,0.15)!important;}
-  ul li svg path[stroke="var(--good)"]{stroke:var(--v3-green)!important;}
-
-  /* Pricing CTA buttons — orange v3 */
-  a.btn-primary[data-tier-cta]{
-    background:linear-gradient(180deg,var(--orange-2),var(--orange))!important;
-    color:#1a0e05!important;
-    border:none!important;
-    box-shadow:0 1px 0 rgba(0,0,0,0.15),0 6px 18px -4px var(--orange-glow)!important;
-  }
-
-  /* Guarantee banner — dark amber */
-  div[style*="border:2px solid var(--ink)"][style*="background:#FFFBEB"]{
-    background:linear-gradient(180deg,rgba(251,146,60,0.10),rgba(251,146,60,0.03))!important;
-    border:2px solid rgba(251,146,60,0.35)!important;
-  }
-  div[style*="background:#FEF3C7"][style*="border:2px solid #F59E0B"]{
-    background:rgba(251,146,60,0.20)!important;
-  }
-
-  /* Generic "Final CTA" max-w-md card → bigger dual-gradient feel */
-  #get-started .card{
-    background:
-      radial-gradient(circle at 20% 0%, rgba(59,130,246,0.18), transparent 60%),
-      radial-gradient(circle at 90% 100%, rgba(251,146,60,0.15), transparent 55%),
-      linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01))!important;
-    border:1px solid var(--v3-line-2)!important;
-  }
-
-  /* Customer logo strip (dark) */
-  .customer-strip{background:var(--bg-0)!important;border-color:var(--v3-line)!important;}
-  .customer-strip-eyebrow{color:var(--text-2)!important;}
-  .customer-logo-real{color:var(--text-1)!important;}
-
-  /* Feature card already dark from V3-FH1 — keep */
-
-  /* Footer — dark */
-  body > footer{
-    background:var(--bg-1)!important;
-    border-top:1px solid var(--v3-line)!important;
-  }
-  body > footer *{color:var(--text-2)!important;}
-  body > footer span[style*="color:var(--ink)"]{color:var(--text-0)!important;}
-
-  /* Masthead — dark glass */
-  .site-masthead{background:transparent!important;}
-  .site-masthead > header{
-    background:rgba(7,9,13,0.72)!important;
-    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-    border-bottom:1px solid var(--v3-line)!important;
-  }
-  .site-masthead .font-bold{color:var(--text-0)!important;}
-  .site-masthead nav[aria-label="Primary"] a.btn-ghost{
-    background:transparent!important;
-    border-color:var(--v3-line-2)!important;
-    color:var(--text-1)!important;
-  }
-  .site-masthead nav[aria-label="Primary"] a.btn-ghost:hover{
-    background:rgba(255,255,255,0.05)!important;
-    border-color:var(--blue)!important;
-    color:var(--text-0)!important;
-  }
-  .site-masthead nav[aria-label="Primary"] a.btn-primary,
-  .site-masthead a.btn-primary{
-    background:linear-gradient(180deg,var(--orange-2),var(--orange))!important;
-    color:#1a0e05!important;
-    border:none!important;
-    box-shadow:0 1px 0 rgba(0,0,0,0.15),0 6px 18px -4px var(--orange-glow)!important;
-  }
-  #mobile-nav-toggle{background:rgba(255,255,255,0.04)!important;border-color:var(--v3-line-2)!important;color:var(--text-0)!important;}
-  #mobile-nav-drawer{background:var(--bg-1)!important;border-top-color:var(--v3-line)!important;}
-  #mobile-nav-drawer a{color:var(--text-1)!important;border-bottom-color:var(--v3-line)!important;}
-  .ticker-bar{background:var(--bg-1)!important;border-bottom:1px solid var(--v3-line)!important;}
-  .ticker-bar *{color:var(--text-2);}
-
-  /* ─── 4-up timeline cards (Brand v3) ─────────────────────────────────── */
-  .v3-timeline{
-    display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
-    max-width:1240px;margin:0 auto;padding:0 24px;
-  }
-  @media(max-width:880px){.v3-timeline{grid-template-columns:repeat(2,1fr);}}
-  @media(max-width:520px){.v3-timeline{grid-template-columns:1fr;}}
-  .v3-timeline-card{
-    position:relative;
-    background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005));
-    border:1px solid var(--v3-line);
-    border-radius:16px;
-    padding:24px 22px;
-    overflow:hidden;
-    transition:transform .15s ease, border-color .15s ease;
-  }
-  .v3-timeline-card:hover{transform:translateY(-2px);border-color:var(--v3-line-2);}
-  .v3-timeline-card .v3-tl-eyebrow{
-    display:inline-block;
-    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;
-    text-transform:uppercase;color:var(--orange);font-weight:700;
-    margin-bottom:14px;
-  }
-  .v3-timeline-card h3{font-size:18px;font-weight:700;color:var(--text-0)!important;margin:0 0 8px;letter-spacing:-.01em;}
-  .v3-timeline-card p{font-size:13.5px;color:var(--text-2);line-height:1.55;margin:0 0 18px;}
-  .v3-timeline-card .v3-bar{
-    height:4px;background:rgba(255,255,255,0.05);border-radius:999px;overflow:hidden;
-  }
-  .v3-timeline-card .v3-bar-fill{
-    height:100%;background:linear-gradient(90deg,var(--blue) 0%,var(--orange) 100%);
-    border-radius:999px;transform-origin:left;transform:scaleX(0);
-    transition:transform 1.6s cubic-bezier(.22,.61,.36,1) .2s;
-  }
-  .v3-timeline-card.in-view .v3-bar-fill{transform:scaleX(var(--fill,1));}
-  .v3-timeline-card .v3-tl-step{
-    position:absolute;top:18px;right:18px;
-    width:32px;height:32px;border-radius:50%;
-    background:rgba(59,130,246,0.10);border:1px solid rgba(59,130,246,0.30);
-    color:var(--blue-2);font-family:'JetBrains Mono',monospace;font-size:13px;
-    font-weight:700;display:flex;align-items:center;justify-content:center;
-  }
-
-  /* ─── Final v3 CTA — dual radial gradient card ─────────────────────────── */
-  .v3-final-cta{
-    position:relative;
-    max-width:1100px;margin:0 auto;
-    padding:80px 56px;
-    border-radius:28px;
-    background:
-      radial-gradient(circle at 12% 0%, rgba(59,130,246,0.28), transparent 55%),
-      radial-gradient(circle at 88% 100%, rgba(251,146,60,0.22), transparent 55%),
-      linear-gradient(180deg, var(--bg-2), var(--bg-1));
-    border:1px solid var(--v3-line-2);
-    overflow:hidden;
-    text-align:center;
-  }
-  .v3-final-cta::before{
-    content:"";position:absolute;inset:0;
-    background-image:
-      linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px);
-    background-size:48px 48px;
-    -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 50%, #000 30%, transparent 75%);
-    mask-image:radial-gradient(ellipse 70% 60% at 50% 50%, #000 30%, transparent 75%);
-    pointer-events:none;
-  }
-  .v3-final-cta > *{position:relative;}
-  .v3-final-cta h2{
-    font-size:clamp(36px,5.6vw,64px)!important;
-    line-height:1.04;letter-spacing:-.035em;
-    font-weight:700;color:var(--text-0)!important;
-    margin:18px auto 18px;max-width:780px;
-  }
-  .v3-final-cta h2 .accent{
-    background:linear-gradient(120deg,var(--blue-2) 0%,var(--orange) 90%);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-  }
-  .v3-final-cta .v3-final-lede{
-    font-size:17px;color:var(--text-1);max-width:600px;margin:0 auto 36px;line-height:1.55;
-  }
-  @media(max-width:680px){.v3-final-cta{padding:48px 24px;}}
-
   html,body{background:var(--paper);color:var(--ink);font-family:'Inter',ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
   html,body{max-width:100%;overflow-x:hidden;}
   img,svg,video,iframe{max-width:100%;height:auto;}
@@ -633,7 +275,7 @@
   .nano-traffic span:nth-child(3){background:#28C840;}
   .nano-titlebar{color:rgba(255,255,255,0.7);font-size:12px;font-weight:500;}
 
-  .nano-body{display:flex;height:460px;}
+  .nano-body{display:flex;height:380px;}
 
   /* Aubergine sidebar */
   .nano-sidebar{
@@ -746,7 +388,7 @@
     display:flex;gap:8px;margin-bottom:8px;
     padding:4px 0;
     opacity:0;
-    animation-duration:36s;
+    animation-duration:30s;
     animation-iteration-count:infinite;
     animation-fill-mode:both;
     animation-timing-function:ease-out;
@@ -800,32 +442,21 @@
   .nano-btn-secondary{background:#fff;color:#1D1C1D;}
 
   /* "Replied" confirmation badge */
-  /* "Replied" confirmation badge — REMOVED in V3-NC4 (replaced by 2-click flow with preview CTA). */
-  .nano-replied{display:none !important;}
-  .nano-replied-old-keep-for-reference{
-    display:inline-flex;align-items:center;gap:9px;
-    margin:10px 0 0 44px;
-    padding:8px 14px 8px 12px;
-    background:linear-gradient(180deg,#F0FDF4 0%,#E8F5E9 100%);
-    border:1px solid #86EFAC;
-    border-radius:8px;
-    font-size:12.5px;color:#14532D;font-weight:700;letter-spacing:.005em;
-    box-shadow:0 1px 0 rgba(20,83,45,0.04), 0 6px 16px -4px rgba(34,197,94,0.22);
+  .nano-replied{
+    display:inline-flex;align-items:center;gap:8px;
+    margin:8px 0 0 48px;
+    padding:7px 14px;
+    background:#E8F5E9;border:1px solid #A5D6A7;
+    border-radius:6px;
+    font-size:12.5px;color:#1B5E20;font-weight:700;
     opacity:0;
-    animation-duration:36s;
+    animation-duration:30s;
     animation-iteration-count:infinite;
     animation-fill-mode:both;
     animation-timing-function:ease-out;
   }
   .nano-replied::before{
-    content:"";
-    width:18px;height:18px;border-radius:50%;
-    background:#22C55E;
-    box-shadow:0 0 0 3px rgba(34,197,94,0.20);
-    flex-shrink:0;
-    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http%3A//www.w3.org/2000/svg' viewBox='0 0 12 12'><path d='M3 6.4 L5.2 8.4 L9 4' stroke='white' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
-    background-repeat:no-repeat;
-    background-position:center;
+    content:"✓";color:#2E7D32;font-weight:900;
   }
 
   /* Top-right LIVE badge — vertically centered in the 49px channel head (which sits below
@@ -858,7 +489,7 @@
     color:var(--muted);text-align:center;
   }
 
-  /* ── Animation timing — 36s loop, three scenarios × 10s each ────────────────
+  /* ── Animation timing — 30s loop, three scenarios × 10s each ────────────────
      0–14s:   Scenario 1 — Ops question (Marcus / Acme Q3 inventory)
      14–28s:  Scenario 2 — Sales lead intake (Sarah / Acme Industrial)
      28–42s:  Scenario 3 — Financial pull (Andrew / October close)
@@ -881,24 +512,22 @@
      slots cleanly under the customer message — no phantom gap. */
   .nano-msg-typing{overflow:hidden;}
 
-  /* Scenario 1 — Pacing tuned for: question read (1-3s) → typing (3-4s) → bot reply quick (4s) →
-     reply read time (4-7.5s, ~3.5s) → click 1 (8s) → pause → preview (9-10s) → preview read (10-11s)
-     → click 2 (11s) → cut (12s). All in 36s loop where 33% = 12s. */
+  /* Scenario 1 — visible window 0-33%. Messages stay visible until S2 takes over (no blank gap). */
   @keyframes nano-cust-1   {0%,3%   {opacity:0;transform:translateY(8px);} 5%,33%   {opacity:1;transform:translateY(0);} 35%,100%{opacity:0;}}
-  @keyframes nano-typing-1 {0%,8%   {opacity:0;max-height:0;margin-bottom:0;padding:0;transform:translateY(8px);} 9%,11%   {opacity:1;max-height:60px;margin-bottom:8px;padding:4px 0;transform:translateY(0);} 12%,100%{opacity:0;max-height:0;margin-bottom:0;padding:0;}}
-  @keyframes nano-reply-1  {0%,11%  {opacity:0;transform:translateY(8px);} 13%,33%  {opacity:1;transform:translateY(0);} 35%,100%{opacity:0;}}
+  @keyframes nano-typing-1 {0%,10%  {opacity:0;max-height:0;margin-bottom:0;padding:0;transform:translateY(8px);} 11%,14%  {opacity:1;max-height:60px;margin-bottom:8px;padding:4px 0;transform:translateY(0);} 15%,100%{opacity:0;max-height:0;margin-bottom:0;padding:0;}}
+  @keyframes nano-reply-1  {0%,15%  {opacity:0;transform:translateY(8px);} 17%,33%  {opacity:1;transform:translateY(0);} 35%,100%{opacity:0;}}
   @keyframes nano-replied-1{0%,23%  {opacity:0;transform:translateY(4px) scale(0.96);} 24%,33%{opacity:1;transform:translateY(0) scale(1);} 35%,100%{opacity:0;}}
 
-  /* Scenario 2 — same pacing offset by 33% */
+  /* Scenario 2 — visible window 33-66%. Picks up exactly where S1 fades. */
   @keyframes nano-cust-2   {0%,33%  {opacity:0;transform:translateY(8px);} 36%,66%  {opacity:1;transform:translateY(0);} 68%,100%{opacity:0;}}
-  @keyframes nano-typing-2 {0%,41%  {opacity:0;max-height:0;margin-bottom:0;padding:0;transform:translateY(8px);} 42%,44%  {opacity:1;max-height:60px;margin-bottom:8px;padding:4px 0;transform:translateY(0);} 45%,100%{opacity:0;max-height:0;margin-bottom:0;padding:0;}}
-  @keyframes nano-reply-2  {0%,44%  {opacity:0;transform:translateY(8px);} 46%,66%  {opacity:1;transform:translateY(0);} 68%,100%{opacity:0;}}
+  @keyframes nano-typing-2 {0%,43%  {opacity:0;max-height:0;margin-bottom:0;padding:0;transform:translateY(8px);} 44%,47%  {opacity:1;max-height:60px;margin-bottom:8px;padding:4px 0;transform:translateY(0);} 48%,100%{opacity:0;max-height:0;margin-bottom:0;padding:0;}}
+  @keyframes nano-reply-2  {0%,48%  {opacity:0;transform:translateY(8px);} 50%,66%  {opacity:1;transform:translateY(0);} 68%,100%{opacity:0;}}
   @keyframes nano-replied-2{0%,56%  {opacity:0;transform:translateY(4px) scale(0.96);} 57%,66%{opacity:1;transform:translateY(0) scale(1);} 68%,100%{opacity:0;}}
 
-  /* Scenario 3 — same pacing offset by 66% */
+  /* Scenario 3 — visible window 66-100%. Picks up exactly where S2 fades. */
   @keyframes nano-cust-3   {0%,66%  {opacity:0;transform:translateY(8px);} 69%,99%  {opacity:1;transform:translateY(0);} 99.5%,100%{opacity:0;}}
-  @keyframes nano-typing-3 {0%,74%  {opacity:0;max-height:0;margin-bottom:0;padding:0;transform:translateY(8px);} 75%,77%  {opacity:1;max-height:60px;margin-bottom:8px;padding:4px 0;transform:translateY(0);} 78%,100%{opacity:0;max-height:0;margin-bottom:0;padding:0;}}
-  @keyframes nano-reply-3  {0%,77%  {opacity:0;transform:translateY(8px);} 79%,99%  {opacity:1;transform:translateY(0);} 99.5%,100%{opacity:0;}}
+  @keyframes nano-typing-3 {0%,76%  {opacity:0;max-height:0;margin-bottom:0;padding:0;transform:translateY(8px);} 77%,80%  {opacity:1;max-height:60px;margin-bottom:8px;padding:4px 0;transform:translateY(0);} 81%,100%{opacity:0;max-height:0;margin-bottom:0;padding:0;}}
+  @keyframes nano-reply-3  {0%,81%  {opacity:0;transform:translateY(8px);} 83%,99%  {opacity:1;transform:translateY(0);} 99.5%,100%{opacity:0;}}
   @keyframes nano-replied-3{0%,89%  {opacity:0;transform:translateY(4px) scale(0.96);} 90%,99%{opacity:1;transform:translateY(0) scale(1);} 99.5%,100%{opacity:0;}}
 
   /* ── V3-NC2: Polish layer — animated cursor, progress dots, pulsing glow ──── */
@@ -926,9 +555,9 @@
     background:rgba(255,255,255,0.28);
     transition:transform .25s ease, background-color .25s ease;
   }
-  .nano-progress-dot:nth-child(1){animation:nano-prog-1 36s infinite linear;}
-  .nano-progress-dot:nth-child(2){animation:nano-prog-2 36s infinite linear;}
-  .nano-progress-dot:nth-child(3){animation:nano-prog-3 36s infinite linear;}
+  .nano-progress-dot:nth-child(1){animation:nano-prog-1 30s infinite linear;}
+  .nano-progress-dot:nth-child(2){animation:nano-prog-2 30s infinite linear;}
+  .nano-progress-dot:nth-child(3){animation:nano-prog-3 30s infinite linear;}
   @keyframes nano-prog-1{
     0%,32%   {background:#3DDC84;transform:scale(1.4);box-shadow:0 0 8px rgba(61,220,132,0.6);}
     34%,100% {background:rgba(255,255,255,0.28);transform:scale(1);box-shadow:none;}
@@ -943,143 +572,71 @@
     67%,100% {background:#3DDC84;transform:scale(1.4);box-shadow:0 0 8px rgba(61,220,132,0.6);}
   }
 
-  /* Preview footer — holds the second-click CTA ("Approve & send" / "Confirm & send" / "Share to #leadership"). */
-  .nano-preview-footer{
-    margin-top:auto;
-    border-top:1px solid #E1E1E1;
-    background:#FAFAFA;
-    padding:12px 20px;
-    display:flex;align-items:center;justify-content:space-between;gap:12px;
-    flex-shrink:0;
-  }
-  .nano-preview-meta{
-    font-size:12px;color:#5B5B5B;font-weight:500;
-    display:inline-flex;align-items:center;gap:4px;
-  }
-  .nano-preview-cta{
-    background:#007a5a;color:#fff;border:none;
-    padding:9px 18px;border-radius:6px;
-    font-size:13px;font-weight:800;letter-spacing:.005em;
-    box-shadow:0 1px 0 rgba(0,0,0,0.05), 0 4px 10px -2px rgba(0,122,90,0.25);
-    cursor:default;
-    font-family:'Lato','Slack-Lato',sans-serif;
-  }
-  /* Deck preview footer — dark theme matches the slide background */
-  .nano-preview-3 .nano-preview-footer{
-    background:rgba(11,18,32,0.85);
-    border-top-color:rgba(255,255,255,0.12);
-  }
-  .nano-preview-3 .nano-preview-meta{color:rgba(255,255,255,0.7);}
-  .nano-preview-3 .nano-preview-cta{
-    background:linear-gradient(135deg,#00D4FF 0%,#006BD6 100%);
-    color:#fff;
-    box-shadow:0 1px 0 rgba(0,0,0,0.15), 0 4px 14px -2px rgba(0,212,255,0.45);
-  }
-
-  /* Animated cursor — TWO clicks per scenario for the new flow:
-     Click 1 = bot's action button in Slack (Send draft / Send / Open deck)
-     Click 2 = preview's CTA button (Approve & send / Confirm & send / Share to #leadership)
-     Demo: 490px tall, ~1055px wide at desktop.
-     Click 1 coords: top:63.5%/59%, left:32.3%/30.8%/32.4% (per S1/S2/S3)
-     Click 2 coords: top:95%, left:91.5% (preview footer CTA — same for all scenarios)
-     z-index:7 so cursor appears ABOVE preview overlay (preview is z-index:6) */
+  /* Animated cursor — coords pinned to exact button centers (JS-measured against live DOM).
+     Cursor SVG tip is at (2,1) in its 18×22 box, so element top = btn_center_y - 1.
+     Demo height 510px, demo width ~1055px at desktop.
+     S1 "Send draft" btn center (343, 314) → tip at top:61.4%, left:32.3%
+     S2 "Send"       btn center (327, 314) → tip at top:61.4%, left:30.8%
+     S3 "Open deck"  btn center (344, 291) → tip at top:56.9%, left:32.4% */
   .nano-cursor{
     position:absolute;
-    width:18px;height:22px;z-index:7;
+    width:18px;height:22px;z-index:5;
     pointer-events:none;
     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http%3A//www.w3.org/2000/svg' viewBox='0 0 18 22'><path d='M2 1 L2 17 L6.5 13 L9 19 L11 18 L8.5 12 L14 12 Z' fill='%23000' stroke='%23fff' stroke-width='1.4' stroke-linejoin='round'/></svg>");
     background-size:contain;background-repeat:no-repeat;
-    filter:drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+    filter:drop-shadow(0 2px 4px rgba(0,0,0,0.22));
     opacity:0;
-    animation:nano-cursor-loop 36s infinite ease-in-out;
-    left:32.3%;top:63.5%;
+    animation:nano-cursor-loop 30s infinite ease-in-out;
+    left:32.3%;top:61.4%;
   }
   @keyframes nano-cursor-loop{
-    /* === SCENARIO 1 (0-33% / 0-12s) === */
-    /* Click 1 on "Send draft" button at ~22% (after ~3s reading bot reply) */
-    0%,19%   {opacity:0;top:63.5%;left:32.3%;transform:translate(60px,12px) scale(0.9);}
-    21%      {opacity:1;top:63.5%;left:32.3%;transform:translate(0,0) scale(1);}
-    22%      {opacity:1;top:63.5%;left:32.3%;transform:translate(0,0) scale(0.82);}
-    23%      {opacity:1;top:63.5%;left:32.3%;transform:translate(0,0) scale(1);}
-    25%      {opacity:0;top:63.5%;left:32.3%;transform:translate(20px,8px) scale(0.95);}
-    /* Click 2 on preview's "Approve & send →" CTA at ~31% (after ~1s reading preview) */
-    28%      {opacity:0;top:95%;left:91.5%;transform:translate(40px,12px) scale(0.9);}
-    30%      {opacity:1;top:95%;left:91.5%;transform:translate(0,0) scale(1);}
-    31%      {opacity:1;top:95%;left:91.5%;transform:translate(0,0) scale(0.82);}
-    32%      {opacity:1;top:95%;left:91.5%;transform:translate(0,0) scale(1);}
-    33%      {opacity:0;top:95%;left:91.5%;transform:translate(40px,12px) scale(0.9);}
-
-    /* === SCENARIO 2 (33-66% / 12-24s) === */
-    /* Click 1 on "Send" button at ~55% */
-    52%      {opacity:0;top:63.5%;left:30.8%;transform:translate(60px,12px) scale(0.9);}
-    54%      {opacity:1;top:63.5%;left:30.8%;transform:translate(0,0) scale(1);}
-    55%      {opacity:1;top:63.5%;left:30.8%;transform:translate(0,0) scale(0.82);}
-    56%      {opacity:1;top:63.5%;left:30.8%;transform:translate(0,0) scale(1);}
-    58%      {opacity:0;top:63.5%;left:30.8%;transform:translate(20px,8px) scale(0.95);}
-    /* Click 2 on preview's "Confirm & send →" CTA at ~64% */
-    61%      {opacity:0;top:95%;left:91.5%;transform:translate(40px,12px) scale(0.9);}
-    63%      {opacity:1;top:95%;left:91.5%;transform:translate(0,0) scale(1);}
-    64%      {opacity:1;top:95%;left:91.5%;transform:translate(0,0) scale(0.82);}
-    65%      {opacity:1;top:95%;left:91.5%;transform:translate(0,0) scale(1);}
-    66%      {opacity:0;top:95%;left:91.5%;transform:translate(40px,12px) scale(0.9);}
-
-    /* === SCENARIO 3 (66-99% / 24-36s) === */
-    /* Click 1 on "Open deck" button at ~88% (S3 button is higher because reply is shorter) */
-    85%      {opacity:0;top:59%;left:32.4%;transform:translate(60px,12px) scale(0.9);}
-    87%      {opacity:1;top:59%;left:32.4%;transform:translate(0,0) scale(1);}
-    88%      {opacity:1;top:59%;left:32.4%;transform:translate(0,0) scale(0.82);}
-    89%      {opacity:1;top:59%;left:32.4%;transform:translate(0,0) scale(1);}
-    91%      {opacity:0;top:59%;left:32.4%;transform:translate(20px,8px) scale(0.95);}
-    /* Click 2 on preview's "Share to #leadership →" CTA at ~97% */
-    94%      {opacity:0;top:95%;left:91.5%;transform:translate(40px,12px) scale(0.9);}
-    96%      {opacity:1;top:95%;left:91.5%;transform:translate(0,0) scale(1);}
-    97%      {opacity:1;top:95%;left:91.5%;transform:translate(0,0) scale(0.82);}
-    98%      {opacity:1;top:95%;left:91.5%;transform:translate(0,0) scale(1);}
-    99%,100% {opacity:0;top:95%;left:91.5%;transform:translate(40px,12px) scale(0.9);}
+    /* Scenario 1 "Send draft" — tip at (343, 314) */
+    0%,21%   {opacity:0;top:61.4%;left:32.3%;transform:translate(60px,12px) scale(0.9);}
+    23%      {opacity:1;top:61.4%;left:32.3%;transform:translate(0,0) scale(1);}
+    25%      {opacity:1;top:61.4%;left:32.3%;transform:translate(0,0) scale(0.82);}
+    26%      {opacity:1;top:61.4%;left:32.3%;transform:translate(0,0) scale(1);}
+    29%      {opacity:0;top:61.4%;left:32.3%;transform:translate(60px,12px) scale(0.9);}
+    /* Scenario 2 "Send" — tip at (327, 314) */
+    53%      {opacity:0;top:61.4%;left:30.8%;transform:translate(60px,12px) scale(0.9);}
+    55%      {opacity:1;top:61.4%;left:30.8%;transform:translate(0,0) scale(1);}
+    57%      {opacity:1;top:61.4%;left:30.8%;transform:translate(0,0) scale(0.82);}
+    58%      {opacity:1;top:61.4%;left:30.8%;transform:translate(0,0) scale(1);}
+    62%      {opacity:0;top:61.4%;left:30.8%;transform:translate(60px,12px) scale(0.9);}
+    /* Scenario 3 "Open deck" — tip at (344, 291) — shorter content shifts button up */
+    86%      {opacity:0;top:56.9%;left:32.4%;transform:translate(60px,12px) scale(0.9);}
+    88%      {opacity:1;top:56.9%;left:32.4%;transform:translate(0,0) scale(1);}
+    90%      {opacity:1;top:56.9%;left:32.4%;transform:translate(0,0) scale(0.82);}
+    91%      {opacity:1;top:56.9%;left:32.4%;transform:translate(0,0) scale(1);}
+    95%,100% {opacity:0;top:56.9%;left:32.4%;transform:translate(60px,12px) scale(0.9);}
   }
 
-  /* Click ripple — pulses on both buttons each scenario.
-     Click 1: button center y - 14 / button center x - 14
-     Click 2: preview CTA center - 14 (top:92.2%, left:90.1%) */
+  /* Click ripple — centered on each scenario's button (offset -14px to compensate for ripple radius) */
   .nano-cursor-ripple{
     position:absolute;
     width:28px;height:28px;border-radius:50%;
-    border:2px solid #1F4FFF;z-index:7;
+    border:2px solid #1F4FFF;z-index:4;
     pointer-events:none;
     opacity:0;
-    left:31.2%;top:60.7%;
-    animation:nano-ripple-loop 36s infinite linear;
+    left:31.2%;top:58.8%;
+    animation:nano-ripple-loop 30s infinite linear;
   }
   @keyframes nano-ripple-loop{
-    /* === SCENARIO 1 === */
-    /* Ripple 1: bot button at y:312 → top:60.7%, left:31.2% */
-    0%,21%   {opacity:0;top:60.7%;left:31.2%;transform:scale(0.4);}
-    22%      {opacity:0.7;top:60.7%;left:31.2%;transform:scale(0.4);}
-    24%      {opacity:0;top:60.7%;left:31.2%;transform:scale(1.6);}
-    25%      {opacity:0;top:60.7%;left:31.2%;}
-    /* Ripple 2: preview CTA → top:92.2%, left:90.1% (cyan tone for preview action) */
-    30%      {opacity:0;top:92.2%;left:90.1%;transform:scale(0.4);border-color:#00D4FF;}
-    31%      {opacity:0.8;top:92.2%;left:90.1%;transform:scale(0.4);border-color:#00D4FF;}
-    33%      {opacity:0;top:92.2%;left:90.1%;transform:scale(1.6);border-color:#00D4FF;}
-
-    /* === SCENARIO 2 === */
-    54%      {opacity:0;top:60.7%;left:29.7%;transform:scale(0.4);border-color:#1F4FFF;}
-    55%      {opacity:0.7;top:60.7%;left:29.7%;transform:scale(0.4);border-color:#1F4FFF;}
-    57%      {opacity:0;top:60.7%;left:29.7%;transform:scale(1.6);border-color:#1F4FFF;}
-    58%      {opacity:0;top:60.7%;left:29.7%;}
-    63%      {opacity:0;top:92.2%;left:90.1%;transform:scale(0.4);border-color:#00D4FF;}
-    64%      {opacity:0.8;top:92.2%;left:90.1%;transform:scale(0.4);border-color:#00D4FF;}
-    66%      {opacity:0;top:92.2%;left:90.1%;transform:scale(1.6);border-color:#00D4FF;}
-
-    /* === SCENARIO 3 === */
-    87%      {opacity:0;top:56.3%;left:31.3%;transform:scale(0.4);border-color:#1F4FFF;}
-    88%      {opacity:0.7;top:56.3%;left:31.3%;transform:scale(0.4);border-color:#1F4FFF;}
-    90%      {opacity:0;top:56.3%;left:31.3%;transform:scale(1.6);border-color:#1F4FFF;}
-    91%      {opacity:0;top:56.3%;left:31.3%;}
-    96%      {opacity:0;top:92.2%;left:90.1%;transform:scale(0.4);border-color:#00D4FF;}
-    97%      {opacity:0.8;top:92.2%;left:90.1%;transform:scale(0.4);border-color:#00D4FF;}
-    99%      {opacity:0;top:92.2%;left:90.1%;transform:scale(1.6);border-color:#00D4FF;}
-    100%     {opacity:0;}
+    /* Ripple is 28×28 — element top/left = btn_center - 14. Centered on each button. */
+    /* Scenario 1: btn (343, 314) → ripple top:58.8%, left:31.2% */
+    0%,24%   {opacity:0;top:58.8%;left:31.2%;transform:scale(0.4);}
+    25%      {opacity:0.7;top:58.8%;left:31.2%;transform:scale(0.4);}
+    27%      {opacity:0;top:58.8%;left:31.2%;transform:scale(1.6);}
+    28%      {opacity:0;top:58.8%;left:31.2%;}
+    /* Scenario 2: btn (327, 314) → ripple top:58.8%, left:29.7% */
+    56%      {opacity:0;top:58.8%;left:29.7%;transform:scale(0.4);}
+    57%      {opacity:0.7;top:58.8%;left:29.7%;transform:scale(0.4);}
+    59%      {opacity:0;top:58.8%;left:29.7%;transform:scale(1.6);}
+    60%      {opacity:0;top:58.8%;left:29.7%;}
+    /* Scenario 3: btn (344, 291) → ripple top:54.3%, left:31.3% */
+    89%      {opacity:0;top:54.3%;left:31.3%;transform:scale(0.4);}
+    90%      {opacity:0.7;top:54.3%;left:31.3%;transform:scale(0.4);}
+    92%      {opacity:0;top:54.3%;left:31.3%;transform:scale(1.6);}
+    93%,100% {opacity:0;top:54.3%;left:31.3%;}
   }
 
   /* ── V3-NC3: Preview overlays — Email / HubSpot / Slide deck slide in after each click.
@@ -1156,34 +713,30 @@
   .nano-deck-warn{color:#FCD34D;}
 
   /* Slide-in animations — each preview appears right after its scenario's cursor click */
-  .nano-preview-1{animation:nano-prev-1 36s infinite cubic-bezier(0.22,1,0.36,1);}
-  .nano-preview-2{animation:nano-prev-2 36s infinite cubic-bezier(0.22,1,0.36,1);}
-  .nano-preview-3{animation:nano-prev-3 36s infinite cubic-bezier(0.22,1,0.36,1);}
+  .nano-preview-1{animation:nano-prev-1 30s infinite cubic-bezier(0.22,1,0.36,1);}
+  .nano-preview-2{animation:nano-prev-2 30s infinite cubic-bezier(0.22,1,0.36,1);}
+  .nano-preview-3{animation:nano-prev-3 30s infinite cubic-bezier(0.22,1,0.36,1);}
 
-  /* Preview animations:
-     - Slide in AFTER the bot-button click + a deliberate pause (so reader sees the click result)
-     - Hold long enough for the cursor to do the SECOND click on the preview's CTA
-     - Hard cut to next scenario (no slide-out)
-     S1 click 1 at 22%, pause 23-25%, preview slides in 25-28%, holds + click 2 at 31%, cut at 33%
-     S2 click 1 at 55%, pause 56-58%, preview 58-61%, holds + click 2 at 64%, cut at 66%
-     S3 click 1 at 88%, pause 89-91%, preview 91-94%, holds + click 2 at 97%, cut at 99% */
   @keyframes nano-prev-1{
+    /* Click at 25% → preview slides in 26-28%, holds 28-31%, slides out 31-33% */
     0%,25%   {opacity:0;transform:translateX(100%);}
     27%      {opacity:1;transform:translateX(0);}
-    32%      {opacity:1;transform:translateX(0);}
-    33%,100% {opacity:0;transform:translateX(0);}  /* hard cut */
+    31%      {opacity:1;transform:translateX(0);}
+    33%,100% {opacity:0;transform:translateX(100%);}
   }
   @keyframes nano-prev-2{
-    0%,58%   {opacity:0;transform:translateX(100%);}
-    60%      {opacity:1;transform:translateX(0);}
-    65%      {opacity:1;transform:translateX(0);}
-    66%,100% {opacity:0;transform:translateX(0);}  /* hard cut */
+    /* Click at 57% → preview 58-65% */
+    0%,57%   {opacity:0;transform:translateX(100%);}
+    59%      {opacity:1;transform:translateX(0);}
+    63%      {opacity:1;transform:translateX(0);}
+    65%,100% {opacity:0;transform:translateX(100%);}
   }
   @keyframes nano-prev-3{
-    0%,91%   {opacity:0;transform:translateX(100%);}
-    93%      {opacity:1;transform:translateX(0);}
-    99%      {opacity:1;transform:translateX(0);}
-    99.5%,100% {opacity:0;transform:translateX(0);}  /* hard cut at loop end */
+    /* Click at 90% → preview 91-99% (longest hold to land the closing impression) */
+    0%,90%   {opacity:0;transform:translateX(100%);}
+    92%      {opacity:1;transform:translateX(0);}
+    98%      {opacity:1;transform:translateX(0);}
+    99%,100% {opacity:0;transform:translateX(100%);}
   }
 
   /* Mobile — hide previews on narrow screens (sidebar collapses anyway) */
@@ -1376,6 +929,311 @@
     .int-logo{width:52px;height:52px;font-size:12.5px;}
     .int-cluster{height:200px;}
   }
+
+  /* ─── Brand v3 dark tokens (used by interactive demo) ─────────────────── */
+  :root{
+    --bg-0:#07090d; --bg-1:#0b0f17; --bg-2:#11161f; --bg-3:#161c27; --bg-4:#1c2331;
+    --v3-line:#1f2735; --v3-line-2:#2a3344;
+    --text-0:#f4f6fa; --text-1:#c5cdd9; --text-2:#8b94a3; --text-3:#5a6373;
+    --blue:#3b82f6; --blue-2:#60a5fa; --blue-glow:rgba(59,130,246,0.35);
+    --orange:#fb923c; --orange-2:#fdba74; --orange-glow:rgba(251,146,60,0.3);
+    --v3-green:#34d399;
+  }
+
+  /* ─── Interactive Slack demo (ported from Claude Design prototype, V4-INT) ── */
+  .demo-shell{
+    border:1px solid var(--v3-line);
+    border-radius:20px;
+    overflow:hidden;
+    background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent 30%),var(--bg-1);
+    box-shadow:0 30px 80px -30px rgba(0,0,0,0.7),0 0 0 1px rgba(59,130,246,0.06),inset 0 1px 0 rgba(255,255,255,0.03);
+    display:grid;grid-template-columns:240px 1fr;
+    grid-template-rows:auto 1fr;
+    min-height:640px;
+    max-width:1180px;margin:32px auto 0;
+    position:relative;
+    color:var(--text-0);
+    font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
+  }
+  .demo-shell *{box-sizing:border-box;}
+  .demo-shell .demo-toolbar{
+    display:flex;align-items:center;gap:8px;padding:12px 14px;
+    border-bottom:1px solid var(--v3-line);grid-column:1/-1;
+    background:var(--bg-0);
+  }
+  .demo-shell .window-dots{display:flex;gap:6px;}
+  .demo-shell .window-dots span{width:11px;height:11px;border-radius:50%;background:#2a3344;}
+  .demo-shell .window-dots span:nth-child(1){background:#ff5f57;}
+  .demo-shell .window-dots span:nth-child(2){background:#febc2e;}
+  .demo-shell .window-dots span:nth-child(3){background:#28c840;}
+  .demo-shell .url{flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-3);}
+  .demo-shell .sidebar{
+    background:var(--bg-0);border-right:1px solid var(--v3-line);
+    padding:18px 12px;display:flex;flex-direction:column;gap:18px;
+  }
+  .demo-shell .sidebar-team{display:flex;align-items:center;gap:10px;padding:0 8px;}
+  .demo-shell .sidebar-team .badge{
+    width:32px;height:32px;border-radius:8px;
+    background:linear-gradient(135deg,var(--blue),var(--orange));
+    display:grid;place-items:center;font-weight:700;font-size:13px;color:#07090d;
+  }
+  .demo-shell .sidebar-team .name{font-weight:600;font-size:14px;color:var(--text-0);}
+  .demo-shell .sidebar-team .meta{font-size:11px;color:var(--text-3);}
+  .demo-shell .sidebar-group{display:flex;flex-direction:column;gap:2px;}
+  .demo-shell .sidebar-label{
+    font-size:11px;text-transform:uppercase;letter-spacing:.1em;
+    color:var(--text-3);padding:6px 10px;font-weight:600;
+  }
+  .demo-shell .channel{
+    padding:6px 10px;border-radius:6px;font-size:13.5px;color:var(--text-1);
+    display:flex;align-items:center;gap:8px;
+  }
+  .demo-shell .channel .hash{color:var(--text-3);}
+  .demo-shell .channel.active{background:rgba(59,130,246,0.12);color:#fff;}
+  .demo-shell .channel.active .hash{color:var(--blue-2);}
+  .demo-shell .channel .pill{
+    margin-left:auto;font-size:10px;padding:1px 6px;border-radius:999px;
+    background:var(--orange);color:#1a0e05;font-weight:700;
+  }
+  .demo-shell .channel .agent-dot{
+    width:8px;height:8px;border-radius:50%;background:var(--v3-green);
+    box-shadow:0 0 0 3px rgba(52,211,153,0.2);
+  }
+  .demo-shell .day-card{
+    margin-top:auto;padding:10px;border-radius:10px;
+    background:var(--bg-2);border:1px solid var(--v3-line);
+  }
+  .demo-shell .day-l{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em;font-weight:600;}
+  .demo-shell .day-v{font-size:24px;font-weight:700;letter-spacing:-.02em;margin-top:4px;color:var(--text-0);}
+  .demo-shell .day-s{font-size:12px;color:var(--v3-green);margin-top:2px;}
+  .demo-shell .chat{display:flex;flex-direction:column;min-width:0;}
+  .demo-shell .chat-header{
+    border-bottom:1px solid var(--v3-line);padding:14px 22px;
+    display:flex;align-items:center;gap:14px;background:var(--bg-1);
+  }
+  .demo-shell .chat-header .avatar{
+    width:36px;height:36px;border-radius:8px;background:#fff;
+    display:grid;place-items:center;position:relative;overflow:hidden;padding:3px;flex-shrink:0;
+  }
+  .demo-shell .chat-header .avatar svg{width:100%;height:100%;}
+  .demo-shell .chat-header .avatar::after{
+    content:"";position:absolute;bottom:-2px;right:-2px;width:10px;height:10px;
+    border-radius:50%;background:var(--v3-green);border:2px solid var(--bg-1);
+  }
+  .demo-shell .chat-header .title{font-weight:600;font-size:15px;color:var(--text-0);}
+  .demo-shell .chat-header .subtitle{font-size:12px;color:var(--text-2);margin-top:2px;}
+  .demo-shell .chat-header .actions{margin-left:auto;display:flex;gap:8px;align-items:center;}
+  .demo-shell .chip{
+    font-size:11px;padding:4px 10px;border-radius:999px;
+    background:rgba(52,211,153,0.10);color:var(--v3-green);
+    border:1px solid rgba(52,211,153,0.25);font-weight:600;letter-spacing:.02em;
+  }
+  .demo-shell .chat-stream{
+    flex:1;overflow-y:auto;padding:22px;display:flex;flex-direction:column;gap:16px;
+    scroll-behavior:smooth;max-height:520px;
+  }
+  .demo-shell .chat-stream::-webkit-scrollbar{width:8px;}
+  .demo-shell .chat-stream::-webkit-scrollbar-track{background:transparent;}
+  .demo-shell .chat-stream::-webkit-scrollbar-thumb{background:var(--v3-line-2);border-radius:4px;}
+  .demo-shell .msg{
+    display:grid;grid-template-columns:36px 1fr;gap:12px;
+    animation:msg-in .35s cubic-bezier(.2,.8,.2,1);
+  }
+  @keyframes msg-in{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+  .demo-shell .msg .av{
+    width:36px;height:36px;border-radius:8px;display:grid;place-items:center;
+    font-weight:700;font-size:13px;
+  }
+  .demo-shell .msg.user .av{background:var(--bg-3);color:var(--text-1);}
+  .demo-shell .msg.bot .av{background:#fff;overflow:hidden;padding:3px;}
+  .demo-shell .msg.bot .av svg{width:100%;height:100%;}
+  .demo-shell .msg .body{min-width:0;}
+  .demo-shell .msg .head{display:flex;align-items:baseline;gap:8px;margin-bottom:4px;flex-wrap:wrap;}
+  .demo-shell .msg .head .name{font-weight:600;font-size:14px;color:var(--text-1);}
+  .demo-shell .msg .head .name.bot{color:var(--text-0);}
+  .demo-shell .msg .head .tag{
+    font-size:10px;padding:1px 6px;background:var(--blue);color:#fff;
+    border-radius:4px;font-weight:700;letter-spacing:.04em;
+  }
+  .demo-shell .msg .head .time{font-size:11px;color:var(--text-3);font-variant-numeric:tabular-nums;}
+  .demo-shell .msg .text{font-size:14.5px;color:var(--text-1);line-height:1.55;}
+  .demo-shell .msg .text strong{color:var(--text-0);font-weight:600;}
+  .demo-shell .msg .text code{
+    font-family:'JetBrains Mono',monospace;background:var(--bg-3);
+    border:1px solid var(--v3-line);padding:1px 6px;border-radius:4px;
+    font-size:12.5px;color:var(--orange-2);
+  }
+  .demo-shell .workflow-grid{
+    margin-top:6px;display:grid;grid-template-columns:repeat(2,1fr);gap:8px;max-width:540px;
+  }
+  .demo-shell .workflow-btn{
+    text-align:left;
+    background:linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));
+    border:1px solid var(--v3-line-2);border-radius:10px;padding:12px 14px;
+    color:var(--text-0);display:flex;align-items:center;gap:10px;
+    transition:all .2s ease;font-size:13.5px;cursor:pointer;font-family:inherit;
+  }
+  .demo-shell .workflow-btn:hover{
+    border-color:var(--blue);
+    background:linear-gradient(180deg,rgba(59,130,246,0.10),rgba(59,130,246,0.02));
+    transform:translateY(-1px);
+  }
+  .demo-shell .workflow-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+  .demo-shell .workflow-btn .icon{
+    width:28px;height:28px;border-radius:6px;display:grid;place-items:center;
+    font-size:14px;flex-shrink:0;
+  }
+  .demo-shell .workflow-btn .label-wrap{display:flex;flex-direction:column;gap:2px;min-width:0;}
+  .demo-shell .workflow-btn .label-wrap .l{font-weight:600;font-size:13.5px;color:var(--text-0);}
+  .demo-shell .workflow-btn .label-wrap .s{font-size:11.5px;color:var(--text-3);}
+  .demo-shell .branch-wrap{padding-left:48px;}
+  .demo-shell .branch-row{display:flex;gap:8px;flex-wrap:wrap;}
+  .demo-shell .branch-btn{
+    padding:8px 14px;font-size:13px;border-radius:999px;
+    background:var(--bg-3);border:1px solid var(--v3-line-2);color:var(--text-0);
+    font-weight:500;transition:all .18s ease;cursor:pointer;font-family:inherit;
+  }
+  .demo-shell .branch-btn:hover{background:var(--bg-4);border-color:var(--blue);color:var(--blue-2);}
+  .demo-shell .branch-btn:disabled{opacity:.5;cursor:not-allowed;}
+  .demo-shell .branch-btn.primary{
+    background:rgba(251,146,60,0.10);border-color:rgba(251,146,60,0.40);color:var(--orange-2);
+  }
+  .demo-shell .branch-btn.primary:hover{background:rgba(251,146,60,0.18);}
+  .demo-shell .typing-bubble{
+    display:inline-flex;align-items:center;gap:4px;padding:10px 14px;
+    background:var(--bg-3);border-radius:12px;border:1px solid var(--v3-line);
+  }
+  .demo-shell .typing-bubble span{
+    width:6px;height:6px;border-radius:50%;background:var(--text-2);
+    animation:demo-typing 1.2s infinite ease-in-out;
+  }
+  .demo-shell .typing-bubble span:nth-child(2){animation-delay:.15s;}
+  .demo-shell .typing-bubble span:nth-child(3){animation-delay:.3s;}
+  @keyframes demo-typing{0%,60%,100%{transform:translateY(0);opacity:.4;}30%{transform:translateY(-4px);opacity:1;}}
+  .demo-shell .process-card{
+    margin-top:6px;background:var(--bg-2);border:1px solid var(--v3-line);
+    border-radius:12px;padding:14px 16px;max-width:560px;
+  }
+  .demo-shell .process-step{
+    display:flex;align-items:center;gap:10px;padding:7px 0;font-size:13.5px;
+    color:var(--text-1);opacity:.4;transition:opacity .25s ease;
+  }
+  .demo-shell .process-step.active{opacity:1;}
+  .demo-shell .process-step.done{opacity:1;color:var(--text-1);}
+  .demo-shell .process-step .ind{
+    width:18px;height:18px;border-radius:50%;border:2px solid var(--v3-line-2);
+    display:grid;place-items:center;flex-shrink:0;position:relative;
+  }
+  .demo-shell .process-step.active .ind{
+    border-color:var(--blue);border-top-color:transparent;
+    animation:proc-spin .7s linear infinite;
+  }
+  .demo-shell .process-step.done .ind{background:var(--v3-green);border-color:var(--v3-green);}
+  .demo-shell .process-step.done .ind::after{
+    content:"";width:8px;height:4px;
+    border-left:2px solid #07090d;border-bottom:2px solid #07090d;
+    transform:rotate(-45deg) translate(1px,-1px);
+  }
+  .demo-shell .process-step .meta{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-3);}
+  @keyframes proc-spin{to{transform:rotate(360deg);}}
+  .demo-shell .progress-track{
+    height:4px;background:var(--bg-3);border-radius:999px;overflow:hidden;margin-top:12px;
+  }
+  .demo-shell .progress-fill{
+    height:100%;background:linear-gradient(90deg,var(--blue),var(--orange));
+    width:0%;transition:width .3s ease;border-radius:999px;
+  }
+  .demo-shell .integrations-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;padding-left:48px;}
+  .demo-shell .integration-pill{
+    display:inline-flex;align-items:center;gap:8px;padding:7px 12px 7px 8px;
+    background:var(--bg-2);border:1px solid var(--v3-line);border-radius:999px;
+    font-size:12.5px;color:var(--text-1);position:relative;overflow:hidden;
+    transition:border-color .25s ease;
+  }
+  .demo-shell .integration-pill .ipdot{
+    width:8px;height:8px;border-radius:50%;background:var(--text-3);
+    transition:background .25s ease,box-shadow .25s ease;
+  }
+  .demo-shell .integration-pill.live .ipdot{background:var(--v3-green);box-shadow:0 0 0 4px rgba(52,211,153,0.18);}
+  .demo-shell .integration-pill.live{border-color:rgba(52,211,153,0.35);}
+  .demo-shell .integration-pill .ico{
+    width:18px;height:18px;border-radius:4px;display:grid;place-items:center;
+    font-size:10px;font-weight:800;color:#fff;
+  }
+  .demo-shell .success-card{
+    margin-top:6px;
+    background:linear-gradient(180deg,rgba(52,211,153,0.06),rgba(52,211,153,0));
+    border:1px solid rgba(52,211,153,0.30);border-radius:14px;padding:16px 18px;
+    max-width:560px;position:relative;overflow:hidden;
+  }
+  .demo-shell .success-card .head-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .demo-shell .success-card .check-circle{
+    width:24px;height:24px;border-radius:50%;background:var(--v3-green);
+    display:grid;place-items:center;flex-shrink:0;
+  }
+  .demo-shell .success-card .check-circle::after{
+    content:"";width:10px;height:5px;
+    border-left:2px solid #07090d;border-bottom:2px solid #07090d;
+    transform:rotate(-45deg) translate(1px,-1px);
+  }
+  .demo-shell .success-card .title{font-weight:600;font-size:14.5px;color:var(--text-0);}
+  .demo-shell .success-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px;}
+  .demo-shell .success-metric{
+    background:rgba(255,255,255,0.03);border:1px solid var(--v3-line);
+    border-radius:10px;padding:10px 12px;
+  }
+  .demo-shell .success-metric .l{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em;font-weight:600;}
+  .demo-shell .success-metric .v{font-size:18px;font-weight:700;color:var(--text-0);margin-top:4px;font-variant-numeric:tabular-nums;letter-spacing:-.02em;}
+  .demo-shell .success-metric .v.accent{color:var(--orange-2);}
+  .demo-shell .success-metric .v.green{color:var(--v3-green);}
+  .demo-shell .aha{
+    margin-top:10px;padding:10px 14px;border-left:2px solid var(--orange);
+    background:rgba(251,146,60,0.06);border-radius:0 8px 8px 0;
+    font-size:13px;color:var(--text-1);display:flex;gap:8px;
+  }
+  .demo-shell .aha .spark{color:var(--orange);}
+  .demo-shell .demo-detail{margin-top:12px;font-size:13.5px;color:var(--text-1);line-height:1.55;}
+  .demo-shell .demo-composer{border-top:1px solid var(--v3-line);padding:14px 22px;background:var(--bg-1);}
+  .demo-shell .composer-input{
+    display:flex;align-items:center;gap:10px;padding:10px 14px;
+    border:1px solid var(--v3-line-2);border-radius:10px;background:var(--bg-2);
+    color:var(--text-2);font-size:14px;
+  }
+  .demo-shell .composer-input input{
+    flex:1;background:transparent;border:none;outline:none;
+    color:var(--text-0);font-size:14px;font-family:inherit;
+  }
+  .demo-shell .composer-input input::placeholder{color:var(--text-3);}
+  .demo-shell .composer-input .send-btn{
+    padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;
+    background:linear-gradient(180deg,var(--blue-2),var(--blue));color:#fff;
+    border:none;cursor:not-allowed;opacity:.6;font-family:inherit;
+  }
+  .demo-shell .composer-hint{
+    margin-top:6px;font-size:11px;color:var(--text-3);
+    display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap;
+  }
+  .demo-shell .kbd{
+    font-family:'JetBrains Mono',monospace;font-size:10px;padding:1px 5px;
+    background:var(--bg-3);border:1px solid var(--v3-line);border-radius:4px;color:var(--text-2);
+  }
+  .demo-shell .confetti{position:absolute;pointer-events:none;inset:0;overflow:hidden;z-index:100;}
+  .demo-shell .confetti-piece{
+    position:absolute;width:8px;height:12px;top:-20px;
+    animation:confetti-fall var(--d,2.4s) ease-out forwards;
+    opacity:.95;border-radius:1px;
+  }
+  @keyframes confetti-fall{0%{transform:translateY(0) rotate(0deg);opacity:1;}100%{transform:translateY(100vh) rotate(720deg);opacity:0;}}
+  @media(max-width:820px){
+    .demo-shell{grid-template-columns:1fr;}
+    .demo-shell .sidebar{display:none;}
+    .demo-shell .chat-stream{padding:16px;max-height:480px;}
+    .demo-shell .workflow-grid{grid-template-columns:1fr;}
+    .demo-shell .success-metrics{grid-template-columns:1fr;}
+    .demo-shell .demo-composer{padding:12px;}
+    .demo-shell .integrations-row{padding-left:0;}
+    .demo-shell .branch-wrap{padding-left:0;}
+  }
 </style>
 </head>
 <body>
@@ -1467,500 +1325,142 @@
     drawer.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ setOpen(false); }); });
     document.addEventListener('keydown', function(e){ if(e.key === 'Escape') setOpen(false); });
   })();
-
-  /* v3 count-up animation for hero stats — 1.6s ease-out cubic, runs once on load.
-     Honors prefers-reduced-motion: snaps to final value instead. */
-  (function(){
-    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var els = document.querySelectorAll('#v3-stats [data-count]');
-    if(!els.length) return;
-    function format(n, decimals){
-      return decimals ? n.toFixed(decimals) : Math.round(n).toLocaleString('en-US');
-    }
-    function animate(el){
-      var target = parseFloat(el.getAttribute('data-count'));
-      var decimals = parseInt(el.getAttribute('data-decimals') || '0', 10);
-      if(reduce){ el.textContent = format(target, decimals); return; }
-      var start = performance.now();
-      var dur = 1600;
-      function frame(now){
-        var t = Math.min(1, (now - start) / dur);
-        var eased = 1 - Math.pow(1 - t, 3); /* ease-out cubic */
-        el.textContent = format(target * eased, decimals);
-        if(t < 1) requestAnimationFrame(frame);
-      }
-      requestAnimationFrame(frame);
-    }
-    /* Trigger when stats grid scrolls into view (or immediately if already visible) */
-    var stats = document.getElementById('v3-stats');
-    if(stats && 'IntersectionObserver' in window){
-      var observed = false;
-      var io = new IntersectionObserver(function(entries){
-        entries.forEach(function(e){
-          if(e.isIntersecting && !observed){
-            observed = true;
-            els.forEach(animate);
-            io.disconnect();
-          }
-        });
-      }, {threshold:0.3});
-      io.observe(stats);
-    } else {
-      els.forEach(animate);
-    }
-  })();
-
-  /* v3 timeline progress bars — staggered fill via CSS scaleX, triggered on enter */
-  (function(){
-    var cards = document.querySelectorAll('#v3-timeline .v3-timeline-card');
-    if(!cards.length) return;
-    if('IntersectionObserver' in window){
-      var io = new IntersectionObserver(function(entries){
-        entries.forEach(function(e){
-          if(e.isIntersecting){
-            // stagger by index for a satisfying cascade
-            var i = Array.prototype.indexOf.call(cards, e.target);
-            setTimeout(function(){ e.target.classList.add('in-view'); }, i * 140);
-            io.unobserve(e.target);
-          }
-        });
-      }, {threshold:0.25});
-      cards.forEach(function(c){ io.observe(c); });
-    } else {
-      cards.forEach(function(c){ c.classList.add('in-view'); });
-    }
-  })();
 </script>
 
-<!-- ─── HERO v3 — dark mode, gradient H1, animated stats grid (Brand v3, 2026-05-01) ── -->
+<!-- ─── HERO — centered text + agent UI showcase (B+C hybrid) ──────────────── -->
 <main id="main">
-<section class="v3-dark v3-hero" id="hero" aria-label="Ramped AI hero">
-  <div class="v3-hero-inner">
+<section class="hero-section" id="hero">
+  <div class="section-wrap hero-inner" style="text-align:center;">
 
-    <!-- Eyebrow pill with pulsing green dot -->
-    <div class="v3-eyebrow" role="note" aria-label="30-day go-live guarantee">
-      <span class="dot" aria-hidden="true"></span>
-      <span>AI department deployment · 30 days · live agents</span>
+    <!-- Eyebrow pill — strongest commitment, centered -->
+    <div class="hero-eyebrow" style="display:inline-flex;">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <path d="M7 1L2 3.5v4C2 10.1 4.2 12.6 7 13.5c2.8-.9 5-3.4 5-6V3.5L7 1z" fill="#F59E0B" opacity=".25" stroke="#B45309" stroke-width="1.3"/>
+      </svg>
+      <span>30-DAY GO-LIVE GUARANTEE — OR FULL REFUND</span>
     </div>
 
-    <!-- H1 with gradient on the second clause -->
-    <h1 class="v3-h1">
-      Your AI Department,<br><span class="accent">Live in 30 Days.</span>
+    <!-- Headline — bigger and centered -->
+    <h1 class="hero-h1" style="font-size:clamp(2.8rem, 7vw, 5rem);line-height:1.02;letter-spacing:-.04em;max-width:1000px;margin:0 auto 24px;">
+      Your AI department,<br>live in 30 days.
     </h1>
 
-    <!-- Lede -->
-    <p class="v3-lede">
-      Ramped deploys autonomous AI agents directly into your business systems — HubSpot, NetSuite, QuickBooks, Slack, and the rest of your stack — running real work in production by day 30. Not a chatbot. A department.
+    <!-- Subheadline — narrower max-width for centered comfort -->
+    <p class="hero-sub" style="margin:0 auto 36px;font-size:1.125rem;max-width:640px;">
+      Done-for-you AI implementation. We build, deploy, and run AI agents inside your operating business — automating your highest-friction workflows on a flat monthly fee.
     </p>
 
-    <!-- CTAs -->
-    <div class="v3-cta-row">
-      <a href="/book" class="btn-primary">Book a discovery call →</a>
-      <a href="/free-roadmap" class="btn-ghost">Get your free roadmap</a>
+    <!-- CTA row — centered. Secondary CTA upgraded from "Watch a demo" to the
+         M1-4 free roadmap (2026-04-29) — converts at ~25-40% vs cold direct ~3%. -->
+    <div class="hero-cta-row" style="justify-content:center;margin-bottom:18px;">
+      <a href="/book" class="btn-primary btn-large">Book a discovery call →</a>
+      <a href="/free-roadmap" class="btn-ghost btn-large">Get your free roadmap</a>
     </div>
 
-    <!-- Trust row -->
-    <div class="v3-trust" aria-label="Trust signals">
-      <span>30-day deployment guarantee</span>
-      <span>Built by 10-year operator</span>
-      <span>Works inside your existing stack</span>
+    <!-- W1-3 (2026-04-29): the 30-day guarantee — promoted from a small eyebrow chip
+         to a prominent co-equal hero element. Sits at the decision point, right
+         after the CTAs and before the founder credit. -->
+    <div class="hero-guarantee" role="note" aria-label="30-day go-live guarantee">
+      <span class="hero-guarantee-icon" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 14 14" fill="none">
+          <path d="M7 1L2 3.5v4C2 10.1 4.2 12.6 7 13.5c2.8-.9 5-3.4 5-6V3.5L7 1z" fill="#F59E0B" opacity=".25" stroke="#B45309" stroke-width="1.4"/>
+          <path d="M5 7l1.4 1.4L9 5.8" stroke="#B45309" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+      </span>
+      <span class="hero-guarantee-text">
+        <strong>30-day go-live guarantee — full refund if we miss.</strong>
+        <small>No fine print. No partial payments. No questions.</small>
+      </span>
     </div>
 
-    <!-- 4-up animated count-up stats -->
-    <div class="v3-stats" aria-label="Outcomes" id="v3-stats">
-      <div class="v3-stat">
-        <div class="v3-stat-num"><span data-count="40">0</span><span class="v3-stat-unit">hrs</span></div>
-        <div class="v3-stat-label">saved per week per workflow</div>
-      </div>
-      <div class="v3-stat">
-        <div class="v3-stat-num"><span class="v3-stat-unit">$</span><span data-count="1200">0</span><span class="v3-stat-unit">K</span></div>
-        <div class="v3-stat-label">avg. pipeline / quarter caught</div>
-      </div>
-      <div class="v3-stat">
-        <div class="v3-stat-num"><span data-count="30">0</span><span class="v3-stat-unit">days</span></div>
-        <div class="v3-stat-label">from kickoff to production</div>
-      </div>
-      <div class="v3-stat">
-        <div class="v3-stat-num"><span data-count="9.4" data-decimals="1">0</span><span class="v3-stat-unit">x</span></div>
-        <div class="v3-stat-label">ROI in year one</div>
-      </div>
-    </div>
-
-    <!-- Founder credibility — kept from v2, restyled -->
-    <p style="margin:48px auto 0;font-size:13.5px;color:var(--text-3);max-width:680px;">
-      Built by <strong style="color:var(--text-1);">Andrew Yoon</strong> — 10-year operator and founder of Xtractor Depot. Free · 30 minutes · No commitment.
+    <!-- Founder credibility — centered -->
+    <p class="hero-founder" style="max-width:680px;margin:0 auto;">
+      Built by <strong>Andrew Yoon</strong> — 10-year operator and founder of Xtractor Depot.
+      <span class="hero-founder-trust">Free · 30 minutes · No commitment.</span>
     </p>
-  </div>
-</section>
 
-<!-- ─── DEMO SECTION — Slack mockup wrapped in dark v3 surround (Brand v3) ──────── -->
-<section class="v3-dark" style="padding:32px 0 88px;position:relative;" aria-label="Live demo">
-  <div style="max-width:1240px;margin:0 auto;padding:0 24px;">
-    <div class="v3-eyebrow" style="margin:0 auto 18px;display:flex;width:fit-content;">
-      <span class="dot" aria-hidden="true"></span>
-      <span>LIVE · Watch Ramped Bot work in 36 seconds</span>
+    <!-- Ramped Bot Slack demo — V4-INT (2026-05-01).
+         Interactive demo ported from the Claude Design prototype.
+         Vanilla JS state machine — no React. Click any playbook to run it.
+         CSS lives in the .demo-shell block in <style>. JS lives at the end of <body>. -->
+    <div class="demo-shell" id="demo-shell" aria-label="Ramped Bot demo workspace">
+      <div class="demo-toolbar" aria-hidden="true">
+        <div class="window-dots"><span></span><span></span><span></span></div>
+        <div class="url">workspace.ramped.ai / agents / ramped-bot</div>
+        <div style="width:60px;"></div>
+      </div>
+
+      <aside class="sidebar" aria-hidden="true">
+        <div class="sidebar-team">
+          <div class="badge">N</div>
+          <div>
+            <div class="name">Northwind</div>
+            <div class="meta">12 agents online</div>
+          </div>
+        </div>
+        <div class="sidebar-group">
+          <div class="sidebar-label">Channels</div>
+          <div class="channel"><span class="hash">#</span> general</div>
+          <div class="channel"><span class="hash">#</span> sales-pod</div>
+          <div class="channel"><span class="hash">#</span> deal-room</div>
+          <div class="channel"><span class="hash">#</span> finance-leads</div>
+          <div class="channel"><span class="hash">#</span> inventory-alerts</div>
+        </div>
+        <div class="sidebar-group">
+          <div class="sidebar-label">AI Agents</div>
+          <div class="channel active">
+            <span class="agent-dot"></span> Ramped Bot
+            <span class="pill">LIVE</span>
+          </div>
+          <div class="channel"><span class="agent-dot" style="background:#fb923c;box-shadow:0 0 0 3px rgba(251,146,60,0.2);"></span> Ops Agent</div>
+          <div class="channel"><span class="agent-dot" style="background:#a78bfa;box-shadow:0 0 0 3px rgba(167,139,250,0.2);"></span> Finance Agent</div>
+        </div>
+        <div class="day-card">
+          <div class="day-l">Day</div>
+          <div class="day-v">30 / 30</div>
+          <div class="day-s">● Deployment complete</div>
+        </div>
+      </aside>
+
+      <section class="chat">
+        <header class="chat-header">
+          <div class="avatar">
+            <svg viewBox="0 0 100 100" fill="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="rampedSwoopDemo" x1="17.46" y1="84.69" x2="76" y2="11.64" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#0A2540"/>
+                  <stop offset="58%" stop-color="#006BD6"/>
+                  <stop offset="100%" stop-color="#00D4FF"/>
+                </linearGradient>
+              </defs>
+              <path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="url(#rampedSwoopDemo)"/>
+            </svg>
+          </div>
+          <div>
+            <div class="title">Ramped Bot</div>
+            <div class="subtitle">Your AI department · trained on Northwind data</div>
+          </div>
+          <div class="actions">
+            <span class="chip">● Live in production</span>
+          </div>
+        </header>
+
+        <div class="chat-stream" id="demo-stream" role="log" aria-live="polite"></div>
+
+        <div class="demo-composer" aria-hidden="true">
+          <div class="composer-input">
+            <span style="color:var(--text-3);">＋</span>
+            <input id="demo-composer-input" placeholder="Ask Ramped Bot anything, or pick a playbook above…" disabled />
+            <button class="send-btn" disabled>Send</button>
+          </div>
+          <div class="composer-hint">
+            <span>Connected to <strong style="color:var(--text-1);">HubSpot</strong>, <strong style="color:var(--text-1);">NetSuite</strong>, <strong style="color:var(--text-1);">QuickBooks</strong>, <strong style="color:var(--text-1);">Gong</strong>, <strong style="color:var(--text-1);">Slack</strong></span>
+            <span><span class="kbd">⌘</span> <span class="kbd">K</span> commands</span>
+          </div>
+        </div>
+      </section>
     </div>
 
-    <!-- Ramped Bot Slack demo — V3-NC1 (2026-04-29).
-         A pixel-accurate Slack channel showing a Ramped customer agent handling
-         a real ops question end-to-end. CSS-only 14s loop, prefers-reduced-motion
-         shows the end state. Full styles in the .nano-* block above. -->
-    <div class="nano-demo" aria-label="Live demo: Ramped Bot, a Ramped customer agent, working in Slack">
-      <!-- LIVE pill floats over the whole demo -->
-      <div class="nano-live-pill" aria-hidden="true">
-        <span class="nano-live-pill-dot"></span><span>LIVE · IN PRODUCTION</span>
-      </div>
-
-      <!-- Scenario progress dots (1/2/3 indicator), top-center over the chrome bar -->
-      <div class="nano-progress" aria-hidden="true">
-        <span class="nano-progress-dot"></span>
-        <span class="nano-progress-dot"></span>
-        <span class="nano-progress-dot"></span>
-      </div>
-
-      <!-- Animated cursor + click ripple — appears during each bot reply phase -->
-      <div class="nano-cursor-ripple" aria-hidden="true"></div>
-      <div class="nano-cursor" aria-hidden="true"></div>
-
-      <!-- ─── Preview overlays — slide in after the cursor clicks each scenario's button.
-           Show the actual artifact the bot just opened: drafted email, HubSpot record, deck slide. -->
-
-      <!-- S1 → Email composer (Gmail-style) -->
-      <div class="nano-preview nano-preview-1" aria-hidden="true">
-        <div class="nano-preview-bar">
-          <span class="nano-preview-icon" aria-hidden="true">✉</span>
-          <span class="nano-preview-app">Gmail · New Message</span>
-          <span class="nano-preview-status">Draft auto-saved</span>
-        </div>
-        <div class="nano-preview-content">
-          <div class="nano-email-meta">
-            <div class="nano-email-row"><span class="nano-email-label">To</span><span class="nano-email-value">janet@acme.com</span></div>
-            <div class="nano-email-row"><span class="nano-email-label">Subject</span><span class="nano-email-value">Order #2847 — confirming new shipping address</span></div>
-          </div>
-          <div class="nano-email-body">
-            Hi Janet,<br><br>
-            Quick follow-up on order <strong>#2847</strong> — picked &amp; packed yesterday, UPS Ground, ETA <strong>Wed Nov 12</strong>.<br><br>
-            Heads up: the address on file is your old Reno warehouse. Per your Sept invoice you've relocated — want me to update shipping to the new location before it goes out?<br><br>
-            — Marcus
-          </div>
-        </div>
-        <footer class="nano-preview-footer">
-          <span class="nano-preview-meta">⚡ Drafted by Ramped Bot · 0.4s</span>
-          <button class="nano-preview-cta" type="button" tabindex="-1">Approve &amp; send →</button>
-        </footer>
-      </div>
-
-      <!-- S2 → HubSpot lead record -->
-      <div class="nano-preview nano-preview-2" aria-hidden="true">
-        <div class="nano-preview-bar">
-          <span class="nano-preview-icon" aria-hidden="true">⚡</span>
-          <span class="nano-preview-app">HubSpot · Acme Industrial</span>
-          <span class="nano-preview-status nano-preview-status-good">✓ Meeting booked</span>
-        </div>
-        <div class="nano-preview-content">
-          <div class="nano-hs-header">
-            <div class="nano-hs-avatar">AI</div>
-            <div>
-              <div class="nano-hs-name">Acme Industrial</div>
-              <div class="nano-hs-meta">87 employees · $12M ARR · Manufacturing</div>
-            </div>
-          </div>
-          <div class="nano-hs-grid">
-            <div class="nano-hs-cell"><div class="nano-hs-cell-label">ICP Score</div><div class="nano-hs-cell-value nano-hs-strong">9 / 10</div></div>
-            <div class="nano-hs-cell"><div class="nano-hs-cell-label">Pipeline</div><div class="nano-hs-cell-value nano-hs-pos">+$120K</div></div>
-            <div class="nano-hs-cell"><div class="nano-hs-cell-label">Form notes</div><div class="nano-hs-cell-value"><em>"replacing 2 inside reps"</em></div></div>
-            <div class="nano-hs-cell"><div class="nano-hs-cell-label">Meeting</div><div class="nano-hs-cell-value">Wed 2pm · 30 min · Cal.com</div></div>
-          </div>
-          <div class="nano-hs-cta">→ Drafted intro reply · Meeting hold on calendar · Ready to tag @Sarah</div>
-        </div>
-        <footer class="nano-preview-footer">
-          <span class="nano-preview-meta">⚡ Enriched by Ramped Bot · 0.6s</span>
-          <button class="nano-preview-cta" type="button" tabindex="-1">Confirm &amp; send →</button>
-        </footer>
-      </div>
-
-      <!-- S3 → Slide deck preview (October close) -->
-      <div class="nano-preview nano-preview-3" aria-hidden="true">
-        <div class="nano-preview-bar">
-          <span class="nano-preview-icon" aria-hidden="true">▣</span>
-          <span class="nano-preview-app">Google Slides · October-Close.pptx</span>
-          <span class="nano-preview-status">Slide 1 of 8</span>
-        </div>
-        <div class="nano-preview-content nano-deck-slide">
-          <div class="nano-deck-eyebrow">FINANCIAL SUMMARY</div>
-          <div class="nano-deck-title">October 2026</div>
-          <div class="nano-deck-stats">
-            <div class="nano-deck-stat">
-              <div class="nano-deck-num">$1.24M</div>
-              <div class="nano-deck-label">Revenue<br><span class="nano-deck-trend">+18% MoM</span></div>
-            </div>
-            <div class="nano-deck-stat">
-              <div class="nano-deck-num">$87K</div>
-              <div class="nano-deck-label">Cloud infra<br><span class="nano-deck-trend nano-deck-warn">+32% · flag</span></div>
-            </div>
-            <div class="nano-deck-stat">
-              <div class="nano-deck-num">$42K</div>
-              <div class="nano-deck-label">AR &gt;60d<br><span class="nano-deck-trend nano-deck-warn">3 invoices</span></div>
-            </div>
-          </div>
-        </div>
-        <footer class="nano-preview-footer">
-          <span class="nano-preview-meta">⚡ Built by Ramped Bot · 1.2s</span>
-          <button class="nano-preview-cta" type="button" tabindex="-1">Share to #leadership →</button>
-        </footer>
-      </div>
-
-      <!-- Mac-style window chrome -->
-      <div class="nano-chrome">
-        <div class="nano-traffic"><span></span><span></span><span></span></div>
-        <span class="nano-titlebar">Acme Industries · Slack</span>
-      </div>
-
-      <div class="nano-body">
-        <!-- Aubergine sidebar -->
-        <aside class="nano-sidebar" aria-hidden="true">
-          <div class="nano-ws">
-            <span class="nano-ws-icon">A</span>
-            <span>Acme Industries</span>
-          </div>
-          <div class="nano-section">Channels</div>
-          <div class="nano-channel"><span class="nano-channel-hash">#</span>general</div>
-          <div class="nano-channel"><span class="nano-channel-hash">#</span>sales</div>
-          <div class="nano-channel nano-channel-active"><span class="nano-channel-hash">#</span>support</div>
-          <div class="nano-channel"><span class="nano-channel-hash">#</span>ops</div>
-          <div class="nano-channel"><span class="nano-channel-hash">#</span>warehouse</div>
-          <div class="nano-section">Apps</div>
-          <div class="nano-app">
-            <span class="nano-app-icon" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 100 100" fill="none"><path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="#fff"/></svg></span>
-            <span>Ramped Bot</span>
-            <span class="nano-online" aria-hidden="true"></span>
-          </div>
-        </aside>
-
-        <!-- Channel main area -->
-        <main class="nano-main">
-          <header class="nano-channel-head">
-            <span class="nano-channel-title">support</span>
-            <span class="nano-channel-meta">4 members</span>
-          </header>
-
-          <div class="nano-msgs" aria-live="polite">
-
-            <!-- ─── Scenario 1: Ops · inventory question (Marcus, 10:42 AM) ─── -->
-            <div class="nano-scenario nano-scenario-1">
-              <div class="nano-msg nano-msg-cust">
-                <div class="nano-avatar nano-avatar-cust" aria-hidden="true">MC</div>
-                <div class="nano-msg-body">
-                  <div class="nano-msg-head">
-                    <span class="nano-msg-name">Marcus Chen</span>
-                    <span class="nano-msg-time">10:42 AM</span>
-                  </div>
-                  <div class="nano-msg-text">
-                    Are we still on track to ship Acme's Q3 inventory order? Andrew's asking.
-                  </div>
-                </div>
-              </div>
-              <div class="nano-msg nano-msg-typing">
-                <div class="nano-avatar nano-avatar-bot" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 100 100" fill="none"><path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="#fff"/></svg></div>
-                <div class="nano-msg-body">
-                  <div class="nano-msg-head">
-                    <span class="nano-msg-name">Ramped Bot</span>
-                    <span class="nano-app-badge">APP</span>
-                    <span class="nano-msg-time">10:42 AM</span>
-                  </div>
-                  <div class="nano-msg-text">
-                    <span class="nano-msg-status">Pulling order #2847 from NetSuite&hellip;</span>
-                  </div>
-                </div>
-              </div>
-              <div class="nano-msg nano-msg-reply">
-                <div class="nano-avatar nano-avatar-bot" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 100 100" fill="none"><path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="#fff"/></svg></div>
-                <div class="nano-msg-body">
-                  <div class="nano-msg-head">
-                    <span class="nano-msg-name">Ramped Bot</span>
-                    <span class="nano-app-badge">APP</span>
-                    <span class="nano-msg-time">10:42 AM</span>
-                  </div>
-                  <div class="nano-msg-text">
-                    Pulled order #2847 — picked &amp; packed yesterday, UPS Ground, ETA <strong>Wed Nov 12</strong>.<br>
-                    ⚠️ <strong>Heads up:</strong> shipping address is the old Reno warehouse. Acme relocated last month per their Sept invoice. I drafted a quick confirm email to Janet — want me to send?<br>
-                    <span class="nano-link">→ View draft</span> · <span class="nano-link">View order in NetSuite</span>
-                  </div>
-                  <div class="nano-actions" aria-hidden="true">
-                    <button class="nano-btn nano-btn-primary" type="button" tabindex="-1">Send draft</button>
-                    <button class="nano-btn nano-btn-secondary" type="button" tabindex="-1">Edit</button>
-                  </div>
-                </div>
-              </div>
-              <div class="nano-replied" role="status">
-                Replied · 14s response time · ticket #1247 closed · 2.3 min saved
-              </div>
-            </div>
-
-            <!-- ─── Scenario 2: Sales · lead intake (Sarah, 2:14 PM) ─── -->
-            <div class="nano-scenario nano-scenario-2">
-              <div class="nano-msg nano-msg-cust">
-                <div class="nano-avatar nano-avatar-cust-2" aria-hidden="true">SK</div>
-                <div class="nano-msg-body">
-                  <div class="nano-msg-head">
-                    <span class="nano-msg-name">Sarah Kim</span>
-                    <span class="nano-msg-time">2:14 PM</span>
-                  </div>
-                  <div class="nano-msg-text">
-                    Hot lead just came through the website — Acme Industrial. Can you take a look?
-                  </div>
-                </div>
-              </div>
-              <div class="nano-msg nano-msg-typing">
-                <div class="nano-avatar nano-avatar-bot" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 100 100" fill="none"><path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="#fff"/></svg></div>
-                <div class="nano-msg-body">
-                  <div class="nano-msg-head">
-                    <span class="nano-msg-name">Ramped Bot</span>
-                    <span class="nano-app-badge">APP</span>
-                    <span class="nano-msg-time">2:14 PM</span>
-                  </div>
-                  <div class="nano-msg-text">
-                    <span class="nano-msg-status">Enriching from HubSpot + Clearbit&hellip;</span>
-                  </div>
-                </div>
-              </div>
-              <div class="nano-msg nano-msg-reply">
-                <div class="nano-avatar nano-avatar-bot" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 100 100" fill="none"><path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="#fff"/></svg></div>
-                <div class="nano-msg-body">
-                  <div class="nano-msg-head">
-                    <span class="nano-msg-name">Ramped Bot</span>
-                    <span class="nano-app-badge">APP</span>
-                    <span class="nano-msg-time">2:14 PM</span>
-                  </div>
-                  <div class="nano-msg-text">
-                    <strong>Acme Industrial</strong> — 87 employees, $12M ARR, manufacturing.<br>
-                    Form notes: <em>"looking to replace 2 inside reps"</em> — strong fit. ICP score <strong>9/10</strong>. Drafted intro reply with your Cal link &amp; tagged @Sarah.<br>
-                    <span class="nano-link">→ View draft</span> · <span class="nano-link">View in HubSpot</span>
-                  </div>
-                  <div class="nano-actions" aria-hidden="true">
-                    <button class="nano-btn nano-btn-primary" type="button" tabindex="-1">Send</button>
-                    <button class="nano-btn nano-btn-secondary" type="button" tabindex="-1">Edit</button>
-                  </div>
-                </div>
-              </div>
-              <div class="nano-replied" role="status">
-                Replied · 11s response time · meeting booked Wed 2pm · pipeline +$120K
-              </div>
-            </div>
-
-            <!-- ─── Scenario 3: Finance · monthly close (Andrew, 4:42 PM) ─── -->
-            <div class="nano-scenario nano-scenario-3">
-              <div class="nano-msg nano-msg-cust">
-                <div class="nano-avatar nano-avatar-cust-3" aria-hidden="true">AY</div>
-                <div class="nano-msg-body">
-                  <div class="nano-msg-head">
-                    <span class="nano-msg-name">Andrew Yoon</span>
-                    <span class="nano-msg-time">4:42 PM</span>
-                  </div>
-                  <div class="nano-msg-text">
-                    Quick — what does October close look like? Board call in 20 min.
-                  </div>
-                </div>
-              </div>
-              <div class="nano-msg nano-msg-typing">
-                <div class="nano-avatar nano-avatar-bot" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 100 100" fill="none"><path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="#fff"/></svg></div>
-                <div class="nano-msg-body">
-                  <div class="nano-msg-head">
-                    <span class="nano-msg-name">Ramped Bot</span>
-                    <span class="nano-app-badge">APP</span>
-                    <span class="nano-msg-time">4:42 PM</span>
-                  </div>
-                  <div class="nano-msg-text">
-                    <span class="nano-msg-status">Pulling October from QuickBooks + Stripe&hellip;</span>
-                  </div>
-                </div>
-              </div>
-              <div class="nano-msg nano-msg-reply">
-                <div class="nano-avatar nano-avatar-bot" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 100 100" fill="none"><path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="#fff"/></svg></div>
-                <div class="nano-msg-body">
-                  <div class="nano-msg-head">
-                    <span class="nano-msg-name">Ramped Bot</span>
-                    <span class="nano-app-badge">APP</span>
-                    <span class="nano-msg-time">4:42 PM</span>
-                  </div>
-                  <div class="nano-msg-text">
-                    <strong>October close:</strong> Revenue <strong>$1.24M (+18% MoM)</strong>. Top expense: cloud infra <strong>$87K (+32%)</strong> — flagging for review.<br>
-                    ⚠️ 3 invoices &gt;60 days unpaid totaling <strong>$42K</strong>. Queued the deck in Drive.<br>
-                    <span class="nano-link">→ View summary</span> · <span class="nano-link">View P&amp;L</span>
-                  </div>
-                  <div class="nano-actions" aria-hidden="true">
-                    <button class="nano-btn nano-btn-primary" type="button" tabindex="-1">Open deck</button>
-                    <button class="nano-btn nano-btn-secondary" type="button" tabindex="-1">Email collections</button>
-                  </div>
-                </div>
-              </div>
-              <div class="nano-replied" role="status">
-                Replied · 9s response time · summary posted to #leadership · saved 45 min
-              </div>
-            </div>
-
-          </div>
-          <!-- Slack-style composer at bottom of channel — authentic placeholder, fills the empty space -->
-          <footer class="nano-msg-input" aria-hidden="true">
-            <div class="nano-msg-input-bar">
-              <span class="nano-msg-input-add" aria-hidden="true">+</span>
-              <span class="nano-msg-input-placeholder">Message #support</span>
-              <span class="nano-msg-input-icons" aria-hidden="true">
-                <span>@</span><span>:)</span><span>Aa</span>
-                <span class="nano-msg-input-send">↑</span>
-              </span>
-            </div>
-          </footer>
-        </main>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- ─── 30-DAY TIMELINE — 4-up cards with animated progress bars (Brand v3) ── -->
-<section class="v3-dark" style="padding:80px 0 56px;position:relative;" aria-label="30-day deployment timeline">
-  <div style="max-width:1240px;margin:0 auto 36px;padding:0 24px;text-align:center;">
-    <div class="v3-eyebrow" style="margin:0 auto 18px;display:flex;width:fit-content;">
-      <span class="dot" aria-hidden="true"></span>
-      <span>30-DAY DEPLOYMENT · BUILT-IN GUARANTEE</span>
-    </div>
-    <h2 class="v3-h1" style="font-size:clamp(32px,4.6vw,52px);margin:0 auto 14px;max-width:760px;">
-      From kickoff to <span class="accent">live agents</span> in 30 days.
-    </h2>
-    <p class="v3-lede" style="margin:0 auto 8px;">
-      Four weeks. Four milestones. A working AI department by the end of the month — or your money back.
-    </p>
-  </div>
-  <div class="v3-timeline" id="v3-timeline">
-    <article class="v3-timeline-card" style="--fill:0.25;">
-      <span class="v3-tl-step" aria-hidden="true">01</span>
-      <span class="v3-tl-eyebrow">Week 1 · Diagnose</span>
-      <h3>Map your stack &amp; find the wins.</h3>
-      <p>Workshops with your team. Audit of NetSuite, HubSpot, QuickBooks, Slack. Locked deployment plan.</p>
-      <div class="v3-bar" aria-hidden="true"><div class="v3-bar-fill"></div></div>
-    </article>
-    <article class="v3-timeline-card" style="--fill:0.50;">
-      <span class="v3-tl-step" aria-hidden="true">02</span>
-      <span class="v3-tl-eyebrow">Week 2 · Build</span>
-      <h3>Wire the agents into production.</h3>
-      <p>Custom agent built and integrated with your real systems. First workflow running end-to-end in staging.</p>
-      <div class="v3-bar" aria-hidden="true"><div class="v3-bar-fill"></div></div>
-    </article>
-    <article class="v3-timeline-card" style="--fill:0.75;">
-      <span class="v3-tl-step" aria-hidden="true">03</span>
-      <span class="v3-tl-eyebrow">Week 3 · Test</span>
-      <h3>Pressure-test on real volume.</h3>
-      <p>Run agents against last quarter's data. Tune the edges. Approval flows wired into Slack.</p>
-      <div class="v3-bar" aria-hidden="true"><div class="v3-bar-fill"></div></div>
-    </article>
-    <article class="v3-timeline-card" style="--fill:1;">
-      <span class="v3-tl-step" aria-hidden="true">04</span>
-      <span class="v3-tl-eyebrow">Week 4 · Live</span>
-      <h3>Production. Day-one ROI.</h3>
-      <p>Agents take live traffic. Daily health checks. Monthly retainer kicks in for ongoing iteration.</p>
-      <div class="v3-bar" aria-hidden="true"><div class="v3-bar-fill"></div></div>
-    </article>
   </div>
 </section>
 
@@ -2321,4 +1821,809 @@
       </p>
 
       <blockquote style="border-left:2px solid var(--line);padding-left:16px;margin:0;">
-        <p style="font-size:15px;color:var(--muted);font-style:italic;line-height:1.65;margin-bottom:8px;">"Honestly, I was skeptical. We'd tried software before 
+        <p style="font-size:15px;color:var(--muted);font-style:italic;line-height:1.65;margin-bottom:8px;">"Honestly, I was skeptical. We'd tried software before and it always ended up as one more thing to manage. By day 30 we had a live agent handling our quote intake — no babysitting required. I wish we'd done this two years ago."</p>
+        <cite style="font-size:13px;color:var(--muted);font-weight:500;">— Andrew, Founder, Xtractor Depot</cite>
+      </blockquote>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px;">
+        <div style="padding:12px 14px;background:var(--paper);border-radius:8px;border:1px solid var(--line);text-align:center;">
+          <p style="font-size:22px;font-weight:800;color:var(--ink);font-family:'JetBrains Mono',monospace;"><span data-countup="14" data-suffix="h">14h</span></p>
+          <p style="font-size:11px;color:var(--muted);margin-top:4px;">hrs/week saved</p>
+        </div>
+        <div style="padding:12px 14px;background:var(--paper);border-radius:8px;border:1px solid var(--line);text-align:center;">
+          <p style="font-size:22px;font-weight:800;color:var(--ink);font-family:'JetBrains Mono',monospace;"><span data-countup="8" data-suffix="m">8m</span></p>
+          <p style="font-size:11px;color:var(--muted);margin-top:4px;">response time</p>
+        </div>
+        <div style="padding:12px 14px;background:var(--paper);border-radius:8px;border:1px solid var(--line);text-align:center;">
+          <p style="font-size:22px;font-weight:800;color:var(--ink);font-family:'JetBrains Mono',monospace;"><span data-countup="30" data-suffix="d">30d</span></p>
+          <p style="font-size:11px;color:var(--muted);margin-top:4px;">to go-live</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── PRICING ───────────────────────────────────────────────────────────── -->
+<section class="py-20" id="pricing" style="background:#fff;">
+  <div class="section-wrap">
+    <div class="mb-12">
+      <p class="sectionnum mb-3">Pricing</p>
+      <h2 style="font-size:clamp(1.75rem,4vw,2.5rem);font-weight:800;letter-spacing:-.02em;color:var(--ink);">
+        Simple, performance-backed pricing.
+      </h2>
+      <p style="font-size:16px;color:var(--muted);margin-top:10px;max-width:520px;line-height:1.6;">We guarantee your AI agent goes live within 30 days — or you get a full refund. No partial payments, no fine print.</p>
+      <p style="margin-top:10px;font-size:14px;color:var(--muted);">Wondering how this compares to hiring a VA? <a href="/comparison" style="color:var(--accent);font-weight:600;text-decoration:none;">See the full breakdown →</a></p>
+
+      <!-- Billing toggle -->
+      <div style="display:flex;align-items:center;gap:12px;margin-top:20px;">
+        <div style="display:flex;background:#F1F1EF;border-radius:10px;padding:3px;gap:2px;">
+          <!-- V-B7 (2026-04-29): contrast bumped — inactive state was 3.5:1 (failed WCAG AA).
+               Now uses ink-2 instead of muted (≈ 4.7:1). Active state unchanged. -->
+          <button id="btn-monthly" onclick="setBilling(false)" style="padding:7px 18px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;background:transparent;color:var(--ink-2);">Monthly</button>
+          <button id="btn-annual" onclick="setBilling(true)" style="padding:7px 18px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.1);">Annual</button>
+        </div>
+        <span id="annual-badge" style="font-size:12px;font-weight:700;color:#0F7A4B;background:#ECFDF5;padding:4px 10px;border-radius:20px;">🎁 2 months free</span>
+      </div>
+    </div>
+
+    <div class="grid sm:grid-cols-3 gap-6" style="grid-auto-rows:1fr;margin-top:24px;">
+      <!-- Starter -->
+      <div class="card p-7 hover-lift flex flex-col">
+        <div class="mb-5">
+          <p class="mono" style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">Starter</p>
+          <p style="font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.02em;"><span id="starter-price">$2,083</span><span id="starter-period" style="font-size:15px;font-weight:500;color:var(--muted);">/mo</span></p>
+          <p id="starter-note" style="font-size:13px;color:var(--muted);margin-top:3px;">billed annually · save $5,000 · + $2,500 onboarding</p>
+        </div>
+        <p style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:12px;">Best for: 5–30 employees</p>
+        <ul style="list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:11px;flex:1;">
+          <li class="flex items-start gap-2.5">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px;" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ECFDF5"/><path d="M4.5 8.5l2.5 2.5 4-5" stroke="var(--good)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:14px;color:var(--ink);">Custom AI agent trained to your business</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px;" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ECFDF5"/><path d="M4.5 8.5l2.5 2.5 4-5" stroke="var(--good)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:14px;color:var(--ink);">Up to 5 workflow automations</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px;" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ECFDF5"/><path d="M4.5 8.5l2.5 2.5 4-5" stroke="var(--good)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:14px;color:var(--ink);">3–5 software integrations</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px;" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ECFDF5"/><path d="M4.5 8.5l2.5 2.5 4-5" stroke="var(--good)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:14px;color:var(--ink);">Monthly check-in call</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px;" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ECFDF5"/><path d="M4.5 8.5l2.5 2.5 4-5" stroke="var(--good)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:14px;color:var(--ink);">All compute &amp; hosting included</span>
+          </li>
+        </ul>
+        <a href="/book?tier=starter&billing=annual" class="btn-primary w-full justify-center" data-tier-cta="starter">Get started →</a>
+      </div>
+
+      <!-- Growth (featured) -->
+      <div class="card p-8 hover-lift flex flex-col" style="border-color:var(--accent);border-width:2px;background:linear-gradient(160deg,#EEF3FF 0%,#fff 60%);box-shadow:0 1px 0 rgba(11,18,32,0.06), 0 18px 48px -20px rgba(31,79,255,0.30), 0 4px 12px -4px rgba(11,18,32,0.10);transform:translateY(-6px);">
+        <div class="flex items-center justify-between mb-2">
+          <span style="font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#fff;background:var(--accent);padding:5px 12px;border-radius:999px;box-shadow:0 4px 12px -4px rgba(31,79,255,0.45);">★ Most popular</span>
+        </div>
+        <div class="mb-5">
+          <p class="mono" style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">Growth</p>
+          <p style="font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.02em;"><span id="growth-price">$4,167</span><span id="growth-period" style="font-size:15px;font-weight:500;color:var(--muted);">/mo</span></p>
+          <p id="growth-note" style="font-size:13px;color:var(--muted);margin-top:3px;">billed annually · save $10,000 · + $3,500 onboarding</p>
+        </div>
+        <p style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:12px;">Best for: 30–100 employees</p>
+        <ul style="list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:11px;flex:1;">
+          <li class="flex items-start gap-2.5">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px;" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ECFDF5"/><path d="M4.5 8.5l2.5 2.5 4-5" stroke="var(--good)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:14px;color:var(--ink);">Custom AI agent — expanded scope</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px;" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ECFDF5"/><path d="M4.5 8.5l2.5 2.5 4-5" stroke="var(--good)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:14px;color:var(--ink);">Up to 15 workflow automations</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px;" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ECFDF5"/><path d="M4.5 8.5l2.5 2.5 4-5" stroke="var(--good)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:14px;color:var(--ink);">10+ software integrations</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px;" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ECFDF5"/><path d="M4.5 8.5l2.5 2.5 4-5" stroke="var(--good)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:14px;color:var(--ink);">Weekly check-ins + monthly strategy call</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px;" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ECFDF5"/><path d="M4.5 8.5l2.5 2.5 4-5" stroke="var(--good)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:14px;color:var(--ink);">All compute &amp; hosting included</span>
+          </li>
+        </ul>
+        <a href="/book?tier=growth&billing=annual" class="btn-primary w-full justify-center" style="background:var(--accent);" data-tier-cta="growth">Get started →</a>
+      </div>
+
+      <!-- Enterprise -->
+      <div class="card p-7 hover-lift flex flex-col">
+        <div class="mb-5">
+          <p class="mono" style="font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:4px;">Enterprise</p>
+          <!-- W1-4 (2026-04-29): explicit floor instead of "Custom" — primes anchoring + signals seriousness. -->
+          <p style="font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.02em;">From $10K<span style="font-size:15px;font-weight:500;color:var(--muted);">/mo</span></p>
+          <p style="font-size:13px;color:var(--muted);margin-top:3px;">Scoped on call · Custom SLA</p>
+        </div>
+        <p style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:12px;">Best for: 100+ employees</p>
+        <ul style="list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:11px;flex:1;">
+          <li class="flex items-start gap-2.5">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px;" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ECFDF5"/><path d="M4.5 8.5l2.5 2.5 4-5" stroke="var(--good)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:14px;color:var(--ink);">Full AI operations buildout</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px;" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ECFDF5"/><path d="M4.5 8.5l2.5 2.5 4-5" stroke="var(--good)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:14px;color:var(--ink);">Unlimited workflow automations</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px;" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ECFDF5"/><path d="M4.5 8.5l2.5 2.5 4-5" stroke="var(--good)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:14px;color:var(--ink);">Custom development &amp; integrations</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px;" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ECFDF5"/><path d="M4.5 8.5l2.5 2.5 4-5" stroke="var(--good)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:14px;color:var(--ink);">Dedicated support + QBRs</span>
+          </li>
+          <li class="flex items-start gap-2.5">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px;" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="#ECFDF5"/><path d="M4.5 8.5l2.5 2.5 4-5" stroke="var(--good)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:14px;color:var(--ink);">White-label option available</span>
+          </li>
+        </ul>
+        <a href="/book?tier=enterprise&billing=annual" class="btn-primary w-full justify-center" data-tier-cta="enterprise">Let's talk →</a>
+      </div>
+    </div>
+
+    <!-- Guarantee banner -->
+    <div style="margin-top:28px;padding:18px 24px;border-radius:14px;border:2px solid var(--ink);background:#FFFBEB;display:flex;align-items:center;gap:16px;">
+      <div style="flex-shrink:0;width:44px;height:44px;border-radius:50%;background:#FEF3C7;border:2px solid #F59E0B;display:flex;align-items:center;justify-content:center;">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true"><path d="M11 2L3 6v6c0 5 3.6 9.1 8 10.5C15.4 21.1 19 17 19 12V6L11 2z" fill="#F59E0B" opacity=".25" stroke="#F59E0B" stroke-width="1.5" stroke-linejoin="round"/></svg>
+      </div>
+      <div>
+        <p style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:2px;">30-day guaranteed satisfaction or your money back.</p>
+        <p style="font-size:13px;color:#92400E;line-height:1.5;">If your AI agent isn't live and running within 30 days, you get a full refund. No questions, no partial payments, no fine print.</p>
+      </div>
+    </div>
+
+    <p style="font-size:14px;color:var(--muted);margin-top:16px;padding-left:2px;">
+      Not ready to commit? <a href="/book" style="color:var(--accent);font-weight:500;">Book a free 30-minute discovery call first.</a>
+    </p>
+  </div>
+</section>
+
+
+<!-- ─── FINAL CTA ─────────────────────────────────────────────────────────── -->
+<section class="py-20" id="get-started" style="background:linear-gradient(180deg,var(--paper) 0%,#F5F8FF 100%);">
+  <div class="section-wrap">
+    <div class="max-w-[640px] mb-10">
+      <p class="sectionnum mb-4">Get started</p>
+      <h2 style="font-size:clamp(2rem,4.5vw,3rem);font-weight:800;letter-spacing:-.03em;color:var(--ink);line-height:1.1;">
+        Ready to ramp?
+      </h2>
+      <p style="font-size:16px;color:var(--muted);margin-top:12px;line-height:1.6;">
+        Book a free 30-minute discovery call. We'll map out your biggest automation win and show you exactly what it's worth.
+      </p>
+    </div>
+
+    <!-- Final CTA -->
+    <div class="card ink-shadow p-7 max-w-md">
+      <p style="font-weight:600;font-size:16px;margin-bottom:6px;color:var(--ink);">Book a free discovery call</p>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.5;">30 minutes. We'll identify your highest-impact automation, build a roadmap, and tell you exactly what it'll take to go live.</p>
+      <a href="/book" class="btn-primary w-full justify-center" style="text-decoration:none;font-size:15px;">Book a call →</a>
+      <p style="font-size:12px;color:var(--muted);margin-top:12px;text-align:center;">Free · No commitment · Go live in 30 days or it's free</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ─── FOOTER ────────────────────────────────────────────────────────────── -->
+<footer class="border-t border-[var(--line)] px-5 py-10">
+  <div class="section-wrap" style="display:flex;flex-direction:column;gap:20px;">
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:20px;">
+      <!-- Logo + tagline -->
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <svg width="22" height="22" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="rampedSwoopFooter" x1="17.46" y1="84.69" x2="76" y2="11.64" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#0A2540"/>
+                <stop offset="58%" stop-color="#006BD6"/>
+                <stop offset="100%" stop-color="#00D4FF"/>
+              </linearGradient>
+            </defs>
+            <path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="url(#rampedSwoopFooter)"/>
+          </svg>
+          <span style="font-weight:700;font-size:14px;color:var(--ink);">Ramped AI</span>
+        </div>
+        <p style="font-size:13px;color:var(--muted);">AI implementation for operating businesses</p>
+      </div>
+      <!-- Nav links -->
+      <nav style="display:flex;flex-wrap:wrap;gap:8px 24px;align-items:center;">
+        <a href="/#how-it-works" style="font-size:13px;color:var(--muted);">How it works</a>
+        <a href="/#pricing" style="font-size:13px;color:var(--muted);">Pricing</a>
+        <a href="/about" style="font-size:13px;color:var(--muted);">About</a>
+        <a href="/demo" style="font-size:13px;color:var(--muted);">Demo</a>
+        <a href="/comparison" style="font-size:13px;color:var(--muted);">Compare</a>
+        <a href="/book" style="font-size:13px;color:var(--muted);">Book a call</a>
+        <a href="/privacy" style="font-size:13px;color:var(--muted);">Privacy</a>
+      </nav>
+    </div>
+    <!-- Bottom row -->
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;padding-top:12px;border-top:1px solid var(--line);">
+      <p style="font-size:12px;color:var(--muted);">© 2026 Ramped AI. All rights reserved.</p>
+      <a href="mailto:jon@30dayramp.com" style="font-size:12px;color:var(--muted);">jon@30dayramp.com</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+    a.addEventListener('click', function(e) {
+      var target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  // Form handling — POST to /api/contact serverless function
+  function handleFormSubmit(formId, innerWrapperId, successId) {
+    var form = document.getElementById(formId);
+    if (!form) return;
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var btn = form.querySelector('button[type="submit"]');
+      if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+
+      var data = {
+        name: (form.querySelector('[name="name"]') || {}).value || null,
+        email: (form.querySelector('[name="email"]') || {}).value || null,
+        company: (form.querySelector('[name="company"]') || {}).value || null,
+      };
+
+      fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      }).then(function(res) {
+        var inner = document.getElementById(innerWrapperId);
+        var success = document.getElementById(successId);
+        if (res.ok) {
+          if (inner) inner.style.display = 'none';
+          if (success) success.classList.add('visible');
+        } else {
+          if (btn) { btn.disabled = false; btn.textContent = 'Get started →'; }
+          var errEl = form.querySelector('.form-error');
+          if (errEl) { errEl.textContent = 'Something went wrong — please try again or email jon@30dayramp.com'; errEl.style.display = 'block'; }
+        }
+      }).catch(function() {
+        if (btn) { btn.disabled = false; btn.textContent = 'Get started →'; }
+        var errEl = form.querySelector('.form-error');
+        if (errEl) { errEl.textContent = 'Network error — please check your connection and try again.'; errEl.style.display = 'block'; }
+      });
+    });
+  }
+
+  handleFormSubmit('hero-form', 'hero-form-inner', 'hero-form-success');
+  handleFormSubmit('final-form', 'final-form-inner', 'final-form-success');
+
+  // Billing toggle
+  function setBilling(isAnnual) {
+    document.getElementById('starter-price').textContent = isAnnual ? '$2,083' : '$2,500';
+    document.getElementById('starter-period').textContent = '/mo';
+    document.getElementById('starter-note').textContent = isAnnual ? 'billed annually \u00b7 save $5,000 \u00b7 + $2,500 onboarding' : '+ $2,500 one-time onboarding';
+    document.getElementById('growth-price').textContent = isAnnual ? '$4,167' : '$5,000';
+    document.getElementById('growth-period').textContent = '/mo';
+    document.getElementById('growth-note').textContent = isAnnual ? 'billed annually \u00b7 save $10,000 \u00b7 + $3,500 onboarding' : '+ $3,500 one-time onboarding';
+    var badge = document.getElementById('annual-badge');
+    badge.style.display = isAnnual ? 'inline' : 'none';
+    var ma = document.getElementById('btn-monthly'), aa = document.getElementById('btn-annual');
+    // V-B7: inactive-state color uses ink-2 (≈ 4.7:1 contrast on the toggle pill bg) — passes WCAG AA. Was 'muted' (~3.5:1).
+    if(isAnnual){ aa.style.background='#fff'; aa.style.color='var(--ink)'; aa.style.boxShadow='0 1px 4px rgba(0,0,0,.1)'; ma.style.background='transparent'; ma.style.color='var(--ink-2)'; ma.style.boxShadow='none'; }
+    else { ma.style.background='#fff'; ma.style.color='var(--ink)'; ma.style.boxShadow='0 1px 4px rgba(0,0,0,.1)'; aa.style.background='transparent'; aa.style.color='var(--ink-2)'; aa.style.boxShadow='none'; }
+    // Keep tier CTA hrefs in sync with the toggle so /book?tier=X&billing=Y matches what the visitor was just looking at.
+    var billingParam = isAnnual ? 'annual' : 'monthly';
+    document.querySelectorAll('a[data-tier-cta]').forEach(function(a){
+      var t = a.getAttribute('data-tier-cta');
+      a.setAttribute('href', '/book?tier=' + t + '&billing=' + billingParam);
+    });
+  }
+  setBilling(true); // default to annual
+</script>
+
+<script>
+  // Count-up animation using IntersectionObserver
+  (function() {
+    var duration = 1500; // ms
+    var observed = new Set();
+
+    function animateCountUp(el) {
+      var target = parseInt(el.getAttribute('data-countup'), 10);
+      var suffix = el.getAttribute('data-suffix') || '';
+      var start = null;
+
+      function step(timestamp) {
+        if (!start) start = timestamp;
+        var elapsed = timestamp - start;
+        var progress = Math.min(elapsed / duration, 1);
+        // ease-out quad
+        var eased = 1 - (1 - progress) * (1 - progress);
+        var current = Math.round(eased * target);
+        el.textContent = current + suffix;
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        } else {
+          el.textContent = target + suffix;
+        }
+      }
+
+      requestAnimationFrame(step);
+    }
+
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting && !observed.has(entry.target)) {
+          observed.add(entry.target);
+          animateCountUp(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('[data-countup]').forEach(function(el) {
+      observer.observe(el);
+    });
+  })();
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Ramped AI",
+  "url": "https://www.30dayramp.com/"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Ramped AI",
+  "url": "https://www.30dayramp.com/",
+  "logo": "https://www.30dayramp.com/apple-touch-icon.png",
+  "email": "jon@30dayramp.com",
+  "description": "AI implementation for operating businesses. Deploy production AI agents in 30 days."
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "How is this different from hiring an AI consultant?", "acceptedAnswer": { "@type": "Answer", "text": "We build and run the agents ourselves. You get working software, not a strategy deck." } },
+    { "@type": "Question", "name": "Do I need technical staff to work with you?", "acceptedAnswer": { "@type": "Answer", "text": "No. We handle everything — setup, integration, training, and maintenance. Your team just uses the results." } },
+    { "@type": "Question", "name": "What kinds of businesses do you work with?", "acceptedAnswer": { "@type": "Answer", "text": "Established businesses with real workflows to automate. We work best with companies doing $1M+ in revenue that have repetitive, high-volume processes." } },
+    { "@type": "Question", "name": "What if it doesn't work in 30 days?", "acceptedAnswer": { "@type": "Answer", "text": "You get a full refund. No questions asked." } },
+    { "@type": "Question", "name": "What does the monthly fee cover?", "acceptedAnswer": { "@type": "Answer", "text": "Uptime, maintenance, iteration, and ongoing improvements. As your business grows, we expand the system without a new engagement." } }
+  ]
+}
+</script>
+
+<script>
+/* ─────────────────────────────────────────────────────────────────────────
+   Interactive Slack demo — vanilla JS port of the Claude Design prototype.
+   Originally a React+Babel app; rebuilt here as a state machine that mounts
+   into #demo-stream. Click any workflow button to run a 6-step animated
+   playbook end-to-end. Clean state on each run; no external deps.
+   ───────────────────────────────────────────────────────────────────────── */
+(function(){
+  var stream = document.getElementById('demo-stream');
+  if(!stream) return;
+
+  // ── Workflows (extracted from the prototype's WORKFLOWS object) ───────────
+  var WORKFLOWS = {
+    lead: {
+      id:"lead", title:"Handle inbound lead", subtitle:"HubSpot → Slack → Calendar",
+      icon:"🎯", iconBg:"linear-gradient(135deg,#3b82f6,#60a5fa)",
+      userPrompt:"New inbound lead just came in from the website demo form — Sara Chen, Director of Ops at Northwind Logistics. Run the inbound playbook.",
+      intro:"On it. Pulling Sara's profile and Northwind's signal data now — give me a moment to enrich.",
+      steps:[
+        {label:"Enriching lead from Clearbit + LinkedIn", ms:950, integrations:["clearbit"]},
+        {label:"Scoring fit against ICP model", ms:800},
+        {label:"Looking up Northwind in HubSpot", ms:700, integrations:["hubspot"]},
+        {label:"Drafting personalized outreach", ms:1100},
+        {label:"Booking discovery slot in Calendar", ms:800, integrations:["calendar"]},
+        {label:"Posting handoff to #sales-pod", ms:600, integrations:["slack"]}
+      ],
+      integrations:["hubspot","clearbit","calendar","slack"],
+      successTitle:"Lead routed and meeting booked.",
+      successMetrics:[
+        {l:"Time to first touch", v:"47s", color:"accent"},
+        {l:"Pipeline added", v:"$12,400", color:"green"},
+        {l:"Fit score", v:"94 / 100"}
+      ],
+      aha:"Agent learned from your last 12 closed-won deals — Sara fits the profile of a 32-day cycle, so I queued a tighter follow-up cadence.",
+      detail:"Sent a Loom recap to Sara, looped in <strong>@marcus</strong> as AE, and dropped the Northwind brief into the deal record. Next touch fires in 26 hours if no reply."
+    },
+    inventory: {
+      id:"inventory", title:"Automate inventory", subtitle:"NetSuite reorder + SKU forecast",
+      icon:"📦", iconBg:"linear-gradient(135deg,#fb923c,#fdba74)",
+      userPrompt:"Run the weekly inventory pass. Flag anything tracking below safety stock and trigger reorders where the math works.",
+      intro:"Pulling SKU velocity from NetSuite and cross-checking against the demand model. Running the reorder logic now.",
+      steps:[
+        {label:"Fetching 14,200 active SKUs from NetSuite", ms:900, integrations:["netsuite"]},
+        {label:"Running 30-day demand forecast", ms:1100},
+        {label:"Flagging SKUs below safety stock", ms:700},
+        {label:"Validating supplier lead times", ms:800},
+        {label:"Generating purchase orders", ms:950, integrations:["netsuite"]},
+        {label:"Notifying ops in #inventory-alerts", ms:600, integrations:["slack"]}
+      ],
+      integrations:["netsuite","slack"],
+      successTitle:"62 SKUs reordered, 3 flagged for review.",
+      successMetrics:[
+        {l:"POs generated", v:"62", color:"accent"},
+        {l:"Stockouts prevented", v:"$84,200", color:"green"},
+        {l:"Hours saved", v:"11h"}
+      ],
+      aha:"Three SKUs hit a seasonality spike I haven't seen before — paused those for a human review instead of auto-firing.",
+      detail:"POs sit in <code>Pending Approval</code> in NetSuite. The 3 flagged items are in <strong>#inventory-alerts</strong> with my reasoning attached."
+    },
+    finance: {
+      id:"finance", title:"Process finance report", subtitle:"QuickBooks → variance memo",
+      icon:"📊", iconBg:"linear-gradient(135deg,#a78bfa,#60a5fa)",
+      userPrompt:"Close Q3 — pull the actuals from QuickBooks, compare to plan, and draft the variance memo for Friday's board prep.",
+      intro:"Closing Q3 now. Reconciling actuals, building the variance walk, and drafting the memo with footnotes.",
+      steps:[
+        {label:"Reconciling 1,847 transactions in QuickBooks", ms:1100, integrations:["quickbooks"]},
+        {label:"Mapping to plan categories", ms:850},
+        {label:"Computing line-item variances", ms:700},
+        {label:"Drafting executive variance memo", ms:1100},
+        {label:"Generating board-ready charts", ms:800},
+        {label:"Sharing draft with #finance-leads", ms:500, integrations:["slack"]}
+      ],
+      integrations:["quickbooks","slack"],
+      successTitle:"Q3 close packet ready for review.",
+      successMetrics:[
+        {l:"Variance vs plan", v:"+4.2%", color:"green"},
+        {l:"Memo turnaround", v:"9 min", color:"accent"},
+        {l:"Manual hours saved", v:"14h"}
+      ],
+      aha:"Spotted a recurring duplicate from one vendor across June and July — I held those out and flagged for AP review before they hit the memo.",
+      detail:"Memo and charts are in <strong>#finance-leads</strong>. Two notes added for the CFO: <strong>OpEx</strong> ran hot on cloud spend, and <strong>headcount</strong> came in under by $86k."
+    },
+    sales: {
+      id:"sales", title:"Qualify sales call", subtitle:"Gong recap + MEDDIC scoring",
+      icon:"📞", iconBg:"linear-gradient(135deg,#34d399,#60a5fa)",
+      userPrompt:"Discovery call with Acme Robotics just wrapped — process the recording, score the deal, and update the pipeline.",
+      intro:"Got the recording. Pulling the transcript, scoring against MEDDIC, and updating HubSpot. Should take under a minute.",
+      steps:[
+        {label:"Transcribing 38-min call from Gong", ms:1100, integrations:["gong"]},
+        {label:"Extracting champion + decision criteria", ms:900},
+        {label:"Scoring against MEDDIC framework", ms:750},
+        {label:"Updating deal record in HubSpot", ms:700, integrations:["hubspot"]},
+        {label:"Drafting follow-up email + summary", ms:950},
+        {label:"Posting recap to #deal-room", ms:500, integrations:["slack"]}
+      ],
+      integrations:["gong","hubspot","slack"],
+      successTitle:"Acme Robotics qualified — moved to Stage 3.",
+      successMetrics:[
+        {l:"MEDDIC score", v:"78%", color:"accent"},
+        {l:"Deal size", v:"$148k", color:"green"},
+        {l:"Close confidence", v:"High"}
+      ],
+      aha:"Their CTO mentioned a 6-week procurement freeze — I flagged the timeline and pre-built a phased rollout option for your follow-up.",
+      detail:"Updated <strong>Acme Robotics — Pilot</strong> in HubSpot. Follow-up email is in your drafts. Two flags: budget signed-off, but legal review may add 2 weeks."
+    }
+  };
+
+  // Integration metadata — used for the lit-up pills under the process card
+  var INTEGRATION_META = {
+    hubspot:    {label:"HubSpot",    abbr:"H",   bg:"#ff7a59"},
+    clearbit:   {label:"Clearbit",   abbr:"C",   bg:"#3b82f6"},
+    calendar:   {label:"Calendar",   abbr:"📅", bg:"#22c55e"},
+    slack:      {label:"Slack",      abbr:"#",   bg:"#a855f7"},
+    netsuite:   {label:"NetSuite",   abbr:"N",   bg:"#f59e0b"},
+    quickbooks: {label:"QuickBooks", abbr:"Q",   bg:"#10b981"},
+    gong:       {label:"Gong",       abbr:"G",   bg:"#ef4444"}
+  };
+
+  // Inline SVG for the bot avatar — same swoop as the masthead
+  var BOT_SVG = '<svg viewBox="0 0 100 100" fill="none" aria-hidden="true"><defs><linearGradient id="rampedSwoopMsg" x1="17.46" y1="84.69" x2="76" y2="11.64" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#0A2540"/><stop offset="58%" stop-color="#006BD6"/><stop offset="100%" stop-color="#00D4FF"/></linearGradient></defs><path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="url(#rampedSwoopMsg)"/></svg>';
+
+  // ── State ────────────────────────────────────────────────────────────────
+  var running = false;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var SPEED = reduce ? 4 : 1;  // honor reduced motion by sprinting through
+
+  // ── DOM helpers (vanilla, no React) ──────────────────────────────────────
+  function el(tag, props, children){
+    var n = document.createElement(tag);
+    if(props){
+      for(var k in props){
+        if(k === 'class') n.className = props[k];
+        else if(k === 'html') n.innerHTML = props[k];
+        else if(k === 'style' && typeof props[k] === 'object'){
+          for(var s in props[k]) n.style[s] = props[k][s];
+        }
+        else if(k.indexOf('on') === 0) n.addEventListener(k.slice(2), props[k]);
+        else if(k === 'disabled' && props[k]) n.setAttribute('disabled','');
+        else n.setAttribute(k, props[k]);
+      }
+    }
+    if(children){
+      (Array.isArray(children) ? children : [children]).forEach(function(c){
+        if(c == null) return;
+        if(typeof c === 'string') n.appendChild(document.createTextNode(c));
+        else n.appendChild(c);
+      });
+    }
+    return n;
+  }
+  function nowStamp(){
+    var d = new Date(); var h = d.getHours(); var m = String(d.getMinutes()).padStart(2,'0');
+    var ampm = h >= 12 ? 'PM' : 'AM'; h = (h % 12) || 12;
+    return h + ':' + m + ' ' + ampm;
+  }
+  function wait(ms){ return new Promise(function(r){ setTimeout(r, ms / SPEED); }); }
+  function scrollToBottom(){
+    requestAnimationFrame(function(){ stream.scrollTop = stream.scrollHeight; });
+  }
+
+  // ── Component renderers ──────────────────────────────────────────────────
+  function renderMessage(opts){
+    // opts: {who:'user'|'bot', name, time, tag?, contentHtml}
+    var avContent = opts.who === 'bot' ? BOT_SVG : 'U';
+    var head = el('div', {class:'head'}, [
+      el('span', {class:'name' + (opts.who === 'bot' ? ' bot' : '')}, opts.name),
+      opts.tag ? el('span', {class:'tag'}, opts.tag) : null,
+      el('span', {class:'time'}, opts.time)
+    ]);
+    var text = el('div', {class:'text', html: opts.contentHtml});
+    return el('div', {class:'msg ' + opts.who}, [
+      el('div', {class:'av', html: avContent}),
+      el('div', {class:'body'}, [head, text])
+    ]);
+  }
+  function renderTyping(){
+    return el('div', {class:'msg bot'}, [
+      el('div', {class:'av', html: BOT_SVG}),
+      el('div', {class:'body'}, [
+        el('div', {class:'head'}, [
+          el('span', {class:'name bot'}, 'Ramped Bot'),
+          el('span', {class:'tag'}, 'AI'),
+          el('span', {class:'time'}, 'typing…')
+        ]),
+        el('div', {class:'text'}, [
+          el('div', {class:'typing-bubble'}, [el('span'), el('span'), el('span')])
+        ])
+      ])
+    ]);
+  }
+  function renderProcess(steps){
+    var card = el('div', {class:'process-card'});
+    steps.forEach(function(s, i){
+      card.appendChild(el('div', {class:'process-step', 'data-i': i}, [
+        el('span', {class:'ind'}),
+        el('span', null, s.label)
+      ]));
+    });
+    var track = el('div', {class:'progress-track'}, el('div', {class:'progress-fill'}));
+    card.appendChild(track);
+    var wrap = el('div', {class:'msg bot', style:{paddingLeft:'48px', gridTemplateColumns:'1fr'}}, [
+      el('div', {class:'body', style:{gridColumn:'1 / -1'}}, [card])
+    ]);
+    return {node: wrap, card: card, fill: track.querySelector('.progress-fill')};
+  }
+  function renderIntegrations(ids){
+    var row = el('div', {class:'integrations-row'});
+    ids.forEach(function(id){
+      var meta = INTEGRATION_META[id]; if(!meta) return;
+      var pill = el('span', {class:'integration-pill', 'data-id':id}, [
+        el('span', {class:'ipdot'}),
+        el('span', {class:'ico', style:{background: meta.bg}}, meta.abbr),
+        el('span', null, meta.label)
+      ]);
+      row.appendChild(pill);
+    });
+    return row;
+  }
+  function renderSuccess(wf){
+    var metrics = el('div', {class:'success-metrics'});
+    wf.successMetrics.forEach(function(m){
+      metrics.appendChild(el('div', {class:'success-metric'}, [
+        el('div', {class:'l'}, m.l),
+        el('div', {class:'v ' + (m.color || '')}, m.v)
+      ]));
+    });
+    var card = el('div', {class:'success-card'}, [
+      el('div', {class:'head-row'}, [
+        el('div', {class:'check-circle'}),
+        el('div', {class:'title'}, wf.successTitle)
+      ]),
+      metrics,
+      wf.aha ? el('div', {class:'aha'}, [
+        el('span', {class:'spark'}, '✦'),
+        el('span', {html: '<strong style="color:var(--orange-2);">Agent learned from your data —</strong> ' + wf.aha})
+      ]) : null,
+      wf.detail ? el('div', {class:'demo-detail', html: wf.detail}) : null
+    ]);
+    return el('div', {class:'msg bot'}, [
+      el('div', {class:'av', html: BOT_SVG}),
+      el('div', {class:'body'}, [card])
+    ]);
+  }
+  function renderBranches(wfId){
+    var row = el('div', {class:'branch-row'}, [
+      el('button', {class:'branch-btn primary', type:'button', onclick: function(){ goToBook(); }}, '📅 Book a discovery call'),
+      el('button', {class:'branch-btn', type:'button', onclick: function(e){ if(running) return; e.target.closest('.branch-wrap').remove(); appendUserMsg('Run another playbook.'); appendPicker(); }}, '↻ Run another playbook'),
+      el('button', {class:'branch-btn', type:'button', onclick: function(e){ if(running) return; refineRun(wfId, e.target.closest('.branch-wrap')); }}, '✎ Refine output')
+    ]);
+    return el('div', {class:'branch-wrap'}, [row]);
+  }
+  function renderPicker(){
+    var grid = el('div', {class:'workflow-grid'});
+    Object.keys(WORKFLOWS).forEach(function(id){
+      var wf = WORKFLOWS[id];
+      var btn = el('button', {class:'workflow-btn', type:'button', onclick: function(){ runWorkflow(id); }}, [
+        el('span', {class:'icon', style:{background: wf.iconBg}}, wf.icon),
+        el('span', {class:'label-wrap'}, [
+          el('span', {class:'l'}, wf.title),
+          el('span', {class:'s'}, wf.subtitle)
+        ])
+      ]);
+      grid.appendChild(btn);
+    });
+    return el('div', {style:{paddingLeft:'48px'}}, [grid]);
+  }
+
+  // ── Confetti (only on initial run, off for reduced motion) ───────────────
+  function fireConfetti(){
+    if(reduce) return;
+    var host = document.getElementById('demo-shell'); if(!host) return;
+    var colors = ['#3b82f6','#fb923c','#34d399','#60a5fa','#fdba74','#a78bfa'];
+    var layer = el('div', {class:'confetti'});
+    host.appendChild(layer);
+    for(var i = 0; i < 70; i++){
+      var p = el('div', {class:'confetti-piece'});
+      p.style.left = (Math.random() * 100) + '%';
+      p.style.background = colors[Math.floor(Math.random() * colors.length)];
+      p.style.setProperty('--d', (1.6 + Math.random() * 1.6) + 's');
+      p.style.animationDelay = (Math.random() * 0.4) + 's';
+      p.style.transform = 'rotate(' + (Math.random() * 360) + 'deg)';
+      layer.appendChild(p);
+    }
+    setTimeout(function(){ layer.remove(); }, 4500);
+  }
+
+  // ── Helpers for picker / user msg / refine ──────────────────────────────
+  function setPickerDisabled(disabled){
+    stream.querySelectorAll('.workflow-btn').forEach(function(b){
+      if(disabled) b.setAttribute('disabled',''); else b.removeAttribute('disabled');
+    });
+  }
+  function appendUserMsg(content){
+    stream.appendChild(renderMessage({who:'user', name:'You', time: nowStamp(), contentHtml: content}));
+    scrollToBottom();
+  }
+  function appendPicker(){
+    var picker = renderPicker();
+    stream.appendChild(picker);
+    scrollToBottom();
+  }
+  function goToBook(){ window.location.href = '/book'; }
+  function refineRun(wfId, branchWrap){
+    if(branchWrap) branchWrap.remove();
+    appendUserMsg('Adjust the output — tighter tone and add a specific next step.');
+    running = true; setPickerDisabled(true);
+    var typingNode = renderTyping();
+    stream.appendChild(typingNode); scrollToBottom();
+    setTimeout(function(){
+      typingNode.remove();
+      var wf = WORKFLOWS[wfId] || {title:'workflow'};
+      var html = 'Got it — re-drafted with a tighter tone and added <code>schedule a 15-min sync</code> as the explicit next step. Updated record in place. <strong style="color:var(--orange-2);">I\'ll remember that preference</strong> for future ' + wf.title.toLowerCase() + ' runs.';
+      stream.appendChild(renderMessage({who:'bot', name:'Ramped Bot', tag:'AI', time: nowStamp(), contentHtml: html}));
+      stream.appendChild(renderBranches(wfId));
+      running = false;
+      scrollToBottom();
+    }, 1100);
+  }
+
+  // ── Main: run a workflow end-to-end ──────────────────────────────────────
+  async function runWorkflow(wfId){
+    if(running) return;
+    var wf = WORKFLOWS[wfId]; if(!wf) return;
+    running = true; setPickerDisabled(true);
+
+    // 1. user message
+    appendUserMsg(wf.userPrompt);
+    await wait(450);
+
+    // 2. typing indicator
+    var typingNode = renderTyping();
+    stream.appendChild(typingNode); scrollToBottom();
+    await wait(900);
+    typingNode.remove();
+
+    // 3. bot intro
+    stream.appendChild(renderMessage({who:'bot', name:'Ramped Bot', tag:'AI', time: nowStamp(), contentHtml: wf.intro}));
+    scrollToBottom();
+    await wait(400);
+
+    // 4. process card + integrations row
+    var proc = renderProcess(wf.steps);
+    stream.appendChild(proc.node);
+    var intRow = renderIntegrations(wf.integrations);
+    stream.appendChild(intRow);
+    scrollToBottom();
+
+    var totalMs = wf.steps.reduce(function(s, x){ return s + x.ms; }, 0);
+    var elapsed = 0;
+    for(var i = 0; i < wf.steps.length; i++){
+      var step = wf.steps[i];
+      var stepMs = step.ms / SPEED;
+      // mark active
+      var stepNodes = proc.card.querySelectorAll('.process-step');
+      stepNodes.forEach(function(n, idx){
+        n.classList.remove('active','done');
+        if(idx < i) n.classList.add('done');
+        else if(idx === i) n.classList.add('active');
+      });
+      // light up integrations
+      if(step.integrations){
+        step.integrations.forEach(function(id){
+          var pill = intRow.querySelector('.integration-pill[data-id="' + id + '"]');
+          if(pill) pill.classList.add('live');
+        });
+      }
+      // animate progress bar smoothly across this step
+      var startElapsed = elapsed;
+      var stepStart = performance.now();
+      await new Promise(function(resolve){
+        function tick(){
+          var t = performance.now() - stepStart;
+          var pct = Math.min(100, ((startElapsed + Math.min(t, stepMs)) / (totalMs / SPEED)) * 100);
+          proc.fill.style.width = pct + '%';
+          if(t >= stepMs) resolve();
+          else requestAnimationFrame(tick);
+        }
+        tick();
+      });
+      elapsed += stepMs;
+      // mark done
+      stepNodes[i].classList.remove('active');
+      stepNodes[i].classList.add('done');
+      var meta = el('span', {class:'meta'}, '✓ ' + (step.ms/1000).toFixed(1) + 's');
+      stepNodes[i].appendChild(meta);
+      scrollToBottom();
+    }
+    proc.fill.style.width = '100%';
+
+    await wait(350);
+
+    // 5. success card + confetti
+    stream.appendChild(renderSuccess(wf));
+    scrollToBottom();
+    fireConfetti();
+    await wait(400);
+
+    // 6. branch buttons
+    stream.appendChild(renderBranches(wfId));
+    scrollToBottom();
+
+    running = false;
+  }
+
+  // ── Initial state: greeting + picker ─────────────────────────────────────
+  function init(){
+    var greeting = renderMessage({
+      who:'bot', name:'Ramped Bot', tag:'AI', time:'9:14 AM',
+      contentHtml: 'Morning — I\'ve been live for <strong>30 days</strong>. I\'ve trained on your Northwind data, mapped your tools, and I\'m ready to run real work. <strong>Pick a playbook</strong> and I\'ll execute it end-to-end.'
+    });
+    stream.appendChild(greeting);
+    appendPicker();
+  }
+  init();
+})();
+</script>
+</body>
+</html>

@@ -19,3 +19,7 @@ Thumbs.db
 
 # misc
 *.log
+
+# Prototype extracted files (temp working dir)
+_proto_extracted/
+Ramped AI Prototype.standalone.html
