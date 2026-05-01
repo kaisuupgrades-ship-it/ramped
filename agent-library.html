@@ -23,7 +23,7 @@
   <script defer src="/_vercel/insights/script.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Lato:wght@400;700;900&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="/styles.css">
   <style>
     :root{
@@ -118,12 +118,14 @@
       padding:4px 10px;background:#fff;border:1px solid var(--line);border-radius:6px;
     }
 
-    /* Slack mockup — pixel-perfect */
+    /* Slack mockup — pixel-perfect, Slack-faithful */
     .slack{
       background:#fff;border-radius:14px;overflow:hidden;
       box-shadow:0 1px 0 rgba(11,18,32,0.04),0 24px 48px -12px rgba(11,18,32,0.18),0 8px 16px -8px rgba(31,79,255,0.12);
-      font-family:'Inter',-apple-system,sans-serif;color:#1D1C1D;
+      font-family:'Lato','Slack-Lato',-apple-system,sans-serif;color:#1D1C1D;
+      line-height:1.46462;text-align:left;
     }
+    .slack *, .slack *::before, .slack *::after { text-align:left; }
     .slack-chrome{
       background:#350D36;height:30px;display:flex;align-items:center;
       padding:0 14px;gap:14px;border-bottom:1px solid rgba(0,0,0,0.18);
@@ -177,14 +179,14 @@
     .msgs{flex:1;padding:18px 20px;overflow:hidden;position:relative;}
 
     .msg{
-      display:flex;gap:11px;margin-bottom:16px;opacity:0;
+      display:flex;gap:8px;margin-bottom:8px;padding:4px 0;opacity:0;
       animation-duration:14s;animation-iteration-count:infinite;
       animation-fill-mode:both;animation-timing-function:ease-out;
     }
     .avatar{
-      width:32px;height:32px;border-radius:5px;flex-shrink:0;
+      width:36px;height:36px;border-radius:4px;flex-shrink:0;
       display:flex;align-items:center;justify-content:center;
-      font-weight:800;font-size:12px;color:#fff;letter-spacing:-.02em;
+      font-weight:900;font-size:13px;color:#fff;letter-spacing:-.02em;
     }
     .av-cust{background:linear-gradient(135deg,#D97706,#92400E);}
     .av-cust-2{background:linear-gradient(135deg,#7C3AED,#4C1D95);}
