@@ -122,8 +122,9 @@
     background-size:24px 24px;
     mask-image:radial-gradient(ellipse 100% 80% at 50% 30%, #000 40%, transparent 90%);
   }
-  .hero-inner{position:relative;padding-top:64px;padding-bottom:72px;}
-  @media(min-width:768px){.hero-inner{padding-top:88px;padding-bottom:96px;}}
+  /* Trimmed top padding (was 64/88) — eyebrow badge removed, H1 now sits closer to ticker */
+  .hero-inner{position:relative;padding-top:36px;padding-bottom:72px;}
+  @media(min-width:768px){.hero-inner{padding-top:48px;padding-bottom:96px;}}
   .hero-eyebrow{
     display:inline-flex;align-items:center;gap:8px;
     padding:6px 14px;margin-bottom:24px;
@@ -137,6 +138,11 @@
     font-size:clamp(2.4rem, 5.5vw, 3.8rem);
     font-weight:800;line-height:1.04;letter-spacing:-.035em;
     color:var(--ink);max-width:720px;margin-bottom:20px;
+  }
+  /* Gradient accent on the second clause — matches Claude Design prototype's H1 treatment */
+  .hero-h1 .hero-h1-accent{
+    background:linear-gradient(120deg, var(--blue-2) 0%, var(--orange) 90%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
   }
   .hero-sub{
     font-size:1.075rem;color:var(--muted);line-height:1.65;
@@ -1065,6 +1071,7 @@
     border:1px solid var(--v3-line);padding:1px 6px;border-radius:4px;
     font-size:12.5px;color:var(--orange-2);
   }
+  .demo-shell .workflow-wrap{padding-left:48px;}
   .demo-shell .workflow-grid{
     margin-top:6px;display:grid;grid-template-columns:repeat(2,1fr);gap:8px;max-width:540px;
   }
@@ -1233,8 +1240,18 @@
     .demo-shell .workflow-grid{grid-template-columns:1fr;}
     .demo-shell .success-metrics{grid-template-columns:1fr;}
     .demo-shell .demo-composer{padding:12px;}
-    .demo-shell .integrations-row{padding-left:0;}
-    .demo-shell .branch-wrap{padding-left:0;}
+    /* Keep the 48px indent on mobile so playbook / branch buttons + integration pills
+       align under the chat message body (avatar 36px + gap 12px = 48px). */
+    .demo-shell .integrations-row{padding-left:48px;}
+    .demo-shell .branch-wrap{padding-left:48px;}
+    .demo-shell .workflow-wrap{padding-left:48px;}
+  }
+  /* Below ~440px viewports the indent eats too much horizontal space — shrink it
+     to 12px so workflow buttons still have breathing room. */
+  @media(max-width:440px){
+    .demo-shell .integrations-row{padding-left:12px;}
+    .demo-shell .branch-wrap{padding-left:12px;}
+    .demo-shell .workflow-wrap{padding-left:12px;}
   }
 
   /* ─────────────────────────────────────────────────────────────────────────
@@ -1600,17 +1617,9 @@
 <section class="hero-section" id="hero">
   <div class="section-wrap hero-inner" style="text-align:center;">
 
-    <!-- Eyebrow pill — strongest commitment, centered -->
-    <div class="hero-eyebrow" style="display:inline-flex;">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-        <path d="M7 1L2 3.5v4C2 10.1 4.2 12.6 7 13.5c2.8-.9 5-3.4 5-6V3.5L7 1z" fill="#F59E0B" opacity=".25" stroke="#B45309" stroke-width="1.3"/>
-      </svg>
-      <span>30-DAY GO-LIVE GUARANTEE — OR FULL REFUND</span>
-    </div>
-
-    <!-- Headline — bigger and centered -->
+    <!-- Headline — gradient accent on second clause, ported from Claude Design prototype -->
     <h1 class="hero-h1" style="font-size:clamp(2.8rem, 7vw, 5rem);line-height:1.02;letter-spacing:-.04em;max-width:1000px;margin:0 auto 24px;">
-      Your AI department,<br>live in 30 days.
+      Your AI department,<br><span class="hero-h1-accent">live in 30 days.</span>
     </h1>
 
     <!-- Subheadline — narrower max-width for centered comfort -->
@@ -2527,7 +2536,7 @@
       ]);
       grid.appendChild(btn);
     });
-    return el('div', {style:{paddingLeft:'48px'}}, [grid]);
+    return el('div', {class:'workflow-wrap'}, [grid]);
   }
 
   // ── Confetti (only on initial run, off for reduced motion) ───────────────
