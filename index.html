@@ -162,9 +162,12 @@
   }
   .hero-h1{color:var(--text-0)!important;}
   .hero-sub{color:var(--text-1)!important;}
-  .hero-founder{color:var(--text-2)!important;}
-  .hero-founder strong{color:var(--text-0)!important;}
-  .hero-founder-trust{color:var(--text-3)!important;opacity:1!important;}
+  /* .hero-founder: brighter base color (text-1) so the whole sentence reads, plus
+     belt-and-suspenders specificity boost on the <strong> so Andrew Yoon is white. */
+  .hero-section .hero-founder, p.hero-founder{color:var(--text-1)!important;}
+  .hero-section .hero-founder strong, p.hero-founder strong{
+    color:var(--text-0)!important;font-weight:600!important;
+  }
 
   /* Hero CTAs — v3 orange primary, dark-glass ghost */
   .hero-cta-row .btn-primary{
@@ -1724,7 +1727,6 @@
     <!-- Founder credibility — centered -->
     <p class="hero-founder" style="max-width:680px;margin:0 auto;">
       Built by <strong>Andrew Yoon</strong> — 10-year operator and founder of Xtractor Depot.
-      <span class="hero-founder-trust">Free · 30 minutes · No commitment.</span>
     </p>
 
       </div><!-- /.hero-text -->
