@@ -354,7 +354,7 @@
     display:flex;gap:8px;margin-bottom:8px;
     padding:4px 0;
     opacity:0;
-    animation-duration:42s;
+    animation-duration:30s;
     animation-iteration-count:infinite;
     animation-fill-mode:both;
     animation-timing-function:ease-out;
@@ -416,7 +416,7 @@
     border-radius:6px;
     font-size:12.5px;color:#1B5E20;font-weight:700;
     opacity:0;
-    animation-duration:42s;
+    animation-duration:30s;
     animation-iteration-count:infinite;
     animation-fill-mode:both;
     animation-timing-function:ease-out;
@@ -453,7 +453,7 @@
     color:var(--muted);text-align:center;
   }
 
-  /* ── Animation timing — 42s loop, three scenarios × 14s each ────────────────
+  /* ── Animation timing — 30s loop, three scenarios × 10s each ────────────────
      0–14s:   Scenario 1 — Ops question (Marcus / Acme Q3 inventory)
      14–28s:  Scenario 2 — Sales lead intake (Sarah / Acme Industrial)
      28–42s:  Scenario 3 — Financial pull (Andrew / October close)
@@ -472,32 +472,134 @@
   .nano-scenario-3 .nano-msg-reply  {animation-name:nano-reply-3;}
   .nano-scenario-3 .nano-replied    {animation-name:nano-replied-3;}
 
-  /* Scenario 1 — visible window 0-33% (0-14s) */
+  /* Typing indicator collapses its height when invisible so the bot reply
+     slots cleanly under the customer message — no phantom gap. */
+  .nano-msg-typing{overflow:hidden;}
+
+  /* Scenario 1 — visible window 0-33% (0-10s) */
   @keyframes nano-cust-1   {0%,5%   {opacity:0;transform:translateY(8px);} 6%,29%   {opacity:1;transform:translateY(0);} 31%,100%{opacity:0;}}
-  @keyframes nano-typing-1 {0%,11%  {opacity:0;transform:translateY(8px);} 12%,15%  {opacity:1;transform:translateY(0);} 16%,100%{opacity:0;}}
+  @keyframes nano-typing-1 {0%,11%  {opacity:0;max-height:0;margin-bottom:0;padding:0;transform:translateY(8px);} 12%,15%  {opacity:1;max-height:60px;margin-bottom:8px;padding:4px 0;transform:translateY(0);} 16%,100%{opacity:0;max-height:0;margin-bottom:0;padding:0;}}
   @keyframes nano-reply-1  {0%,17%  {opacity:0;transform:translateY(8px);} 18%,29%  {opacity:1;transform:translateY(0);} 31%,100%{opacity:0;}}
   @keyframes nano-replied-1{0%,23%  {opacity:0;transform:translateY(4px) scale(0.96);} 24%,29%{opacity:1;transform:translateY(0) scale(1);} 31%,100%{opacity:0;}}
 
-  /* Scenario 2 — visible window 33-66% (14-28s) */
+  /* Scenario 2 — visible window 33-66% (10-20s) */
   @keyframes nano-cust-2   {0%,38%  {opacity:0;transform:translateY(8px);} 39%,62%  {opacity:1;transform:translateY(0);} 64%,100%{opacity:0;}}
-  @keyframes nano-typing-2 {0%,44%  {opacity:0;transform:translateY(8px);} 45%,48%  {opacity:1;transform:translateY(0);} 49%,100%{opacity:0;}}
+  @keyframes nano-typing-2 {0%,44%  {opacity:0;max-height:0;margin-bottom:0;padding:0;transform:translateY(8px);} 45%,48%  {opacity:1;max-height:60px;margin-bottom:8px;padding:4px 0;transform:translateY(0);} 49%,100%{opacity:0;max-height:0;margin-bottom:0;padding:0;}}
   @keyframes nano-reply-2  {0%,50%  {opacity:0;transform:translateY(8px);} 51%,62%  {opacity:1;transform:translateY(0);} 64%,100%{opacity:0;}}
   @keyframes nano-replied-2{0%,56%  {opacity:0;transform:translateY(4px) scale(0.96);} 57%,62%{opacity:1;transform:translateY(0) scale(1);} 64%,100%{opacity:0;}}
 
-  /* Scenario 3 — visible window 66-100% (28-42s) */
+  /* Scenario 3 — visible window 66-100% (20-30s) */
   @keyframes nano-cust-3   {0%,71%  {opacity:0;transform:translateY(8px);} 72%,95%  {opacity:1;transform:translateY(0);} 97%,100%{opacity:0;}}
-  @keyframes nano-typing-3 {0%,77%  {opacity:0;transform:translateY(8px);} 78%,81%  {opacity:1;transform:translateY(0);} 82%,100%{opacity:0;}}
+  @keyframes nano-typing-3 {0%,77%  {opacity:0;max-height:0;margin-bottom:0;padding:0;transform:translateY(8px);} 78%,81%  {opacity:1;max-height:60px;margin-bottom:8px;padding:4px 0;transform:translateY(0);} 82%,100%{opacity:0;max-height:0;margin-bottom:0;padding:0;}}
   @keyframes nano-reply-3  {0%,83%  {opacity:0;transform:translateY(8px);} 84%,95%  {opacity:1;transform:translateY(0);} 97%,100%{opacity:0;}}
   @keyframes nano-replied-3{0%,89%  {opacity:0;transform:translateY(4px) scale(0.96);} 90%,95%{opacity:1;transform:translateY(0) scale(1);} 97%,100%{opacity:0;}}
 
+  /* ── V3-NC2: Polish layer — animated cursor, progress dots, pulsing glow ──── */
+
+  /* Soft breathing shadow under the demo — subtle but adds depth */
+  .nano-demo{
+    animation:nano-shadow-pulse 5s ease-in-out infinite alternate;
+  }
+  @keyframes nano-shadow-pulse{
+    0%   {box-shadow:0 1px 0 rgba(11,18,32,0.04), 0 40px 80px -32px rgba(11,18,32,0.28), 0 14px 32px -14px rgba(31,79,255,0.22);}
+    100% {box-shadow:0 1px 0 rgba(11,18,32,0.04), 0 48px 96px -32px rgba(11,18,32,0.34), 0 18px 40px -14px rgba(31,79,255,0.42);}
+  }
+
+  /* Scenario progress dots — 1 / 2 / 3 active state, top-right of the chrome bar */
+  .nano-progress{
+    position:absolute;
+    top:8px;left:50%;transform:translateX(-50%);
+    display:flex;align-items:center;gap:8px;
+    z-index:6;
+    padding:4px 0;
+    pointer-events:none;
+  }
+  .nano-progress-dot{
+    width:6px;height:6px;border-radius:50%;
+    background:rgba(255,255,255,0.28);
+    transition:transform .25s ease, background-color .25s ease;
+  }
+  .nano-progress-dot:nth-child(1){animation:nano-prog-1 30s infinite linear;}
+  .nano-progress-dot:nth-child(2){animation:nano-prog-2 30s infinite linear;}
+  .nano-progress-dot:nth-child(3){animation:nano-prog-3 30s infinite linear;}
+  @keyframes nano-prog-1{
+    0%,32%   {background:#3DDC84;transform:scale(1.4);box-shadow:0 0 8px rgba(61,220,132,0.6);}
+    34%,100% {background:rgba(255,255,255,0.28);transform:scale(1);box-shadow:none;}
+  }
+  @keyframes nano-prog-2{
+    0%,32%   {background:rgba(255,255,255,0.28);transform:scale(1);box-shadow:none;}
+    34%,65%  {background:#3DDC84;transform:scale(1.4);box-shadow:0 0 8px rgba(61,220,132,0.6);}
+    67%,100% {background:rgba(255,255,255,0.28);transform:scale(1);box-shadow:none;}
+  }
+  @keyframes nano-prog-3{
+    0%,65%   {background:rgba(255,255,255,0.28);transform:scale(1);box-shadow:none;}
+    67%,100% {background:#3DDC84;transform:scale(1.4);box-shadow:0 0 8px rgba(61,220,132,0.6);}
+  }
+
+  /* Animated cursor — appears during each reply phase, briefly hovers + clicks */
+  .nano-cursor{
+    position:absolute;
+    width:18px;height:22px;z-index:5;
+    pointer-events:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http%3A//www.w3.org/2000/svg' viewBox='0 0 18 22'><path d='M2 1 L2 17 L6.5 13 L9 19 L11 18 L8.5 12 L14 12 Z' fill='%23000' stroke='%23fff' stroke-width='1.4' stroke-linejoin='round'/></svg>");
+    background-size:contain;background-repeat:no-repeat;
+    filter:drop-shadow(0 2px 4px rgba(0,0,0,0.22));
+    opacity:0;
+    animation:nano-cursor-loop 30s infinite ease-in-out;
+    /* Resting position — center-left of the message area */
+    left:34%;top:78%;
+  }
+  @keyframes nano-cursor-loop{
+    /* Scenario 1: bot reply 18-29% → cursor 23-28% */
+    0%,21%   {opacity:0;transform:translate(60px,12px) scale(0.9);}
+    23%      {opacity:1;transform:translate(0,0) scale(1);}
+    25%      {opacity:1;transform:translate(0,0) scale(0.82);}
+    26%      {opacity:1;transform:translate(0,0) scale(1);}
+    29%,53%  {opacity:0;transform:translate(60px,12px) scale(0.9);}
+    /* Scenario 2: bot reply 50-62% → cursor 55-61% */
+    55%      {opacity:1;transform:translate(0,0) scale(1);}
+    57%      {opacity:1;transform:translate(0,0) scale(0.82);}
+    58%      {opacity:1;transform:translate(0,0) scale(1);}
+    62%,86%  {opacity:0;transform:translate(60px,12px) scale(0.9);}
+    /* Scenario 3: bot reply 84-95% → cursor 88-94% */
+    88%      {opacity:1;transform:translate(0,0) scale(1);}
+    90%      {opacity:1;transform:translate(0,0) scale(0.82);}
+    91%      {opacity:1;transform:translate(0,0) scale(1);}
+    95%,100% {opacity:0;transform:translate(60px,12px) scale(0.9);}
+  }
+
+  /* Click ripple — pulses out from the cursor's resting position */
+  .nano-cursor-ripple{
+    position:absolute;
+    width:28px;height:28px;border-radius:50%;
+    border:2px solid #1F4FFF;z-index:4;
+    pointer-events:none;
+    opacity:0;
+    left:32%;top:78%;
+    animation:nano-ripple-loop 30s infinite linear;
+  }
+  @keyframes nano-ripple-loop{
+    0%,24%   {opacity:0;transform:scale(0.4);}
+    25%      {opacity:0.7;transform:scale(0.4);}
+    27%      {opacity:0;transform:scale(1.6);}
+    28%,56%  {opacity:0;}
+    57%      {opacity:0.7;transform:scale(0.4);}
+    59%      {opacity:0;transform:scale(1.6);}
+    60%,89%  {opacity:0;}
+    90%      {opacity:0.7;transform:scale(0.4);}
+    92%      {opacity:0;transform:scale(1.6);}
+    93%,100% {opacity:0;}
+  }
+
   /* Reduced motion — show the end-state only, skip the typing intermediate */
   @media (prefers-reduced-motion: reduce){
-    .nano-msg, .nano-replied, .nano-live-pill-dot{
+    .nano-msg, .nano-replied, .nano-live-pill-dot, .nano-demo, .nano-progress-dot, .nano-cursor, .nano-cursor-ripple{
       animation:none !important;
       opacity:1 !important;
       transform:none !important;
     }
     .nano-msg-typing{display:none;}
+    .nano-cursor, .nano-cursor-ripple{display:none;}
   }
 
   /* Mobile — collapse the sidebar, tighten the body */
@@ -826,6 +928,17 @@
         <span class="nano-live-pill-dot"></span><span>LIVE · IN PRODUCTION</span>
       </div>
 
+      <!-- Scenario progress dots (1/2/3 indicator), top-center over the chrome bar -->
+      <div class="nano-progress" aria-hidden="true">
+        <span class="nano-progress-dot"></span>
+        <span class="nano-progress-dot"></span>
+        <span class="nano-progress-dot"></span>
+      </div>
+
+      <!-- Animated cursor + click ripple — appears during each bot reply phase -->
+      <div class="nano-cursor-ripple" aria-hidden="true"></div>
+      <div class="nano-cursor" aria-hidden="true"></div>
+
       <!-- Mac-style window chrome -->
       <div class="nano-chrome">
         <div class="nano-traffic"><span></span><span></span><span></span></div>
@@ -1019,9 +1132,6 @@
         </main>
       </div>
     </div>
-    <p class="nano-caption">
-      Above: Ramped Bot handling real ops, sales, and finance questions in a customer's Slack — three scenarios on a 42-second loop.
-    </p>
 
   </div>
 </section>
@@ -1775,4 +1885,4 @@
 
 
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
