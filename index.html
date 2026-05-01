@@ -536,7 +536,10 @@
     67%,100% {background:#3DDC84;transform:scale(1.4);box-shadow:0 0 8px rgba(61,220,132,0.6);}
   }
 
-  /* Animated cursor — appears during each reply phase, briefly hovers + clicks */
+  /* Animated cursor — per-scenario coordinates measured live at:
+     S1 "Send draft": btn center (343, 314) → top 59%, left 31%
+     S2 "Send":       btn center (327, 314) → top 59%, left 30%
+     S3 "Open deck":  btn center (344, 291) → top 55%, left 32% (shorter content) */
   .nano-cursor{
     position:absolute;
     width:18px;height:22px;z-index:5;
@@ -546,51 +549,55 @@
     filter:drop-shadow(0 2px 4px rgba(0,0,0,0.22));
     opacity:0;
     animation:nano-cursor-loop 30s infinite ease-in-out;
-    /* Resting position — over the bot's primary action button (~Send draft / Send / Open deck).
-       Calibrated against demo geometry: chrome 30px + channel head 49px + 2 messages stacked ≈
-       buttons land around 235-260px from top of demo, total height ~559px → ~44%. */
-    left:31%;top:44%;
+    left:31%;top:59%;
   }
   @keyframes nano-cursor-loop{
-    /* Scenario 1: bot reply 18-29% → cursor 23-28% */
-    0%,21%   {opacity:0;transform:translate(60px,12px) scale(0.9);}
-    23%      {opacity:1;transform:translate(0,0) scale(1);}
-    25%      {opacity:1;transform:translate(0,0) scale(0.82);}
-    26%      {opacity:1;transform:translate(0,0) scale(1);}
-    29%,53%  {opacity:0;transform:translate(60px,12px) scale(0.9);}
-    /* Scenario 2: bot reply 50-62% → cursor 55-61% */
-    55%      {opacity:1;transform:translate(0,0) scale(1);}
-    57%      {opacity:1;transform:translate(0,0) scale(0.82);}
-    58%      {opacity:1;transform:translate(0,0) scale(1);}
-    62%,86%  {opacity:0;transform:translate(60px,12px) scale(0.9);}
-    /* Scenario 3: bot reply 84-95% → cursor 88-94% */
-    88%      {opacity:1;transform:translate(0,0) scale(1);}
-    90%      {opacity:1;transform:translate(0,0) scale(0.82);}
-    91%      {opacity:1;transform:translate(0,0) scale(1);}
-    95%,100% {opacity:0;transform:translate(60px,12px) scale(0.9);}
+    /* Scenario 1 "Send draft" — top 59%, left 31% */
+    0%,21%   {opacity:0;top:59%;left:31%;transform:translate(60px,12px) scale(0.9);}
+    23%      {opacity:1;top:59%;left:31%;transform:translate(0,0) scale(1);}
+    25%      {opacity:1;top:59%;left:31%;transform:translate(0,0) scale(0.82);}
+    26%      {opacity:1;top:59%;left:31%;transform:translate(0,0) scale(1);}
+    29%      {opacity:0;top:59%;left:31%;transform:translate(60px,12px) scale(0.9);}
+    /* Scenario 2 "Send" — top 59%, left 30% */
+    53%      {opacity:0;top:59%;left:30%;transform:translate(60px,12px) scale(0.9);}
+    55%      {opacity:1;top:59%;left:30%;transform:translate(0,0) scale(1);}
+    57%      {opacity:1;top:59%;left:30%;transform:translate(0,0) scale(0.82);}
+    58%      {opacity:1;top:59%;left:30%;transform:translate(0,0) scale(1);}
+    62%      {opacity:0;top:59%;left:30%;transform:translate(60px,12px) scale(0.9);}
+    /* Scenario 3 "Open deck" — top 55% (shorter content), left 32% */
+    86%      {opacity:0;top:55%;left:32%;transform:translate(60px,12px) scale(0.9);}
+    88%      {opacity:1;top:55%;left:32%;transform:translate(0,0) scale(1);}
+    90%      {opacity:1;top:55%;left:32%;transform:translate(0,0) scale(0.82);}
+    91%      {opacity:1;top:55%;left:32%;transform:translate(0,0) scale(1);}
+    95%,100% {opacity:0;top:55%;left:32%;transform:translate(60px,12px) scale(0.9);}
   }
 
-  /* Click ripple — pulses out from the cursor's resting position */
+  /* Click ripple — centered on each scenario's button (offset -14px to compensate for ripple radius) */
   .nano-cursor-ripple{
     position:absolute;
     width:28px;height:28px;border-radius:50%;
     border:2px solid #1F4FFF;z-index:4;
     pointer-events:none;
     opacity:0;
-    left:29%;top:44%;
+    left:30%;top:58%;
     animation:nano-ripple-loop 30s infinite linear;
   }
   @keyframes nano-ripple-loop{
-    0%,24%   {opacity:0;transform:scale(0.4);}
-    25%      {opacity:0.7;transform:scale(0.4);}
-    27%      {opacity:0;transform:scale(1.6);}
-    28%,56%  {opacity:0;}
-    57%      {opacity:0.7;transform:scale(0.4);}
-    59%      {opacity:0;transform:scale(1.6);}
-    60%,89%  {opacity:0;}
-    90%      {opacity:0.7;transform:scale(0.4);}
-    92%      {opacity:0;transform:scale(1.6);}
-    93%,100% {opacity:0;}
+    /* Scenario 1: top 58%, left 30% (centered on Send draft) */
+    0%,24%   {opacity:0;top:58%;left:30%;transform:scale(0.4);}
+    25%      {opacity:0.7;top:58%;left:30%;transform:scale(0.4);}
+    27%      {opacity:0;top:58%;left:30%;transform:scale(1.6);}
+    28%      {opacity:0;top:58%;left:30%;}
+    /* Scenario 2: top 58%, left 29% */
+    56%      {opacity:0;top:58%;left:29%;transform:scale(0.4);}
+    57%      {opacity:0.7;top:58%;left:29%;transform:scale(0.4);}
+    59%      {opacity:0;top:58%;left:29%;transform:scale(1.6);}
+    60%      {opacity:0;top:58%;left:29%;}
+    /* Scenario 3: top 54%, left 31% */
+    89%      {opacity:0;top:54%;left:31%;transform:scale(0.4);}
+    90%      {opacity:0.7;top:54%;left:31%;transform:scale(0.4);}
+    92%      {opacity:0;top:54%;left:31%;transform:scale(1.6);}
+    93%,100% {opacity:0;top:54%;left:31%;}
   }
 
   /* Reduced motion — show the end-state only, skip the typing intermediate */
