@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Admin · Ramped AI</title>
   <meta name="robots" content="noindex, nofollow" />
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/favicon.svg?v=2" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -2773,46 +2773,4 @@
     document.querySelectorAll('#avail-days input[type=checkbox]:checked').forEach(cb => days.push(cb.value));
 
     const startHour = parseInt(document.getElementById('avail-start')?.value ?? 8, 10);
-    const endHour   = parseInt(document.getElementById('avail-end')?.value   ?? 18, 10);
-    const slotMin   = parseInt(document.getElementById('avail-slot')?.value  ?? 30, 10);
-
-    if (!days.length) {
-      if (statusEl) { statusEl.textContent = 'Select at least one day.'; statusEl.style.color = '#E53935'; }
-      if (btn) { btn.disabled = false; btn.textContent = 'Save changes'; }
-      return;
-    }
-    if (startHour >= endHour) {
-      if (statusEl) { statusEl.textContent = 'Start time must be before end time.'; statusEl.style.color = '#E53935'; }
-      if (btn) { btn.disabled = false; btn.textContent = 'Save changes'; }
-      return;
-    }
-
-    try {
-      const res = await adminFetch('/api/availability', {
-        method: 'PUT',
-        body: JSON.stringify({
-          days_available:   days,
-          start_hour:       startHour,
-          end_hour:         endHour,
-          slot_duration_min: slotMin,
-          blocked_dates:    _blockedDates,
-          timezone:         'America/Chicago',
-        }),
-      });
-      if (!res.ok) {
-        const j = await res.json().catch(() => ({}));
-        throw new Error(j.error || ('Server error ' + res.status));
-      }
-      if (statusEl) { statusEl.textContent = '✓ Saved'; statusEl.style.color = '#16a34a'; }
-      setTimeout(() => { if (statusEl) statusEl.textContent = ''; }, 3000);
-    } catch (err) {
-      if (statusEl) { statusEl.textContent = 'Error: ' + err.message; statusEl.style.color = '#E53935'; }
-    } finally {
-      if (btn) { btn.disabled = false; btn.textContent = 'Save changes'; }
-    }
-  }
-</script>
-</main>
-</body>
-</html>
-
+    const endHour   = parseIn

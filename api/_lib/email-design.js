@@ -22,15 +22,16 @@ const FROM_EMAIL = 'jon@30dayramp.com';
 
 // Bulletproof header with brand arrow-swoop logo + wordmark on dark navy.
 // Uses table layout so it renders correctly in Gmail / Outlook / Apple Mail.
-// The PNG is hosted at /assets/email-logo-bars.png (filename kept for backwards-compat
-// with already-sent emails; the file content itself is the new arrow-swoop glyph).
-// Gmail will proxy-cache it.
+// The PNG is hosted at /assets/email-logo-v2.png (NEW URL after brand v2 migration —
+// the old /assets/email-logo-bars.png URL is left in place but no longer referenced
+// because Gmail's image proxy aggressively caches images by URL; using a fresh URL
+// guarantees recipients see the new logo even if they'd already cached the old one).
 export function emailHeader({ siteUrl = SITE_URL_DEFAULT } = {}) {
   return `<tr><td class="ehead-pad" style="background:#0A2540;border-radius:16px 16px 0 0;padding:24px 36px;">
   <table cellpadding="0" cellspacing="0" border="0" role="presentation">
     <tr>
       <td style="vertical-align:middle;padding-right:14px;line-height:0;">
-        <img src="${siteUrl}/assets/email-logo-bars.png" width="44" height="44" alt="" style="display:block;border:0;outline:none;text-decoration:none;width:44px;height:44px;">
+        <img src="${siteUrl}/assets/email-logo-v2.png" width="44" height="44" alt="" style="display:block;border:0;outline:none;text-decoration:none;width:44px;height:44px;">
       </td>
       <td style="vertical-align:middle;color:#FFFFFF;font-family:'Helvetica Neue',Arial,sans-serif;font-weight:700;font-size:16px;letter-spacing:-0.2px;">Ramped AI</td>
     </tr>

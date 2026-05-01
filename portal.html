@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="robots" content="noindex,nofollow" />
 <title>Client Portal — Ramped AI</title>
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" />
 <link rel="stylesheet" href="/styles.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1143,25 +1143,4 @@
       loadPortalProfile();
 
       // Onboarding section — show only after invoice paid + before kickoff complete
-      const paymentStatus = data.booking?.payment_status || data.payment_status || null;
-      const showOnboarding = paymentStatus === 'onboarding_paid' || paymentStatus === 'subscription_active';
-      if (showOnboarding) {
-        const sec = document.getElementById('onboarding-section');
-        if (sec) {
-          sec.style.display = 'block';
-          loadOnboarding();
-        }
-      }
-
-      // Approvals queue — show only when pending drafts exist
-      if (data.drafts && data.drafts.length) {
-        renderApprovalsQueue(data.drafts);
-      }
-    } catch (e) {
-      console.warn('portal-data not available, falling back to mock:', e.message);
-    }
-  })();
-</script>
-
-</body>
-</html>
+      const paymentStatus = data.booking?.payment_status || data.
