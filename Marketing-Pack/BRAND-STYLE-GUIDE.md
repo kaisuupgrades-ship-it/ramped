@@ -123,24 +123,37 @@ We're an operator talking to an operator. Not a vendor. Not a consultant. Not a 
 
 ### Logo
 
-The 4 ascending bar charts in `var(--accent)` with opacity gradient (1.0, 0.75, 0.55, 0.35).
+**Updated 2026-04-30 (v2 — authoritative)** — replaced the 4-bar mark with the arrow swoop. Source SVG provided by ChatGPT brand pack export. Gradient deep navy (`#0A2540`) → royal blue (`#006BD6`) → cyan (`#00D4FF`). Hockey-stick swoop with sharp triangular arrowhead, narrow tapered tail at lower-left, gradient direction follows the swoop axis.
 
 ```html
-<svg width="26" height="22" viewBox="0 0 26 22" fill="none">
-  <rect x="0"  y="14" width="5" height="8"  rx="1.5" fill="var(--accent)"/>
-  <rect x="7"  y="9"  width="5" height="13" rx="1.5" fill="var(--accent)" opacity=".75"/>
-  <rect x="14" y="4"  width="5" height="18" rx="1.5" fill="var(--accent)" opacity=".55"/>
-  <rect x="21" y="0"  width="5" height="22" rx="1.5" fill="var(--accent)" opacity=".35"/>
+<svg width="30" height="30" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="rampedSwoopNav" x1="17.46" y1="84.69" x2="76" y2="11.64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0A2540"/>
+      <stop offset="58%" stop-color="#006BD6"/>
+      <stop offset="100%" stop-color="#00D4FF"/>
+    </linearGradient>
+  </defs>
+  <path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="url(#rampedSwoopNav)"/>
 </svg>
 ```
 
+**Asset files:**
+- `/favicon.svg` — master glyph (also used as 16/32/48 favicons)
+- `/apple-touch-icon.png` — 180×180 raster
+- `/android-chrome-192.png`, `/android-chrome-512.png` — Android launcher
+- `/logo-master-1024.png` — App-store / high-res master
+- `/logo-lockup.svg` — full RAMPED AI lockup with tagline (light mode)
+- `/logo-lockup-dark.svg` — dark-mode variant
+
 **Logo rules:**
 - Always paired with "Ramped AI" wordmark on the right (Inter 700, 18px, var(--ink))
-- Minimum size: 18px wide
+- Minimum size: 20px wide
 - Maximum size: 64px wide (in normal layout)
 - Clear space: 0.5× logo width on all sides
-- Never rotate, never recolor (except white-on-dark for inverted backgrounds)
-- Don't drop shadows, don't outline, don't gradient on the wordmark
+- Never rotate, never alter the gradient hue. White-fill variant allowed for use on dark accent backgrounds (e.g. Slack mockup avatars).
+- Don't drop shadows, don't outline, don't gradient on the wordmark itself
+- The "AI" in the wordmark uses `#00D4FF` (cyan accent) for emphasis when displayed at large lockup sizes; in masthead/inline use, the entire wordmark is `var(--ink)`
 
 ---
 

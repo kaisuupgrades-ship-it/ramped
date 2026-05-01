@@ -343,6 +343,20 @@
           "type": "markdown",
           "updated": "2026-04-30",
           "description": "Log of video generations + lessons learned. Credit usage tracking."
+        },
+        {
+          "title": "Higgsfield Prompt Guide — how to prompt for premium video",
+          "path": "/Marketing-Pack/HIGGSFIELD-PROMPT-GUIDE.md",
+          "type": "markdown",
+          "updated": "2026-04-30",
+          "description": "8 rules + Ramped formula + 6 ready-to-use prompt templates (A-F) + multi-shot template. Reference before every new generation."
+        },
+        {
+          "title": "Higgsfield Asset Manifest — all 22 generated assets w/ URLs",
+          "path": "/Marketing-Pack/HIGGSFIELD-ASSET-MANIFEST.md",
+          "type": "markdown",
+          "updated": "2026-04-30",
+          "description": "Single source of truth for every Higgsfield asset: 3 PFPs, 3 banners, 5 hero stills, 11 b-roll videos. Direct CDN URLs + use case + stitching plan for the 30s hero video."
         }
       ]
     }
