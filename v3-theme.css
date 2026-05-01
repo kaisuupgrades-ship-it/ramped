@@ -309,6 +309,349 @@ body > footer a:hover{color:var(--text-0)!important;}
 .customer-strip-eyebrow{color:var(--text-2)!important;}
 .customer-logo-real{color:var(--text-1)!important;}
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   CROSS-PAGE LEGIBILITY OVERRIDES (2026-05-01)
+
+   Exhaustive sweep to fix dark-on-dark text, white cards, cream backgrounds,
+   light borders, and hardcoded dark hex colors across every customer page.
+   Each rule is tagged with the page(s) it primarily targets; many apply to
+   several pages at once because they reuse the same class names.
+
+   NOT overridden: .slack and its children inside agent-library.html (the
+   intentional Slack-fidelity white-card mockup) — using class-name targeting
+   keeps Slack chrome unaffected.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Buttons — dark glass ghost; orange primary across pages ──────────── */
+.btn-ghost{
+  background:rgba(255,255,255,0.03)!important;
+  color:var(--text-1)!important;
+  border:1px solid var(--v3-line-2)!important;
+}
+.btn-ghost:hover{
+  background:rgba(255,255,255,0.06)!important;
+  border-color:var(--blue)!important;
+  color:var(--text-0)!important;
+}
+/* Generic primary buttons on customer pages (thanks, free-roadmap, etc.) */
+.btn-primary,
+.btn-submit{
+  background:linear-gradient(180deg,var(--orange-2),var(--orange))!important;
+  color:#1a0e05!important;
+  border:none!important;
+  box-shadow:0 1px 0 rgba(0,0,0,0.15),0 6px 18px -4px var(--orange-glow)!important;
+}
+.btn-submit:hover:not(:disabled){
+  background:linear-gradient(180deg,var(--orange),var(--orange-2))!important;
+  box-shadow:0 1px 0 rgba(0,0,0,0.15),0 10px 24px -4px var(--orange-glow)!important;
+}
+/* Don't double-paint the v3 final CTA buttons inside the prototype card */
+.v3-final-cta .v3-btn-primary,
+.v3-final-cta .v3-btn-ghost{box-shadow:initial;}
+
+/* ─── Surfaces — cards, panels, shells across pages ────────────────────── */
+.card,
+.form-card,
+.step-card,
+.booking-shell,
+.article-card,
+.skeleton-card,
+.team-card,
+.success-card{
+  background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005))!important;
+  border:1px solid var(--v3-line)!important;
+  color:var(--text-0)!important;
+}
+.team-card-avatar{
+  background:rgba(255,255,255,0.04)!important;
+  box-shadow:0 0 0 1px var(--v3-line-2)!important;
+}
+.value-icon{background:rgba(59,130,246,0.10)!important;color:var(--blue-2)!important;}
+.step-footer{background:rgba(255,255,255,0.02)!important;border-top:1px solid var(--v3-line)!important;}
+
+/* booking-shell internal dividers */
+.left-panel{border-right-color:var(--v3-line)!important;border-bottom-color:var(--v3-line)!important;}
+
+/* ─── Form inputs — universal dark mode ────────────────────────────────── */
+.text-input,
+.textarea-input,
+input[type="text"]:not(.demo-shell *),
+input[type="email"]:not(.demo-shell *),
+input[type="tel"]:not(.demo-shell *),
+input[type="number"]:not(.demo-shell *),
+input[type="url"]:not(.demo-shell *),
+select:not(.demo-shell *),
+textarea:not(.demo-shell *){
+  background:var(--bg-2)!important;
+  border:1.5px solid var(--v3-line-2)!important;
+  color:var(--text-0)!important;
+}
+.text-input::placeholder,
+.textarea-input::placeholder,
+input::placeholder,
+textarea::placeholder{color:var(--text-3)!important;}
+.text-input:focus,
+.textarea-input:focus,
+input:focus,
+select:focus,
+textarea:focus{border-color:var(--blue)!important;outline:none;}
+
+/* ─── Pills / chips / tabs — dark surfaces with text-1 labels ──────────── */
+.pill,
+.chip,
+.q-chip,
+.checkbox-pill,
+.toc-pill,
+.int-chip,
+.sub-btn,
+.filter-tab{
+  background:rgba(255,255,255,0.03)!important;
+  border:1px solid var(--v3-line-2)!important;
+  color:var(--text-1)!important;
+}
+.pill:hover,
+.q-chip:hover,
+.checkbox-pill:hover,
+.toc-pill:hover,
+.filter-tab:hover{
+  background:rgba(255,255,255,0.06)!important;
+  border-color:var(--blue)!important;
+  color:var(--text-0)!important;
+}
+.q-chip.q-chip-on,
+.checkbox-pill.active,
+.filter-tab.active,
+.scenario-tab.active{
+  background:linear-gradient(180deg,rgba(59,130,246,0.18),rgba(59,130,246,0.08))!important;
+  border-color:var(--blue)!important;
+  color:var(--blue-2)!important;
+}
+.scenario-tab{color:var(--text-2)!important;}
+.scenario-tab:hover{background:rgba(255,255,255,0.04)!important;color:var(--text-0)!important;}
+
+/* questionnaire chip checkboxes / radios — interior dot/check */
+.chip-label{
+  background:rgba(255,255,255,0.03)!important;
+  border:1.5px solid var(--v3-line-2)!important;
+  color:var(--text-0)!important;
+}
+.chip-label:hover{
+  border-color:var(--blue)!important;
+  background:rgba(59,130,246,0.06)!important;
+}
+.chip-label.selected{
+  background:rgba(59,130,246,0.12)!important;
+  border-color:var(--blue)!important;
+  color:var(--blue-2)!important;
+}
+.chip-label .chip-check,
+.chip-label .chip-radio{
+  background:var(--bg-2)!important;
+  border:1.5px solid var(--v3-line-2)!important;
+}
+.chip-label.selected .chip-check,
+.chip-label.selected .chip-radio{
+  background:var(--blue)!important;border-color:var(--blue)!important;
+}
+
+/* ─── Sticky page headers (about, thanks, free-roadmap, questionnaire) ──── */
+.nav-bar,
+.site-nav,
+body > header:not(.site-masthead *){
+  background:rgba(11,15,23,0.55)!important;
+  backdrop-filter:blur(18px) saturate(1.6)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(1.6)!important;
+  border-bottom:1px solid var(--v3-line)!important;
+  color:var(--text-1)!important;
+}
+.nav-actions a.btn-secondary,
+.nav-back{color:var(--text-1)!important;}
+.nav-back:hover{color:var(--text-0)!important;}
+.logo{color:var(--text-0)!important;}
+.logo-bar{background:var(--text-0)!important;}
+
+/* ─── Universal page footers (free-roadmap, agent-library, questionnaire) ── */
+.site-footer,
+body > footer:not(.lib-cta *){
+  color:var(--text-2)!important;
+  border-top:1px solid var(--v3-line)!important;
+}
+.site-footer a,
+body > footer a{color:var(--text-2)!important;}
+.site-footer a:hover,
+body > footer a:hover{color:var(--text-0)!important;}
+.site-footer .copy,
+footer .copy{color:var(--text-3)!important;border-top-color:var(--v3-line)!important;}
+
+/* ─── Muted/secondary text — re-color to text-2 (~7:1 on bg-0) ─────────── */
+.subtitle,
+.lede,
+.panel-label,
+.cal-header,
+.back-btn,
+.nav-link,
+.nav-back,
+.scenario-meta,
+.article-summary,
+.article-date,
+.badge-default,
+.step-hint,
+.field-label,
+.progress-meta,
+.loading-sub,
+.loading-step,
+.benefit-item,
+.form-fineprint,
+.form-sub,
+.lib-deck,
+.scenario-deck,
+.outcome,
+.email-label,
+.table-scroll-hint,
+.fineprint,
+.eyebrow,
+.prose .updated{color:var(--text-2)!important;}
+.lib-deck strong,
+.scenario-deck strong,
+.outcome strong{color:var(--text-0)!important;}
+
+/* Headings/labels that need to be readable */
+.lib-h1,
+.scenario h2,
+.about-stat-val,
+.about-stat-label,
+.article-title,
+.progress-meta .step-label,
+.guarantee-strip-text,
+.guarantee-strip-text strong,
+.bullets li,
+.hero-col .lead{color:var(--text-0)!important;}
+.about-stat-label{color:var(--text-2)!important;}
+.article-title:hover{color:var(--orange-2)!important;}
+
+/* Hover states that previously went invisible */
+.back-btn:hover,
+.nav-link:hover,
+nav a:hover,
+.filter-tab:hover{color:var(--text-0)!important;}
+
+/* ─── Dividers, progress tracks, vertical lines ────────────────────────── */
+.progress-track,
+.step-line::before,
+.scenario-meta .sep,
+hr{background:var(--v3-line)!important;}
+.scenario,
+.outcome-row{border-top-color:var(--v3-line)!important;border-bottom-color:var(--v3-line)!important;}
+.scenario:nth-of-type(even){background:rgba(255,255,255,0.015)!important;}
+.calendar-nav button{
+  background:rgba(255,255,255,0.03)!important;
+  border:1px solid var(--v3-line-2)!important;
+  color:var(--text-1)!important;
+}
+.calendar-nav button:hover{background:rgba(255,255,255,0.06)!important;color:var(--text-0)!important;}
+
+/* ─── Calendar disabled days + slot buttons (book.html hardcoded grays) ─── */
+.cal-day:disabled,
+.cal-day.other-month{color:var(--text-3)!important;}
+.slot-btn{
+  background:rgba(255,255,255,0.03)!important;
+  border:1px solid var(--v3-line-2)!important;
+  color:var(--text-0)!important;
+}
+.slot-btn:hover:not(:disabled){
+  background:rgba(59,130,246,0.10)!important;border-color:var(--blue)!important;
+}
+.slot-btn:disabled{
+  background:rgba(255,255,255,0.015)!important;
+  color:var(--text-3)!important;
+  border-color:var(--v3-line)!important;
+}
+
+/* ─── Resources page badges (cream pills with dark text) ────────────────── */
+.badge-anthropic,
+.badge-openai,
+.badge-deepmind,
+.badge-thebatch,
+.badge-mittechreview,
+.badge-default{
+  background:rgba(255,255,255,0.04)!important;
+  border:1px solid var(--v3-line-2)!important;
+  color:var(--text-1)!important;
+}
+.badge-anthropic{color:#fdba74!important;border-color:rgba(251,146,60,0.35)!important;background:rgba(251,146,60,0.10)!important;}
+.badge-openai{color:#34d399!important;border-color:rgba(52,211,153,0.35)!important;background:rgba(52,211,153,0.10)!important;}
+.badge-deepmind{color:#60a5fa!important;border-color:rgba(96,165,250,0.35)!important;background:rgba(59,130,246,0.10)!important;}
+.badge-thebatch{color:#a78bfa!important;border-color:rgba(167,139,250,0.35)!important;background:rgba(167,139,250,0.10)!important;}
+.badge-mittechreview{color:#f87171!important;border-color:rgba(248,113,113,0.35)!important;background:rgba(248,113,113,0.10)!important;}
+
+/* ─── Resources skeleton shimmer ───────────────────────────────────────── */
+.skeleton{
+  background:linear-gradient(90deg,var(--bg-2) 25%,var(--bg-3) 50%,var(--bg-2) 75%)!important;
+}
+
+/* ─── Privacy page prose body (hardcoded #374151) ──────────────────────── */
+.prose p,
+.prose li{color:var(--text-1)!important;}
+.prose h2,
+.prose h3{color:var(--text-0)!important;}
+
+/* ─── Free-roadmap guarantee strip + form-error (cream tint, dark crimson) ── */
+.guarantee-strip{
+  background:linear-gradient(180deg,rgba(251,146,60,0.10),rgba(251,146,60,0.03))!important;
+  border:1.5px solid rgba(251,146,60,0.35)!important;
+}
+.guarantee-strip-text small{color:var(--orange-2)!important;}
+.form-error,
+.field-error{
+  background:rgba(248,113,113,0.10)!important;
+  border:1px solid rgba(248,113,113,0.35)!important;
+  color:#fca5a5!important;
+}
+
+/* ─── Questionnaire loading overlay (cream → dark glass) ───────────────── */
+.loading-overlay{
+  background:rgba(7,9,13,0.92)!important;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+.loading-spinner{border-color:var(--v3-line-2)!important;border-top-color:var(--blue)!important;}
+.loading-step.active{color:var(--text-0)!important;}
+.loading-step .step-dot{background:var(--v3-line-2)!important;}
+.loading-step.active .step-dot{background:var(--blue)!important;}
+
+/* ─── Comparison table — cream/pale-blue cells become dark with accents ── */
+.cmp-table td{border-top-color:var(--v3-line)!important;}
+.cmp-table tbody tr:hover td{background:rgba(255,255,255,0.03)!important;}
+.cmp-table .col-va{background:rgba(248,113,113,0.05)!important;color:var(--text-2)!important;}
+.cmp-table .col-ramp{background:rgba(59,130,246,0.05)!important;color:var(--text-0)!important;}
+.cmp-table .col-ramp-win{background:rgba(52,211,153,0.05)!important;}
+.cmp-table .label-col{color:var(--text-0)!important;background:transparent!important;}
+.math-bar-track{background:var(--v3-line)!important;}
+.table-scroll::after{
+  background:linear-gradient(90deg,rgba(7,9,13,0) 0%,var(--bg-0) 100%)!important;
+}
+
+/* ─── Agent-library lib-hero gridline tweak (cream linework on dark) ───── */
+.lib-hero{
+  background:transparent!important;
+  border-bottom:1px solid var(--v3-line)!important;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)!important;
+}
+
+/* ─── About page hero/founder/CTA inheritances ─────────────────────────── */
+.about-stat-val{color:var(--text-0)!important;}
+
+/* ─── Generic site-wide cleanup for any remaining var(--ink) text class ── */
+/* Catches all the leftover .someClass { color:var(--ink) } rules across pages.
+   Excluded: .demo-shell descendants (page-specific dark theme) and .slack
+   descendants (intentional Slack-fidelity white card in agent-library). */
+body :not(.demo-shell):not(.demo-shell *):not(.slack):not(.slack *) > h1[style*="color:var(--ink)"],
+body :not(.demo-shell):not(.demo-shell *):not(.slack):not(.slack *) > h2[style*="color:var(--ink)"],
+body :not(.demo-shell):not(.demo-shell *):not(.slack):not(.slack *) > h3[style*="color:var(--ink)"]{
+  color:var(--text-0)!important;
+}
+
 /* ─── Reduced motion ────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce){
   .v3-eyebrow .dot{animation:none;}
