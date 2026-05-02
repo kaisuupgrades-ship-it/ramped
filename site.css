@@ -1,8 +1,11 @@
 /* ===== Ramped AI — Shared site styles (v3 dark) ===== */
 :root{
-  --bg-0:#07090d; --bg-1:#0b0f17; --bg-2:#11161f; --bg-3:#161c27; --bg-4:#1c2331;
-  --line:#1f2735; --line-2:#2a3344;
-  --text-0:#f4f6fa; --text-1:#c5cdd9; --text-2:#8b94a3; --text-3:#5a6373;
+  /* Brand v3.1 — base lifted ~5 luminance units from v3 (07090d) so the page
+     reads less black-hole and more GitHub-Dark / Linear. Ambient gradients on
+     <body> below add a top-of-page blue+orange glow for warmth. */
+  --bg-0:#0d121b; --bg-1:#11171f; --bg-2:#161d28; --bg-3:#1c2330; --bg-4:#232b3a;
+  --line:#262f3f; --line-2:#323c4e;
+  --text-0:#f4f6fa; --text-1:#c8d0dc; --text-2:#929bab; --text-3:#646e7e;
   --blue:#3b82f6; --blue-2:#60a5fa; --blue-glow:rgba(59,130,246,0.35);
   --orange:#fb923c; --orange-2:#fdba74; --orange-glow:rgba(251,146,60,0.30);
   --green:#34d399; --good:#34d399; --red:#f87171; --purple:#a78bfa; --warn:#fbbf24;
@@ -15,9 +18,10 @@ html,body{margin:0;padding:0;background:var(--bg-0);color:var(--text-0);
   font-family:var(--font-sans);font-feature-settings:"ss01","cv11";
   -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
 body{background:
-  radial-gradient(1200px 600px at 50% -200px,rgba(59,130,246,0.18),transparent 60%),
-  radial-gradient(900px 500px at 90% 10%,rgba(251,146,60,0.10),transparent 60%),
-  var(--bg-0);min-height:100vh}
+  radial-gradient(1400px 700px at 50% -150px,rgba(96,165,250,0.22),transparent 60%),
+  radial-gradient(1000px 600px at 92% 8%,rgba(251,146,60,0.16),transparent 60%),
+  radial-gradient(900px 600px at 8% 90%,rgba(96,165,250,0.10),transparent 60%),
+  var(--bg-0);min-height:100vh;background-attachment:fixed}
 a{color:inherit;text-decoration:none}
 button{font-family:inherit;cursor:pointer}
 img{max-width:100%;display:block}
