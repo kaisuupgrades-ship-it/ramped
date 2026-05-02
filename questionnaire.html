@@ -133,4 +133,31 @@ const counter=document.getElementById("q-counter"),bar=document.getElementById("
   next=document.getElementById("q-next"),back=document.getElementById("q-back"),skip=document.getElementById("q-skip");
 function show(n){cur=Math.max(1,Math.min(total,n));steps.forEach(s=>s.classList.toggle("on",+s.dataset.q===cur));counter.textContent=`Question ${cur} / ${total}`;bar.style.setProperty("--prog",`${(cur/total)*100}%`);back.style.visibility=cur===1?"hidden":"visible";next.textContent=cur===total?"Submit →":"Continue →"}
 
-function _radio(n){const el=docum
+function _radio(n){const el=document.querySelector(`input[name="${n}"]:checked`);return el?el.value:"";}
+function _checks(n){return [...document.querySelectorAll(`input[name="${n}"]:checked`)].map(x=>x.value);}
+function _text(n){const el=document.querySelector(`[name="${n}"]`);return el?String(el.value||"").trim():"";}
+
+async function submitQuestionnaire(){
+  next.disabled=true;next.textContent="Submitting…";
+  const payload={booking_id:BID,email:EMAIL,
+    business_description:_text("biz"),revenue:_radio("rev"),team_size:_radio("team"),
+    pain_points:_checks("pain"),hours_lost:_radio("hours"),stack:_text("stack"),
+    prior_attempts:_radio("prior"),prior_notes:_text("prior_notes"),
+    success_definition:_text("success"),budget:_radio("budget"),notes:_text("notes")};
+  try{
+    const r=await fetch("/api/questionnaire",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+    if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.error||"Submission failed");}
+    location.href="/thanks?intent=questionnaire";
+  }catch(err){
+    next.disabled=false;next.textContent="Submit →";
+    alert(err.message||"Something went wrong. Email jon@30dayramp.com and we'll get this in.");
+  }
+}
+
+next.addEventListener("click",()=>{if(cur===total){submitQuestionnaire();return}show(cur+1)});
+back.addEventListener("click",()=>show(cur-1));
+skip.addEventListener("click",()=>{if(cur===total){submitQuestionnaire();return}show(cur+1)});
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

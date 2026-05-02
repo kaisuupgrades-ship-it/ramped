@@ -1,195 +1,397 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>About — Ramped AI</title>
-<meta name="description" content="Built by Andrew Yoon, a 10-year operator and founder of Xtractor Depot. We're an AI implementation team for operating businesses." />
-<link rel="canonical" href="https://www.30dayramp.com/about" />
-<link rel="icon" href="favicon.ico" />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="site.css" />
-<style>
-.about-hero{padding:80px 0 32px;position:relative}
-.about-hero h1{font-size:clamp(40px,6vw,68px);letter-spacing:-0.035em;line-height:1.04;margin:18px 0 0;font-weight:700;text-wrap:balance;max-width:980px}
-.about-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:48px;align-items:start}
-@media (max-width:900px){.about-grid{grid-template-columns:1fr}}
-.story-block{display:flex;flex-direction:column;gap:18px}
-.story-block p{margin:0;color:var(--text-1);font-size:16px;line-height:1.65;text-wrap:pretty}
-.story-block p strong{color:var(--text-0)}
-.founder-card{background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005));
-  border:1px solid var(--line);border-radius:20px;padding:28px;position:sticky;top:120px}
-.founder-photo{width:100%;aspect-ratio:1/1;border-radius:14px;margin-bottom:18px;
-  background:repeating-linear-gradient(135deg,#1c2331 0 8px,#161c27 8px 16px);
-  border:1px dashed var(--line-2);display:grid;place-items:center;color:var(--text-3);
-  font-family:var(--font-mono);font-size:12px}
-.founder-name{font-size:22px;font-weight:700;letter-spacing:-0.02em}
-.founder-role{color:var(--text-2);font-size:14px;margin-top:4px}
-.founder-meta{margin-top:18px;display:flex;flex-direction:column;gap:10px;padding-top:18px;border-top:1px solid var(--line)}
-.founder-meta div{font-size:13.5px;color:var(--text-1);display:flex;justify-content:space-between;gap:14px}
-.founder-meta div span:first-child{color:var(--text-3);font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:0.08em}
-.principles-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:8px}
-@media (max-width:800px){.principles-grid{grid-template-columns:1fr}}
-.principle{background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005));
-  border:1px solid var(--line);border-radius:16px;padding:24px}
-.principle .num{font-family:var(--font-mono);font-size:11px;color:var(--blue-2);letter-spacing:0.1em}
-.principle h3{margin:8px 0 10px;font-size:19px;letter-spacing:-0.015em}
-.principle p{margin:0;color:var(--text-2);font-size:14px;line-height:1.55}
-.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-@media (max-width:800px){.team-grid{grid-template-columns:1fr 1fr}}
-@media (max-width:560px){.team-grid{grid-template-columns:1fr}}
-.team-card{background:rgba(255,255,255,0.02);border:1px solid var(--line);border-radius:16px;padding:22px}
-.team-card .photo{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#1c2331,#11161f);
-  border:1px dashed var(--line-2);margin-bottom:14px}
-.team-card h4{margin:0 0 4px;font-size:16px}
-.team-card .role{color:var(--text-2);font-size:13px}
-.team-card .bio{margin-top:10px;color:var(--text-2);font-size:13px;line-height:1.5}
-</style>
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=3">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>About — Ramped AI</title>
+  <meta name="description" content="Meet the team behind Ramped AI — operators who built the AI department they wished they'd had."/>
+
+  <!-- OG / Social -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.30dayramp.com/about" />
+  <meta property="og:title" content="About — Ramped AI" />
+  <meta property="og:description" content="Meet the team behind Ramped AI — operators who built the AI department they wished they'd had." />
+  <meta property="og:image" content="https://www.30dayramp.com/og-image.png" />
+  <meta property="og:site_name" content="Ramped AI" />
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="About — Ramped AI">
+  <meta name="twitter:description" content="Meet the team behind Ramped AI — operators who built the AI department they wished they'd had.">
+  <meta name="twitter:image" content="https://www.30dayramp.com/og-image.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3" />
+  <link rel="alternate icon" href="/favicon.ico?v=3" />
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://www.30dayramp.com/about" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Vercel Analytics -->
+  <script defer src="/_vercel/insights/script.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/v3-theme.css">
+  <style>
+    :root {
+      --ink:#0B1220; --ink-2:#1A2233;
+      --accent:#1F4FFF; --accent-2:#0B2A8C;
+      --muted:#5B6272; --line:#E6E4DC;
+      --paper:#FAFAF7; --surface:#F5F5F3;
+    }
+    html,body{background:var(--paper);color:var(--ink);font-family:'Inter',ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    .section-wrap{max-width:1120px;margin:0 auto;padding:0 24px;}
+    @media(min-width:768px){.section-wrap{padding:0 32px;}}
+    .btn-primary{background:var(--ink);color:#fff;padding:13px 22px;border-radius:10px;font-weight:600;font-size:15px;display:inline-flex;align-items:center;gap:8px;transition:transform .12s ease,opacity .12s ease;cursor:pointer;border:none;text-decoration:none;}
+    .btn-primary:hover{opacity:.88;transform:translateY(-1px);}
+    .btn-ghost{padding:13px 18px;border-radius:10px;font-weight:600;font-size:15px;color:var(--ink);border:1px solid var(--line);background:#fff;cursor:pointer;transition:background .12s ease;text-decoration:none;display:inline-flex;align-items:center;}
+    .btn-ghost:hover{background:var(--surface);}
+    .card{background:#fff;border:1px solid var(--line);border-radius:16px;}
+    .ink-shadow{box-shadow:0 1px 3px rgba(11,18,32,.07),0 4px 16px rgba(11,18,32,.05);}
+    .sectionnum{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+    .grid-bg{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:32px 32px;background-position:-1px -1px;}
+
+    /* Ticker — unified with homepage (PR 7 Tier A): JetBrains Mono, green dots, same scroll speed */
+    .ticker-bar{background:var(--ink);overflow:hidden;height:38px;display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,0.07);}
+    .ticker-track{display:flex;width:100%;overflow:hidden;mask-image:linear-gradient(to right,transparent 0%,black 6%,black 94%,transparent 100%);}
+    .ticker-items{display:inline-flex;align-items:center;white-space:nowrap;animation:ticker-scroll 36s linear infinite;}
+    .ticker-item{display:inline-flex;align-items:center;gap:9px;padding:0 36px;font-size:11.5px;font-weight:500;color:rgba(255,255,255,0.78);letter-spacing:.045em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;}
+    .ticker-dot{color:#4ADE80;font-size:7px;line-height:1;}
+    @keyframes ticker-scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+    .ticker-bar:hover .ticker-items{animation-play-state:paused;}
+
+    /* Team card */
+    .team-card{background:#fff;border:1px solid var(--line);border-radius:20px;}
+    .team-card-avatar{width:72px;height:72px;border-radius:50%;object-fit:cover;object-position:center 32%;flex-shrink:0;background:var(--surface);box-shadow:0 0 0 1px var(--line);}
+    .team-card-head{display:flex;align-items:center;gap:16px;margin-bottom:8px;}
+
+    /* Stat strip */
+    .about-stat{border-left:3px solid var(--accent);padding-left:16px;}
+    .about-stat-val{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:700;color:var(--ink);line-height:1;display:block;margin-bottom:6px;}
+    .about-stat-label{font-size:13px;color:var(--muted);line-height:1.5;}
+
+    /* Value icon */
+    .value-icon{width:40px;height:40px;border-radius:10px;background:var(--surface);display:flex;align-items:center;justify-content:center;margin-bottom:14px;flex-shrink:0;}
+
+    nav a:hover{color:var(--ink);}
+
+    /* Skip link */
+    .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 14px;border-radius:0 0 8px 0;font-size:13px;font-weight:600;z-index:100;}
+    .skip-link:focus{left:0;}
+    a:focus-visible, button:focus-visible {outline:2px solid var(--accent);outline-offset:2px;border-radius:6px;}
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .ticker-items { animation: none !important; }
+      *, *::before, *::after { transition-duration: 0.001ms !important; animation-duration: 0.001ms !important; }
+    }
+  </style>
 </head>
 <body>
-<a class="skip" href="#main">Skip to main content</a>
-<div id="ramped-header"></div>
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<!-- ─── MASTHEAD (canonical — keep byte-identical across pages) ──────────── -->
+<div class="site-masthead" style="position:sticky;top:0;z-index:40;">
+<header class="border-b border-[var(--line)] bg-[var(--paper)]/90 backdrop-blur">
+  <div style="max-width:1120px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+    <a href="/" class="flex items-center gap-2 shrink-0" aria-label="Ramped AI — home">
+      <svg width="48" height="48" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="rampedSwoopNav" x1="17.46" y1="84.69" x2="76" y2="11.64" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#0A2540"/>
+            <stop offset="58%" stop-color="#006BD6"/>
+            <stop offset="100%" stop-color="#00D4FF"/>
+          </linearGradient>
+        </defs>
+        <path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="url(#rampedSwoopNav)"/>
+      </svg>
+      <span class="font-bold text-lg tracking-tight ml-2">Ramped AI</span>
+    </a>
+    <nav class="hidden sm:flex items-center gap-3" aria-label="Primary">
+      <a href="/about"      class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;background:var(--surface);" aria-current="page">About</a>
+      <a href="/#pricing"   class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">Pricing</a>
+      <a href="/comparison" class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">Compare</a>
+      <a href="/book"       class="btn-primary whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">Book a call →</a>
+    </nav>
+    <div class="sm:hidden flex items-center gap-2">
+      <a href="/book" class="btn-primary" style="padding:11px 14px;font-size:13px;min-height:44px;">Book a call →</a>
+      <button type="button" id="mobile-nav-toggle" aria-expanded="false" aria-controls="mobile-nav-drawer" aria-label="Open menu"
+        style="width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;">
+        <svg width="18" height="14" viewBox="0 0 18 14" aria-hidden="true" focusable="false">
+          <rect y="0"  width="18" height="2" rx="1" fill="currentColor"/>
+          <rect y="6"  width="18" height="2" rx="1" fill="currentColor"/>
+          <rect y="12" width="18" height="2" rx="1" fill="currentColor"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <nav id="mobile-nav-drawer" aria-label="Mobile" hidden class="sm:hidden"
+    style="border-top:1px solid var(--line);background:var(--paper);">
+    <ul style="list-style:none;margin:0;padding:8px 16px 16px;display:flex;flex-direction:column;gap:4px;">
+      <li><a href="/about"      style="display:block;padding:12px 8px;font-size:15px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);text-decoration:none;background:var(--surface);" aria-current="page">About</a></li>
+      <li><a href="/#pricing"   style="display:block;padding:12px 8px;font-size:15px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);text-decoration:none;">Pricing</a></li>
+      <li><a href="/comparison" style="display:block;padding:12px 8px;font-size:15px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);text-decoration:none;">Compare</a></li>
+      <li><a href="/book"       style="display:block;padding:12px 8px;font-size:15px;font-weight:700;color:var(--accent);text-decoration:none;">Book a call →</a></li>
+    </ul>
+  </nav>
+</header>
+<!-- Stats ticker (sticks WITH the nav) -->
+<div class="ticker-bar" role="marquee" aria-label="Key stats">
+  <div class="ticker-track">
+    <span class="ticker-items" aria-hidden="true">
+      <span class="ticker-item"><span class="ticker-dot">●</span>Save 40+ hours per week</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>30-day go-live guarantee</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>3× faster lead response time</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>Avg. $12,000+ / mo saved vs. staffing</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>5× avg. ROI in year 1</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>24/7 AI coverage — no sick days</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>Save 40+ hours per week</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>30-day go-live guarantee</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>3× faster lead response time</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>Avg. $12,000+ / mo saved vs. staffing</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>5× avg. ROI in year 1</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>24/7 AI coverage — no sick days</span>
+    </span>
+  </div>
+</div>
+</div>
+<script>
+  (function(){
+    var btn = document.getElementById('mobile-nav-toggle');
+    var drawer = document.getElementById('mobile-nav-drawer');
+    if(!btn || !drawer) return;
+    function setOpen(open){
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      if(open){ drawer.removeAttribute('hidden'); } else { drawer.setAttribute('hidden', ''); }
+    }
+    btn.addEventListener('click', function(){ setOpen(btn.getAttribute('aria-expanded') !== 'true'); });
+    drawer.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ setOpen(false); }); });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape') setOpen(false); });
+  })();
+</script>
 
 <main id="main">
-
-<section class="about-hero">
-  <div class="container">
-    <span class="eyebrow"><span class="pulse"></span>About Ramped AI</span>
-    <h1>We're operators who got tired of <span class="accent">AI consultants who don't ship.</span></h1>
-    <p class="lede">So we built the company we wished existed — one that builds and runs the agents instead of selling you another strategy deck.</p>
+<!-- Hero — proportions matched to homepage hero (PR 7 Tier B vertical-rhythm fix) -->
+<section class="grid-bg" style="position:relative;overflow:hidden;background-image:radial-gradient(1100px 600px at 95% -5%, rgba(31,79,255,0.12), transparent 60%), radial-gradient(800px 500px at -5% 105%, rgba(31,79,255,0.06), transparent 55%), linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);background-size:auto, auto, 32px 32px, 32px 32px;background-color:var(--paper);">
+  <div class="section-wrap" style="padding-top:88px;padding-bottom:104px;">
+    <!-- Eyebrow pill — visual parity with homepage's amber pill -->
+    <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 14px;margin-bottom:28px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,0.7);backdrop-filter:blur(6px);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase;">
+      <span style="width:6px;height:6px;border-radius:50%;background:var(--accent);"></span>
+      About Ramped AI
+    </div>
+    <h1 style="font-size:clamp(2.2rem,5vw,3.4rem);font-weight:800;line-height:1.05;letter-spacing:-.035em;color:var(--ink);max-width:760px;margin-bottom:24px;">
+      Built by operators,<br>for operators.
+    </h1>
+    <p style="font-size:1.075rem;color:var(--muted);line-height:1.7;max-width:620px;margin-bottom:36px;">
+      Ramped AI was founded by business owners who experienced the problem firsthand — manual, repetitive tasks draining time and capping growth. We didn't hire consultants to solve it. We built the AI department we wished we'd had.
+    </p>
+    <p style="font-size:13.5px;color:var(--muted);line-height:1.6;">
+      Founded by <strong style="color:var(--ink);font-weight:600;">Andrew Yoon</strong> — 10-year operator at Xtractor Depot.
+    </p>
   </div>
 </section>
 
-<section class="section" style="padding-top:32px">
-  <div class="container">
-    <div class="about-grid">
-      <div class="story-block">
-        <span class="kicker">Founder note</span>
-        <h2 style="font-size:clamp(26px,3vw,36px);letter-spacing:-0.025em;margin:0;line-height:1.15;text-wrap:balance">Why we started Ramped AI</h2>
-        <p>I spent ten years running operating businesses — distribution, fulfillment, e-commerce. The kind of company where one person wears six hats and "automation" usually means "another spreadsheet."</p>
-        <p>In 2024, I started using AI agents inside <strong>Xtractor Depot</strong> — my industrial-equipment business. The results were absurd. Quote turnaround dropped from 3 days to 8 minutes. We saved 14 hours a week on inventory work. By month three I'd freed up enough capacity to hire a salesperson instead of an admin.</p>
-        <p>Naturally, every operator I knew asked me to build them the same thing. So I did. And I noticed every consultant they'd already hired had given them <em>strategy</em> — slide decks, frameworks, "north stars" — but no working software.</p>
-        <p><strong>Ramped AI is the company we wish had existed.</strong> We don't sell roadmaps. We build, deploy, and run the agents on a flat monthly fee. If they aren't live in 30 days, you don't pay.</p>
-        <p style="color:var(--text-2);font-size:14.5px;margin-top:6px">— Andrew Yoon, Founder</p>
-      </div>
-      <aside class="founder-card">
-        <img src="/assets/team/andrew.jpg" alt="Andrew Yoon, Co-Founder &amp; CEO of Ramped AI" class="founder-photo" style="width:100%;aspect-ratio:1/1;border-radius:14px;margin-bottom:18px;object-fit:cover;object-position:center 32%;background:var(--bg-3);border:1px solid var(--line);">
-        <div class="founder-name">Andrew Yoon</div>
-        <div class="founder-role">Co-Founder &amp; CEO</div>
-        <div class="founder-meta">
-          <div><span>Operating</span><span>10 years</span></div>
-          <div><span>Prev</span><span>Xtractor Depot</span></div>
-          <div><span>Based in</span><span>Los Angeles, CA</span></div>
-          <div><span>Email</span><span><a href="mailto:jon@30dayramp.com" style="color:var(--blue-2)">jon@30dayramp.com</a></span></div>
-        </div>
-      </aside>
-    </div>
-  </div>
-</section>
 
-<section class="section">
-  <div class="container">
-    <div class="section-head">
-      <span class="kicker">Operating principles</span>
-      <h2>How we work, in three lines.</h2>
-    </div>
-    <div class="principles-grid">
-      <div class="principle"><div class="num">01</div><h3>We ship working software.</h3><p>No strategy decks. No "AI roadmap" deliverables. We build agents that run inside your real systems — HubSpot, NetSuite, Slack — and we put them in production.</p></div>
-      <div class="principle"><div class="num">02</div><h3>30 days, or it's free.</h3><p>One go-live deadline. One flat fee. If your first agent isn't running in production by day 30, we refund the engagement. No partial payments, no fine print.</p></div>
-      <div class="principle"><div class="num">03</div><h3>Operators only.</h3><p>We work with companies running real businesses — distribution, services, B2B. Not pre-revenue startups. Not AI-curious enterprises looking for a pilot. Operators who need leverage right now.</p></div>
+<!-- Origin story -->
+<section style="background:var(--paper);padding-block:96px;">
+  <div class="section-wrap">
+    <div style="margin-bottom:12px;"><span class="sectionnum">Our story</span></div>
+    <h2 style="font-size:clamp(1.5rem,3vw,2rem);font-weight:800;line-height:1.15;letter-spacing:-.02em;color:var(--ink);margin-bottom:28px;max-width:760px;">
+      We lived the problem before we built the solution.
+    </h2>
+    <div style="display:flex;flex-direction:column;gap:18px;font-size:16px;color:var(--muted);line-height:1.8;max-width:680px;">
+      <p>Running Xtractor Depot — a fast-scaling physical-goods business supplying extraction equipment to clients from cannabis operators to SpaceX and Lucid Motors — meant dealing with an endless stream of manual, repetitive tasks. Quote intake. Follow-up emails. Lead qualification. Status updates. Each one small on its own. Together, they consumed weeks of productive time every month.</p>
+      <p>Existing AI tools promised automation but delivered dashboards. Consultants delivered decks, not working software. The market had a clear gap: no one was actually building and running the systems for you on an ongoing basis.</p>
+      <p>Ramped AI was founded to close that gap. We deploy a fully operational AI department for any operating business — live in 30 days, on a flat monthly retainer. No technical staff required. No endless onboarding. Just results.</p>
     </div>
   </div>
 </section>
 
-<section class="section">
-  <div class="container">
-    <div class="section-head">
-      <span class="kicker">The team</span>
-      <h2>Small, senior, and shipping.</h2>
-      <p>We stay deliberately small so the people scoping your build are the same people writing the code.</p>
-    </div>
-    <div class="team-grid" style="grid-template-columns:repeat(2,1fr);max-width:980px;margin:0 auto;">
-      <div class="team-card" style="padding:28px;">
-        <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;">
-          <img src="/assets/team/andrew.jpg" alt="Andrew Yoon, Co-Founder &amp; CEO of Ramped AI" width="72" height="72" loading="lazy" decoding="async" style="width:72px;height:72px;border-radius:50%;object-fit:cover;object-position:center 32%;flex-shrink:0;background:var(--bg-3);border:1px solid var(--line);">
+<!-- Team -->
+<section class="bg-white" style="padding-block:96px;">
+  <div class="section-wrap">
+    <div style="margin-bottom:12px;"><span class="sectionnum">The team</span></div>
+    <h2 style="font-size:clamp(1.5rem,3vw,2rem);font-weight:800;line-height:1.15;letter-spacing:-.02em;color:var(--ink);margin-bottom:8px;">
+      Operators first. Technologists second.
+    </h2>
+    <p style="font-size:15px;color:var(--muted);line-height:1.7;max-width:560px;margin-bottom:48px;">
+      Two co-founders. We've spent years inside operating businesses — running them, banking them, building for them — and we know exactly what it costs to have the wrong systems.
+    </p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:28px;max-width:1040px;">
+
+      <!-- Andrew Yoon · Co-Founder & CEO -->
+      <div class="team-card ink-shadow" style="padding:32px;">
+        <div class="team-card-head">
+          <img src="/assets/team/andrew.jpg" alt="Andrew Yoon, Co-Founder & CEO of Ramped AI" class="team-card-avatar" width="72" height="72" loading="lazy" decoding="async">
           <div>
-            <h4 style="margin:0;font-size:18px;letter-spacing:-0.01em;">Andrew Yoon</h4>
-            <div class="role" style="color:var(--blue-2);font-weight:600;font-size:13px;margin-top:2px;">Co-Founder &amp; CEO</div>
+            <div style="font-size:19px;font-weight:800;color:var(--ink);letter-spacing:-.02em;line-height:1.2;">Andrew Yoon</div>
+            <div style="font-size:13px;font-weight:600;color:var(--accent);margin-top:4px;">Co-Founder &amp; CEO</div>
           </div>
         </div>
-        <div style="width:32px;height:2px;background:var(--line);margin:14px 0;"></div>
-        <p class="bio" style="font-size:13.5px;color:var(--text-2);line-height:1.7;margin:0 0 12px;">Andrew founded Xtractor Depot in 2016, growing it into a multi-industry supplier of precision lab equipment to clients ranging from cannabis operators to SpaceX and Lucid Motors. A Saint Louis University accounting graduate, he started his entrepreneurial journey in college.</p>
-        <p class="bio" style="font-size:13.5px;color:var(--text-2);line-height:1.7;margin:0 0 12px;">Running a fast-scaling physical-goods business exposed a universal gap: no one was building and running AI automation systems for operating businesses on an ongoing basis. That insight became Ramped AI.</p>
-        <p class="bio" style="font-size:13.5px;color:var(--text-2);line-height:1.7;margin:0 0 16px;">Outside the office, Andrew plays ice hockey, golf, tennis, and paintball. He lives in Los Angeles County with his wife Steph and their dogs.</p>
+        <div style="width:32px;height:2px;background:var(--line);margin:18px 0;"></div>
+        <p style="font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:14px;">Andrew founded Xtractor Depot in 2016, growing it into a multi-industry supplier of precision lab equipment to clients ranging from cannabis operators to SpaceX and Lucid Motors. A Saint Louis University accounting graduate, he started his entrepreneurial journey in college.</p>
+        <p style="font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:14px;">Running a fast-scaling physical-goods business exposed a universal gap: no one was building and running AI automation systems for operating businesses on an ongoing basis. That insight became Ramped AI.</p>
+        <p style="font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:20px;">Outside the office, Andrew plays ice hockey, golf, tennis, and paintball. He lives in Los Angeles County with his wife Steph and their dogs.</p>
         <div style="display:flex;flex-wrap:wrap;gap:6px;">
-          <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,0.04);color:var(--text-2);border:1px solid var(--line);">Operations</span>
-          <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,0.04);color:var(--text-2);border:1px solid var(--line);">B2B Sales</span>
-          <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,0.04);color:var(--text-2);border:1px solid var(--line);">Manufacturing</span>
-          <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,0.04);color:var(--text-2);border:1px solid var(--line);">AI Strategy</span>
+          <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface);color:var(--muted);border:1px solid var(--line);">Operations</span>
+          <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface);color:var(--muted);border:1px solid var(--line);">B2B Sales</span>
+          <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface);color:var(--muted);border:1px solid var(--line);">Manufacturing</span>
+          <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface);color:var(--muted);border:1px solid var(--line);">AI Strategy</span>
         </div>
       </div>
-      <div class="team-card" style="padding:28px;">
-        <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;">
-          <img src="/assets/team/jonathan.jpg" alt="Jonathan Roh, Co-Founder &amp; COO of Ramped AI" width="72" height="72" loading="lazy" decoding="async" style="width:72px;height:72px;border-radius:50%;object-fit:cover;object-position:center 32%;flex-shrink:0;background:var(--bg-3);border:1px solid var(--line);">
+
+      <!-- Jonathan Roh · Co-Founder & COO -->
+      <div class="team-card ink-shadow" style="padding:32px;">
+        <div class="team-card-head">
+          <img src="/assets/team/jonathan.jpg" alt="Jonathan Roh, Co-Founder & COO of Ramped AI" class="team-card-avatar" width="72" height="72" loading="lazy" decoding="async">
           <div>
-            <h4 style="margin:0;font-size:18px;letter-spacing:-0.01em;">Jonathan Roh</h4>
-            <div class="role" style="color:var(--blue-2);font-weight:600;font-size:13px;margin-top:2px;">Co-Founder &amp; COO</div>
+            <div style="font-size:19px;font-weight:800;color:var(--ink);letter-spacing:-.02em;line-height:1.2;">Jonathan Roh</div>
+            <div style="font-size:13px;font-weight:600;color:var(--accent);margin-top:4px;">Co-Founder &amp; COO</div>
           </div>
         </div>
-        <div style="width:32px;height:2px;background:var(--line);margin:14px 0;"></div>
-        <p class="bio" style="font-size:13.5px;color:var(--text-2);line-height:1.7;margin:0 0 12px;">A University of Missouri Trulaske College of Business graduate and Dean's List honoree, Jonathan started his career in commercial banking, working closely with owner-operators across manufacturing, distribution, and professional services.</p>
-        <p class="bio" style="font-size:13.5px;color:var(--text-2);line-height:1.7;margin:0 0 12px;">Hundreds of conversations later, he kept seeing the same pattern: manual workflows wasting hours every week, delaying customer responses, holding back businesses ready to scale. That insight led him to co-found Ramped AI alongside Andrew.</p>
-        <p class="bio" style="font-size:13.5px;color:var(--text-2);line-height:1.7;margin:0 0 16px;">As COO, Jonathan owns day-to-day execution and client delivery — making sure every implementation runs autonomously from week one. A Missouri native, he's based in the Chesterfield area.</p>
+        <div style="width:32px;height:2px;background:var(--line);margin:18px 0;"></div>
+        <p style="font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:14px;">A University of Missouri Trulaske College of Business graduate and Dean's List honoree, Jonathan started his career in commercial banking, working closely with owner-operators across manufacturing, distribution, and professional services.</p>
+        <p style="font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:14px;">Hundreds of conversations later, he kept seeing the same pattern: manual workflows wasting hours every week, delaying customer responses, holding back businesses ready to scale. That insight led him to co-found Ramped AI alongside Andrew.</p>
+        <p style="font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:20px;">As COO, Jonathan owns day-to-day execution and client delivery — making sure every implementation runs autonomously from week one. A Missouri native, he's based in the Chesterfield area.</p>
         <div style="display:flex;flex-wrap:wrap;gap:6px;">
-          <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,0.04);color:var(--text-2);border:1px solid var(--line);">Operations</span>
-          <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,0.04);color:var(--text-2);border:1px solid var(--line);">Client Delivery</span>
-          <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,0.04);color:var(--text-2);border:1px solid var(--line);">Banking &amp; Finance</span>
-          <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,0.04);color:var(--text-2);border:1px solid var(--line);">Process Design</span>
+          <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface);color:var(--muted);border:1px solid var(--line);">Operations</span>
+          <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface);color:var(--muted);border:1px solid var(--line);">Client Delivery</span>
+          <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface);color:var(--muted);border:1px solid var(--line);">Banking &amp; Finance</span>
+          <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface);color:var(--muted);border:1px solid var(--line);">Process Design</span>
         </div>
       </div>
+
     </div>
   </div>
 </section>
 
-<!-- 30-day timeline -->
-<section class="section" style="padding-top:48px">
-  <div class="container">
-    <div class="section-head">
-      <span class="eyebrow"><span class="pulse"></span>HOW WE DEPLOY</span>
-      <h2>Same 30 days. <span class="accent">Every engagement.</span></h2>
-    </div>
-    <div class="timeline-wrap" id="timeline-wrap">
-      <div class="tl-card" style="--w:25%"><div class="tl-num">01/04</div><div class="week">Week 1 · Diagnose</div><h3>Map your stack &amp; find the wins.</h3><p>Workshops with your team. Audit of NetSuite, HubSpot, QuickBooks, Slack. Locked deployment plan.</p><div class="tl-bar"></div></div>
-      <div class="tl-card" style="--w:50%"><div class="tl-num">02/04</div><div class="week">Week 2 · Build</div><h3>Wire the agents into production.</h3><p>Custom agent built and integrated with your real systems. First workflow running end-to-end in staging.</p><div class="tl-bar"></div></div>
-      <div class="tl-card" style="--w:75%"><div class="tl-num">03/04</div><div class="week">Week 3 · Test</div><h3>Pressure-test on real volume.</h3><p>Run agents against last quarter's data. Tune the edges. Approval flows wired into Slack.</p><div class="tl-bar"></div></div>
-      <div class="tl-card" style="--w:100%"><div class="tl-num">04/04</div><div class="week">Week 4 · Live</div><h3>Production. Day-one ROI.</h3><p>Agents take live traffic. Daily health checks. Monthly retainer kicks in for ongoing iteration.</p><div class="tl-bar"></div></div>
+<!-- Values -->
+<section class="grid-bg" style="background:linear-gradient(180deg,#F5F8FF 0%,var(--paper) 100%);padding-block:96px;">
+  <div class="section-wrap">
+    <div style="margin-bottom:12px;"><span class="sectionnum">How we work</span></div>
+    <h2 style="font-size:clamp(1.5rem,3vw,2rem);font-weight:800;line-height:1.15;letter-spacing:-.02em;color:var(--ink);margin-bottom:48px;">
+      A few things we care deeply about.
+    </h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;">
+
+      <div class="card ink-shadow" style="padding:24px;">
+        <div class="value-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M3 10l4 4 10-8" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:8px;">Results, not reports</div>
+        <p style="font-size:14px;color:var(--muted);line-height:1.7;">We measure success by hours saved and revenue recovered — not decks delivered or dashboards built.</p>
+      </div>
+
+      <div class="card ink-shadow" style="padding:24px;">
+        <div class="value-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <rect x="3" y="9" width="14" height="9" rx="2" stroke="var(--accent)" stroke-width="2"/>
+            <path d="M7 9V6a3 3 0 016 0v3" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:8px;">We own the risk</div>
+        <p style="font-size:14px;color:var(--muted);line-height:1.7;">30-day go-live guarantee with a full refund if we miss it. We don't get paid unless it works.</p>
+      </div>
+
+      <div class="card ink-shadow" style="padding:24px;">
+        <div class="value-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <rect x="2" y="5" width="16" height="12" rx="2" stroke="var(--accent)" stroke-width="2"/>
+            <path d="M6 5V4a2 2 0 014 0v1M10 5V4a2 2 0 014 0v1" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:8px;">One bill, everything included</div>
+        <p style="font-size:14px;color:var(--muted);line-height:1.7;">AI compute, hosting, maintenance, and iteration — all covered. No surprise invoices, no "that's out of scope."</p>
+      </div>
+
+      <div class="card ink-shadow" style="padding:24px;">
+        <div class="value-icon">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <polyline points="2,15 7,9 11,12 18,4" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div style="font-weight:700;font-size:15px;color:var(--ink);margin-bottom:8px;">Grows with you</div>
+        <p style="font-size:14px;color:var(--muted);line-height:1.7;">As your business scales, we expand the system. No new engagement, no renegotiation — just more automation.</p>
+      </div>
+
     </div>
   </div>
 </section>
 
-<div id="ramped-final-cta"></div>
+<!-- CTA -->
+<section class="bg-white" style="padding-block:96px;">
+  <div class="section-wrap" style="text-align:center;">
+    <h2 style="font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;line-height:1.15;letter-spacing:-.02em;color:var(--ink);margin-bottom:12px;">
+      Ready to ramp?
+    </h2>
+    <p style="font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:32px;max-width:460px;margin-left:auto;margin-right:auto;">Book a free 30-minute discovery call. We'll map out your biggest automation win and show you exactly what it's worth.</p>
+    <a href="/book" class="btn-primary" style="font-size:16px;padding:15px 32px;">Book a free discovery call →</a>
+    <p style="font-size:12px;color:var(--muted);margin-top:14px;">Free · No commitment · Live in 30 days or it's free</p>
+  </div>
+</section>
+
 </main>
 
-<div id="ramped-footer"></div>
-<script src="partials.js"></script>
-<script>
-const tlObs=new IntersectionObserver(([e])=>{if(e.isIntersecting){
-  document.querySelectorAll("#timeline-wrap .tl-card").forEach((c,i)=>setTimeout(()=>c.classList.add("in-view"),i*140));
-  tlObs.disconnect();
-}},{threshold:0.2});
-const tw=document.getElementById("timeline-wrap");if(tw)tlObs.observe(tw);
-</script>
+<!-- Footer -->
+<footer class="border-t border-[var(--line)] px-5 py-10">
+  <div class="section-wrap" style="display:flex;flex-direction:column;gap:20px;">
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:20px;">
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <svg width="22" height="18" viewBox="0 0 26 22" fill="none" aria-hidden="true">
+            <rect x="0"  y="14" width="5" height="8"  rx="1.5" fill="var(--accent)"/>
+            <rect x="7"  y="9"  width="5" height="13" rx="1.5" fill="var(--accent)" opacity=".75"/>
+            <rect x="14" y="4"  width="5" height="18" rx="1.5" fill="var(--accent)" opacity=".55"/>
+            <rect x="21" y="0"  width="5" height="22" rx="1.5" fill="var(--accent)" opacity=".35"/>
+          </svg>
+          <span style="font-weight:700;font-size:14px;color:var(--ink);">Ramped AI</span>
+        </div>
+        <p style="font-size:13px;color:var(--muted);">AI implementation for operating businesses</p>
+      </div>
+      <nav style="display:flex;flex-wrap:wrap;gap:8px 24px;align-items:center;">
+        <a href="/#how-it-works" style="font-size:13px;color:var(--muted);">How it works</a>
+        <a href="/#pricing"      style="font-size:13px;color:var(--muted);">Pricing</a>
+        <a href="/about"         style="font-size:13px;color:var(--muted);">About</a>
+        <a href="/comparison"    style="font-size:13px;color:var(--muted);">Compare</a>
+        <a href="/book"          style="font-size:13px;color:var(--muted);">Book a call</a>
+        <a href="/privacy"       style="font-size:13px;color:var(--muted);">Privacy</a>
+      </nav>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;padding-top:12px;border-top:1px solid var(--line);">
+      <p style="font-size:12px;color:var(--muted);">© 2026 Ramped AI. All rights reserved.</p>
+      <a href="mailto:jon@30dayramp.com" style="font-size:12px;color:var(--muted);">jon@30dayramp.com</a>
+    </div>
+  </div>
+</footer>
+
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@graph": [
+  "@type": "AboutPage",
+  "url": "https://www.30dayramp.com/about",
+  "name": "About — Ramped AI",
+  "description": "Meet the team behind Ramped AI — operators who built the AI department they wished they'd had.",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Ramped AI",
+    "url": "https://www.30dayramp.com/",
+    "logo": "https://www.30dayramp.com/apple-touch-icon.png"
+  },
+  "mainEntity": [
     {
       "@type": "Person",
       "name": "Andrew Yoon",
       "jobTitle": "Co-Founder & CEO",
       "worksFor": { "@type": "Organization", "name": "Ramped AI", "url": "https://www.30dayramp.com/" },
       "alumniOf": { "@type": "CollegeOrUniversity", "name": "Saint Louis University" },
-      "image": "https://www.30dayramp.com/assets/team/andrew.jpg",
       "description": "Andrew founded Xtractor Depot in 2016. After running a fast-scaling physical-goods business, he co-founded Ramped AI to deploy AI departments for operating businesses."
     },
     {
@@ -198,13 +400,4 @@ const tw=document.getElementById("timeline-wrap");if(tw)tlObs.observe(tw);
       "jobTitle": "Co-Founder & COO",
       "worksFor": { "@type": "Organization", "name": "Ramped AI", "url": "https://www.30dayramp.com/" },
       "alumniOf": { "@type": "CollegeOrUniversity", "name": "University of Missouri — Robert J. Trulaske, Sr. College of Business" },
-      "image": "https://www.30dayramp.com/assets/team/jonathan.jpg",
-      "description": "Jonathan started his career in commercial banking with owner-operators across manufacturing, distribution, and professional services. As COO of Ramped AI, he owns day-to-day execution and client delivery."
-    }
-  ]
-}
-</script>
-<script defer src="/_vercel/insights/script.js"></script>
-</body>
-</html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+      "description": "Jonathan started his career in commercial banking, working with owner-operators across manufacturing, distribution, and professional services. He co-founded Ramped AI to solve the manual-workflow 

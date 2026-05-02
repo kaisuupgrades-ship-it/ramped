@@ -114,4 +114,11 @@ async function loadResources(){
   }
 }
 document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>{
-  document.querySelectorAll(".filter")
+  document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("on",x===b));
+  render(b.dataset.cat);
+}));
+loadResources();
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

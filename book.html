@@ -239,12 +239,7 @@
 <div id="ramped-footer"></div>
 <script src="partials.js"></script>
 <script>
-/* ── /api/book + /api/availability + /api/questionnaire integration ──── */
-const TZ=(Intl.DateTimeFormat().resolvedOptions().timeZone)||"UTC";
-const _qp=new URLSearchParams(location.search);
-const TIER=_qp.get("tier")||"";const BILLING=_qp.get("billing")||"";
-const TIER_LABELS={starter:{monthly:"Starter — $2,500/mo monthly",annual:"Starter — $2,083/mo annual"},growth:{monthly:"Growth — $5,000/mo monthly",annual:"Growth — $4,167/mo annual"},enterprise:{monthly:"Enterprise — From $10K/mo",annual:"Enterprise — From $10K/mo"}};
-
+/* ===== Stepper ===== */
 const steps=[...document.querySelectorAll(".form-step")];
 const total=steps.length;let cur=1;
 const counter=document.getElementById("step-counter"),bar=document.getElementById("prog-bar"),
@@ -253,45 +248,84 @@ function show(n){cur=Math.max(1,Math.min(total,n));steps.forEach(s=>s.classList.
 next.addEventListener("click",()=>{if(cur===total){submit();return}show(cur+1)});
 back.addEventListener("click",()=>show(cur-1));
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&document.activeElement.tagName!=="TEXTAREA"){e.preventDefault();next.click()}});
-
-function _isValidEmail(s){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s||"").trim());}
-function _checks(name){return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(x=>x.value);}
-function _radio(name){const el=document.querySelector(`input[name="${name}"]:checked`);return el?el.value:"";}
-function combineDateAndSlot(date,slot){const m=String(slot).match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);if(!m)return date.toISOString();let h=parseInt(m[1],10);const mm=parseInt(m[2],10);const isPM=m[3].toUpperCase()==="PM";if(isPM&&h<12)h+=12;if(!isPM&&h===12)h=0;const d=new Date(date);d.setHours(h,mm,0,0);return d.toISOString();}
-
+/* ── /api/book + /api/questionnaire integration ──── */
+const TZ=(Intl.DateTimeFormat().resolvedOptions().timeZone)||"UTC";
+const _qp=new URLSearchParams(location.search);
+const TIER=_qp.get("tier")||"";const BILLING=_qp.get("billing")||"";
+function _isValidEmail(s){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s||"").trim())}
+function _checks(n){return [...document.querySelectorAll(`input[name="${n}"]:checked`)].map(x=>x.value)}
+function _radio(n){const el=document.querySelector(`input[name="${n}"]:checked`);return el?el.value:""}
+function combineDateAndSlot(date,slot){const m=String(slot).match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);if(!m)return date.toISOString();let h=parseInt(m[1],10);const mm=parseInt(m[2],10);const isPM=m[3].toUpperCase()==="PM";if(isPM&&h<12)h+=12;if(!isPM&&h===12)h=0;const d=new Date(date);d.setHours(h,mm,0,0);return d.toISOString()}
 async function submit(){
-  if(!selectedDate||!selectedSlot){alert("Please select a date and time slot first.");show(total);return;}
-  const f=document.getElementById("book-form");const fd=new FormData(f);
-  const name=(fd.get("name")||"").toString().trim();
-  const email=(fd.get("email")||"").toString().trim();
-  const company=(fd.get("company")||"").toString().trim();
-  if(!name||!_isValidEmail(email)||!company){alert("Please complete name, email, and company.");show(name?(_isValidEmail(email)?3:2):1);return;}
-  const role=_radio("role"),teamSize=_radio("team_size"),revenue=_radio("revenue"),
-    industry=_radio("industry"),budget=_radio("budget"),
-    pains=_checks("pain"),stacks=_checks("stack");
-  const website=(fd.get("website")||"").toString().trim();
-  const phone=(fd.get("phone")||"").toString().trim();
-  const userNotes=(fd.get("notes")||"").toString().trim();
-  const lines=[];
-  if(role)lines.push(`Role: ${role}`);
-  if(teamSize)lines.push(`Team size: ${teamSize}`);
-  if(revenue)lines.push(`Revenue: ${revenue}`);
-  if(industry)lines.push(`Industry: ${industry}`);
-  if(budget)lines.push(`Budget: ${budget}`);
-  if(pains.length)lines.push(`Pains: ${pains.join(", ")}`);
-  if(stacks.length)lines.push(`Stack: ${stacks.join(", ")}`);
-  if(website)lines.push(`Website: ${website}`);
-  if(phone)lines.push(`Phone: ${phone}`);
-  if(userNotes)lines.push(`\n${userNotes}`);
-  const notes=lines.join("\n");
-  const datetime=combineDateAndSlot(selectedDate,selectedSlot);
+  if(!selectedDate||!selectedSlot){alert("Please select a date and time slot.");show(total);return}
+  const f=document.getElementById("book-form"),fd=new FormData(f);
+  const name=(fd.get("name")||"").toString().trim(),email=(fd.get("email")||"").toString().trim(),company=(fd.get("company")||"").toString().trim();
+  if(!name||!_isValidEmail(email)||!company){alert("Please complete name, email, and company.");show(name?(_isValidEmail(email)?3:2):1);return}
+  const lines=[];const role=_radio("role"),teamSize=_radio("team_size"),revenue=_radio("revenue"),industry=_radio("industry"),budget=_radio("budget"),pains=_checks("pain"),stacks=_checks("stack");
+  const website=(fd.get("website")||"").toString().trim(),phone=(fd.get("phone")||"").toString().trim(),userNotes=(fd.get("notes")||"").toString().trim();
+  if(role)lines.push(`Role: ${role}`);if(teamSize)lines.push(`Team size: ${teamSize}`);if(revenue)lines.push(`Revenue: ${revenue}`);if(industry)lines.push(`Industry: ${industry}`);if(budget)lines.push(`Budget: ${budget}`);if(pains.length)lines.push(`Pains: ${pains.join(", ")}`);if(stacks.length)lines.push(`Stack: ${stacks.join(", ")}`);if(website)lines.push(`Website: ${website}`);if(phone)lines.push(`Phone: ${phone}`);if(userNotes)lines.push(`\n${userNotes}`);
+  const notes=lines.join("\n");const datetime=combineDateAndSlot(selectedDate,selectedSlot);
   next.disabled=true;next.textContent="Booking…";
   try{
     const r=await fetch("/api/book",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({datetime,name,email,company,notes,timezone:TZ,tier:TIER,billing:BILLING})});
     const data=await r.json().catch(()=>({}));
-    if(!r.ok){throw new Error(data.error||"Booking failed");}
-    if(data.booking_id||data.id){
-      const bid=data.booking_id||data.id;
-      fetch("/api/questionnaire",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({booking_id:bid,email,role,team_size:teamSize,revenue,industry,pain_points:pains,stack:stacks,budget,website,company})}).catch(()=>{});
-    }
-    const q=new URLSe
+    if(!r.ok)throw new Error(data.error||"Booking failed");
+    if(data.booking_id||data.id){const bid=data.booking_id||data.id;fetch("/api/questionnaire",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({booking_id:bid,email,role,team_size:teamSize,revenue,industry,pain_points:pains,stack:stacks,budget,website,company})}).catch(()=>{})}
+    const q=new URLSearchParams({intent:"booking",date:selectedDate.toISOString().slice(0,10),slot:selectedSlot});
+    if(TIER)q.set("tier",TIER);if(BILLING)q.set("billing",BILLING);
+    location.href="/thanks?"+q.toString();
+  }catch(err){next.disabled=false;next.textContent="Confirm booking →";alert(err.message||"Something went wrong. Email jon@30dayramp.com and we'll book you in.")}
+}
+
+/* ===== Calendar ===== */
+const grid=document.getElementById("cal-grid"),moLabel=document.getElementById("mo-label"),
+  slotsEl=document.getElementById("slots"),slotsLabel=document.getElementById("slots-label"),
+  summary=document.getElementById("selected-summary");
+let view=new Date();view.setDate(1);let selectedDate=null,selectedSlot=null;
+/* Real availability from /api/availability with cache; falls back to weekday slots if endpoint errors. */
+const _slotCache={};
+const _SLOTS_FALLBACK={1:["9:00 AM","10:30 AM","1:00 PM","3:30 PM"],2:["8:30 AM","11:00 AM","2:00 PM"],3:["9:30 AM","12:00 PM","2:30 PM","4:00 PM"],4:["10:00 AM","1:30 PM","3:00 PM"],5:["9:00 AM","11:30 AM"]};
+async function fetchSlots(date){const ymd=date.toISOString().slice(0,10);if(_slotCache[ymd])return _slotCache[ymd];try{const r=await fetch(`/api/availability?date=${ymd}&timezone=${encodeURIComponent(TZ)}`);if(!r.ok)throw 0;const d=await r.json();_slotCache[ymd]=Array.isArray(d.slots)?d.slots:[];return _slotCache[ymd]}catch(e){_slotCache[ymd]=_SLOTS_FALLBACK[date.getDay()]||[];return _slotCache[ymd]}}
+function render(){
+  grid.innerHTML="";
+  ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(d=>{const el=document.createElement("div");el.className="dow";el.textContent=d;grid.appendChild(el)});
+  moLabel.textContent=view.toLocaleString("en-US",{month:"long",year:"numeric"});
+  const first=new Date(view.getFullYear(),view.getMonth(),1);
+  const dim=new Date(view.getFullYear(),view.getMonth()+1,0).getDate();
+  for(let i=0;i<first.getDay();i++){const e=document.createElement("div");grid.appendChild(e)}
+  for(let d=1;d<=dim;d++){
+    const date=new Date(view.getFullYear(),view.getMonth(),d);
+    const today=new Date();today.setHours(0,0,0,0);
+    const dow=date.getDay();
+    const has=dow>=1&&dow<=5&&date>=today;
+    const past=date<today;
+    const cell=document.createElement("button");
+    cell.type="button";cell.className="cal-day"+(has?" has":"")+(past||!has?" disabled":"");
+    cell.textContent=d;
+    if(has)cell.addEventListener("click",async()=>{selectedDate=date;selectedSlot=null;document.querySelectorAll(".cal-day.selected").forEach(x=>x.classList.remove("selected"));cell.classList.add("selected");await renderSlots();updateSummary()});
+    grid.appendChild(cell);
+  }
+}
+async function renderSlots(){
+  slotsLabel.textContent=selectedDate.toLocaleDateString("en-US",{weekday:"long",month:"short",day:"numeric"});
+  slotsEl.className="cal-empty";slotsEl.textContent="Loading…";
+  const list=await fetchSlots(selectedDate);
+  if(!list.length){slotsEl.className="cal-empty";slotsEl.textContent="No slots available — try another date.";return}
+  slotsEl.className="slot-grid";slotsEl.innerHTML="";
+  list.forEach(s=>{const b=document.createElement("button");b.type="button";b.className="slot";b.textContent=s;
+    b.addEventListener("click",()=>{selectedSlot=s;document.querySelectorAll(".slot.selected").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");updateSummary();show(total)});
+    slotsEl.appendChild(b);
+  });
+}
+function updateSummary(){
+  if(!selectedDate){summary.textContent="No slot selected yet.";return}
+  const dt=selectedDate.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
+  summary.innerHTML=selectedSlot?`<strong style="color:var(--text-0)">${dt}</strong> at <strong style="color:var(--orange-2)">${selectedSlot}</strong> · 30 min · Google Meet`:`<strong style="color:var(--text-0)">${dt}</strong> · select a time →`;
+}
+document.getElementById("prev-mo").addEventListener("click",()=>{view=new Date(view.getFullYear(),view.getMonth()-1,1);render()});
+document.getElementById("next-mo").addEventListener("click",()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);render()});
+render();show(1);
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

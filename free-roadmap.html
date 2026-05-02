@@ -121,4 +121,36 @@
 <script>
 /* /api/free-roadmap — anonymous lead-magnet flow. Posts to api/free-roadmap.js
    which: (a) writes to leads + automation_maps tables, (b) generates a roadmap
-   via Anthropic, (c) emails the roadmap to the pros
+   via Anthropic, (c) emails the roadmap to the prospect with a "Book a discovery
+   call →" primary CTA. Tighter rate limit (3/hr/IP) — Anthropic calls cost real money. */
+const _form=document.getElementById("rm-form");
+function _radio(n){const el=_form.querySelector(`input[name="${n}"]:checked`);return el?el.value:"";}
+function _checks(n){return [..._form.querySelectorAll(`input[name="${n}"]:checked`)].map(x=>x.value);}
+function _text(n){const el=_form.querySelector(`[name="${n}"]`);return el?String(el.value||"").trim():"";}
+function _isValidEmail(s){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s||"").trim());}
+
+_form.addEventListener("submit",async e=>{
+  e.preventDefault();
+  const name=_text("name"),email=_text("email"),company=_text("company");
+  if(!name||!_isValidEmail(email)||!company){alert("Please complete name, email, and company.");return;}
+  const payload={
+    name,email,company,
+    role:_text("role"),team_size:_text("team_size"),
+    pain_points:_checks("pain"),stack:_checks("stack"),
+    notes:_text("vision")||_text("notes")
+  };
+  const btn=_form.querySelector("button[type='submit']");
+  if(btn){btn.disabled=true;btn.textContent="Generating your roadmap…";}
+  try{
+    const r=await fetch("/api/free-roadmap",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+    if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.error||"Submission failed");}
+    location.href="/thanks?intent=roadmap";
+  }catch(err){
+    if(btn){btn.disabled=false;btn.textContent="Send me my roadmap →";}
+    alert(err.message||"Something went wrong. Email jon@30dayramp.com and we'll get this to you.");
+  }
+});
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

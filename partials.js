@@ -1,17 +1,21 @@
 /* Shared masthead + footer renderer for Ramped AI site */
 (function(){
-  const path = location.pathname.split("/").pop() || "index.html";
-  const isHome = path==="index.html"||path==="";
+  // Vercel rewrites .html → clean URL. Match against trailing path segment.
+  const seg = location.pathname.replace(/\/$/, "").split("/").pop() || "";
+  const isHome = seg===""||seg==="index"||seg==="index.html";
+  const isAbout = seg==="about"||seg==="about.html";
+  const isCompare = seg==="comparison"||seg==="comparison.html";
+  const isResources = seg==="resources"||seg==="resources.html";
   const headerHTML = `
   <header class="mast" role="banner">
     <div class="mast-bar">
-      <a href="index.html" class="brand"><img src="logo.png" alt=""/><span class="brand-name">Ramped AI</span></a>
+      <a href="/" class="brand"><img src="/logo.png" alt=""/><span class="brand-name">Ramped AI</span></a>
       <nav class="nav" aria-label="Primary">
-        <a class="desk" href="about.html"${path==="about.html"?' aria-current="page"':''}>About</a>
-        <a class="desk" href="${isHome?'#pricing':'index.html#pricing'}">Pricing</a>
-        <a class="desk" href="comparison.html"${path==="comparison.html"?' aria-current="page"':''}>Compare</a>
-        <a class="desk" href="resources.html"${path==="resources.html"?' aria-current="page"':''}>Resources</a>
-        <a class="btn btn-primary btn-sm nav-cta" href="book.html">Book a call →</a>
+        <a class="desk" href="/about"${isAbout?' aria-current="page"':''}>About</a>
+        <a class="desk" href="${isHome?'#pricing':'/#pricing'}">Pricing</a>
+        <a class="desk" href="/comparison"${isCompare?' aria-current="page"':''}>Compare</a>
+        <a class="desk" href="/resources"${isResources?' aria-current="page"':''}>Resources</a>
+        <a class="btn btn-primary btn-sm nav-cta" href="/book">Book a call →</a>
       </nav>
     </div>
     <div class="ticker" aria-label="Key stats">
@@ -35,17 +39,17 @@
   <footer class="foot">
     <div class="container">
       <div class="foot-inner">
-        <div class="foot-left"><img src="logo.png" alt=""/><div><div class="name">Ramped AI</div><div class="tag">AI implementation for operating businesses.</div></div></div>
+        <div class="foot-left"><img src="/logo.png" alt=""/><div><div class="name">Ramped AI</div><div class="tag">AI implementation for operating businesses.</div></div></div>
         <nav class="foot-nav" aria-label="Footer">
-          <a href="index.html#how-it-works">How it works</a>
-          <a href="index.html#pricing">Pricing</a>
-          <a href="about.html">About</a>
-          <a href="comparison.html">Compare</a>
-          <a href="resources.html">Resources</a>
-          <a href="agent-library.html">Agent library</a>
-          <a href="book.html">Book a call</a>
-          <a href="free-roadmap.html">Free roadmap</a>
-          <a href="privacy.html">Privacy</a>
+          <a href="/#how-it-works">How it works</a>
+          <a href="/#pricing">Pricing</a>
+          <a href="/about">About</a>
+          <a href="/comparison">Compare</a>
+          <a href="/resources">Resources</a>
+          <a href="/agent-library">Agent library</a>
+          <a href="/book">Book a call</a>
+          <a href="/free-roadmap">Free roadmap</a>
+          <a href="/privacy">Privacy</a>
         </nav>
       </div>
       <div class="foot-bottom">
@@ -63,8 +67,8 @@
         <h2>Ready to ramp <span class="accent">your AI department?</span></h2>
         <p>30-minute call. We'll map your highest-leverage automation, scope a deployment plan, and show you the exact ROI math — free, no commitment.</p>
         <div class="cta-row">
-          <a class="btn btn-primary btn-large" href="book.html">Book a discovery call →</a>
-          <a class="btn btn-ghost btn-large" href="free-roadmap.html">Get your free roadmap</a>
+          <a class="btn btn-primary btn-large" href="/book">Book a discovery call →</a>
+          <a class="btn btn-ghost btn-large" href="/free-roadmap">Get your free roadmap</a>
         </div>
         <div class="cta-trust"><span>Free · No commitment</span><span>30 minutes</span><span>Live in 30 days, or refund</span></div>
       </div>

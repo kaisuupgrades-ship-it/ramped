@@ -1,371 +1,752 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Book a discovery call — Ramped AI</title>
-<meta name="description" content="30-minute discovery call. We'll map your highest-leverage automation, scope a deployment plan, and show you the exact ROI math — free, no commitment." />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=3">
+
+<meta charset="utf-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Book a Discovery Call — Ramped AI</title>
+<meta name="description" content="Schedule a free 30-minute discovery call with the Ramped AI team." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.30dayramp.com/book" />
+<meta property="og:title" content="Book a Discovery Call — Ramped AI" />
+<meta property="og:description" content="Schedule a free 30-minute call to see how Ramped AI can automate your business workflows." />
+<meta property="og:image" content="https://www.30dayramp.com/og-image.png" />
+<meta property="og:site_name" content="Ramped AI" />
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Book a Discovery Call — Ramped AI">
+<meta name="twitter:description" content="Schedule a free 30-minute call to see how Ramped AI can deploy custom AI agents for your business in 30 days.">
+<meta name="twitter:image" content="https://www.30dayramp.com/og-image.png">
 <link rel="canonical" href="https://www.30dayramp.com/book" />
-<link rel="icon" href="favicon.ico" />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="site.css" />
-<style>
-.book-hero{padding:64px 0 24px}
-.book-hero h1{font-size:clamp(36px,5vw,56px);letter-spacing:-0.03em;line-height:1.06;margin:18px 0 0;font-weight:700;text-wrap:balance;max-width:880px}
-.book-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:32px;align-items:start}
-@media (max-width:960px){.book-grid{grid-template-columns:1fr}}
-.cal-card{background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005));
-  border:1px solid var(--line);border-radius:20px;padding:28px;position:sticky;top:120px}
-.cal-head{display:flex;align-items:center;gap:14px;padding-bottom:18px;border-bottom:1px solid var(--line);margin-bottom:18px}
-.cal-head .av{width:48px;height:48px;border-radius:10px;background:#fff;padding:5px;display:grid;place-items:center}
-.cal-head .av img{width:100%;height:100%;object-fit:contain}
-.cal-head h3{margin:0;font-size:17px;letter-spacing:-0.015em}
-.cal-head .meta{color:var(--text-2);font-size:13px;margin-top:2px;display:flex;gap:12px}
-.cal-head .meta span{display:inline-flex;align-items:center;gap:5px}
-.cal-month{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-.cal-month .label{font-weight:600;font-size:15px}
-.cal-month button{background:var(--bg-2);border:1px solid var(--line-2);color:var(--text-1);width:32px;height:32px;border-radius:8px;font-size:14px;display:grid;place-items:center}
-.cal-month button:hover{background:var(--bg-3);color:var(--text-0)}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.cal-grid .dow{font-family:var(--font-mono);font-size:10px;text-align:center;color:var(--text-3);padding:6px 0;text-transform:uppercase;letter-spacing:0.08em}
-.cal-day{aspect-ratio:1/1;border-radius:8px;display:grid;place-items:center;font-size:13.5px;color:var(--text-1);background:transparent;border:1px solid transparent;transition:all .15s;cursor:pointer;font-variant-numeric:tabular-nums}
-.cal-day:hover:not(.disabled){background:var(--bg-3);border-color:var(--line-2)}
-.cal-day.has{background:rgba(59,130,246,0.06);border-color:rgba(59,130,246,0.25);color:var(--blue-2);font-weight:600}
-.cal-day.has:hover{background:rgba(59,130,246,0.14)}
-.cal-day.selected{background:linear-gradient(180deg,var(--orange-2),var(--orange));color:#1a0e05;border-color:transparent;font-weight:700}
-.cal-day.disabled{color:var(--text-3);opacity:0.4;cursor:default}
-.cal-slots{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
-.cal-slots h4{margin:0 0 12px;font-size:13px;font-weight:600;color:var(--text-1)}
-.slot-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.slot{padding:10px 12px;border-radius:8px;background:var(--bg-2);border:1px solid var(--line-2);
-  color:var(--text-0);font-size:13.5px;font-family:var(--font-mono);text-align:center;font-weight:500}
-.slot:hover{border-color:var(--blue);color:var(--blue-2);background:rgba(59,130,246,0.06)}
-.slot.selected{background:linear-gradient(180deg,var(--blue-2),var(--blue));color:#fff;border-color:transparent}
-.cal-empty{color:var(--text-3);font-size:13.5px;padding:20px 0;text-align:center}
-.form-card{background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005));
-  border:1px solid var(--line);border-radius:20px;padding:32px}
-.form-stepper{display:flex;align-items:center;gap:8px;margin-bottom:24px;font-family:var(--font-mono);font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.08em}
-.form-stepper .bar{flex:1;height:3px;border-radius:999px;background:var(--bg-3);position:relative;overflow:hidden}
-.form-stepper .bar::after{content:"";position:absolute;inset:0;width:var(--prog,8%);background:linear-gradient(90deg,var(--blue),var(--orange));border-radius:999px;transition:width .3s}
-.form-step{display:none}
-.form-step.on{display:block;animation:fade .3s ease}
-@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-.form-step h2{margin:0 0 6px;font-size:22px;letter-spacing:-0.02em}
-.form-step p.sub{margin:0 0 18px;color:var(--text-2);font-size:14px;line-height:1.5}
-.form-actions{display:flex;justify-content:space-between;gap:10px;margin-top:24px;padding-top:18px;border-top:1px solid var(--line)}
-.form-actions .left{color:var(--text-3);font-size:12px;display:flex;align-items:center}
+<link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml" />
+<link rel="alternate icon" href="/favicon.ico?v=3" />
+<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/v3-theme.css">
+  <style>
+  :root{
+    --ink:#0B1220;--paper:#FAFAF7;--line:#E6E4DC;
+    --muted:#5B6272;--accent:#1F4FFF;--good:#0F7A4B;
+    --surface:#F5F5F3;
+  }
+  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;}
+  a{color:inherit;text-decoration:none;}
+
+  /* ── Layout ── */
+  .page{max-width:1120px;margin-left:auto;margin-right:auto;padding:48px 24px 64px;}
+  .section-wrap{max-width:1120px;margin-left:auto;margin-right:auto;padding-left:24px;padding-right:24px;}
+  @media(min-width:768px){.section-wrap{padding-left:32px;padding-right:32px;}}
+  h1{font-size:clamp(1.5rem,4vw,2.25rem);font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:8px;}
+  .subtitle{font-size:15px;color:var(--muted);margin-bottom:36px;line-height:1.6;}
+
+  /* ── Booking shell ── */
+  .booking-shell{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0;background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:4px 4px 0 var(--ink);}
+  @media(max-width:640px){.booking-shell{grid-template-columns:1fr;}}
+
+  /* ── Left panel: info ── */
+  .left-panel{padding:28px 24px;border-right:1px solid var(--line);min-width:0;overflow:hidden;}
+  @media(max-width:640px){.left-panel{border-right:none;border-bottom:1px solid var(--line);}}
+
+  .panel-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+
+  /* ── Right panel: booking steps ── */
+  .right-panel{padding:28px 24px;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
+  .form-input{width:100%;}
+
+  /* ── Loading spinner ── */
+  .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ── Mobile fixes ── */
+  .site-header-inner{flex-wrap:nowrap;}
+  @media(max-width:400px){.book-logo-text{display:none}}
+  @media(max-width:640px){
+    .left-panel{display:block;border-right:none;border-bottom:1px solid var(--line);padding:20px;}
+    .booking-shell{grid-template-columns:1fr;}
+    .right-panel{border-radius:12px;padding-top:0!important;}
+    .mobile-booking-header{display:block!important;padding:20px 20px 20px!important;}
+  }
+
+  /* ── Calendar ── */
+  .calendar-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .calendar-nav button{background:none;border:1px solid var(--line);border-radius:6px;width:32px;height:32px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
+  .calendar-nav button:hover{background:var(--surface);}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+  .cal-header{text-align:center;font-size:11px;font-weight:600;color:var(--muted);padding:4px 0;text-transform:uppercase;}
+  .cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:8px;font-size:14px;cursor:pointer;border:none;background:none;}
+  .cal-day:hover:not(:disabled){background:var(--accent);color:#fff;}
+  .cal-day.today{box-shadow:0 0 0 2px var(--accent);}
+  .cal-day.selected{background:var(--accent);color:#fff;font-weight:600;}
+  .cal-day:disabled{color:#ccc;cursor:default;}
+  .cal-day.other-month{color:#ddd;}
+
+  /* ── Slots ── */
+  .slot-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .slot-btn{padding:10px;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;font-size:13px;font-weight:500;text-align:center;}
+  .slot-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+  .slot-btn:disabled{color:#bbb;text-decoration:line-through;cursor:default;background:#fafafa;}
+
+  /* ── Back button ── */
+  .back-btn{background:none;border:none;cursor:pointer;font-size:13px;color:var(--muted);padding:0 0 16px;display:flex;align-items:center;gap:4px;}
+  .back-btn:hover{color:var(--ink);}
+
+  /* ── Confirmation ── */
+  .confirm-box{text-align:center;padding:32px 16px;}
+  .confirm-box .check{font-size:48px;margin-bottom:12px;}
+  .btn-primary{background:var(--ink);color:#fff;padding:13px 22px;border-radius:10px;font-weight:600;font-size:15px;display:inline-flex;align-items:center;gap:8px;transition:transform .12s ease,opacity .12s ease;cursor:pointer;border:none;text-decoration:none;}
+  .btn-primary:hover{opacity:.88;transform:translateY(-1px);}
+  .btn-ghost{padding:13px 18px;border-radius:10px;font-weight:600;font-size:15px;color:var(--ink);border:1px solid var(--line);background:#fff;cursor:pointer;transition:background .12s ease;display:inline-flex;align-items:center;text-decoration:none;}
+  .btn-ghost:hover{background:#F2F0E8;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 14px;border-radius:0 0 8px 0;font-size:13px;font-weight:600;z-index:100;}
+  .skip-link:focus{left:0;}
+  a:focus-visible, button:focus-visible, select:focus-visible, textarea:focus-visible, input:focus-visible, [role="button"]:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  .slot-btn:disabled{color:#bbb;cursor:not-allowed;background:#f7f7f5;border-color:#eeece6;}
+
+  /* ── Post-booking questionnaire chips ── */
+  .q-chip{display:flex;align-items:center;justify-content:center;text-align:center;padding:8px 10px;border:1.5px solid var(--line);border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;user-select:none;background:#fff;color:var(--ink);line-height:1.3;-webkit-tap-highlight-color:transparent;touch-action:manipulation;position:relative;}
+  .q-chip.q-chip-on{background:#E8EEFF;border-color:var(--accent);color:var(--accent);}
+  /* Stats ticker (masthead) */
+  .ticker-bar{background:var(--ink);overflow:hidden;height:38px;display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,0.07);}
+  .ticker-track{display:flex;width:100%;overflow:hidden;mask-image:linear-gradient(to right,transparent 0%,black 6%,black 94%,transparent 100%);}
+  .ticker-items{display:inline-flex;align-items:center;white-space:nowrap;animation:ticker-scroll 36s linear infinite;}
+  .ticker-item{display:inline-flex;align-items:center;gap:9px;padding:0 36px;font-size:11.5px;font-weight:500;color:rgba(255,255,255,0.78);letter-spacing:.045em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;}
+  .ticker-dot{color:#4ADE80;font-size:7px;line-height:1;}
+  @keyframes ticker-scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  .ticker-bar:hover .ticker-items{animation-play-state:paused;}
+  @media (prefers-reduced-motion: reduce){.ticker-items{animation:none !important;}}
 </style>
 </head>
 <body>
-<a class="skip" href="#main">Skip to main content</a>
-<div id="ramped-header"></div>
-
-<main id="main">
-<section class="book-hero">
-  <div class="container">
-    <span class="eyebrow"><span class="pulse"></span>30-min discovery call · Free · No commitment</span>
-    <h1>Book a call. We'll map the wins <span class="accent">in 30 minutes.</span></h1>
-    <p class="lede">Pick a time, tell us about your business, and we'll prep an automation map specific to your stack before we get on the call.</p>
-  </div>
-</section>
-
-<section class="section" style="padding-top:24px">
-  <div class="container">
-    <div class="book-grid">
-      <!-- Form (left, primary) -->
-      <div class="form-card">
-        <div class="form-stepper">
-          <span id="step-counter">Step 1 / 12</span>
-          <div class="bar" id="prog-bar" style="--prog:8%"></div>
-        </div>
-
-        <form id="book-form" novalidate>
-          <!-- 1 -->
-          <div class="form-step on" data-step="1">
-            <h2>What's your name?</h2>
-            <p class="sub">First and last is fine.</p>
-            <div class="field"><label>Full name</label><input name="name" placeholder="Jane Doe" required/></div>
-          </div>
-          <!-- 2 -->
-          <div class="form-step" data-step="2">
-            <h2>Best email to reach you?</h2>
-            <p class="sub">We'll send the calendar invite + prep doc here.</p>
-            <div class="field"><label>Email</label><input name="email" type="email" placeholder="jane@company.com" required/></div>
-          </div>
-          <!-- 3 -->
-          <div class="form-step" data-step="3">
-            <h2>What's your company?</h2>
-            <div class="field-row">
-              <div class="field"><label>Company</label><input name="company" placeholder="Acme Logistics" required/></div>
-              <div class="field"><label>Website</label><input name="website" placeholder="acme.com"/></div>
-            </div>
-          </div>
-          <!-- 4 -->
-          <div class="form-step" data-step="4">
-            <h2>What's your role?</h2>
-            <div class="pill-group">
-              <label class="pill-check"><input type="radio" name="role" value="Founder/CEO"/>Founder / CEO</label>
-              <label class="pill-check"><input type="radio" name="role" value="COO/Ops"/>COO / Head of Ops</label>
-              <label class="pill-check"><input type="radio" name="role" value="CFO/Finance"/>CFO / Finance lead</label>
-              <label class="pill-check"><input type="radio" name="role" value="CRO/Sales"/>CRO / Sales lead</label>
-              <label class="pill-check"><input type="radio" name="role" value="Other"/>Other</label>
-            </div>
-          </div>
-          <!-- 5 -->
-          <div class="form-step" data-step="5">
-            <h2>Team size?</h2>
-            <div class="pill-group">
-              <label class="pill-check"><input type="radio" name="team_size" value="1-10"/>1–10</label>
-              <label class="pill-check"><input type="radio" name="team_size" value="11-50"/>11–50</label>
-              <label class="pill-check"><input type="radio" name="team_size" value="51-200"/>51–200</label>
-              <label class="pill-check"><input type="radio" name="team_size" value="200+"/>200+</label>
-            </div>
-          </div>
-          <!-- 6 -->
-          <div class="form-step" data-step="6">
-            <h2>Annual revenue?</h2>
-            <p class="sub">Rough is fine — helps us scope.</p>
-            <div class="pill-group">
-              <label class="pill-check"><input type="radio" name="revenue" value="<$1M"/>Under $1M</label>
-              <label class="pill-check"><input type="radio" name="revenue" value="$1-5M"/>$1M – $5M</label>
-              <label class="pill-check"><input type="radio" name="revenue" value="$5-20M"/>$5M – $20M</label>
-              <label class="pill-check"><input type="radio" name="revenue" value="$20-100M"/>$20M – $100M</label>
-              <label class="pill-check"><input type="radio" name="revenue" value="$100M+"/>$100M+</label>
-            </div>
-          </div>
-          <!-- 7 -->
-          <div class="form-step" data-step="7">
-            <h2>What kind of business?</h2>
-            <div class="pill-group">
-              <label class="pill-check"><input type="radio" name="industry" value="Distribution"/>Distribution / Wholesale</label>
-              <label class="pill-check"><input type="radio" name="industry" value="Ecommerce"/>E-commerce</label>
-              <label class="pill-check"><input type="radio" name="industry" value="Services"/>Professional services</label>
-              <label class="pill-check"><input type="radio" name="industry" value="SaaS"/>SaaS / Software</label>
-              <label class="pill-check"><input type="radio" name="industry" value="Other"/>Other</label>
-            </div>
-          </div>
-          <!-- 8 -->
-          <div class="form-step" data-step="8">
-            <h2>Where's your team losing the most hours?</h2>
-            <p class="sub">Pick all that apply — we'll dig deeper on the call.</p>
-            <div class="pill-group">
-              <label class="pill-check"><input type="checkbox" name="pain" value="Lead intake"/>Lead intake / qualification</label>
-              <label class="pill-check"><input type="checkbox" name="pain" value="Quoting"/>Quoting / proposals</label>
-              <label class="pill-check"><input type="checkbox" name="pain" value="Order ops"/>Order processing</label>
-              <label class="pill-check"><input type="checkbox" name="pain" value="Inventory"/>Inventory / reorders</label>
-              <label class="pill-check"><input type="checkbox" name="pain" value="Finance"/>Finance / reporting</label>
-              <label class="pill-check"><input type="checkbox" name="pain" value="Customer support"/>Customer support</label>
-              <label class="pill-check"><input type="checkbox" name="pain" value="Recruiting"/>Recruiting / HR</label>
-            </div>
-          </div>
-          <!-- 9 -->
-          <div class="form-step" data-step="9">
-            <h2>Which tools do you run on?</h2>
-            <p class="sub">Helps us pre-scope the integration work.</p>
-            <div class="pill-group">
-              <label class="pill-check"><input type="checkbox" name="stack" value="HubSpot"/>HubSpot</label>
-              <label class="pill-check"><input type="checkbox" name="stack" value="Salesforce"/>Salesforce</label>
-              <label class="pill-check"><input type="checkbox" name="stack" value="NetSuite"/>NetSuite</label>
-              <label class="pill-check"><input type="checkbox" name="stack" value="QuickBooks"/>QuickBooks</label>
-              <label class="pill-check"><input type="checkbox" name="stack" value="Shopify"/>Shopify</label>
-              <label class="pill-check"><input type="checkbox" name="stack" value="Slack"/>Slack</label>
-              <label class="pill-check"><input type="checkbox" name="stack" value="Gong"/>Gong</label>
-              <label class="pill-check"><input type="checkbox" name="stack" value="Zendesk"/>Zendesk</label>
-              <label class="pill-check"><input type="checkbox" name="stack" value="Other"/>Other / custom</label>
-            </div>
-          </div>
-          <!-- 10 -->
-          <div class="form-step" data-step="10">
-            <h2>What's the budget reality?</h2>
-            <p class="sub">No wrong answer — but candor helps the call.</p>
-            <div class="pill-group">
-              <label class="pill-check"><input type="radio" name="budget" value="<$2.5K"/>Under $2.5K / mo</label>
-              <label class="pill-check"><input type="radio" name="budget" value="$2.5-5K"/>$2.5K – $5K / mo</label>
-              <label class="pill-check"><input type="radio" name="budget" value="$5-10K"/>$5K – $10K / mo</label>
-              <label class="pill-check"><input type="radio" name="budget" value="$10K+"/>$10K+ / mo</label>
-              <label class="pill-check"><input type="radio" name="budget" value="exploring"/>Just exploring</label>
-            </div>
-          </div>
-          <!-- 11 -->
-          <div class="form-step" data-step="11">
-            <h2>Anything else we should know?</h2>
-            <p class="sub">Optional. The more context you give, the more prepared we'll be.</p>
-            <div class="field"><label>Notes</label><textarea name="notes" rows="5" placeholder="What you're trying to fix, what you've already tried, anything that would change how we'd approach the call…"></textarea></div>
-          </div>
-          <!-- 12 -->
-          <div class="form-step" data-step="12">
-            <h2>Pick a time on the right →</h2>
-            <p class="sub">Select a date, then a slot. We'll lock the call when you submit.</p>
-            <div id="selected-summary" style="background:var(--bg-2);border:1px solid var(--line);border-radius:12px;padding:16px;font-size:14px;color:var(--text-2)">No slot selected yet.</div>
-            <div class="field" style="margin-top:18px"><label>Phone (optional)</label><input name="phone" placeholder="+1 555 123 4567"/></div>
-          </div>
-
-          <div class="form-actions">
-            <button type="button" class="btn btn-ghost" id="btn-back">← Back</button>
-            <div class="left" id="hint">Press <span class="kbd" style="font-family:var(--font-mono);font-size:10px;padding:1px 5px;background:var(--bg-3);border:1px solid var(--line);border-radius:4px;color:var(--text-2)">Enter</span> to continue</div>
-            <button type="button" class="btn btn-primary" id="btn-next">Continue →</button>
-          </div>
-        </form>
-      </div>
-
-      <!-- Calendar (right, sticky) -->
-      <aside class="cal-card">
-        <div class="cal-head">
-          <div class="av"><img src="logo.png" alt=""/></div>
-          <div>
-            <h3>30-min discovery call</h3>
-            <div class="meta"><span>⏱ 30 min</span><span>● Google Meet</span></div>
-          </div>
-        </div>
-        <div class="cal-month">
-          <button id="prev-mo" aria-label="Previous month">‹</button>
-          <div class="label" id="mo-label">May 2026</div>
-          <button id="next-mo" aria-label="Next month">›</button>
-        </div>
-        <div class="cal-grid" id="cal-grid"></div>
-        <div class="cal-slots">
-          <h4 id="slots-label">Pick a date</h4>
-          <div id="slots" class="cal-empty">Select a date with availability to see open times.</div>
-        </div>
-        <div style="margin-top:18px;padding-top:18px;border-top:1px solid var(--line);font-size:12px;color:var(--text-3);line-height:1.5">
-          All times in your local timezone. The call lands on Google Meet — invite hits your inbox once you submit.
-        </div>
-      </aside>
+<a href="#main" class="skip-link">Skip to main content</a>
+<!-- ─── MASTHEAD (canonical — keep byte-identical across pages) ──────────── -->
+<div class="site-masthead" style="position:sticky;top:0;z-index:40;">
+<header class="border-b border-[var(--line)] bg-[var(--paper)]/90 backdrop-blur">
+  <div style="max-width:1120px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+    <a href="/" class="flex items-center gap-2 shrink-0" aria-label="Ramped AI — home">
+      <svg width="48" height="48" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="rampedSwoopNav" x1="17.46" y1="84.69" x2="76" y2="11.64" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#0A2540"/>
+            <stop offset="58%" stop-color="#006BD6"/>
+            <stop offset="100%" stop-color="#00D4FF"/>
+          </linearGradient>
+        </defs>
+        <path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="url(#rampedSwoopNav)"/>
+      </svg>
+      <span class="font-bold text-lg tracking-tight ml-2">Ramped AI</span>
+    </a>
+    <nav class="hidden sm:flex items-center gap-3" aria-label="Primary">
+      <a href="/about"      class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">About</a>
+      <a href="/#pricing"   class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">Pricing</a>
+      <a href="/comparison" class="btn-ghost whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;">Compare</a>
+      <a href="/book"       class="btn-primary whitespace-nowrap" style="padding:11px 16px;font-size:13px;min-height:44px;" aria-current="page">Book a call →</a>
+    </nav>
+    <div class="sm:hidden flex items-center gap-2">
+      <a href="/book" class="btn-primary" style="padding:11px 14px;font-size:13px;min-height:44px;" aria-current="page">Book a call →</a>
+      <button type="button" id="mobile-nav-toggle" aria-expanded="false" aria-controls="mobile-nav-drawer" aria-label="Open menu"
+        style="width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;">
+        <svg width="18" height="14" viewBox="0 0 18 14" aria-hidden="true" focusable="false">
+          <rect y="0"  width="18" height="2" rx="1" fill="currentColor"/>
+          <rect y="6"  width="18" height="2" rx="1" fill="currentColor"/>
+          <rect y="12" width="18" height="2" rx="1" fill="currentColor"/>
+        </svg>
+      </button>
     </div>
   </div>
-</section>
+  <nav id="mobile-nav-drawer" aria-label="Mobile" hidden class="sm:hidden"
+    style="border-top:1px solid var(--line);background:var(--paper);">
+    <ul style="list-style:none;margin:0;padding:8px 16px 16px;display:flex;flex-direction:column;gap:4px;">
+      <li><a href="/about"      style="display:block;padding:12px 8px;font-size:15px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);text-decoration:none;">About</a></li>
+      <li><a href="/#pricing"   style="display:block;padding:12px 8px;font-size:15px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);text-decoration:none;">Pricing</a></li>
+      <li><a href="/comparison" style="display:block;padding:12px 8px;font-size:15px;font-weight:600;color:var(--ink);border-bottom:1px solid var(--line);text-decoration:none;">Compare</a></li>
+      <li><a href="/book"       style="display:block;padding:12px 8px;font-size:15px;font-weight:700;color:var(--accent);text-decoration:none;" aria-current="page">Book a call →</a></li>
+    </ul>
+  </nav>
+</header>
+<!-- Stats ticker (sticks WITH the nav) -->
+<div class="ticker-bar" role="marquee" aria-label="Key stats">
+  <div class="ticker-track">
+    <span class="ticker-items" aria-hidden="true">
+      <span class="ticker-item"><span class="ticker-dot">●</span>Save 40+ hours per week</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>30-day go-live guarantee</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>3× faster lead response time</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>Avg. $12,000+ / mo saved vs. staffing</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>5× avg. ROI in year 1</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>24/7 AI coverage — no sick days</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>Save 40+ hours per week</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>30-day go-live guarantee</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>3× faster lead response time</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>Avg. $12,000+ / mo saved vs. staffing</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>5× avg. ROI in year 1</span>
+      <span class="ticker-item"><span class="ticker-dot">●</span>24/7 AI coverage — no sick days</span>
+    </span>
+  </div>
+</div>
+</div>
+<script>
+  (function(){
+    var btn = document.getElementById('mobile-nav-toggle');
+    var drawer = document.getElementById('mobile-nav-drawer');
+    if(!btn || !drawer) return;
+    function setOpen(open){
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      if(open){ drawer.removeAttribute('hidden'); } else { drawer.setAttribute('hidden', ''); }
+    }
+    btn.addEventListener('click', function(){ setOpen(btn.getAttribute('aria-expanded') !== 'true'); });
+    drawer.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ setOpen(false); }); });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape') setOpen(false); });
+  })();
+</script>
+<main id="main" class="page">
+  <div class="booking-shell" id="booking-shell">
+    <!-- Left panel -->
+    <div class="left-panel">
+      <h1 style="font-size:22px;font-weight:700;line-height:1.3;margin-bottom:8px;">Book a free 30-min discovery call</h1>
+      <p style="font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:24px;">We'll map out exactly what AI can automate in your business &mdash; no pitch, just a real conversation.</p>
+
+      <div style="margin-bottom:24px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">What we'll cover</p>
+        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px;">
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:14px;">
+            <span style="color:var(--accent);font-size:16px;line-height:1.4;">&#10003;</span>
+            <span>Where AI can save you 10+ hours/week right now</span>
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:14px;">
+            <span style="color:var(--accent);font-size:16px;line-height:1.4;">&#10003;</span>
+            <span>Which workflows to automate first for fastest ROI</span>
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:14px;">
+            <span style="color:var(--accent);font-size:16px;line-height:1.4;">&#10003;</span>
+            <span>What a 30-day implementation looks like for your business</span>
+          </li>
+          <li style="display:flex;align-items:flex-start;gap:10px;font-size:14px;">
+            <span style="color:var(--accent);font-size:16px;line-height:1.4;">&#10003;</span>
+            <span>Honest assessment &mdash; if it's not a fit, we'll tell you</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Guarantee badge -->
+      <div style="display:flex;align-items:flex-start;gap:10px;padding:14px 16px;background:var(--surface);border-radius:10px;border:1px solid var(--line);">
+        <svg width="18" height="18" viewBox="0 0 14 14" fill="none" style="flex-shrink:0;margin-top:1px;" aria-hidden="true"><path d="M7 1L2 3.5v4C2 10.1 4.2 12.6 7 13.5c2.8-.9 5-3.4 5-6V3.5L7 1z" fill="#F59E0B" opacity=".3" stroke="#F59E0B" stroke-width="1.2"/></svg>
+        <div>
+          <p style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px;">30-day go-live guarantee</p>
+          <p style="font-size:12px;color:var(--muted);line-height:1.5;">If your AI agent isn't live in 30 days, you get a full refund. No questions, no partial payments, no fine print.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right panel -->
+    <div class="right-panel" id="right-panel">
+      <!-- Mobile-only booking header (hidden on desktop via CSS) -->
+      <div class="mobile-booking-header" style="display:none;padding:16px 20px 0;border-bottom:1px solid var(--line);margin-bottom:16px;">
+        <p style="font-size:13px;font-weight:600;margin:0 0 2px;">Book a free 30-min call</p>
+        <p style="font-size:12px;color:var(--muted);margin:0;">No pressure &middot; We'll find what AI can do for your business</p>
+      </div>
+
+      <div id="booking-step" style="padding:8px 0;"><p style="color:var(--muted);font-size:14px;padding:20px 0;display:flex;align-items:center;gap:8px;"><span style="display:inline-block;width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;" aria-hidden="true"></span>Loading available times…</p></div>
+    </div>
+  </div>
+
 </main>
 
-<div id="ramped-footer"></div>
-<script src="partials.js"></script>
 <script>
-/* ── /api/book + /api/availability + /api/questionnaire integration ──── */
-const TZ=(Intl.DateTimeFormat().resolvedOptions().timeZone)||"UTC";
-const _qp=new URLSearchParams(location.search);
-const TIER=_qp.get("tier")||"";const BILLING=_qp.get("billing")||"";
-const TIER_LABELS={starter:{monthly:"Starter — $2,500/mo monthly",annual:"Starter — $2,083/mo annual"},growth:{monthly:"Growth — $5,000/mo monthly",annual:"Growth — $4,167/mo annual"},enterprise:{monthly:"Enterprise — From $10K/mo",annual:"Enterprise — From $10K/mo"}};
+const HOST_TZ = 'America/Chicago';
+const VISITOR_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
+let SLOT_HOURS = [9,9.5,10,10.5,11,11.5,12,12.5,13,13.5,14,14.5,15,15.5,16,16.5];
+let _avail = { days_available:['Mon','Tue','Wed','Thu','Fri'], start_hour:9, end_hour:17, slot_duration_min:30, blocked_dates:[] };
 
-const steps=[...document.querySelectorAll(".form-step")];
-const total=steps.length;let cur=1;
-const counter=document.getElementById("step-counter"),bar=document.getElementById("prog-bar"),
-  next=document.getElementById("btn-next"),back=document.getElementById("btn-back");
-function show(n){cur=Math.max(1,Math.min(total,n));steps.forEach(s=>s.classList.toggle("on",+s.dataset.step===cur));counter.textContent=`Step ${cur} / ${total}`;bar.style.setProperty("--prog",`${(cur/total)*100}%`);back.style.visibility=cur===1?"hidden":"visible";next.textContent=cur===total?"Confirm booking →":"Continue →";}
-next.addEventListener("click",()=>{if(cur===total){submit();return}show(cur+1)});
-back.addEventListener("click",()=>show(cur-1));
-document.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&document.activeElement.tagName!=="TEXTAREA"){e.preventDefault();next.click()}});
+let currentMonth, currentYear, selectedDate, selectedSlot, selectedTier, selectedBilling;
 
-function _isValidEmail(s){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s||"").trim());}
-function _checks(name){return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(x=>x.value);}
-function _radio(name){const el=document.querySelector(`input[name="${name}"]:checked`);return el?el.value:"";}
-function combineDateAndSlot(date,slot){const m=String(slot).match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);if(!m)return date.toISOString();let h=parseInt(m[1],10);const mm=parseInt(m[2],10);const isPM=m[3].toUpperCase()==="PM";if(isPM&&h<12)h+=12;if(!isPM&&h===12)h=0;const d=new Date(date);d.setHours(h,mm,0,0);return d.toISOString();}
-
-async function submit(){
-  if(!selectedDate||!selectedSlot){alert("Please select a date and time slot first.");show(total);return;}
-  const f=document.getElementById("book-form");const fd=new FormData(f);
-  const name=(fd.get("name")||"").toString().trim();
-  const email=(fd.get("email")||"").toString().trim();
-  const company=(fd.get("company")||"").toString().trim();
-  if(!name||!_isValidEmail(email)||!company){alert("Please complete name, email, and company.");show(name?(_isValidEmail(email)?3:2):1);return;}
-  const role=_radio("role"),teamSize=_radio("team_size"),revenue=_radio("revenue"),
-    industry=_radio("industry"),budget=_radio("budget"),
-    pains=_checks("pain"),stacks=_checks("stack");
-  const website=(fd.get("website")||"").toString().trim();
-  const phone=(fd.get("phone")||"").toString().trim();
-  const userNotes=(fd.get("notes")||"").toString().trim();
-  const lines=[];
-  if(role)lines.push(`Role: ${role}`);
-  if(teamSize)lines.push(`Team size: ${teamSize}`);
-  if(revenue)lines.push(`Revenue: ${revenue}`);
-  if(industry)lines.push(`Industry: ${industry}`);
-  if(budget)lines.push(`Budget: ${budget}`);
-  if(pains.length)lines.push(`Pains: ${pains.join(", ")}`);
-  if(stacks.length)lines.push(`Stack: ${stacks.join(", ")}`);
-  if(website)lines.push(`Website: ${website}`);
-  if(phone)lines.push(`Phone: ${phone}`);
-  if(userNotes)lines.push(`\n${userNotes}`);
-  const notes=lines.join("\n");
-  const datetime=combineDateAndSlot(selectedDate,selectedSlot);
-  next.disabled=true;next.textContent="Booking…";
-  try{
-    const r=await fetch("/api/book",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({datetime,name,email,company,notes,timezone:TZ,tier:TIER,billing:BILLING})});
-    const data=await r.json().catch(()=>({}));
-    if(!r.ok){throw new Error(data.error||"Booking failed");}
-    if(data.booking_id||data.id){
-      const bid=data.booking_id||data.id;
-      fetch("/api/questionnaire",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({booking_id:bid,email,role,team_size:teamSize,revenue,industry,pain_points:pains,stack:stacks,budget,website,company})}).catch(()=>{});
-    }
-    const q=new URLSearchParams({intent:"booking",date:selectedDate.toISOString().slice(0,10),slot:selectedSlot});
-    if(TIER)q.set("tier",TIER);if(BILLING)q.set("billing",BILLING);
-    location.href="/thanks?"+q.toString();
-  }catch(err){
-    next.disabled=false;next.textContent="Confirm booking →";
-    alert(err.message||"Something went wrong. Email jon@30dayramp.com and we'll book you in.");
+function computeSlotHours(avail) {
+  const slots = [];
+  const step = avail.slot_duration_min || 30;
+  const startM = (avail.start_hour || 9) * 60;
+  const endM   = (avail.end_hour   || 17) * 60;
+  for (let m = startM; m < endM; m += step) {
+    slots.push(m / 60);
   }
+  return slots;
 }
 
-/* ===== Calendar — fetches real availability from /api/availability ===== */
-const grid=document.getElementById("cal-grid"),moLabel=document.getElementById("mo-label"),
-  slotsEl=document.getElementById("slots"),slotsLabel=document.getElementById("slots-label"),
-  summary=document.getElementById("selected-summary");
-let view=new Date();view.setDate(1);let selectedDate=null,selectedSlot=null;
-const _slotCache={};
-async function fetchSlots(date){
-  const ymd=date.toISOString().slice(0,10);
-  if(_slotCache[ymd])return _slotCache[ymd];
-  try{
-    const r=await fetch(`/api/availability?date=${ymd}&timezone=${encodeURIComponent(TZ)}`);
-    if(!r.ok)throw 0;
-    const d=await r.json();_slotCache[ymd]=Array.isArray(d.slots)?d.slots:[];return _slotCache[ymd];
-  }catch(e){
-    const fb={1:["9:00 AM","10:30 AM","1:00 PM","3:30 PM"],2:["8:30 AM","11:00 AM","2:00 PM"],3:["9:30 AM","12:00 PM","2:30 PM","4:00 PM"],4:["10:00 AM","1:30 PM","3:00 PM"],5:["9:00 AM","11:30 AM"]};
-    _slotCache[ymd]=fb[date.getDay()]||[];return _slotCache[ymd];
+async function init() {
+  const urlParams = new URLSearchParams(window.location.search);
+  selectedTier = urlParams.get('tier') || '';
+  // Default to annual since that's the homepage default and the more advantageous price.
+  selectedBilling = (urlParams.get('billing') || 'annual').toLowerCase();
+  if (selectedBilling !== 'monthly' && selectedBilling !== 'annual') selectedBilling = 'annual';
+  try {
+    const r = await fetch('/api/availability');
+    if (r.ok) { _avail = await r.json(); SLOT_HOURS = computeSlotHours(_avail); }
+  } catch(e) {
+    // API unavailable — fall back to defaults already set in _avail
+    console.warn('availability API unavailable, using defaults');
   }
+  const now = new Date();
+  currentMonth = now.getMonth();
+  currentYear = now.getFullYear();
+  renderCalendar();
 }
-function render(){
-  grid.innerHTML="";
-  ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(d=>{const el=document.createElement("div");el.className="dow";el.textContent=d;grid.appendChild(el)});
-  moLabel.textContent=view.toLocaleString("en-US",{month:"long",year:"numeric"});
-  const first=new Date(view.getFullYear(),view.getMonth(),1);
-  const dim=new Date(view.getFullYear(),view.getMonth()+1,0).getDate();
-  for(let i=0;i<first.getDay();i++){const e=document.createElement("div");grid.appendChild(e)}
-  for(let d=1;d<=dim;d++){
-    const date=new Date(view.getFullYear(),view.getMonth(),d);
-    const today=new Date();today.setHours(0,0,0,0);
-    const dow=date.getDay();
-    const has=dow>=1&&dow<=5&&date>=today;
-    const past=date<today;
-    const cell=document.createElement("button");
-    cell.type="button";cell.className="cal-day"+(has?" has":"")+(past||!has?" disabled":"");
-    cell.textContent=d;
-    if(has)cell.addEventListener("click",async()=>{selectedDate=date;selectedSlot=null;document.querySelectorAll(".cal-day.selected").forEach(x=>x.classList.remove("selected"));cell.classList.add("selected");await renderSlots();updateSummary()});
-    grid.appendChild(cell);
+
+function renderCalendar() {
+  const stepDiv = document.getElementById('booking-step');
+  stepDiv.innerHTML = buildCalendarHTML(currentYear, currentMonth);
+  attachCalendarEvents();
+}
+
+function buildCalendarHTML(year, month) {
+  const monthName = new Date(year, month, 1).toLocaleString('default', {month:'long'});
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const today = new Date();
+
+  let html = '<div class="calendar-nav">' +
+    '<button id="prev-month" aria-label="Previous month">\u2039</button>' +
+    '<span style="font-weight:600;font-size:15px;">' + monthName + ' ' + year + '</span>' +
+    '<button id="next-month" aria-label="Next month">\u203a</button>' +
+    '</div>' +
+    '<div class="cal-grid">' +
+    ['Su','Mo','Tu','We','Th','Fr','Sa'].map(function(d){return '<div class="cal-header">'+d+'</div>';}).join('');
+
+  for(var i=0;i<firstDay;i++) html += '<div class="cal-day other-month" aria-hidden="true"></div>';
+
+  var FULL_DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var FULL_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var DAY_ABBR   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  for(var d=1;d<=daysInMonth;d++){
+    var date = new Date(year, month, d);
+    var isToday = date.toDateString()===today.toDateString();
+    var isPast = date < new Date(today.getFullYear(),today.getMonth(),today.getDate());
+    var dateStr = year+'-'+String(month+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    var dayAbbr = DAY_ABBR[date.getDay()];
+    var availDays = (_avail && _avail.days_available) || ['Mon','Tue','Wed','Thu','Fri'];
+    var blockedDates = (_avail && _avail.blocked_dates) || [];
+    var isUnavailableDay = !availDays.includes(dayAbbr);
+    var isBlocked = blockedDates.includes(dateStr);
+    var disabled = isPast || isUnavailableDay || isBlocked;
+    var cls = ['cal-day', isToday?'today':'', disabled?'':'available'].filter(Boolean).join(' ');
+    var ariaLabel = FULL_DAYS[date.getDay()] + ', ' + FULL_MONTHS[month] + ' ' + d + ', ' + year;
+    if(isPast) ariaLabel += ' (unavailable \u2014 past date)';
+    else if(isBlocked) ariaLabel += ' (unavailable \u2014 blocked)';
+    else if(isUnavailableDay) ariaLabel += ' (unavailable)';
+    else if(isToday) ariaLabel += ' (today)';
+    html += '<button class="'+cls+'" '+(disabled?'disabled':'')+' data-date="'+dateStr+'" aria-label="'+ariaLabel+'">'+d+'</button>';
   }
+
+  html += '</div><p style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px;">Times in your local timezone</p>';
+  return html;
 }
-async function renderSlots(){
-  slotsLabel.textContent=selectedDate.toLocaleDateString("en-US",{weekday:"long",month:"short",day:"numeric"});
-  slotsEl.className="cal-empty";slotsEl.textContent="Loading…";
-  const list=await fetchSlots(selectedDate);
-  if(!list.length){slotsEl.className="cal-empty";slotsEl.textContent="No slots available — try another date.";return;}
-  slotsEl.className="slot-grid";slotsEl.innerHTML="";
-  list.forEach(s=>{const b=document.createElement("button");b.type="button";b.className="slot";b.textContent=s;
-    b.addEventListener("click",()=>{selectedSlot=s;document.querySelectorAll(".slot.selected").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");updateSummary();show(total)});
-    slotsEl.appendChild(b);
+
+function attachCalendarEvents(){
+  var prevBtn = document.getElementById('prev-month');
+  var nextBtn = document.getElementById('next-month');
+  if(prevBtn) prevBtn.addEventListener('click', function(){
+    var now=new Date();
+    if(currentYear===now.getFullYear()&&currentMonth===now.getMonth()) return;
+    currentMonth--; if(currentMonth<0){currentMonth=11;currentYear--;}
+    renderCalendar();
+  });
+  if(nextBtn) nextBtn.addEventListener('click', function(){
+    currentMonth++; if(currentMonth>11){currentMonth=0;currentYear++;}
+    renderCalendar();
+  });
+  document.querySelectorAll('.cal-day.available').forEach(function(btn){
+    btn.addEventListener('click', function(){ selectedDate=btn.dataset.date; showSlots(); });
   });
 }
-function updateSummary(){
-  if(!selectedDate){summary.textContent="No slot selected yet.";return}
-  const dt=selectedDate.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
-  let inner=selectedSlot?`<strong style="color:var(--text-0)">${dt}</strong> at <strong style="color:var(--orange-2)">${selectedSlot}</strong> · 30 min · Google Meet`:`<strong style="color:var(--text-0)">${dt}</strong> · select a time →`;
-  if(TIER&&TIER_LABELS[TIER]&&TIER_LABELS[TIER][BILLING||"annual"]){
-    inner+=`<br><span style="font-size:12px;color:var(--text-3);">📋 Plan interest: ${TIER_LABELS[TIER][BILLING||"annual"]}</span>`;
-  }
-  summary.innerHTML=inner;
+
+async function showSlots(){
+  var stepDiv = document.getElementById('booking-step');
+  var d = new Date(selectedDate+'T12:00:00');
+  var label = d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  stepDiv.innerHTML = '<button class="back-btn" id="back-to-cal">\u2190 '+label+'</button><div id="slots-container"><p style="color:var(--muted);font-size:14px;">Loading available times\u2026</p></div>';
+  document.getElementById('back-to-cal').addEventListener('click', renderCalendar);
+
+  var booked=[];
+  try{ var r=await fetch('/api/book?date='+selectedDate); var j=await r.json(); booked=j.booked||[]; }catch(e){}
+
+  var slotsHTML = SLOT_HOURS.map(function(h){
+    var hour=Math.floor(h), min=h%1?'30':'00';
+    var dateTimeStr = selectedDate+'T'+String(hour).padStart(2,'0')+':'+min+':00';
+    // Compute the UTC ISO for this Chicago-local time
+    var tempDate = new Date(dateTimeStr);
+    var chicagoStr = tempDate.toLocaleString('en-US',{timeZone:HOST_TZ,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+    var m2 = chicagoStr.match(/(\d+)\/(\d+)\/(\d+),?\s+(\d+):(\d+):(\d+)/);
+    var chicagoDate = m2 ? new Date(m2[3]+'-'+m2[1]+'-'+m2[2]+'T'+m2[4]+':'+m2[5]+':'+m2[6]) : tempDate;
+    var offsetMs = chicagoDate - tempDate;
+    var utcDate = new Date(tempDate.getTime() - offsetMs);
+    var iso = utcDate.toISOString();
+    var isBooked = booked.some(function(b){return Math.abs(new Date(b)-new Date(iso))<60000;});
+    var isPast = new Date(iso) < new Date(Date.now() + 30*60*1000); // disable slots starting in less than 30 min
+    var localLabel = utcDate.toLocaleString('en-US',{hour:'numeric',minute:'2-digit',hour12:true,timeZone:VISITOR_TZ,timeZoneName:'short'});
+    return '<button class="slot-btn" '+((isBooked||isPast)?'disabled':'')+' data-iso="'+iso+'" data-label="'+localLabel+'">'+localLabel+'</button>';
+  }).join('');
+
+  var tzLabel = '<p style="font-size:12px;color:var(--muted);margin:0 0 10px;">Times shown in your local timezone · <strong>' + VISITOR_TZ.replace(/_/g,' ') + '</strong></p>';
+  document.getElementById('slots-container').innerHTML = tzLabel + '<div class="slot-grid">'+slotsHTML+'</div>';
+  document.querySelectorAll('.slot-btn:not(:disabled)').forEach(function(btn){
+    btn.addEventListener('click',function(){ selectedSlot={iso:btn.dataset.iso,label:btn.dataset.label}; showForm(); });
+  });
 }
-document.getElementById("prev-mo").addEventListener("click",()=>{view=new Date(view.getFullYear(),view.getMonth()-1,1);render()});
-document.getElementById("next-mo").addEventListener("click",()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);render()});
-render();show(1);
+
+function showForm(){
+  var stepDiv = document.getElementById('booking-step');
+  var d = new Date(selectedDate+'T12:00:00');
+  var dateLabel = d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  var tierLabels = selectedBilling === 'annual'
+    ? {starter:'Starter · $2,083/mo (billed annually · save $5,000)', growth:'Growth · $4,167/mo (billed annually · save $10,000)', enterprise:'Enterprise · from $10K/mo · scoped on call'}
+    : {starter:'Starter · $2,500/mo', growth:'Growth · $5,000/mo', enterprise:'Enterprise · from $10K/mo · scoped on call'};
+  var tierBadge = selectedTier ? '<div style="background:#EEF3FF;border:1px solid #c7d2fe;border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:13px;color:var(--accent);font-weight:600;">📋 Plan interest: '+(tierLabels[selectedTier.toLowerCase()]||selectedTier)+'</div>' : '';
+  stepDiv.innerHTML =
+    '<button class="back-btn" id="back-to-slots">\u2190 '+dateLabel+' at '+selectedSlot.label+'</button>' +
+    tierBadge +
+    '<form id="book-form" novalidate style="display:flex;flex-direction:column;gap:14px;">' +
+      '<div>' +
+        '<label for="book-name" style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">YOUR NAME<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span></label>' +
+        '<input id="book-name" name="name" required placeholder="Jane Smith" autocomplete="name" class="form-input" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;box-sizing:border-box;">' +
+        '<p class="field-error" id="err-name" style="display:none;color:#dc2626;font-size:12px;margin-top:4px;"></p>' +
+      '</div>' +
+      '<div>' +
+        '<label for="book-email" style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">WORK EMAIL<span style="color:var(--accent);white-space:nowrap;">&nbsp;*</span></label>' +
+        '<input id="book-email" name="email" type="email" required placeholder="jane@company.com" autocomplete="email" inputmode="email" class="form-input" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;box-sizing:border-box;">' +
+        '<p class="field-error" id="err-email" style="display:none;color:#dc2626;font-size:12px;margin-top:4px;"></p>' +
+      '</div>' +
+      '<div>' +
+        '<label for="book-company" style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">COMPANY NAME</label>' +
+        '<input id="book-company" name="company" placeholder="Acme Inc." autocomplete="organization" class="form-input" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;box-sizing:border-box;">' +
+      '</div>' +
+      '<div>' +
+        '<label for="book-notes" style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;">WHAT CAN WE HELP WITH?</label>' +
+        '<textarea id="book-notes" name="notes" rows="3" placeholder="Brief context helps us prep\u2026" class="form-input" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;resize:vertical;box-sizing:border-box;font-family:inherit;"></textarea>' +
+      '</div>' +
+      '<div id="form-error" role="alert" aria-live="polite" style="display:none;color:#dc2626;font-size:13px;padding:8px 12px;background:#fef2f2;border-radius:6px;"></div>' +
+      '<button type="submit" id="submit-btn" style="width:100%;padding:14px;background:var(--ink);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;">Confirm booking \u2192</button>' +
+    '</form>';
+  document.getElementById('back-to-slots').addEventListener('click', function(){ showSlots(); });
+  document.getElementById('book-form').addEventListener('submit', submitBooking);
+}
+
+function _clearFieldError(id){
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.style.display='none';
+  el.textContent='';
+  var input = document.getElementById(id.replace(/^err-/,'book-'));
+  if(input){ input.removeAttribute('aria-invalid'); input.style.borderColor='var(--line)'; }
+}
+function _setFieldError(id, message){
+  var el = document.getElementById(id);
+  if(!el) return false;
+  el.textContent=message;
+  el.style.display='block';
+  var input = document.getElementById(id.replace(/^err-/,'book-'));
+  if(input){ input.setAttribute('aria-invalid','true'); input.style.borderColor='#dc2626'; }
+  return true;
+}
+function _isValidEmailClient(email){
+  if(!email || email.length>254) return false;
+  if(!/^[A-Z0-9._%+\-]+@[A-Z0-9.\-]+\.[A-Z]{2,}$/i.test(email)) return false;
+  var tld = email.split('.').pop().toLowerCase();
+  if(['invalid','test','example','localhost','local'].indexOf(tld)>=0) return false;
+  return true;
+}
+
+async function submitBooking(e){
+  e.preventDefault();
+  var btn = document.getElementById('submit-btn');
+  var errDiv = document.getElementById('form-error');
+  errDiv.style.display='none';
+  _clearFieldError('err-name');
+  _clearFieldError('err-email');
+
+  var fd = new FormData(e.target);
+  var name  = (fd.get('name')  || '').trim();
+  var email = (fd.get('email') || '').trim();
+  var firstBadInput = null;
+  if(!name || name.length < 2){
+    _setFieldError('err-name', 'Please enter your name.');
+    firstBadInput = firstBadInput || document.getElementById('book-name');
+  }
+  if(!email){
+    _setFieldError('err-email', 'Please enter your email.');
+    firstBadInput = firstBadInput || document.getElementById('book-email');
+  } else if(!_isValidEmailClient(email)){
+    _setFieldError('err-email', 'Please enter a valid email address.');
+    firstBadInput = firstBadInput || document.getElementById('book-email');
+  }
+  if(firstBadInput){ firstBadInput.focus(); return; }
+
+  btn.innerHTML='<span class="spinner"></span>Booking\u2026'; btn.disabled=true;
+  try{
+    var r = await fetch('/api/book',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({datetime:selectedSlot.iso,name:fd.get('name'),email:fd.get('email'),company:fd.get('company')||'',notes:fd.get('notes')||'',timezone:VISITOR_TZ,tier:selectedTier||'',billing:selectedBilling||''})});
+    if(r.status===409){errDiv.textContent='That slot was just booked \u2014 please pick another time.';errDiv.style.display='block';btn.textContent='Confirm booking \u2192';btn.disabled=false;setTimeout(function(){showSlots();},2000);return;}
+    if(r.status===429){ errDiv.textContent='Too many requests \u2014 please wait a moment and try again.'; errDiv.style.display='block'; btn.textContent='Confirm booking \u2192'; btn.disabled=false; return; }
+    if(!r.ok){
+      var body = await r.json().catch(function(){ return {}; });
+      throw new Error(body && body.error ? body.error : 'Something went wrong \u2014 please try again.');
+    }
+    // Capture booking_id from the response so the inline questionnaire below
+    // attaches to the right booking \u2014 fixes audit C2.
+    var bookResponse = await r.json().catch(function(){ return {}; });
+    window._lastBookingId = (bookResponse && bookResponse.booking_id) || null;
+    showConfirmation(fd.get('name'),fd.get('email'));
+  }catch(err){errDiv.textContent=err.message||'Something went wrong \u2014 please try again.';errDiv.style.display='block';btn.textContent='Confirm booking \u2192';btn.disabled=false;}
+}
+
+function showConfirmation(name, email){
+  var stepDiv = document.getElementById('booking-step');
+  var d = new Date(selectedDate+'T12:00:00');
+  var dateLabel = d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  var rescheduleSubject = encodeURIComponent('Reschedule discovery call \u2014 '+dateLabel+' at '+selectedSlot.label);
+  var rescheduleBody = encodeURIComponent('Hi \u2014 I booked a discovery call for '+dateLabel+' at '+selectedSlot.label+' but need to reschedule. Here are a few times that work:\n\n- \n- \n\nThanks!');
+  var rescheduleHref = 'mailto:jon@30dayramp.com?subject='+rescheduleSubject+'&body='+rescheduleBody;
+
+  stepDiv.innerHTML =
+    '<div style="text-align:center;padding:16px 0 14px;">'+
+      '<div style="font-size:36px;line-height:1;margin-bottom:8px;">\u2713</div>'+
+      '<h2 style="font-size:20px;font-weight:700;margin:0 0 4px;">You\'re booked!</h2>'+
+      '<p style="font-size:14px;font-weight:600;color:var(--ink);margin:0 0 3px;">'+dateLabel+' at '+selectedSlot.label+'</p>'+
+      '<p style="font-size:12px;color:var(--muted);margin:0 0 6px;">Confirmation sent to '+email+' \u00b7 Google Meet link coming before the call.</p>'+
+      '<p style="font-size:12px;color:var(--muted);margin:0;">Need to change it? <a href="'+rescheduleHref+'" style="color:var(--accent);font-weight:600;">Reschedule or cancel</a>.</p>'+
+    '</div>'+
+    '<div style="background:#EEF2FF;border:1.5px solid #A5B4FC;border-radius:10px;padding:14px 16px;margin:14px 0 16px;">'+
+      '<p style="font-size:13px;font-weight:700;color:#1F4FFF;margin:0 0 3px;">\ud83d\uddfa\ufe0f Help us prepare your roadmap</p>'+
+      '<p style="font-size:12px;color:#3730A3;line-height:1.5;margin:0;">Answer a few quick questions so we can build your custom automation plan before the call. Takes ~2 minutes.</p>'+
+    '</div>'+
+    '<div id="q-container"></div>';
+
+  var Q_STEPS = [
+    {id:'pain_points',    type:'checkbox', title:'What\'s eating your team\'s time?',                           subtitle:'Select all that apply',
+     options:['Lead follow-up & nurturing','Scheduling & calendar management','Answering repetitive questions','Quotes & proposal sending','Order / invoice processing','Appointment reminders & no-shows','Customer support tickets','Social media posting','Data entry & reporting','Employee onboarding']},
+    {id:'industry',       type:'text',     title:'What industry are you in?',
+     placeholder:'e.g. Real Estate, E-commerce, Law, Cannabis\u2026'},
+    {id:'team_size',      type:'radio',    title:'How big is your team?',
+     options:['1\u20135','6\u201315','16\u201350','51\u2013100','100+']},
+    {id:'revenue',        type:'radio',    title:'Annual revenue?',
+     options:['Under $300K/yr','$300K\u2013$1M/yr','$1M\u2013$5M/yr','$5M+/yr']},
+    {id:'lead_source',    type:'radio',    title:'How do clients find you?',
+     options:['Referrals','Instagram / LinkedIn','Cold outreach','Google / SEO','Paid ads','Word of mouth']},
+    {id:'inbound',        type:'radio',    title:'How do customers primarily contact you?',
+     options:['Phone / Voice','Email','Website / Form','Social media DM','Walk-in','Multiple channels']},
+    {id:'integrations',   type:'checkbox', title:'Which platforms does your business use?',                     subtitle:'Select all that apply',
+     options:['WhatsApp Business','Instagram / Facebook DM','SMS / Text (Twilio)','Telegram','Slack','Discord','Email (Gmail / Outlook)','Website chat','Shopify','Google Calendar','Airtable','Make / Zapier','HubSpot','Salesforce / Other CRM','Notion','ClickUp / Asana / Monday','Stripe','QuickBooks / Xero']},
+    {id:'crm',            type:'radio',    title:'Current CRM?',
+     options:['HubSpot','Salesforce','GoHighLevel','Pipedrive','Other CRM','No CRM yet']},
+    {id:'email_provider', type:'radio',    title:'Email provider?',
+     options:['Google Workspace / Gmail','Outlook / M365','Both','Other']},
+    {id:'device_os',      type:'radio',    title:'What OS does your team use?',
+     options:['Mac','Windows','Linux / Server','Mixed / Not sure']},
+    {id:'ai_tools',       type:'checkbox', title:'Are you using AI tools in your business?',                   subtitle:'Select all that apply',
+     options:['ChatGPT / OpenAI','Claude / Anthropic','Google Gemini','Microsoft Copilot','Make AI / Zapier AI','Not using AI yet']},
+    {id:'automation_goal',type:'textarea', title:'What\'s the first thing you\'d want an AI agent to handle?',
+     placeholder:'e.g. \u201cFollow up with leads that haven\'t responded in 48 hours and automatically book them\u2026\u201d', optional:true}
+  ];
+
+  var qAnswers = {};
+  var qCurrent = 0;
+
+  function renderQStep(idx){
+    var step = Q_STEPS[idx];
+    var pct  = Math.round((idx / Q_STEPS.length) * 100);
+    var c    = document.getElementById('q-container');
+    if(!c) return;
+
+    var optHTML = '';
+    if(step.type === 'checkbox' || step.type === 'radio'){
+      optHTML = '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:10px;">'+
+        step.options.map(function(opt){
+          var saved = qAnswers[step.id];
+          var on = step.type==='checkbox' ? (Array.isArray(saved) && saved.indexOf(opt)>=0) : (saved===opt);
+          return '<label class="q-chip'+(on?' q-chip-on':'')+'" style="-webkit-tap-highlight-color:transparent;touch-action:manipulation;">'+
+            '<input type="'+step.type+'" name="q_'+step.id+'" value="'+opt+'"'+(on?' checked':'')+' style="position:absolute;opacity:0;width:0;height:0;">'+
+            '<span>'+opt+'</span>'+
+            '</label>';
+        }).join('')+
+      '</div>';
+    } else if(step.type === 'text'){
+      optHTML = '<input type="text" id="q-input" placeholder="'+(step.placeholder||'')+'" value="'+(qAnswers[step.id]||'')+'" autocomplete="off" style="width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:9px;font-size:14px;background:#fff;box-sizing:border-box;margin-top:10px;font-family:inherit;">';
+    } else {
+      optHTML = '<textarea id="q-input" placeholder="'+(step.placeholder||'')+'" rows="3" style="width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:9px;font-size:14px;background:#fff;box-sizing:border-box;margin-top:10px;font-family:inherit;resize:vertical;">'+(qAnswers[step.id]||'')+'</textarea>';
+    }
+
+    c.innerHTML =
+      '<div style="margin-bottom:14px;">'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'+
+          '<span style="font-size:11px;font-weight:600;color:var(--muted);">Step '+(idx+1)+' of '+Q_STEPS.length+'</span>'+
+          (step.optional ? '<span style="font-size:10px;color:var(--muted);background:#F5F5F3;padding:2px 7px;border-radius:4px;">optional</span>' : '')+
+        '</div>'+
+        '<div style="background:#E6E4DC;border-radius:4px;height:3px;">'+
+          '<div style="background:var(--accent);height:100%;width:'+pct+'%;transition:width .3s;border-radius:4px;"></div>'+
+        '</div>'+
+      '</div>'+
+      '<p style="font-size:15px;font-weight:700;color:var(--ink);margin:0 0 4px;line-height:1.3;">'+step.title+'</p>'+
+      (step.subtitle ? '<p style="font-size:12px;color:var(--muted);margin:0;">'+step.subtitle+'</p>' : '')+
+      optHTML+
+      '<div id="q-err" style="display:none;color:#dc2626;font-size:12px;margin-top:8px;padding:6px 10px;background:#fef2f2;border-radius:6px;"></div>'+
+      '<div style="display:flex;gap:8px;margin-top:14px;">'+
+        (idx>0 ? '<button type="button" id="q-back" style="flex:0 0 auto;padding:10px 16px;border:1px solid var(--line);border-radius:9px;background:#fff;font-size:13px;font-weight:600;cursor:pointer;color:var(--muted);">\u2190</button>' : '')+
+        '<button type="button" id="q-next" style="flex:1;padding:11px;background:var(--ink);color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;">'+(idx===Q_STEPS.length-1?'Submit \u2192':'Next \u2192')+'</button>'+
+      '</div>'+
+      (idx===0 ? '<button type="button" id="q-skip" style="width:100%;padding:6px;background:none;border:none;font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;margin-top:4px;">Skip for now</button>' : '');
+
+    document.querySelectorAll('.q-chip').forEach(function(label){
+      label.addEventListener('click', function(e){
+        e.preventDefault();
+        var inp = label.querySelector('input');
+        if(!inp) return;
+        if(inp.type==='checkbox'){ inp.checked=!inp.checked; } else { inp.checked=true; }
+        inp.dispatchEvent(new Event('change'));
+      });
+      var inp = label.querySelector('input');
+      if(!inp) return;
+      inp.addEventListener('change', function(){
+        if(inp.type==='checkbox'){
+          label.classList.toggle('q-chip-on', inp.checked);
+        } else {
+          document.querySelectorAll('.q-chip').forEach(function(l){ l.classList.remove('q-chip-on'); });
+          label.classList.add('q-chip-on');
+          setTimeout(function(){ advQ(step, idx); }, 220);
+        }
+      });
+    });
+
+    if(step.type==='text'||step.type==='textarea'){
+      var inp2 = document.getElementById('q-input');
+      if(inp2) setTimeout(function(){ inp2.focus(); }, 80);
+    }
+    var nb=document.getElementById('q-next'); if(nb) nb.addEventListener('click',function(){ advQ(step,idx); });
+    var bb=document.getElementById('q-back'); if(bb) bb.addEventListener('click',function(){ qCurrent=idx-1; renderQStep(qCurrent); });
+    var sb=document.getElementById('q-skip'); if(sb) sb.addEventListener('click',function(){ showBooked(false); });
+  }
+
+  function collectQ(step){
+    if(step.type==='checkbox'){ return Array.from(document.querySelectorAll('input[name="q_'+step.id+'"]:checked')).map(function(i){ return i.value; }); }
+    if(step.type==='radio'){ var s=document.querySelector('input[name="q_'+step.id+'"]:checked'); return s?s.value:null; }
+    var i=document.getElementById('q-input'); return i?i.value.trim():'';
+  }
+
+  function advQ(step, idx){
+    var val=collectQ(step);
+    var err=document.getElementById('q-err'); if(err) err.style.display='none';
+    if(!step.optional){
+      if(step.type==='checkbox'&&(!val||!val.length)){ if(err){err.textContent='Please select at least one option.';err.style.display='block';} return; }
+      if((step.type==='radio'||step.type==='text')&&!val){ if(err){err.textContent='Please make a selection to continue.';err.style.display='block';} return; }
+    }
+    qAnswers[step.id]=val;
+    if(idx===Q_STEPS.length-1){ submitQ(); } else { qCurrent=idx+1; renderQStep(qCurrent); }
+  }
+
+  async function submitQ(){
+    var c=document.getElementById('q-container');
+    if(c) c.innerHTML='<div style="text-align:center;padding:32px 16px;"><div style="font-size:32px;margin-bottom:12px;">\u2699\ufe0f</div><p style="font-size:14px;color:var(--muted);">Building your automation roadmap\u2026</p></div>';
+    try{
+      await fetch('/api/questionnaire',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+        email:email, booking_id: window._lastBookingId || undefined,
+        pain_points:qAnswers.pain_points||[], automation_goal:qAnswers.automation_goal||'',
+        industry:qAnswers.industry||'', team_size:qAnswers.team_size||'', revenue:qAnswers.revenue||'',
+        lead_source:qAnswers.lead_source||'', inbound:qAnswers.inbound||'', integrations:qAnswers.integrations||[],
+        crm:qAnswers.crm||'', email_provider:qAnswers.email_provider||'', device_os:qAnswers.device_os||'',
+        ai_tools:qAnswers.ai_tools||[], tier:selectedTier||''
+      })});
+    }catch(e){}
+    showBooked(true);
+  }
+
+  renderQStep(0);
+}
+
+function showBooked(completedMap){
+  var stepDiv = document.getElementById('booking-step');
+  stepDiv.innerHTML = completedMap ?
+    '<div class="confirm-box">'+
+      '<div style="font-size:36px;margin-bottom:8px;">\ud83d\uddfa\ufe0f</div>'+
+      '<h2 style="font-size:20px;font-weight:700;margin:0 0 8px;">You\'re all set!</h2>'+
+      '<p style="font-size:14px;color:var(--muted);line-height:1.6;margin:0 0 8px;">We\'re building your custom automation roadmap now. You\'ll receive it before the call so we can hit the ground running.</p>'+
+      '<p style="font-size:14px;color:var(--muted);margin:0 0 24px;">See you on the call!</p>'+
+      '<a href="/" style="display:inline-block;padding:10px 24px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;color:var(--ink);">\u2190 Back to home</a>'+
+    '</div>'
+  :
+    '<div class="confirm-box">'+
+      '<div class="check">\u2713</div>'+
+      '<h2 style="font-size:20px;font-weight:700;margin:0 0 8px;">You\'re all set!</h2>'+
+      '<p style="font-size:14px;color:var(--muted);margin:0 0 24px;">We\'ll send a Google Meet link before the call. See you soon!</p>'+
+      '<a href="/" style="display:inline-block;padding:10px 24px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;color:var(--ink);">\u2190 Back to home</a>'+
+    '</div>';
+}
+
+document.addEventListener('DOMContentLoaded', init);
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
-</body>
-</html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+<footer class="border-t border-[var(--line)] px-5 py-10">
+  <div class="section-wrap" style="display:flex;flex-direction:column;gap:20px;">
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:20px;">
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <svg width="22" height="22" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="rampedSwoopFooter" x1="17.46" y1="84.69" x2="76" y2="11.64" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#0A2540"/>
+                <stop offset="58%" stop-color="#006BD6"/>
+                <stop offset="100%" stop-color="#00D4FF"/>
+              </linearGradient>
+            </defs>
+            <path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="url(#rampedSwoopFooter)"/>
+          </svg>
+          <span style="font-weight:700;font-size:14px;color:var(--ink);">Ramped AI</span>
+        </div>
+        <p style="font-size:13px;color:var(--muted);">AI implementation for operating businesses</p>
+      </div>
+      <nav style="display:flex;flex-wrap:wrap;gap:8px 24px;align-items:center;">
+        <a href="/#how-it-works" style="font-size:13px;color:var(--muted);">How it works</a>
+        <a href="/#pricing" style="font-size:13px;color:var(--muted);">Pricing</a>
+        <a href="/about" style="font-size:13px;color:var(--muted);">About</a>
+        <a href="/comparison" style="font-size:13px;color:var(--muted);">Compare</a>
+        <a href="/book" style="font-size:13px;color:var(--muted);">Book a call</a>
+        <a href="/privacy" style="font-size:13px;color:var(--muted);">Privacy</a>
+      </nav>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;padding-top:12px;border-top:1px solid var(--line);">
+      <p style="font-size:12px;color:var(--muted);">© 2026 Ramped AI. All rights reserved.</p>
+      <a href="mailto:jon@30dayramp.com" style="font-size:12px;color:var(--muted);">jon@30dayramp.com</a>
+    </div>
+  </div>
+</footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "serviceType": "AI implementation",
+  "provider": {
+    "@type": "Organization",
+    "name": "Ramped AI",
+    "url": "https://www.30dayramp.com/"
+  },
+  "name": "AI Department in 30 Days",
+  "description": "Done-for-you deployment of production AI agents into operating businesses. Live within 30 days or full refund.",
+  "areaServed": "US",
+  "offers": [
+    {
+      "@type": "Offer",
+      "name": "Starter",
+      "priceSpecification": {
+        "@type": "UnitPriceSpecification",
+        "price": "2500",
+        "priceCurrency": "USD",
+        "billingIncrement": 1,
+        "unitCode": "MON"
+      }
+    },
+    {
+      "@type": "Offer",
+      "name": "Growth",
+      "priceSpecific

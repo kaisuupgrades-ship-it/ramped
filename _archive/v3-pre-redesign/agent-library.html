@@ -1,244 +1,722 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Agent library — Ramped AI</title>
-<meta name="description" content="Real-world AI agent scenarios. See how Ramped AI handles inbound leads, quoting, finance close, and recruiting — Slack-by-Slack." />
-<link rel="canonical" href="https://www.30dayramp.com/agent-library" />
-<link rel="icon" href="favicon.ico" />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="site.css" />
-<style>
-.lib-hero{padding:72px 0 24px}
-.lib-hero h1{font-size:clamp(36px,5.4vw,62px);letter-spacing:-0.03em;line-height:1.05;margin:18px 0 0;font-weight:700;text-wrap:balance;max-width:1000px}
-.scenario-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:36px 0 24px;border-bottom:1px solid var(--line);padding-bottom:0}
-.tab{padding:12px 18px;background:transparent;border:none;color:var(--text-2);font-weight:600;font-size:14px;border-bottom:2px solid transparent;display:flex;align-items:center;gap:8px;transition:all .15s;font-family:inherit}
-.tab:hover{color:var(--text-0)}
-.tab.on{color:var(--text-0);border-bottom-color:var(--orange)}
-.tab .ic{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-size:12px}
-.scenario{display:none;animation:fade .4s ease}
-.scenario.on{display:grid}
-@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
-.scenario{grid-template-columns:1fr 1.4fr;gap:28px;align-items:start}
-@media (max-width:960px){.scenario{grid-template-columns:1fr}}
-.scenario-meta h2{font-size:clamp(24px,3vw,32px);letter-spacing:-0.02em;margin:0 0 12px;line-height:1.15}
-.scenario-meta .lede{color:var(--text-1);font-size:15.5px;line-height:1.6;margin:0 0 18px}
-.kpi-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:18px}
-.kpi{background:rgba(255,255,255,0.02);border:1px solid var(--line);border-radius:10px;padding:12px}
-.kpi .l{font-size:10.5px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.08em;font-weight:600}
-.kpi .v{font-size:18px;font-weight:700;letter-spacing:-0.02em;margin-top:3px;color:var(--orange-2);font-variant-numeric:tabular-nums}
-.tools-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
-.tool-chip{font-size:11.5px;padding:5px 10px;border-radius:999px;background:var(--bg-2);border:1px solid var(--line);color:var(--text-1);font-family:var(--font-mono)}
-.what-h{font-family:var(--font-mono);font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.08em;margin:18px 0 8px}
-.what-list{padding-left:18px;margin:0;color:var(--text-1);font-size:14px;line-height:1.6}
-.what-list li{margin-bottom:6px}
-/* Slack mockup */
-.slack-window{background:var(--bg-1);border:1px solid var(--line);border-radius:16px;overflow:hidden;
-  box-shadow:0 30px 80px -30px rgba(0,0,0,0.7),inset 0 1px 0 rgba(255,255,255,0.03)}
-.slack-bar{padding:10px 14px;background:var(--bg-0);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
-.dots{display:flex;gap:6px}.dots span{width:11px;height:11px;border-radius:50%}
-.dots span:nth-child(1){background:#ff5f57}.dots span:nth-child(2){background:#febc2e}.dots span:nth-child(3){background:#28c840}
-.slack-bar .ch{flex:1;text-align:center;font-family:var(--font-mono);font-size:12px;color:var(--text-3)}
-.slack-stream{padding:18px;display:flex;flex-direction:column;gap:14px;max-height:560px;overflow-y:auto}
-.slack-stream::-webkit-scrollbar{width:6px}
-.slack-stream::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:3px}
-.smsg{display:grid;grid-template-columns:34px 1fr;gap:10px}
-.smsg .av{width:34px;height:34px;border-radius:7px;display:grid;place-items:center;font-weight:700;font-size:12px;color:#fff;flex-shrink:0;overflow:hidden}
-.smsg .av img{width:100%;height:100%;object-fit:contain;background:#fff;padding:3px}
-.smsg .head{display:flex;align-items:baseline;gap:8px;margin-bottom:3px}
-.smsg .head .name{font-weight:600;font-size:13.5px}
-.smsg .head .tag{font-size:9.5px;padding:1px 5px;background:var(--blue);color:#fff;border-radius:3px;font-weight:700;letter-spacing:0.04em}
-.smsg .head .time{font-size:11px;color:var(--text-3);font-variant-numeric:tabular-nums}
-.smsg .body{font-size:13.5px;color:var(--text-1);line-height:1.55}
-.smsg .body strong{color:var(--text-0);font-weight:600}
-.smsg .body code{font-family:var(--font-mono);background:var(--bg-3);border:1px solid var(--line);padding:1px 5px;border-radius:3px;font-size:12px;color:var(--orange-2)}
-.s-attach{margin-top:8px;border-left:3px solid var(--blue);padding:10px 12px;background:rgba(59,130,246,0.06);border-radius:0 8px 8px 0}
-.s-attach.green{border-left-color:var(--green);background:rgba(52,211,153,0.06)}
-.s-attach.orange{border-left-color:var(--orange);background:rgba(251,146,60,0.06)}
-.s-attach .h{font-weight:600;font-size:12.5px;margin-bottom:4px}
-.s-attach .l{font-size:12.5px;color:var(--text-2);line-height:1.5}
-.s-attach .stat-row{display:flex;gap:14px;margin-top:8px;flex-wrap:wrap}
-.s-attach .stat-row > div{font-family:var(--font-mono);font-size:11.5px;color:var(--text-2)}
-.s-attach .stat-row strong{color:var(--text-0);font-weight:700;display:block;font-size:14px;font-variant-numeric:tabular-nums}
-.s-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.s-btn{padding:6px 12px;background:var(--bg-3);border:1px solid var(--line-2);border-radius:6px;color:var(--text-0);font-size:12.5px;font-weight:500}
-.s-btn:hover{border-color:var(--blue);color:var(--blue-2)}
-.s-btn.primary{background:linear-gradient(180deg,#28c840,#1a9e2e);color:#fff;border-color:transparent;font-weight:600}
-.s-btn.primary:hover{color:#fff}
-</style>
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=3">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Agent Library — See Ramped Bot work | Ramped AI</title>
+  <meta name="description" content="See the AI agents Ramped builds for operating businesses, working in real Slack workflows. Ops, sales, finance, customer support — Ramped Bot replies in seconds, with proactive heads-ups."/>
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.30dayramp.com/agent-library" />
+  <meta property="og:title" content="Agent Library — See Ramped Bot work | Ramped AI" />
+  <meta property="og:description" content="See the AI agents Ramped builds for operating businesses, working in real Slack workflows." />
+  <meta property="og:image" content="https://www.30dayramp.com/og-image.png" />
+  <meta property="og:site_name" content="Ramped AI" />
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Agent Library — See Ramped Bot work">
+  <meta name="twitter:description" content="See AI agents Ramped builds, working in real Slack workflows.">
+  <meta name="twitter:image" content="https://www.30dayramp.com/og-image.png">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=3" />
+  <link rel="alternate icon" href="/favicon.ico?v=3" />
+  <link rel="canonical" href="https://www.30dayramp.com/agent-library" />
+  <meta name="robots" content="index, follow" />
+  <script defer src="/_vercel/insights/script.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&family=Lato:wght@400;700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/v3-theme.css">
+  <style>
+    :root{
+      --ink:#0B1220; --ink-2:#1A2233;
+      --paper:#FAFAF7; --surface:#F5F5F3;
+      --line:#E6E4DC; --muted:#5B6272;
+      --accent:#1F4FFF; --accent-2:#0B2A8C;
+      --good:#0F7A4B;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html,body{background:var(--paper);color:var(--ink);font-family:'Inter',ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.6;}
+    .section-wrap{max-width:1120px;margin:0 auto;padding:0 24px;}
+    @media(min-width:768px){.section-wrap{padding:0 32px;}}
+    .btn-primary{background:var(--ink);color:#fff;padding:13px 22px;border-radius:10px;font-weight:600;font-size:15px;display:inline-flex;align-items:center;gap:8px;transition:transform .12s ease,opacity .12s ease;cursor:pointer;border:none;text-decoration:none;}
+    .btn-primary:hover{opacity:.88;transform:translateY(-1px);}
+    .btn-ghost{padding:13px 18px;border-radius:10px;font-weight:600;font-size:15px;color:var(--ink);border:1px solid var(--line);background:#fff;cursor:pointer;transition:background .12s ease;text-decoration:none;display:inline-flex;align-items:center;}
+    .btn-ghost:hover{background:var(--surface);}
+
+    /* Ticker (masthead) */
+    .ticker-bar{background:var(--ink);overflow:hidden;height:38px;display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,0.07);}
+    .ticker-track{display:flex;width:100%;overflow:hidden;mask-image:linear-gradient(to right,transparent 0%,black 6%,black 94%,transparent 100%);}
+    .ticker-items{display:inline-flex;align-items:center;white-space:nowrap;animation:ticker-scroll 36s linear infinite;}
+    .ticker-item{display:inline-flex;align-items:center;gap:9px;padding:0 36px;font-size:11.5px;font-weight:500;color:rgba(255,255,255,0.78);letter-spacing:.045em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;}
+    .ticker-dot{color:#4ADE80;font-size:7px;line-height:1;}
+    @keyframes ticker-scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+    .ticker-bar:hover .ticker-items{animation-play-state:paused;}
+
+    .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 14px;border-radius:0 0 8px 0;font-size:13px;font-weight:600;z-index:100;}
+    .skip-link:focus{left:0;}
+
+    /* Hero */
+    .lib-hero{
+      background-image:radial-gradient(900px 500px at 90% 0%, rgba(31,79,255,0.08), transparent 60%),
+                       linear-gradient(var(--line) 1px, transparent 1px),
+                       linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      background-size:auto, 32px 32px, 32px 32px;
+      background-color:var(--paper);
+      padding:88px 0 72px;border-bottom:1px solid var(--line);
+    }
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:8px;
+      font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+      letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;
+    }
+    .eyebrow::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);}
+    .lib-h1{
+      font-size:clamp(2.2rem,5vw,3.4rem);font-weight:800;letter-spacing:-.035em;
+      line-height:1.05;color:var(--ink);max-width:780px;margin-bottom:22px;
+    }
+    .lib-deck{font-size:1.075rem;color:var(--muted);line-height:1.65;max-width:680px;margin-bottom:28px;}
+    .lib-deck strong{color:var(--ink);font-weight:600;}
+    .lib-toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px;}
+    .toc-pill{
+      padding:8px 14px;border-radius:999px;border:1px solid var(--line);
+      background:#fff;font-size:13px;font-weight:600;color:var(--ink-2);
+      text-decoration:none;transition:all .12s ease;
+    }
+    .toc-pill:hover{border-color:var(--accent);color:var(--accent);background:#F4F7FF;}
+
+    /* Scenario sections */
+    .scenario{
+      padding:88px 0;border-bottom:1px solid var(--line);
+      scroll-margin-top:80px;
+    }
+    .scenario:nth-of-type(even){background:var(--surface);}
+    .scenario-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;}
+    @media(max-width:900px){.scenario-grid{grid-template-columns:1fr;gap:36px;}}
+    .scenario-meta{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+    .scenario-meta .sep{color:var(--line);margin:0 10px;}
+    .scenario-meta .sep::before{content:"·";}
+    .scenario h2{
+      font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;letter-spacing:-.025em;
+      line-height:1.15;color:var(--ink);margin-bottom:14px;
+    }
+    .scenario-deck{font-size:16.5px;color:var(--ink-2);line-height:1.7;margin-bottom:20px;}
+    .scenario-deck strong{font-weight:600;color:var(--ink);}
+    .outcome-row{
+      display:flex;flex-wrap:wrap;gap:16px;margin-top:24px;
+      padding-top:24px;border-top:1px solid var(--line);
+    }
+    .outcome{font-size:13px;color:var(--muted);}
+    .outcome strong{
+      display:block;font-family:'JetBrains Mono',monospace;font-size:1.4rem;
+      font-weight:700;color:var(--ink);letter-spacing:-.02em;line-height:1;margin-bottom:4px;
+    }
+    .integrations{
+      display:flex;flex-wrap:wrap;gap:6px;margin-top:18px;
+    }
+    .int-chip{
+      font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.08em;
+      text-transform:uppercase;font-weight:600;color:var(--muted);
+      padding:4px 10px;background:#fff;border:1px solid var(--line);border-radius:6px;
+    }
+
+    /* Slack mockup — pixel-perfect, Slack-faithful */
+    .slack{
+      background:#fff;border-radius:14px;overflow:hidden;
+      box-shadow:0 1px 0 rgba(11,18,32,0.04),0 24px 48px -12px rgba(11,18,32,0.18),0 8px 16px -8px rgba(31,79,255,0.12);
+      font-family:'Lato','Slack-Lato',-apple-system,sans-serif;color:#1D1C1D;
+      line-height:1.46462;text-align:left;
+    }
+    .slack *, .slack *::before, .slack *::after { text-align:left; }
+    .slack-chrome{
+      background:#350D36;height:30px;display:flex;align-items:center;
+      padding:0 14px;gap:14px;border-bottom:1px solid rgba(0,0,0,0.18);
+    }
+    .traffic{display:flex;gap:7px;}
+    .traffic span{width:11px;height:11px;border-radius:50%;}
+    .traffic span:nth-child(1){background:#FF5F57;}
+    .traffic span:nth-child(2){background:#FEBC2E;}
+    .traffic span:nth-child(3){background:#28C840;}
+    .titlebar{color:rgba(255,255,255,0.7);font-size:12px;font-weight:500;}
+    .slack-body{display:flex;height:430px;}
+    .sidebar{width:200px;flex-shrink:0;background:#3F0E40;color:#fff;font-size:13px;}
+    .ws{
+      display:flex;align-items:center;gap:9px;padding:13px 14px;
+      border-bottom:1px solid rgba(255,255,255,0.08);font-weight:900;font-size:14px;
+    }
+    .ws-icon{
+      width:22px;height:22px;border-radius:5px;flex-shrink:0;
+      background:linear-gradient(135deg,#1F4FFF,#0B2A8C);
+      display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:800;
+    }
+    .ws-section{
+      padding:12px 14px 5px;font-size:11px;text-transform:uppercase;
+      color:rgba(255,255,255,0.55);letter-spacing:.05em;font-weight:700;
+      display:flex;align-items:center;gap:6px;
+    }
+    .ws-section::before{content:"▾";font-size:9px;}
+    .channel,.app{
+      display:flex;align-items:center;gap:8px;padding:5px 14px;
+      color:rgba(255,255,255,0.75);font-size:13px;font-weight:500;
+    }
+    .channel-active{background:#1264A3;color:#fff;font-weight:700;}
+    .ch-hash{opacity:.6;}
+    .app-icon{
+      width:16px;height:16px;border-radius:3px;flex-shrink:0;
+      background:linear-gradient(135deg,#1F4FFF,#0B2A8C);
+      display:flex;align-items:center;justify-content:center;
+    }
+    .online{
+      width:7px;height:7px;border-radius:50%;background:#2BAC76;margin-left:auto;
+    }
+    .main{flex:1;display:flex;flex-direction:column;background:#fff;min-width:0;}
+    .ch-head{
+      height:48px;flex-shrink:0;border-bottom:1px solid #E1E1E1;
+      padding:0 20px;display:flex;align-items:center;gap:8px;
+    }
+    .ch-title{font-weight:900;font-size:15px;letter-spacing:-.01em;}
+    .ch-title::before{content:"# ";color:#616061;font-weight:400;}
+    .ch-meta{color:#616061;font-size:12.5px;font-weight:500;}
+    .ch-meta::before{content:"·";color:#616061;margin-right:6px;}
+    .msgs{flex:1;padding:18px 20px;overflow:hidden;position:relative;}
+
+    .msg{
+      display:flex;gap:8px;margin-bottom:8px;padding:4px 0;opacity:0;
+      animation-duration:14s;animation-iteration-count:infinite;
+      animation-fill-mode:both;animation-timing-function:ease-out;
+    }
+    .avatar{
+      width:36px;height:36px;border-radius:4px;flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;
+      font-weight:900;font-size:13px;color:#fff;letter-spacing:-.02em;
+    }
+    .av-cust{background:linear-gradient(135deg,#D97706,#92400E);}
+    .av-cust-2{background:linear-gradient(135deg,#7C3AED,#4C1D95);}
+    .av-cust-3{background:linear-gradient(135deg,#0D9488,#134E4A);}
+    .av-cust-4{background:linear-gradient(135deg,#DB2777,#831843);}
+    .av-bot{background:linear-gradient(135deg,#1F4FFF,#0B2A8C);}
+    .msg-body{flex:1;min-width:0;}
+    .msg-head{display:flex;align-items:baseline;gap:7px;margin-bottom:2px;flex-wrap:wrap;}
+    .msg-name{font-weight:900;font-size:14px;color:#1D1C1D;}
+    .app-badge{
+      background:#E8E8E8;color:#616061;padding:1px 5px;border-radius:3px;
+      font-size:9.5px;font-weight:800;letter-spacing:.02em;
+    }
+    .msg-time{font-size:11px;color:#616061;font-weight:500;}
+    .msg-text{font-size:13.5px;line-height:1.5;color:#1D1C1D;}
+    .msg-text strong{font-weight:800;}
+    .msg-link{color:#1264A3;text-decoration:underline;}
+    .msg-status{
+      color:#616061;font-style:italic;display:inline-flex;align-items:center;gap:7px;
+    }
+    .msg-status::before{
+      content:"";width:11px;height:11px;border-radius:50%;
+      border:2px solid #1264A3;border-right-color:transparent;
+      animation:spin .9s linear infinite;flex-shrink:0;font-style:normal;
+    }
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .actions{display:flex;gap:6px;margin-top:8px;}
+    .ac-btn{
+      padding:5px 11px;border-radius:5px;font-size:12px;font-weight:700;
+      border:1px solid #E1E1E1;display:inline-block;
+    }
+    .ac-primary{background:#007a5a;color:#fff;border-color:#007a5a;}
+    .ac-secondary{background:#fff;color:#1D1C1D;}
+    .replied{
+      display:inline-flex;align-items:center;gap:7px;margin:6px 0 0 43px;
+      padding:6px 12px;background:#E8F5E9;border:1px solid #A5D6A7;
+      border-radius:6px;font-size:11.5px;color:#1B5E20;font-weight:700;
+      opacity:0;animation-duration:14s;animation-iteration-count:infinite;
+      animation-fill-mode:both;animation-timing-function:ease-out;
+    }
+    .replied::before{content:"✓";color:#2E7D32;font-weight:900;}
+
+    /* Animation timing — 14s per scenario */
+    .msg-cust   {animation-name:msg-cust;}
+    .msg-typing {animation-name:msg-typing;}
+    .msg-reply  {animation-name:msg-reply;}
+    .replied    {animation-name:msg-replied;}
+    @keyframes msg-cust   {0%,5%   {opacity:0;transform:translateY(8px);} 8%,93%  {opacity:1;transform:translateY(0);} 96%,100%{opacity:0;}}
+    @keyframes msg-typing {0%,18%  {opacity:0;transform:translateY(8px);} 22%,32% {opacity:1;transform:translateY(0);} 36%,100%{opacity:0;}}
+    @keyframes msg-reply  {0%,36%  {opacity:0;transform:translateY(8px);} 40%,93% {opacity:1;transform:translateY(0);} 96%,100%{opacity:0;}}
+    @keyframes msg-replied{0%,55%  {opacity:0;transform:translateY(4px) scale(0.96);} 58%,93% {opacity:1;transform:translateY(0) scale(1);} 96%,100%{opacity:0;}}
+
+    @media (prefers-reduced-motion: reduce){
+      .msg, .replied{animation:none !important;opacity:1 !important;transform:none !important;}
+      .msg-typing{display:none;}
+    }
+
+    /* Live pill */
+    .live-pill{
+      position:absolute;top:6px;right:14px;z-index:5;
+      display:inline-flex;align-items:center;gap:7px;
+      padding:5px 9px;border-radius:999px;
+      background:rgba(11,18,32,0.86);backdrop-filter:blur(6px);
+      color:#fff;font-family:'JetBrains Mono',monospace;
+      font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    }
+    .live-dot{
+      width:6px;height:6px;border-radius:50%;background:#3DDC84;
+      animation:pulse 1.6s ease-out infinite;
+    }
+    @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(61,220,132,0.55);}70%{box-shadow:0 0 0 8px rgba(61,220,132,0);}100%{box-shadow:0 0 0 0 rgba(61,220,132,0);}}
+
+    /* CTA */
+    .lib-cta{
+      background:var(--ink);color:#fff;padding:88px 0;text-align:center;
+    }
+    .lib-cta h2{
+      font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:800;letter-spacing:-.025em;
+      line-height:1.1;color:#fff;margin-bottom:14px;
+    }
+    .lib-cta p{
+      font-size:1.05rem;color:rgba(255,255,255,.65);
+      margin-bottom:32px;max-width:560px;margin-left:auto;margin-right:auto;
+    }
+    .lib-cta .btn-primary{background:#fff;color:var(--ink);}
+    .lib-cta .btn-primary:hover{background:rgba(255,255,255,.92);}
+
+    footer{padding:48px 0;border-top:1px solid var(--line);background:var(--paper);}
+    footer .row{display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:flex-start;}
+    footer .col{display:flex;flex-direction:column;gap:6px;}
+    footer a{font-size:13px;color:var(--muted);text-decoration:none;}
+    footer a:hover{color:var(--ink);}
+    footer .copy{font-size:12px;color:var(--muted);margin-top:32px;padding-top:20px;border-top:1px solid var(--line);}
+  </style>
 </head>
 <body>
-<a class="skip" href="#main">Skip to main content</a>
-<div id="ramped-header"></div>
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<!-- Masthead -->
+<div class="site-masthead" style="position:sticky;top:0;z-index:40;">
+<header style="border-bottom:1px solid var(--line);background:rgba(250,250,247,0.9);backdrop-filter:blur(8px);">
+  <div style="max-width:1120px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+    <a href="/" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--ink);">
+      <svg width="48" height="48" viewBox="0 0 100 100" fill="none">
+        <defs>
+          <linearGradient id="rampedSwoopNav" x1="17.46" y1="84.69" x2="76" y2="11.64" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#0A2540"/>
+            <stop offset="58%" stop-color="#006BD6"/>
+            <stop offset="100%" stop-color="#00D4FF"/>
+          </linearGradient>
+        </defs>
+        <path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="url(#rampedSwoopNav)"/>
+      </svg>
+      <span style="font-weight:800;font-size:18px;letter-spacing:-.02em;">Ramped AI</span>
+    </a>
+    <nav style="display:flex;align-items:center;gap:6px;" aria-label="Primary">
+      <a href="/about"      class="btn-ghost" style="padding:11px 14px;font-size:13px;">About</a>
+      <a href="/#pricing"   class="btn-ghost" style="padding:11px 14px;font-size:13px;">Pricing</a>
+      <a href="/comparison" class="btn-ghost" style="padding:11px 14px;font-size:13px;">Compare</a>
+      <a href="/book"       class="btn-primary" style="padding:11px 16px;font-size:13px;">Book a call →</a>
+    </nav>
+  </div>
+</header>
+<div class="ticker-bar"><div class="ticker-track"><span class="ticker-items">
+  <span class="ticker-item"><span class="ticker-dot">●</span>Save 40+ hours per week</span>
+  <span class="ticker-item"><span class="ticker-dot">●</span>30-day go-live guarantee</span>
+  <span class="ticker-item"><span class="ticker-dot">●</span>3× faster lead response time</span>
+  <span class="ticker-item"><span class="ticker-dot">●</span>Avg. $12,000+ / mo saved vs. staffing</span>
+  <span class="ticker-item"><span class="ticker-dot">●</span>5× avg. ROI in year 1</span>
+  <span class="ticker-item"><span class="ticker-dot">●</span>24/7 AI coverage — no sick days</span>
+  <span class="ticker-item"><span class="ticker-dot">●</span>Save 40+ hours per week</span>
+  <span class="ticker-item"><span class="ticker-dot">●</span>30-day go-live guarantee</span>
+  <span class="ticker-item"><span class="ticker-dot">●</span>3× faster lead response time</span>
+  <span class="ticker-item"><span class="ticker-dot">●</span>Avg. $12,000+ / mo saved vs. staffing</span>
+  <span class="ticker-item"><span class="ticker-dot">●</span>5× avg. ROI in year 1</span>
+  <span class="ticker-item"><span class="ticker-dot">●</span>24/7 AI coverage — no sick days</span>
+</span></div></div>
+</div>
 
 <main id="main">
+
+<!-- Hero -->
 <section class="lib-hero">
-  <div class="container">
-    <span class="eyebrow"><span class="pulse"></span>Agent library · Real-world scenarios</span>
-    <h1>What an AI department <span class="accent">actually does, all day.</span></h1>
-    <p class="lede">Four scenarios from production deployments, played out Slack-by-Slack. No demos. No marketing magic. Just the work.</p>
+  <div class="section-wrap">
+    <div class="eyebrow">Agent library · Live in your stack</div>
+    <h1 class="lib-h1">See Ramped Bot work.</h1>
+    <p class="lib-deck">Every Ramped agent lives where your team already does &mdash; <strong>Slack, HubSpot, NetSuite, QuickBooks, Gmail</strong>. Below, four real workflows we deploy in the first 30 days, replying in <strong>14 seconds or less</strong>, catching errors humans miss, asking before they send.</p>
+    <div class="lib-toc">
+      <a href="#ops"     class="toc-pill">Ops · Inventory question</a>
+      <a href="#sales"   class="toc-pill">Sales · Lead intake</a>
+      <a href="#finance" class="toc-pill">Finance · Monthly close</a>
+      <a href="#support" class="toc-pill">Support · Ticket triage</a>
+    </div>
   </div>
 </section>
 
-<section class="section" style="padding-top:24px">
-  <div class="container">
-    <div class="scenario-tabs" id="tabs">
-      <button class="tab on" data-s="lead"><span class="ic" style="background:rgba(59,130,246,0.18);color:var(--blue-2)">🎯</span>Inbound lead</button>
-      <button class="tab" data-s="quote"><span class="ic" style="background:rgba(251,146,60,0.18);color:var(--orange-2)">📋</span>Quote intake</button>
-      <button class="tab" data-s="finance"><span class="ic" style="background:rgba(167,139,250,0.18);color:var(--purple)">📊</span>Finance close</button>
-      <button class="tab" data-s="recruit"><span class="ic" style="background:rgba(52,211,153,0.18);color:var(--green)">👥</span>Recruiting</button>
-    </div>
-
-    <!-- Lead -->
-    <div class="scenario on" data-s="lead">
-      <div class="scenario-meta">
-        <span class="kicker">Sales · Inbound lead routing</span>
-        <h2>Sara hits the demo form. <br/>47 seconds later, she's booked.</h2>
-        <p class="lede">A new lead lands. The agent enriches, scores, drafts, books, and hands off — before your AE has finished their coffee.</p>
-        <div class="kpi-row">
-          <div class="kpi"><div class="l">Time to touch</div><div class="v">47s</div></div>
-          <div class="kpi"><div class="l">Pipeline added</div><div class="v">$12.4K</div></div>
-          <div class="kpi"><div class="l">Hours saved</div><div class="v">18 / wk</div></div>
+<!-- ─── SCENARIO 1: OPS ──────────────────────────────────────────────────── -->
+<section class="scenario" id="ops">
+  <div class="section-wrap">
+    <div class="scenario-grid">
+      <div>
+        <div class="scenario-meta">Scenario 01<span class="sep"></span>Operations<span class="sep"></span>14s response</div>
+        <h2>"Are we still shipping Acme's order?" — answered in 14 seconds.</h2>
+        <p class="scenario-deck">Marcus, your ops manager, asks the question that used to take 12 minutes of cross-checking NetSuite, the tracking portal, and the customer's last invoice. Ramped Bot does it instantly &mdash; <strong>and catches the stale shipping address before the package leaves the warehouse</strong>.</p>
+        <p class="scenario-deck">This is where most operators meet Ramped Bot for the first time. The question is mundane. The agent's answer is what makes them stop and say "wait, what?"</p>
+        <div class="integrations">
+          <span class="int-chip">Slack</span>
+          <span class="int-chip">NetSuite</span>
+          <span class="int-chip">UPS API</span>
+          <span class="int-chip">Gmail</span>
         </div>
-        <div class="tools-row">
-          <span class="tool-chip">HubSpot</span><span class="tool-chip">Clearbit</span><span class="tool-chip">Calendar</span><span class="tool-chip">Slack</span>
-        </div>
-        <div class="what-h">What it does</div>
-        <ul class="what-list">
-          <li>Enriches the lead from Clearbit + LinkedIn</li>
-          <li>Scores fit against your closed-won ICP model</li>
-          <li>Drafts a personalized outreach email</li>
-          <li>Books a slot on the AE's calendar</li>
-          <li>Posts a handoff with full context to <code>#sales-pod</code></li>
-        </ul>
-      </div>
-      <div class="slack-window">
-        <div class="slack-bar"><div class="dots"><span></span><span></span><span></span></div><div class="ch"># sales-pod</div><div style="width:60px"></div></div>
-        <div class="slack-stream">
-          <div class="smsg"><div class="av" style="background:#fff;padding:0"><img src="logo.png" alt=""/></div><div><div class="head"><span class="name">Ramped Bot</span><span class="tag">AI</span><span class="time">9:42 AM</span></div><div class="body">New inbound from <strong>Sara Chen — Director of Ops, Northwind Logistics</strong>. Filled out the demo form 30 seconds ago.<div class="s-attach"><div class="h">Lead enrichment · Northwind Logistics</div><div class="l">$45M ARR · 220 employees · NetSuite-based · Fits ICP pattern of 32-day cycles<br/>Champion: <strong>Sara Chen</strong> · prior contact at Acme (closed-won 2024)</div><div class="stat-row"><div><strong>94/100</strong>Fit score</div><div><strong>$148K</strong>Est. ACV</div><div><strong>32 days</strong>Avg. cycle</div></div></div></div></div></div>
-          <div class="smsg"><div class="av" style="background:#fff;padding:0"><img src="logo.png" alt=""/></div><div><div class="head"><span class="name">Ramped Bot</span><span class="tag">AI</span><span class="time">9:42 AM</span></div><div class="body">Drafted personalized outreach &amp; booked a slot.<div class="s-attach green"><div class="h">📅 Discovery call booked — Tue May 5, 2:30 PM</div><div class="l">Email sent to sara@northwind.com referencing their <strong>NetSuite + HubSpot integration pain</strong> from the form. Calendar invite in your inbox.</div></div><div class="s-actions"><button class="s-btn primary">View deal</button><button class="s-btn">Open email draft</button><button class="s-btn">Reroute to AE</button></div></div></div></div>
-          <div class="smsg"><div class="av" style="background:#3a455a">MC</div><div><div class="head"><span class="name">Marcus (AE)</span><span class="time">9:44 AM</span></div><div class="body">🙏 Already on it. Brief is solid — saved me a half-hour of prep.</div></div></div>
+        <div class="outcome-row">
+          <div class="outcome"><strong>14s</strong>response time</div>
+          <div class="outcome"><strong>−12 min</strong>per question</div>
+          <div class="outcome"><strong>11/mo</strong>errors caught</div>
         </div>
       </div>
-    </div>
-
-    <!-- Quote -->
-    <div class="scenario" data-s="quote">
-      <div class="scenario-meta">
-        <span class="kicker">Operations · Quote intake</span>
-        <h2>Quote turnaround dropped from <br/>3 days to 8 minutes.</h2>
-        <p class="lede">Inbound RFQs hit the inbox. The agent extracts line items, prices against current SKU data, drafts the quote, and routes for sign-off — same morning.</p>
-        <div class="kpi-row">
-          <div class="kpi"><div class="l">Turnaround</div><div class="v">8 min</div></div>
-          <div class="kpi"><div class="l">Win rate Δ</div><div class="v">+22%</div></div>
-          <div class="kpi"><div class="l">Hours saved</div><div class="v">14 / wk</div></div>
+      <div class="slack">
+        <div class="slack-chrome">
+          <div class="traffic"><span></span><span></span><span></span></div>
+          <span class="titlebar">Acme Industries · Slack</span>
         </div>
-        <div class="tools-row">
-          <span class="tool-chip">NetSuite</span><span class="tool-chip">Gmail</span><span class="tool-chip">DocuSign</span><span class="tool-chip">Slack</span>
-        </div>
-        <div class="what-h">What it does</div>
-        <ul class="what-list">
-          <li>Reads inbound RFQs (email + PDF attachments)</li>
-          <li>Matches line items to current SKU + pricing data</li>
-          <li>Applies tier-based discount logic from your matrix</li>
-          <li>Drafts the quote PDF and stages for approval</li>
-          <li>Sends on approval — or escalates exceptions to ops</li>
-        </ul>
-      </div>
-      <div class="slack-window">
-        <div class="slack-bar"><div class="dots"><span></span><span></span><span></span></div><div class="ch"># quote-desk</div><div style="width:60px"></div></div>
-        <div class="slack-stream">
-          <div class="smsg"><div class="av" style="background:#fff;padding:0"><img src="logo.png" alt=""/></div><div><div class="head"><span class="name">Ramped Bot</span><span class="tag">AI</span><span class="time">7:14 AM</span></div><div class="body">RFQ from <strong>Cresta Manufacturing</strong> — 14 line items, total ~<strong>$48,200</strong>. Parsed, priced, draft ready.<div class="s-attach"><div class="h">Quote draft · CRESTA-2026-0184</div><div class="l">12 of 14 SKUs matched at standard tier-2 pricing. <strong>2 flagged</strong> — XPM-440 stock at 8 units (need supplier confirm), and bulk discount ladder kicks in at line 11.</div></div></div></div></div>
-          <div class="smsg"><div class="av" style="background:#fff;padding:0"><img src="logo.png" alt=""/></div><div><div class="head"><span class="name">Ramped Bot</span><span class="tag">AI</span><span class="time">7:14 AM</span></div><div class="body">Awaiting your sign-off — clock-time to draft was <code>6m 12s</code>.<div class="s-actions"><button class="s-btn primary">✓ Approve &amp; send</button><button class="s-btn">Edit draft</button><button class="s-btn">Confirm stock first</button></div></div></div></div>
-          <div class="smsg"><div class="av" style="background:#3a455a">AY</div><div><div class="head"><span class="name">Andrew</span><span class="time">7:18 AM</span></div><div class="body">Approved. Send. 👍</div></div></div>
-          <div class="smsg"><div class="av" style="background:#fff;padding:0"><img src="logo.png" alt=""/></div><div><div class="head"><span class="name">Ramped Bot</span><span class="tag">AI</span><span class="time">7:18 AM</span></div><div class="body">Sent. DocuSign envelope live — Cresta usually counter-signs within 6 hours.<div class="s-attach green"><div class="h">✓ Quote sent · awaiting signature</div><div class="stat-row"><div><strong>$48,200</strong>Quote total</div><div><strong>8 min</strong>End-to-end</div><div><strong>72%</strong>Hist. close rate</div></div></div></div></div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Finance -->
-    <div class="scenario" data-s="finance">
-      <div class="scenario-meta">
-        <span class="kicker">Finance · Monthly close</span>
-        <h2>Q3 close packet, <br/>ready before standup.</h2>
-        <p class="lede">Reconciles QuickBooks. Maps to plan. Computes variance. Drafts the memo with footnotes and flags the duplicates AP missed.</p>
-        <div class="kpi-row">
-          <div class="kpi"><div class="l">Memo turnaround</div><div class="v">9 min</div></div>
-          <div class="kpi"><div class="l">Variance found</div><div class="v">+4.2%</div></div>
-          <div class="kpi"><div class="l">Hours saved</div><div class="v">14 / mo</div></div>
-        </div>
-        <div class="tools-row">
-          <span class="tool-chip">QuickBooks</span><span class="tool-chip">Google Sheets</span><span class="tool-chip">Slack</span>
-        </div>
-        <div class="what-h">What it does</div>
-        <ul class="what-list">
-          <li>Reconciles all transactions in QuickBooks for the period</li>
-          <li>Maps actuals to your plan categories</li>
-          <li>Computes line-item variance and writes the walk</li>
-          <li>Drafts the executive memo with charts</li>
-          <li>Surfaces anomalies (duplicates, drift, vendor outliers)</li>
-        </ul>
-      </div>
-      <div class="slack-window">
-        <div class="slack-bar"><div class="dots"><span></span><span></span><span></span></div><div class="ch"># finance-leads</div><div style="width:60px"></div></div>
-        <div class="slack-stream">
-          <div class="smsg"><div class="av" style="background:#fff;padding:0"><img src="logo.png" alt=""/></div><div><div class="head"><span class="name">Ramped Bot</span><span class="tag">AI</span><span class="time">8:02 AM</span></div><div class="body">Q3 close packet ready for review. Reconciled <strong>1,847 transactions</strong> in QuickBooks; variance memo + charts attached.<div class="s-attach green"><div class="h">📊 Q3 close · variance walk</div><div class="l"><strong>OpEx</strong> ran hot on cloud spend (+$112K vs plan).<br/><strong>Headcount</strong> came in under by $86K — three open roles slipped to Q4.<br/><strong>Revenue</strong> +4.2% vs plan, driven by Northwind expansion.</div></div></div></div></div>
-          <div class="smsg"><div class="av" style="background:#fff;padding:0"><img src="logo.png" alt=""/></div><div><div class="head"><span class="name">Ramped Bot</span><span class="tag">AI</span><span class="time">8:02 AM</span></div><div class="body">⚠️ Held two duplicate invoices from <strong>Cloudplex</strong> (June + July, $4,200 each) out of the memo and tagged for AP review.<div class="s-attach orange"><div class="h">Flag · 2 likely duplicate vendor charges</div><div class="l">Same vendor, same line items, 31 days apart. Posted under different POs. Confidence: <strong>92%</strong>.</div></div><div class="s-actions"><button class="s-btn primary">Open memo</button><button class="s-btn">Review duplicates</button><button class="s-btn">Approve &amp; share with board</button></div></div></div></div>
-          <div class="smsg"><div class="av" style="background:#3a455a">PS</div><div><div class="head"><span class="name">Priya (CFO)</span><span class="time">8:06 AM</span></div><div class="body">Confirmed — Cloudplex billed twice. Already pinged AP. Memo looks clean otherwise. 💯</div></div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Recruit -->
-    <div class="scenario" data-s="recruit">
-      <div class="scenario-meta">
-        <span class="kicker">People · Recruiting</span>
-        <h2>40 applications. <br/>4 worth a screen.</h2>
-        <p class="lede">The agent reads every résumé, scores against your rubric, drafts personalized rejections, and books screens with the keepers.</p>
-        <div class="kpi-row">
-          <div class="kpi"><div class="l">Time to shortlist</div><div class="v">22 min</div></div>
-          <div class="kpi"><div class="l">Apps screened</div><div class="v">40</div></div>
-          <div class="kpi"><div class="l">Hours saved</div><div class="v">11 / role</div></div>
-        </div>
-        <div class="tools-row">
-          <span class="tool-chip">Greenhouse</span><span class="tool-chip">Gmail</span><span class="tool-chip">Calendar</span><span class="tool-chip">Slack</span>
-        </div>
-        <div class="what-h">What it does</div>
-        <ul class="what-list">
-          <li>Reads every résumé + cover letter as it lands</li>
-          <li>Scores against the rubric you defined for the role</li>
-          <li>Drafts personalized rejections (with the actual reason)</li>
-          <li>Books 30-min screens with the top of the pile</li>
-          <li>Files notes back into Greenhouse, ranked</li>
-        </ul>
-      </div>
-      <div class="slack-window">
-        <div class="slack-bar"><div class="dots"><span></span><span></span><span></span></div><div class="ch"># hiring-ops-lead</div><div style="width:60px"></div></div>
-        <div class="slack-stream">
-          <div class="smsg"><div class="av" style="background:#fff;padding:0"><img src="logo.png" alt=""/></div><div><div class="head"><span class="name">Ramped Bot</span><span class="tag">AI</span><span class="time">11:30 AM</span></div><div class="body">First-pass on the <strong>Ops Lead</strong> req. 40 applications in, 4 strong fits, 12 maybes, 24 clear no's.<div class="s-attach"><div class="h">Shortlist · Ops Lead, Austin</div><div class="l">1. <strong>Devin Park</strong> — 6yr ops, NetSuite + HubSpot · 92<br/>2. <strong>Anita Reyes</strong> — 5yr ops, e-comm + 3PL · 88<br/>3. <strong>Marcus Lee</strong> — 8yr ops, ERP migration lead · 85<br/>4. <strong>Sam Chen</strong> — 4yr ops, scrappy generalist · 83</div></div></div></div></div>
-          <div class="smsg"><div class="av" style="background:#fff;padding:0"><img src="logo.png" alt=""/></div><div><div class="head"><span class="name">Ramped Bot</span><span class="tag">AI</span><span class="time">11:30 AM</span></div><div class="body">Drafted 24 personalized rejections (real reasons, not boilerplate) and proposed screens for the top 4.<div class="s-actions"><button class="s-btn primary">Send rejections (24)</button><button class="s-btn">Book all 4 screens</button><button class="s-btn">Review borderline (12)</button></div></div></div></div>
-          <div class="smsg"><div class="av" style="background:#3a455a">AY</div><div><div class="head"><span class="name">Andrew</span><span class="time">11:34 AM</span></div><div class="body">Send rejections. Book Devin + Anita this week, Marcus + Sam next.</div></div></div>
-          <div class="smsg"><div class="av" style="background:#fff;padding:0"><img src="logo.png" alt=""/></div><div><div class="head"><span class="name">Ramped Bot</span><span class="tag">AI</span><span class="time">11:34 AM</span></div><div class="body">Done. <strong>24 rejections sent.</strong> 4 screens booked across the next 8 business days. Calendar invites in your inbox.</div></div></div>
+        <div class="slack-body">
+          <aside class="sidebar">
+            <div class="ws"><span class="ws-icon">A</span><span>Acme</span></div>
+            <div class="ws-section">Channels</div>
+            <div class="channel"><span class="ch-hash">#</span>general</div>
+            <div class="channel"><span class="ch-hash">#</span>sales</div>
+            <div class="channel channel-active"><span class="ch-hash">#</span>support</div>
+            <div class="channel"><span class="ch-hash">#</span>ops</div>
+            <div class="ws-section">Apps</div>
+            <div class="app">
+              <span class="app-icon"><svg width="12" height="12" viewBox="0 0 100 100" fill="none"><path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="#fff"/></svg></span>
+              <span>Ramped Bot</span><span class="online"></span>
+            </div>
+          </aside>
+          <main class="main">
+            <header class="ch-head"><span class="ch-title">support</span><span class="ch-meta">4 members</span></header>
+            <div class="msgs">
+              <div class="live-pill"><span class="live-dot"></span><span>LIVE</span></div>
+              <div class="msg msg-cust">
+                <div class="avatar av-cust">MC</div>
+                <div class="msg-body">
+                  <div class="msg-head"><span class="msg-name">Marcus Chen</span><span class="msg-time">10:42 AM</span></div>
+                  <div class="msg-text">Are we still on track to ship Acme's Q3 inventory order? Andrew's asking.</div>
+                </div>
+              </div>
+              <div class="msg msg-typing">
+                <div class="avatar av-bot"><svg width="18" height="18" viewBox="0 0 100 100" fill="none"><path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="#fff"/></svg></div>
+                <div class="msg-body">
+                  <div class="msg-head"><span class="msg-name">Ramped Bot</span><span class="app-badge">APP</span><span class="msg-time">10:42 AM</span></div>
+                  <div class="msg-text"><span class="msg-status">Pulling order #2847 from NetSuite&hellip;</span></div>
+                </div>
+              </div>
+              <div class="msg msg-reply">
+                <div class="avatar av-bot"><svg width="18" height="18" viewBox="0 0 100 100" fill="none"><path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="#fff"/></svg></div>
+                <div class="msg-body">
+                  <div class="msg-head"><span class="msg-name">Ramped Bot</span><span class="app-badge">APP</span><span class="msg-time">10:42 AM</span></div>
+                  <div class="msg-text">
+                    Pulled order #2847 — picked &amp; packed yesterday, UPS Ground, ETA <strong>Wed Nov 12</strong>.<br>
+                    ⚠️ <strong>Heads up:</strong> shipping address is the old Reno warehouse. Acme relocated last month. Drafted a confirm email — want me to send?<br>
+                    <span class="msg-link">→ View draft</span> · <span class="msg-link">View in NetSuite</span>
+                  </div>
+                  <div class="actions">
+                    <span class="ac-btn ac-primary">Send draft</span>
+                    <span class="ac-btn ac-secondary">Edit</span>
+                  </div>
+                </div>
+              </div>
+              <div class="replied">Replied · 14s · ticket #1247 closed · 12 min saved</div>
+            </div>
+          </main>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<div id="ramped-final-cta"></div>
+<!-- ─── SCENARIO 2: SALES ────────────────────────────────────────────────── -->
+<section class="scenario" id="sales">
+  <div class="section-wrap">
+    <div class="scenario-grid">
+      <div>
+        <div class="scenario-meta">Scenario 02<span class="sep"></span>Sales<span class="sep"></span>11s response</div>
+        <h2>Hot lead in. Bot enriches. You get a meeting on the calendar.</h2>
+        <p class="scenario-deck">Sarah flags a website lead. Ramped Bot pulls the company's HubSpot record, runs a Clearbit enrichment, scores it against your ICP, drafts an intro reply with your Cal link, and pings the owner. Total time: <strong>11 seconds</strong>. Total work for Sarah: <strong>one click</strong>.</p>
+        <p class="scenario-deck">Most ops teams bleed 2-3 weeks of revenue on slow lead response. Ramped Bot closes that gap instantly — even at 11pm on a Sunday.</p>
+        <div class="integrations">
+          <span class="int-chip">Slack</span>
+          <span class="int-chip">HubSpot</span>
+          <span class="int-chip">Clearbit</span>
+          <span class="int-chip">Calendly</span>
+        </div>
+        <div class="outcome-row">
+          <div class="outcome"><strong>3×</strong>faster response</div>
+          <div class="outcome"><strong>+$120K</strong>pipeline added/mo</div>
+          <div class="outcome"><strong>0 leads</strong>missed overnight</div>
+        </div>
+      </div>
+      <div class="slack">
+        <div class="slack-chrome">
+          <div class="traffic"><span></span><span></span><span></span></div>
+          <span class="titlebar">Acme Industries · Slack</span>
+        </div>
+        <div class="slack-body">
+          <aside class="sidebar">
+            <div class="ws"><span class="ws-icon">A</span><span>Acme</span></div>
+            <div class="ws-section">Channels</div>
+            <div class="channel"><span class="ch-hash">#</span>general</div>
+            <div class="channel channel-active"><span class="ch-hash">#</span>sales</div>
+            <div class="channel"><span class="ch-hash">#</span>support</div>
+            <div class="channel"><span class="ch-hash">#</span>ops</div>
+            <div class="ws-section">Apps</div>
+            <div class="app">
+              <span class="app-icon"><svg width="12" height="12" viewBox="0 0 100 100" fill="none"><path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="#fff"/></svg></span>
+              <span>Ramped Bot</span><span class="online"></span>
+            </div>
+          </aside>
+          <main class="main">
+            <header class="ch-head"><span class="ch-title">sales</span><span class="ch-meta">7 members</span></header>
+            <div class="msgs">
+              <div class="live-pill"><span class="live-dot"></span><span>LIVE</span></div>
+              <div class="msg msg-cust">
+                <div class="avatar av-cust-2">SK</div>
+                <div class="msg-body">
+                  <div class="msg-head"><span class="msg-name">Sarah Kim</span><span class="msg-time">2:14 PM</span></div>
+                  <div class="msg-text">Hot lead just came through the website — Acme Industrial. Can you take a look?</div>
+                </div>
+              </div>
+              <div class="msg msg-typing">
+                <div class="avatar av-bot"><svg width="18" height="18" viewBox="0 0 100 100" fill="none"><path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="#fff"/></svg></div>
+                <div class="msg-body">
+                  <div class="msg-head"><span class="msg-name">Ramped Bot</span><span class="app-badge">APP</span><span class="msg-time">2:14 PM</span></div>
+                  <div class="msg-text"><span class="msg-status">Enriching from HubSpot + Clearbit&hellip;</span></div>
+                </div>
+              </div>
+              <div class="msg msg-reply">
+                <div class="avatar av-bot"><svg width="18" height="18" viewBox="0 0 100 100" fill="none"><path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="#fff"/></svg></div>
+                <div class="msg-body">
+                  <div class="msg-head"><span class="msg-name">Ramped Bot</span><span class="app-badge">APP</span><span class="msg-time">2:14 PM</span></div>
+                  <div class="msg-text">
+                    <strong>Acme Industrial</strong> — 87 employees, $12M ARR, manufacturing.<br>
+                    Form notes: <em>"replacing 2 inside reps"</em> — strong fit. ICP score <strong>9/10</strong>. Drafted intro w/ your Cal link &amp; tagged @Sarah.<br>
+                    <span class="msg-link">→ View draft</span> · <span class="msg-link">View in HubSpot</span>
+                  </div>
+                  <div class="actions">
+                    <span class="ac-btn ac-primary">Send</span>
+                    <span class="ac-btn ac-secondary">Edit</span>
+                  </div>
+                </div>
+              </div>
+              <div class="replied">Replied · 11s · meeting booked Wed 2pm · pipeline +$120K</div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SCENARIO 3: FINANCE ──────────────────────────────────────────────── -->
+<section class="scenario" id="finance">
+  <div class="section-wrap">
+    <div class="scenario-grid">
+      <div>
+        <div class="scenario-meta">Scenario 03<span class="sep"></span>Finance<span class="sep"></span>9s response</div>
+        <h2>Board call in 20 minutes. Bot pulls the close.</h2>
+        <p class="scenario-deck">Andrew, the CEO, needs October's number before he walks into the boardroom. Used to mean texting the bookkeeper, waiting, double-checking. Now: ask in Slack, get revenue + top expense category + flagged anomalies in <strong>9 seconds</strong>.</p>
+        <p class="scenario-deck">The bot also catches <strong>3 invoices over 60 days unpaid</strong> &mdash; the kind of cash-flow leak that's sitting in plain sight in every accounting system but nobody pings about.</p>
+        <div class="integrations">
+          <span class="int-chip">Slack</span>
+          <span class="int-chip">QuickBooks</span>
+          <span class="int-chip">Stripe</span>
+          <span class="int-chip">Drive</span>
+        </div>
+        <div class="outcome-row">
+          <div class="outcome"><strong>9s</strong>to close summary</div>
+          <div class="outcome"><strong>−45 min</strong>before each board call</div>
+          <div class="outcome"><strong>$42K</strong>collections flagged</div>
+        </div>
+      </div>
+      <div class="slack">
+        <div class="slack-chrome">
+          <div class="traffic"><span></span><span></span><span></span></div>
+          <span class="titlebar">Acme Industries · Slack</span>
+        </div>
+        <div class="slack-body">
+          <aside class="sidebar">
+            <div class="ws"><span class="ws-icon">A</span><span>Acme</span></div>
+            <div class="ws-section">Channels</div>
+            <div class="channel"><span class="ch-hash">#</span>general</div>
+            <div class="channel"><span class="ch-hash">#</span>sales</div>
+            <div class="channel"><span class="ch-hash">#</span>support</div>
+            <div class="channel channel-active"><span class="ch-hash">#</span>finance</div>
+            <div class="ws-section">Apps</div>
+            <div class="app">
+              <span class="app-icon"><svg width="12" height="12" viewBox="0 0 100 100" fill="none"><path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="#fff"/></svg></span>
+              <span>Ramped Bot</span><span class="online"></span>
+            </div>
+          </aside>
+          <main class="main">
+            <header class="ch-head"><span class="ch-title">finance</span><span class="ch-meta">3 members</span></header>
+            <div class="msgs">
+              <div class="live-pill"><span class="live-dot"></span><span>LIVE</span></div>
+              <div class="msg msg-cust">
+                <div class="avatar av-cust-3">AY</div>
+                <div class="msg-body">
+                  <div class="msg-head"><span class="msg-name">Andrew Yoon</span><span class="msg-time">4:42 PM</span></div>
+                  <div class="msg-text">Quick — what does October close look like? Board call in 20 min.</div>
+                </div>
+              </div>
+              <div class="msg msg-typing">
+                <div class="avatar av-bot"><svg width="18" height="18" viewBox="0 0 100 100" fill="none"><path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="#fff"/></svg></div>
+                <div class="msg-body">
+                  <div class="msg-head"><span class="msg-name">Ramped Bot</span><span class="app-badge">APP</span><span class="msg-time">4:42 PM</span></div>
+                  <div class="msg-text"><span class="msg-status">Pulling October from QuickBooks + Stripe&hellip;</span></div>
+                </div>
+              </div>
+              <div class="msg msg-reply">
+                <div class="avatar av-bot"><svg width="18" height="18" viewBox="0 0 100 100" fill="none"><path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="#fff"/></svg></div>
+                <div class="msg-body">
+                  <div class="msg-head"><span class="msg-name">Ramped Bot</span><span class="app-badge">APP</span><span class="msg-time">4:42 PM</span></div>
+                  <div class="msg-text">
+                    <strong>October close:</strong> Revenue <strong>$1.24M (+18% MoM)</strong>. Top expense: cloud infra <strong>$87K (+32%)</strong> — flagging.<br>
+                    ⚠️ 3 invoices &gt;60d unpaid totaling <strong>$42K</strong>. Queued the deck in Drive.<br>
+                    <span class="msg-link">→ View summary</span> · <span class="msg-link">View P&amp;L</span>
+                  </div>
+                  <div class="actions">
+                    <span class="ac-btn ac-primary">Open deck</span>
+                    <span class="ac-btn ac-secondary">Email collections</span>
+                  </div>
+                </div>
+              </div>
+              <div class="replied">Replied · 9s · summary posted to #leadership · saved 45 min</div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SCENARIO 4: SUPPORT ──────────────────────────────────────────────── -->
+<section class="scenario" id="support">
+  <div class="section-wrap">
+    <div class="scenario-grid">
+      <div>
+        <div class="scenario-meta">Scenario 04<span class="sep"></span>Customer Support<span class="sep"></span>18s response</div>
+        <h2>Customer ticket. Bot drafts. You approve. Sent.</h2>
+        <p class="scenario-deck">Jennifer, your customer success lead, watches a ticket land in <code>#cs-inbox</code>. Ramped Bot reads it, pulls the customer's order history, drafts a personalized response with the right tracking info, and queues it for one-click approval. <strong>The bot never sends without you.</strong></p>
+        <p class="scenario-deck">Approval-by-default is the difference between "AI is risky" and "AI is just another teammate." Every customer-facing touchpoint goes through your team's review. The bot just does the busywork.</p>
+        <div class="integrations">
+          <span class="int-chip">Slack</span>
+          <span class="int-chip">Zendesk</span>
+          <span class="int-chip">Shopify</span>
+          <span class="int-chip">UPS API</span>
+        </div>
+        <div class="outcome-row">
+          <div class="outcome"><strong>18s</strong>median response</div>
+          <div class="outcome"><strong>−9 hrs/wk</strong>support workload</div>
+          <div class="outcome"><strong>100%</strong>human approval</div>
+        </div>
+      </div>
+      <div class="slack">
+        <div class="slack-chrome">
+          <div class="traffic"><span></span><span></span><span></span></div>
+          <span class="titlebar">Acme Industries · Slack</span>
+        </div>
+        <div class="slack-body">
+          <aside class="sidebar">
+            <div class="ws"><span class="ws-icon">A</span><span>Acme</span></div>
+            <div class="ws-section">Channels</div>
+            <div class="channel"><span class="ch-hash">#</span>general</div>
+            <div class="channel"><span class="ch-hash">#</span>sales</div>
+            <div class="channel channel-active"><span class="ch-hash">#</span>cs-inbox</div>
+            <div class="channel"><span class="ch-hash">#</span>ops</div>
+            <div class="ws-section">Apps</div>
+            <div class="app">
+              <span class="app-icon"><svg width="12" height="12" viewBox="0 0 100 100" fill="none"><path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="#fff"/></svg></span>
+              <span>Ramped Bot</span><span class="online"></span>
+            </div>
+          </aside>
+          <main class="main">
+            <header class="ch-head"><span class="ch-title">cs-inbox</span><span class="ch-meta">5 members</span></header>
+            <div class="msgs">
+              <div class="live-pill"><span class="live-dot"></span><span>LIVE</span></div>
+              <div class="msg msg-cust">
+                <div class="avatar av-cust-4">JR</div>
+                <div class="msg-body">
+                  <div class="msg-head"><span class="msg-name">Jennifer R.</span><span class="msg-time">11:08 AM</span></div>
+                  <div class="msg-text">New ticket from Karen at @ParkviewClinic — says her shipment hasn't arrived. Can you check?</div>
+                </div>
+              </div>
+              <div class="msg msg-typing">
+                <div class="avatar av-bot"><svg width="18" height="18" viewBox="0 0 100 100" fill="none"><path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="#fff"/></svg></div>
+                <div class="msg-body">
+                  <div class="msg-head"><span class="msg-name">Ramped Bot</span><span class="app-badge">APP</span><span class="msg-time">11:08 AM</span></div>
+                  <div class="msg-text"><span class="msg-status">Pulling ticket #4127 + UPS tracking&hellip;</span></div>
+                </div>
+              </div>
+              <div class="msg msg-reply">
+                <div class="avatar av-bot"><svg width="18" height="18" viewBox="0 0 100 100" fill="none"><path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="#fff"/></svg></div>
+                <div class="msg-body">
+                  <div class="msg-head"><span class="msg-name">Ramped Bot</span><span class="app-badge">APP</span><span class="msg-time">11:08 AM</span></div>
+                  <div class="msg-text">
+                    Order #5512 — UPS scan delayed at Reno hub due to weather. New ETA <strong>tomorrow 3pm</strong>.<br>
+                    Drafted reply to Karen with the new tracking + a <strong>15% credit on her next order</strong> for the inconvenience.<br>
+                    <span class="msg-link">→ View draft</span> · <span class="msg-link">View ticket</span>
+                  </div>
+                  <div class="actions">
+                    <span class="ac-btn ac-primary">Send draft</span>
+                    <span class="ac-btn ac-secondary">Edit</span>
+                  </div>
+                </div>
+              </div>
+              <div class="replied">Replied · 18s · ticket #4127 in queue · awaiting your approval</div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="lib-cta">
+  <div class="section-wrap">
+    <h2>Want this running in your business?</h2>
+    <p>Book a 30-minute discovery call. We'll map your top three workflows and show you exactly which agents we'd build first. Live in 30 days. Or it's free.</p>
+    <a href="/book" class="btn-primary" style="font-size:16px;padding:15px 28px;">Book a discovery call →</a>
+  </div>
+</section>
+
+<footer>
+  <div class="section-wrap">
+    <div class="row">
+      <div class="col">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <svg width="22" height="22" viewBox="0 0 100 100" fill="none">
+            <defs>
+              <linearGradient id="rampedSwoopFooter" x1="17.46" y1="84.69" x2="76" y2="11.64" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#0A2540"/>
+                <stop offset="58%" stop-color="#006BD6"/>
+                <stop offset="100%" stop-color="#00D4FF"/>
+              </linearGradient>
+            </defs>
+            <path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="url(#rampedSwoopFooter)"/>
+          </svg>
+          <span style="font-weight:700;font-size:14px;color:var(--ink);">Ramped AI</span>
+        </div>
+        <p style="font-size:13px;color:var(--muted);max-width:280px;line-height:1.5;">Done-for-you AI agents in your operating business. Live in 30 days. Or it's free.</p>
+      </div>
+      <div class="col">
+        <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px;">Product</div>
+        <a href="/about">About</a>
+        <a href="/comparison">Compare</a>
+        <a href="/book">Book a call</a>
+      </div>
+      <div class="col">
+        <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px;">Company</div>
+        <a href="/about">Team</a>
+        <a href="mailto:jon@30dayramp.com">jon@30dayramp.com</a>
+        <a href="/privacy">Privacy</a>
+      </div>
+    </div>
+    <div class="copy">© 2026 Ramped AI. All rights reserved. · 30dayramp.com</div>
+  </div>
+</footer>
+
 </main>
-
-<div id="ramped-footer"></div>
-<script src="partials.js"></script>
-<script>
-document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
-  const id=t.dataset.s;
-  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x===t));
-  document.querySelectorAll(".scenario").forEach(s=>s.classList.toggle("on",s.dataset.s===id));
-}));
-</script>
-<script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    

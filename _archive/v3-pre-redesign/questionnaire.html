@@ -1,164 +1,957 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Pre-call questionnaire — Ramped AI</title>
-<meta name="description" content="Help us prep your discovery call. 11 short questions — takes about 5 minutes." />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Get Your Custom Automation Map — Ramped AI</title>
+<meta name="description" content="Answer 10 questions and get a custom AI automation map built for your business before your call." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.30dayramp.com/questionnaire" />
+<meta property="og:title" content="Get Your Custom Automation Map — Ramped AI" />
+<meta property="og:description" content="Answer 10 questions and get a custom AI automation map built for your business before your call." />
+<meta property="og:image" content="https://www.30dayramp.com/og-image.png" />
+<meta name="robots" content="noindex, follow" />
 <link rel="canonical" href="https://www.30dayramp.com/questionnaire" />
-<link rel="icon" href="favicon.ico" />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="site.css" />
+<link rel="icon" href="/favicon.svg?v=3" type="image/svg+xml" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=3">
+<script defer src="/_vercel/insights/script.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/v3-theme.css">
 <style>
-.q-shell{max-width:720px;margin:48px auto 0;padding:0 24px}
-.q-card{background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005));
-  border:1px solid var(--line);border-radius:20px;padding:36px}
-.q-stepper{display:flex;align-items:center;gap:10px;margin-bottom:26px;font-family:var(--font-mono);font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.08em}
-.q-stepper .bar{flex:1;height:3px;border-radius:999px;background:var(--bg-3);position:relative;overflow:hidden}
-.q-stepper .bar::after{content:"";position:absolute;inset:0;width:var(--prog,9%);background:linear-gradient(90deg,var(--blue),var(--orange));border-radius:999px;transition:width .3s}
-.q-step{display:none}
-.q-step.on{display:block;animation:fade .3s ease}
-@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
-.q-step h2{margin:0 0 6px;font-size:24px;letter-spacing:-0.02em;line-height:1.2}
-.q-step p.sub{margin:0 0 22px;color:var(--text-2);font-size:14.5px;line-height:1.55}
-.q-actions{display:flex;justify-content:space-between;gap:10px;margin-top:28px;padding-top:18px;border-top:1px solid var(--line);align-items:center}
-.q-actions .skip-btn{background:none;border:none;color:var(--text-3);font-size:13px;font-family:inherit;cursor:pointer}
-.q-actions .skip-btn:hover{color:var(--text-1)}
+/* ── Design tokens ── */
+:root {
+  --ink: #0B1220;
+  --ink-2: #1A2233;
+  --paper: #FAFAF7;
+  --line: #E6E4DC;
+  --muted: #5B6272;
+  --accent: #1F4FFF;
+  --accent-dim: #EEF2FF;
+  --good: #0F7A4B;
+  --warn: #B45309;
+  --danger: #B91C1C;
+  --surface: #F5F5F3;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ── Skip link ── */
+.skip-link {
+  position: absolute; left: -9999px; top: 0;
+  background: var(--ink); color: #fff;
+  padding: 10px 14px; border-radius: 0 0 8px 0;
+  font-size: 13px; font-weight: 600; z-index: 100;
+}
+.skip-link:focus { left: 0; }
+
+/* ── Nav ── */
+.site-nav {
+  border-bottom: 1px solid var(--line);
+  background: rgba(250,250,247,0.92);
+  backdrop-filter: blur(8px);
+  position: sticky; top: 0; z-index: 40;
+}
+.site-nav-inner {
+  max-width: 1120px; margin: 0 auto;
+  padding: 0 24px; height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.logo {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 700; font-size: 17px; letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.logo-bars {
+  display: flex; align-items: flex-end; gap: 3px;
+}
+.logo-bar {
+  width: 5px; border-radius: 2px 2px 0 0;
+  background: var(--ink);
+}
+.logo-bar:nth-child(4) { background: var(--accent); }
+.nav-back {
+  font-size: 13px; color: var(--muted); font-weight: 500;
+  display: flex; align-items: center; gap: 4px;
+  transition: color 0.12s;
+}
+.nav-back:hover { color: var(--ink); }
+
+/* ── Page shell ── */
+.page-shell {
+  max-width: 640px; margin: 0 auto;
+  padding: 40px 20px 80px;
+}
+
+/* ── Header ── */
+.page-header { margin-bottom: 32px; }
+.page-eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 12px;
+}
+.page-eyebrow .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--good);
+  box-shadow: 0 0 0 3px rgba(15,122,75,0.15);
+}
+.page-title {
+  font-size: clamp(22px, 4vw, 30px);
+  font-weight: 800; letter-spacing: -0.03em;
+  line-height: 1.1; margin-bottom: 10px;
+}
+.page-subtitle {
+  font-size: 15px; color: var(--muted); line-height: 1.6;
+}
+
+/* ── Progress ── */
+.progress-wrap { margin-bottom: 28px; }
+.progress-meta {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 8px;
+  font-size: 12px; color: var(--muted);
+}
+.progress-meta .step-label { font-weight: 600; color: var(--ink); }
+.progress-track {
+  height: 4px; background: var(--line);
+  border-radius: 999px; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ── Step card ── */
+.step-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: 3px 3px 0 var(--ink);
+  overflow: hidden;
+}
+.step-card-header {
+  padding: 24px 28px 0;
+}
+.step-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 6px;
+}
+.step-question {
+  font-size: 18px; font-weight: 700;
+  line-height: 1.3; margin-bottom: 6px;
+}
+.step-hint {
+  font-size: 13px; color: var(--muted); margin-bottom: 20px;
+}
+.step-body { padding: 0 28px 24px; }
+.step-footer {
+  padding: 16px 28px;
+  border-top: 1px solid var(--line);
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 12px;
+  background: var(--surface);
+}
+
+/* ── Chips / checkboxes ── */
+.chip-grid {
+  display: grid; gap: 8px;
+  grid-template-columns: repeat(2, 1fr);
+}
+.chip-grid.cols-1 { grid-template-columns: 1fr; }
+.chip-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+
+@media (max-width: 480px) {
+  .chip-grid { grid-template-columns: 1fr 1fr; }
+  .chip-grid.cols-3 { grid-template-columns: 1fr 1fr; }
+}
+
+.chip-label {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  background: #fff; cursor: pointer;
+  font-size: 13px; font-weight: 500;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: border-color 0.12s, background 0.12s, color 0.12s;
+  line-height: 1.3;
+}
+.chip-label:hover { border-color: var(--accent); background: var(--accent-dim); }
+.chip-label input[type="checkbox"],
+.chip-label input[type="radio"] {
+  position: absolute; opacity: 0; width: 0; height: 0;
+}
+.chip-label.selected {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-weight: 600;
+}
+.chip-label .chip-check {
+  width: 16px; height: 16px; flex-shrink: 0;
+  border: 1.5px solid var(--line);
+  border-radius: 4px; background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.12s;
+}
+.chip-label.selected .chip-check {
+  background: var(--accent); border-color: var(--accent);
+}
+.chip-label .chip-check::after {
+  content: '';
+  width: 5px; height: 9px;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(45deg) translate(-1px, -1px);
+  opacity: 0;
+}
+.chip-label.selected .chip-check::after { opacity: 1; }
+
+/* Radio variant — circle */
+.chip-label .chip-radio {
+  width: 16px; height: 16px; flex-shrink: 0;
+  border: 1.5px solid var(--line);
+  border-radius: 50%; background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.12s;
+}
+.chip-label.selected .chip-radio {
+  border-color: var(--accent);
+}
+.chip-label .chip-radio::after {
+  content: '';
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0; transition: opacity 0.12s;
+}
+.chip-label.selected .chip-radio::after { opacity: 1; }
+
+/* ── Text inputs ── */
+.text-input {
+  width: 100%; padding: 12px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: 10px; background: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px; color: var(--ink);
+  outline: none;
+  transition: border-color 0.12s;
+}
+.text-input:focus { border-color: var(--accent); }
+.text-input::placeholder { color: var(--muted); }
+
+.textarea-input {
+  width: 100%; padding: 12px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: 10px; background: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px; color: var(--ink);
+  outline: none; resize: vertical; min-height: 96px;
+  transition: border-color 0.12s;
+}
+.textarea-input:focus { border-color: var(--accent); }
+.textarea-input::placeholder { color: var(--muted); }
+
+/* ── Contact fields ── */
+.field-group { display: flex; flex-direction: column; gap: 14px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 480px) { .field-row { grid-template-columns: 1fr; } }
+.field-label {
+  display: block; font-size: 12px; font-weight: 600;
+  color: var(--muted); margin-bottom: 5px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.field-wrap { display: flex; flex-direction: column; }
+
+/* ── Buttons ── */
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent); color: #fff;
+  padding: 12px 22px; border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 15px; font-weight: 600;
+  border: none; cursor: pointer;
+  transition: opacity 0.12s, transform 0.12s;
+  white-space: nowrap;
+}
+.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+.btn-primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: none; color: var(--muted);
+  padding: 12px 18px; border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px; font-weight: 500;
+  border: 1.5px solid var(--line); cursor: pointer;
+  transition: color 0.12s, border-color 0.12s, background 0.12s;
+}
+.btn-ghost:hover { color: var(--ink); border-color: var(--ink); background: var(--surface); }
+
+/* ── Error message ── */
+.field-error {
+  display: none; margin-top: 8px;
+  font-size: 13px; color: var(--danger);
+  background: #FEF2F2; border: 1px solid #FECACA;
+  border-radius: 8px; padding: 10px 14px;
+}
+.field-error.visible { display: block; }
+
+/* ── Loading overlay ── */
+.loading-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(250,250,247,0.96);
+  backdrop-filter: blur(4px);
+  z-index: 50;
+  flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 24px;
+}
+.loading-overlay.visible { display: flex; }
+.loading-spinner {
+  width: 48px; height: 48px;
+  border: 3px solid var(--line);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 24px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-title {
+  font-size: 22px; font-weight: 800;
+  letter-spacing: -0.02em; margin-bottom: 8px;
+}
+.loading-sub { font-size: 14px; color: var(--muted); max-width: 320px; line-height: 1.6; }
+.loading-steps { margin-top: 28px; display: flex; flex-direction: column; gap: 10px; max-width: 300px; }
+.loading-step {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; color: var(--muted); opacity: 0.4;
+  transition: opacity 0.4s;
+}
+.loading-step.active { opacity: 1; color: var(--ink); font-weight: 500; }
+.loading-step .step-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--line); flex-shrink: 0;
+  transition: background 0.3s;
+}
+.loading-step.active .step-dot { background: var(--accent); }
+.loading-step.done .step-dot { background: var(--good); }
+.loading-step.done { opacity: 0.7; }
+
+/* ── Benefit strip ── */
+.benefit-strip {
+  display: flex; flex-wrap: wrap; gap: 16px;
+  margin-bottom: 28px;
+}
+.benefit-item {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 13px; color: var(--muted);
+}
+.benefit-item .bicon {
+  width: 20px; height: 20px; border-radius: 5px;
+  background: var(--accent-dim); color: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; flex-shrink: 0;
+}
+
+/* ── Step animations ── */
+.step-panel {
+  animation: fadeSlideIn 0.2s ease both;
+}
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Footer ── */
+.site-footer {
+  border-top: 1px solid var(--line);
+  padding: 24px;
+  text-align: center;
+  font-size: 12px; color: var(--muted);
+}
+.site-footer a { color: var(--muted); }
+.site-footer a:hover { color: var(--ink); }
+
+/* ── Focus ring ── */
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
 </style>
 </head>
 <body>
-<a class="skip" href="#main">Skip to main content</a>
-<div id="ramped-header"></div>
 
-<main id="main">
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
-<section style="padding:48px 0 0">
-  <div class="container">
-    <span class="eyebrow"><span class="pulse"></span>Pre-call prep · ~5 minutes</span>
-    <h1 class="huge" style="text-align:left;font-size:clamp(32px,4.4vw,52px)">Help us <span class="accent">prep your call.</span></h1>
-    <p class="lede">11 short questions. The more context we have, the more specific your roadmap will be when we hop on the call.</p>
+<!-- Nav -->
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav-inner">
+    <a href="/" class="logo" aria-label="Ramped AI home">
+      <svg width="48" height="48" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="rampedSwoopNav" x1="17.46" y1="84.69" x2="76" y2="11.64" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#0A2540"/>
+            <stop offset="58%" stop-color="#006BD6"/>
+            <stop offset="100%" stop-color="#00D4FF"/>
+          </linearGradient>
+        </defs>
+        <path d="M 76 11.64 L 69.86 15.63 L 59.41 22.73 L 59.81 22.97 L 65.07 24.48 L 59.97 36.76 L 57.34 42.42 L 54.39 48.25 L 51.67 53.03 L 49.20 57.02 L 46.73 60.61 L 43.14 65.23 L 40.03 68.74 L 36.60 72.09 L 33.49 74.72 L 29.74 77.35 L 27.43 78.71 L 25.36 79.74 L 23.05 80.70 L 19.22 81.82 L 17.46 82.06 L 19.30 82.93 L 21.29 83.65 L 21.85 83.65 L 21.93 83.81 L 23.13 84.13 L 25.92 84.61 L 30.62 84.69 L 34.45 84.05 L 38.36 82.70 L 40.43 81.66 L 43.06 79.98 L 46.41 77.27 L 48.80 74.88 L 50.56 72.89 L 52.79 69.94 L 55.18 66.35 L 57.26 62.84 L 59.57 58.45 L 62.04 53.19 L 64.67 47.05 L 72.17 28.15 L 72.33 28.07 L 76 31.02 Z" fill="url(#rampedSwoopNav)"/>
+      </svg>
+      Ramped AI
+    </a>
+    <a href="/book" class="nav-back" aria-label="Back to booking">← Back to booking</a>
   </div>
-</section>
+</nav>
 
-<div class="q-shell">
-  <div class="q-card">
-    <div class="q-stepper">
-      <span id="q-counter">Question 1 / 11</span>
-      <div class="bar" id="q-bar" style="--prog:9%"></div>
-    </div>
-    <form id="q-form">
-      <div class="q-step on" data-q="1"><h2>What does your business do?</h2><p class="sub">A sentence or two — the kind of pitch you'd give at a dinner party.</p>
-        <div class="field"><textarea name="biz" rows="4" placeholder="We sell industrial equipment to mid-sized contractors across the US…"></textarea></div></div>
-      <div class="q-step" data-q="2"><h2>What's your annual revenue?</h2>
-        <div class="pill-group">
-          <label class="pill-check"><input type="radio" name="rev" value="<$1M"/>Under $1M</label>
-          <label class="pill-check"><input type="radio" name="rev" value="$1-5M"/>$1M – $5M</label>
-          <label class="pill-check"><input type="radio" name="rev" value="$5-20M"/>$5M – $20M</label>
-          <label class="pill-check"><input type="radio" name="rev" value="$20-100M"/>$20M – $100M</label>
-          <label class="pill-check"><input type="radio" name="rev" value="$100M+"/>$100M+</label>
-        </div></div>
-      <div class="q-step" data-q="3"><h2>How many people on the team?</h2>
-        <div class="pill-group">
-          <label class="pill-check"><input type="radio" name="team" value="1-10"/>1–10</label>
-          <label class="pill-check"><input type="radio" name="team" value="11-50"/>11–50</label>
-          <label class="pill-check"><input type="radio" name="team" value="51-200"/>51–200</label>
-          <label class="pill-check"><input type="radio" name="team" value="200+"/>200+</label>
-        </div></div>
-      <div class="q-step" data-q="4"><h2>What workflows eat the most time?</h2><p class="sub">Pick all that apply.</p>
-        <div class="pill-group">
-          <label class="pill-check"><input type="checkbox" name="pain" value="Lead intake"/>Lead intake</label>
-          <label class="pill-check"><input type="checkbox" name="pain" value="Quoting"/>Quoting</label>
-          <label class="pill-check"><input type="checkbox" name="pain" value="Order ops"/>Order ops</label>
-          <label class="pill-check"><input type="checkbox" name="pain" value="Inventory"/>Inventory</label>
-          <label class="pill-check"><input type="checkbox" name="pain" value="Finance"/>Finance / reporting</label>
-          <label class="pill-check"><input type="checkbox" name="pain" value="Support"/>Customer support</label>
-          <label class="pill-check"><input type="checkbox" name="pain" value="Recruiting"/>Recruiting</label>
-        </div></div>
-      <div class="q-step" data-q="5"><h2>How many hours per week does that cost the team?</h2>
-        <div class="pill-group">
-          <label class="pill-check"><input type="radio" name="hours" value="<10"/>Under 10</label>
-          <label class="pill-check"><input type="radio" name="hours" value="10-25"/>10–25</label>
-          <label class="pill-check"><input type="radio" name="hours" value="25-50"/>25–50</label>
-          <label class="pill-check"><input type="radio" name="hours" value="50+"/>50+</label>
-        </div></div>
-      <div class="q-step" data-q="6"><h2>What tools are you running on?</h2><p class="sub">The more we know, the more accurate the integration plan.</p>
-        <div class="field"><textarea name="stack" rows="3" placeholder="HubSpot for CRM, NetSuite for ERP, Slack, Google Workspace, custom internal portal…"></textarea></div></div>
-      <div class="q-step" data-q="7"><h2>Have you tried automating this before?</h2>
-        <div class="pill-group">
-          <label class="pill-check"><input type="radio" name="prior" value="Never"/>Never tried</label>
-          <label class="pill-check"><input type="radio" name="prior" value="Zapier/Make"/>Zapier / Make</label>
-          <label class="pill-check"><input type="radio" name="prior" value="ChatGPT"/>ChatGPT / Copilot</label>
-          <label class="pill-check"><input type="radio" name="prior" value="Internal build"/>Internal build</label>
-          <label class="pill-check"><input type="radio" name="prior" value="Consultant"/>Hired a consultant</label>
-        </div></div>
-      <div class="q-step" data-q="8"><h2>What worked? What didn't?</h2><p class="sub">Skip if not applicable.</p>
-        <div class="field"><textarea name="prior_notes" rows="4" placeholder="Zapier got us 60% of the way but kept breaking on edge cases…"></textarea></div></div>
-      <div class="q-step" data-q="9"><h2>If we get this right, what changes?</h2><p class="sub">What does success look like in 90 days?</p>
-        <div class="field"><textarea name="success" rows="4" placeholder="My ops lead stops working weekends. We respond to leads in under an hour. I can hire a salesperson instead of an admin…"></textarea></div></div>
-      <div class="q-step" data-q="10"><h2>What's the budget reality?</h2>
-        <div class="pill-group">
-          <label class="pill-check"><input type="radio" name="budget" value="<$2.5K"/>Under $2.5K / mo</label>
-          <label class="pill-check"><input type="radio" name="budget" value="$2.5-5K"/>$2.5K – $5K / mo</label>
-          <label class="pill-check"><input type="radio" name="budget" value="$5-10K"/>$5K – $10K / mo</label>
-          <label class="pill-check"><input type="radio" name="budget" value="$10K+"/>$10K+ / mo</label>
-          <label class="pill-check"><input type="radio" name="budget" value="exploring"/>Just exploring</label>
-        </div></div>
-      <div class="q-step" data-q="11"><h2>Anything else we should know?</h2><p class="sub">Optional — anything that would change how we'd run the call.</p>
-        <div class="field"><textarea name="notes" rows="5" placeholder="Constraints, deadlines, internal politics, related projects, etc."></textarea></div></div>
-
-      <div class="q-actions">
-        <button type="button" class="btn btn-ghost" id="q-back">← Back</button>
-        <button type="button" class="skip-btn" id="q-skip">Skip this question →</button>
-        <button type="button" class="btn btn-primary" id="q-next">Continue →</button>
-      </div>
-    </form>
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loading-overlay" role="status" aria-live="polite" aria-label="Generating your automation map">
+  <div class="loading-spinner" aria-hidden="true"></div>
+  <div class="loading-title">Building your map…</div>
+  <div class="loading-sub">Claude is analyzing your answers and generating a custom automation plan. This takes about 20–30 seconds.</div>
+  <div class="loading-steps" aria-hidden="true">
+    <div class="loading-step active" id="ls-1"><div class="step-dot"></div>Analyzing your time sinks</div>
+    <div class="loading-step" id="ls-2"><div class="step-dot"></div>Selecting AI skills for your stack</div>
+    <div class="loading-step" id="ls-3"><div class="step-dot"></div>Building your 30-day Sprint plan</div>
+    <div class="loading-step" id="ls-4"><div class="step-dot"></div>Calculating ROI projections</div>
+    <div class="loading-step" id="ls-5"><div class="step-dot"></div>Finalizing your custom map</div>
   </div>
 </div>
 
-<div style="height:60px"></div>
+<main id="main-content">
+<div class="page-shell">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-eyebrow"><span class="dot" aria-hidden="true"></span>Pre-call deliverable</div>
+    <h1 class="page-title">Get your custom<br>automation map</h1>
+    <p class="page-subtitle">10 quick questions. We build a tailored automation plan before your Map Call — so your 60 minutes goes straight to action, not discovery.</p>
+  </div>
+
+  <!-- Benefits -->
+  <div class="benefit-strip" aria-label="What you get">
+    <div class="benefit-item"><div class="bicon" aria-hidden="true">⏱</div>2 minutes to complete</div>
+    <div class="benefit-item"><div class="bicon" aria-hidden="true">🗺</div>Custom map before your call</div>
+    <div class="benefit-item"><div class="bicon" aria-hidden="true">💰</div>ROI quantified in dollars</div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap" aria-label="Progress">
+    <div class="progress-meta">
+      <span class="step-label" id="progress-label">Step 1 of 11</span>
+      <span id="progress-pct">0%</span>
+    </div>
+    <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-bar-aria">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- Step cards -->
+  <div id="steps-container"></div>
+
+</div>
 </main>
 
-<div id="ramped-footer"></div>
-<script src="partials.js"></script>
+<footer class="site-footer">
+  <a href="/">30dayramp.com</a> &nbsp;·&nbsp;
+  <a href="/privacy">Privacy</a> &nbsp;·&nbsp;
+  <span>Your answers are used only to build your map.</span>
+</footer>
+
 <script>
-/* /api/questionnaire submission. Pulls booking_id + email from URL params
-   (set by post-booking redirect). Endpoint requires booking_id since 2026-04-29. */
-const _qp=new URLSearchParams(location.search);
-const BID=_qp.get("booking_id")||_qp.get("bid")||"";
-const EMAIL=_qp.get("email")||"";
-if(!BID&&!EMAIL){location.replace("/book");}
+(function () {
+'use strict';
 
-const steps=[...document.querySelectorAll(".q-step")],total=steps.length;let cur=1;
-const counter=document.getElementById("q-counter"),bar=document.getElementById("q-bar"),
-  next=document.getElementById("q-next"),back=document.getElementById("q-back"),skip=document.getElementById("q-skip");
-function show(n){cur=Math.max(1,Math.min(total,n));steps.forEach(s=>s.classList.toggle("on",+s.dataset.q===cur));counter.textContent=`Question ${cur} / ${total}`;bar.style.setProperty("--prog",`${(cur/total)*100}%`);back.style.visibility=cur===1?"hidden":"visible";next.textContent=cur===total?"Submit →":"Continue →"}
+/* ── Email guard — only accessible with a booking email in URL ── */
+var urlParams = new URLSearchParams(window.location.search);
+var prefilledEmail = (urlParams.get('email') || '').trim();
+var prefilledBookingId = (urlParams.get('booking_id') || '').trim();
+if (!prefilledEmail) {
+  window.location.replace('/book');
+}
 
-function _radio(n){const el=document.querySelector(`input[name="${n}"]:checked`);return el?el.value:"";}
-function _checks(n){return [...document.querySelectorAll(`input[name="${n}"]:checked`)].map(x=>x.value);}
-function _text(n){const el=document.querySelector(`[name="${n}"]`);return el?String(el.value||"").trim():"";}
+/* ── Data definitions ── */
+var STEPS = [
+  {
+    id: 'time_sinks',
+    q: "What's eating your team's time?",
+    hint: 'Select all that apply — we\'ll prioritize the biggest wins.',
+    type: 'checkbox',
+    required: true,
+    minSelect: 1,
+    options: [
+      { value: 'Lead follow-up',              label: 'Lead follow-up & nurturing' },
+      { value: 'Answering repetitive Qs',     label: 'Answering repetitive questions' },
+      { value: 'Scheduling',                  label: 'Scheduling & calendar' },
+      { value: 'Quotes & proposals',          label: 'Quotes & proposals' },
+      { value: 'Order/invoice processing',    label: 'Order / invoice processing' },
+      { value: 'Customer support',            label: 'Customer support tickets' },
+      { value: 'Data entry & reporting',      label: 'Data entry & reporting' },
+      { value: 'Employee onboarding',         label: 'Employee onboarding' },
+    ],
+  },
+  {
+    id: 'industry',
+    q: 'What industry are you in?',
+    hint: 'Be specific — this shapes the AI persona and workflows we design.',
+    type: 'text',
+    placeholder: 'e.g. Cannabis retail, Real estate, Healthcare, E-commerce…',
+    required: true,
+  },
+  {
+    id: 'team_size',
+    q: 'How big is your team?',
+    hint: 'Full-time employees including yourself.',
+    type: 'radio',
+    required: true,
+    options: [
+      { value: '1–10',   label: '1–10' },
+      { value: '11–25',  label: '11–25' },
+      { value: '26–50',  label: '26–50' },
+      { value: '51–100', label: '51–100' },
+      { value: '100+',   label: '100+' },
+    ],
+  },
+  {
+    id: 'revenue',
+    q: 'Annual revenue?',
+    hint: 'Helps us right-size the deployment and pricing tier.',
+    type: 'radio',
+    required: true,
+    options: [
+      { value: 'Under $300K',   label: 'Under $300K' },
+      { value: '$300K–$1M',     label: '$300K–$1M' },
+      { value: '$1M–$5M',       label: '$1M–$5M' },
+      { value: '$5M–$20M',      label: '$5M–$20M' },
+      { value: '$20M+',         label: '$20M+' },
+    ],
+  },
+  {
+    id: 'channels',
+    q: 'How do customers reach you?',
+    hint: 'These are the channels your AI coworker will live in.',
+    type: 'checkbox',
+    required: true,
+    minSelect: 1,
+    options: [
+      { value: 'Phone/Voice',       label: 'Phone / Voice' },
+      { value: 'Email',             label: 'Email' },
+      { value: 'Website/Form',      label: 'Website / Form' },
+      { value: 'Walk-in',           label: 'Walk-in' },
+      { value: 'Instagram DM',      label: 'Instagram DM' },
+      { value: 'WhatsApp',          label: 'WhatsApp' },
+      { value: 'Multiple channels', label: 'Multiple channels' },
+    ],
+  },
+  {
+    id: 'platforms',
+    q: 'Which platforms does your business use?',
+    hint: 'We\'ll wire integrations in order of impact.',
+    type: 'checkbox',
+    required: false,
+    options: [
+      { value: 'Slack',            label: 'Slack' },
+      { value: 'Shopify',          label: 'Shopify' },
+      { value: 'HubSpot',          label: 'HubSpot' },
+      { value: 'Salesforce',       label: 'Salesforce' },
+      { value: 'Gmail',            label: 'Gmail' },
+      { value: 'Outlook',          label: 'Outlook' },
+      { value: 'Google Calendar',  label: 'Google Calendar' },
+      { value: 'Airtable',         label: 'Airtable' },
+      { value: 'QuickBooks',       label: 'QuickBooks' },
+      { value: 'Other',            label: 'Other' },
+    ],
+  },
+  {
+    id: 'os',
+    q: 'What OS does your team use?',
+    hint: 'Affects how we set up local integrations and onboarding.',
+    type: 'radio',
+    required: true,
+    options: [
+      { value: 'Mac',           label: 'Mac' },
+      { value: 'Windows',       label: 'Windows' },
+      { value: 'Linux/Server',  label: 'Linux / Server' },
+      { value: 'Mix',           label: 'Mix' },
+    ],
+  },
+  {
+    id: 'crm',
+    q: 'Do you have a CRM?',
+    hint: 'We\'ll connect your AI coworker here first.',
+    type: 'radio',
+    required: true,
+    options: [
+      { value: 'HubSpot',      label: 'HubSpot' },
+      { value: 'Salesforce',   label: 'Salesforce' },
+      { value: 'Pipedrive',    label: 'Pipedrive' },
+      { value: 'Other CRM',    label: 'Other CRM' },
+      { value: 'No CRM yet',   label: 'No CRM yet' },
+    ],
+  },
+  {
+    id: 'email_provider',
+    q: 'Email system?',
+    hint: 'Your primary business email — this is often the first integration.',
+    type: 'radio',
+    required: true,
+    options: [
+      { value: 'Google Workspace/Gmail', label: 'Google Workspace / Gmail' },
+      { value: 'Outlook/M365',           label: 'Outlook / Microsoft 365' },
+      { value: 'Both',                   label: 'Both' },
+      { value: 'Other',                  label: 'Other' },
+    ],
+  },
+  {
+    id: 'existing_ai',
+    q: 'Are you using AI today?',
+    hint: 'We\'ll build on what\'s already working — not replace it.',
+    type: 'radio',
+    required: true,
+    options: [
+      { value: 'ChatGPT/OpenAI',       label: 'ChatGPT / OpenAI' },
+      { value: 'Claude/Anthropic',      label: 'Claude / Anthropic' },
+      { value: 'Google Gemini',         label: 'Google Gemini' },
+      { value: 'Microsoft Copilot',     label: 'Microsoft Copilot' },
+      { value: 'Make AI / Zapier AI',   label: 'Make AI / Zapier AI' },
+      { value: 'Not yet',               label: 'Not using AI yet' },
+    ],
+  },
+  {
+    id: 'contact',
+    q: 'Last step — where should we send your map?',
+    hint: "We'll email your custom automation map and have it ready before your call.",
+    type: 'contact',
+    required: true,
+  },
+];
 
-async function submitQuestionnaire(){
-  next.disabled=true;next.textContent="Submitting…";
-  const payload={booking_id:BID,email:EMAIL,
-    business_description:_text("biz"),revenue:_radio("rev"),team_size:_radio("team"),
-    pain_points:_checks("pain"),hours_lost:_radio("hours"),stack:_text("stack"),
-    prior_attempts:_radio("prior"),prior_notes:_text("prior_notes"),
-    success_definition:_text("success"),budget:_radio("budget"),notes:_text("notes")};
-  try{
-    const r=await fetch("/api/questionnaire",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
-    if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.error||"Submission failed");}
-    location.href="/thanks?intent=questionnaire";
-  }catch(err){
-    next.disabled=false;next.textContent="Submit →";
-    alert(err.message||"Something went wrong. Email jon@30dayramp.com and we'll get this in.");
+var TOTAL_STEPS = STEPS.length;
+var answers = {};
+if (prefilledEmail) { answers.contact = { email: prefilledEmail }; }
+var currentStep = 0;
+
+/* ── Helpers ── */
+function esc(s) {
+  return String(s || '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function updateProgress(step) {
+  var pct = Math.round((step / TOTAL_STEPS) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-label').textContent = 'Step ' + (step + 1) + ' of ' + TOTAL_STEPS;
+  document.getElementById('progress-bar-aria').setAttribute('aria-valuenow', pct);
+}
+
+/* ── Render step ── */
+function renderStep(idx) {
+  var step = STEPS[idx];
+  var container = document.getElementById('steps-container');
+  container.innerHTML = '';
+
+  var panel = document.createElement('div');
+  panel.className = 'step-panel step-card';
+  panel.setAttribute('role', 'region');
+  panel.setAttribute('aria-label', 'Question ' + (idx + 1));
+
+  var header = '<div class="step-card-header">';
+  header += '<div class="step-number">Question ' + (idx + 1) + ' of ' + TOTAL_STEPS + '</div>';
+  header += '<div class="step-question">' + esc(step.q) + '</div>';
+  if (step.hint) header += '<div class="step-hint">' + esc(step.hint) + '</div>';
+  header += '</div>';
+  header += '<div class="step-body" id="step-body">';
+
+  var body = '';
+  var current = answers[step.id];
+
+  if (step.type === 'checkbox') {
+    body += '<div class="chip-grid" role="group" aria-label="' + esc(step.q) + '">';
+    step.options.forEach(function (opt) {
+      var checked = Array.isArray(current) && current.indexOf(opt.value) !== -1;
+      body += '<label class="chip-label' + (checked ? ' selected' : '') + '" data-value="' + esc(opt.value) + '">';
+      body += '<input type="checkbox" name="' + esc(step.id) + '" value="' + esc(opt.value) + '"' + (checked ? ' checked' : '') + ' />';
+      body += '<span class="chip-check" aria-hidden="true"></span>';
+      body += '<span>' + esc(opt.label) + '</span></label>';
+    });
+    body += '</div>';
+
+  } else if (step.type === 'radio') {
+    var cols = step.options.length <= 4 ? 'cols-1' : '';
+    body += '<div class="chip-grid ' + cols + '" role="radiogroup" aria-label="' + esc(step.q) + '">';
+    step.options.forEach(function (opt) {
+      var sel = current === opt.value;
+      body += '<label class="chip-label' + (sel ? ' selected' : '') + '" data-value="' + esc(opt.value) + '">';
+      body += '<input type="radio" name="' + esc(step.id) + '" value="' + esc(opt.value) + '"' + (sel ? ' checked' : '') + ' />';
+      body += '<span class="chip-radio" aria-hidden="true"></span>';
+      body += '<span>' + esc(opt.label) + '</span></label>';
+    });
+    body += '</div>';
+
+  } else if (step.type === 'text') {
+    var val = current ? esc(current) : '';
+    body += '<input type="text" class="text-input" id="text-input-field" name="' + esc(step.id) + '" placeholder="' + esc(step.placeholder || '') + '" value="' + val + '" autocomplete="off" />';
+
+  } else if (step.type === 'contact') {
+    var c = current || {};
+    body += '<div class="field-group">';
+    body += '<div class="field-row">';
+    body += '<div class="field-wrap"><label class="field-label" for="f-name">Your name <span style="color:var(--accent)">*</span></label><input type="text" class="text-input" id="f-name" name="name" placeholder="Jane Smith" value="' + esc(c.name || '') + '" autocomplete="name" /></div>';
+    body += '<div class="field-wrap"><label class="field-label" for="f-company">Company <span style="color:var(--accent)">*</span></label><input type="text" class="text-input" id="f-company" name="company" placeholder="Acme Co." value="' + esc(c.company || '') + '" autocomplete="organization" /></div>';
+    body += '</div>';
+    body += '<div class="field-wrap"><label class="field-label" for="f-email">Work email <span style="color:var(--accent)">*</span></label><input type="email" class="text-input" id="f-email" name="email" placeholder="you@company.com" value="' + esc(c.email || '') + '" autocomplete="email" /></div>';
+    body += '<div class="field-wrap"><label class="field-label" for="f-notes">Anything else? <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">optional</span></label>';
+    body += '<textarea class="textarea-input" id="f-notes" name="notes" placeholder="e.g. We\'re a dispensary chain with 3 locations, biggest pain is weekend DM volume…">' + esc(c.notes || '') + '</textarea></div>';
+    body += '</div>';
+  }
+
+  body += '</div>';  // step-body
+
+  // Error
+  body += '<div class="field-error" id="step-error" role="alert"></div>';
+  body = header + body;
+
+  // Footer buttons
+  var footer = '<div class="step-footer">';
+  if (idx > 0) {
+    footer += '<button type="button" class="btn-ghost" id="btn-back">← Back</button>';
+  } else {
+    footer += '<div></div>';
+  }
+
+  if (step.type === 'contact') {
+    footer += '<button type="button" class="btn-primary" id="btn-next">Generate my map →</button>';
+  } else {
+    var isLast = idx === TOTAL_STEPS - 2;
+    footer += '<button type="button" class="btn-primary" id="btn-next">' + (isLast ? 'Almost done →' : 'Continue →') + '</button>';
+  }
+  footer += '</div>';
+
+  panel.innerHTML = body + footer;
+  container.appendChild(panel);
+
+  // Bind events
+  bindStepEvents(step, idx);
+  updateProgress(idx);
+
+  // Focus management
+  var focusTarget = panel.querySelector('.step-question') || panel.querySelector('input');
+  if (focusTarget) {
+    focusTarget.setAttribute('tabindex', '-1');
+    focusTarget.focus({ preventScroll: false });
+    setTimeout(function () { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 50);
   }
 }
 
-next.addEventListener("click",()=>{if(cur===total){submitQuestionnaire();return}show(cur+1)});
-back.addEventListener("click",()=>show(cur-1));
-skip.addEventListener("click",()=>{if(cur===total){submitQuestionnaire();return}show(cur+1)});
-</script>
-<script defer src="/_vercel/insights/script.js"></script>
-</body>
-</html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+function bindStepEvents(step, idx) {
+  // Checkbox / radio chip selection
+  var labels = document.querySelectorAll('.chip-label');
+  labels.forEach(function (label) {
+    label.addEventListener('click', function (e) {
+      var input = label.querySelector('input');
+      if (!input || e.target === input) return;
+      // Directly toggle state — iOS Safari doesn't reliably fire change on .click() for hidden inputs
+      if (input.type === 'checkbox') {
+        input.checked = !input.checked;
+      } else {
+        input.checked = true;
+      }
+      input.dispatchEvent(new Event('change'));
+    });
+    var input = label.querySelector('input');
+    if (input) {
+      input.addEventListener('change', function () {
+        if (input.type === 'checkbox') {
+          label.classList.toggle('selected', input.checked);
+        } else {
+          // radio — deselect siblings
+          document.querySelectorAll('.chip-label').forEach(function (l) { l.classList.remove('selected'); });
+          label.classList.add('selected');
+          // Auto-advance for radio
+          setTimeout(function () { advance(step, idx); }, 200);
+        }
+      });
+    }
+  });
+
+  // Text input — Enter to advance
+  var textField = document.getElementById('text-input-field');
+  if (textField) {
+    textField.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') advance(step, idx);
+    });
+  }
+
+  // Back button
+  var btnBack = document.getElementById('btn-back');
+  if (btnBack) {
+    btnBack.addEventListener('click', function () {
+      currentStep = Math.max(0, currentStep - 1);
+      renderStep(currentStep);
+    });
+  }
+
+  // Next / submit button
+  var btnNext = document.getElementById('btn-next');
+  if (btnNext) {
+    btnNext.addEventListener('click', function () {
+      advance(step, idx);
+    });
+  }
+}
+
+function showError(msg) {
+  var el = document.getElementById('step-error');
+  if (el) { el.textContent = msg; el.classList.add('visible'); }
+}
+function clearError() {
+  var el = document.getElementById('step-error');
+  if (el) { el.textContent = ''; el.classList.remove('visible'); }
+}
+
+function advance(step, idx) {
+  clearError();
+  var value = collectValue(step);
+
+  // Validate
+  if (step.required) {
+    if (step.type === 'checkbox') {
+      if (!Array.isArray(value) || value.length < (step.minSelect || 1)) {
+        showError('Please select at least one option.');
+        return;
+      }
+    } else if (step.type === 'radio') {
+      if (!value) { showError('Please select one option.'); return; }
+    } else if (step.type === 'text') {
+      if (!value || !value.trim()) { showError('This field is required.'); return; }
+    } else if (step.type === 'contact') {
+      var c = value;
+      if (!c.name || !c.name.trim()) { showError('Please enter your name.'); document.getElementById('f-name').focus(); return; }
+      if (!c.company || !c.company.trim()) { showError('Please enter your company name.'); document.getElementById('f-company').focus(); return; }
+      var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!c.email || !emailRe.test(c.email.trim())) { showError('Please enter a valid work email.'); document.getElementById('f-email').focus(); return; }
+    }
+  }
+
+  answers[step.id] = value;
+
+  if (idx < TOTAL_STEPS - 1) {
+    currentStep = idx + 1;
+    renderStep(currentStep);
+  } else {
+    submitForm();
+  }
+}
+
+function collectValue(step) {
+  if (step.type === 'checkbox') {
+    var checked = document.querySelectorAll('input[type="checkbox"]:checked');
+    return Array.from(checked).map(function (i) { return i.value; });
+  } else if (step.type === 'radio') {
+    var sel = document.querySelector('input[type="radio"]:checked');
+    return sel ? sel.value : null;
+  } else if (step.type === 'text') {
+    var el = document.getElementById('text-input-field');
+    return el ? el.value : '';
+  } else if (step.type === 'contact') {
+    return {
+      name:    (document.getElementById('f-name') || {}).value || '',
+      company: (document.getElementById('f-company') || {}).value || '',
+      email:   (document.getElementById('f-email') || {}).value || '',
+      notes:   (document.getElementById('f-notes') || {}).value || '',
+    };
+  }
+  return null;
+}
+
+/* ── Loading animation ── */
+var loadingTimer = null;
+function startLoadingAnimation() {
+  var steps = [1,2,3,4,5];
+  var delays = [0, 5000, 10000, 16000, 22000];
+  steps.forEach(function (n, i) {
+    setTimeout(function () {
+      var el = document.getElementById('ls-' + n);
+      if (!el) return;
+      // mark previous as done
+      if (n > 1) {
+        var prev = document.getElementById('ls-' + (n - 1));
+        if (prev) { prev.classList.remove('active'); prev.classList.add('done'); }
+      }
+      el.classList.add('active');
+    }, delays[i]);
+  });
+}
+
+/* ── Submit ── */
+function submitForm() {
+  var contact = answers.contact || {};
+  // Use URL-param email first (verified via booking flow), fall back to contact field
+  var emailVal = prefilledEmail || (contact.email || '').trim();
+  var payload = {
+    email:            emailVal,
+    booking_id:       prefilledBookingId || undefined,
+    name:             (contact.name || '').trim(),
+    company:          (contact.company || '').trim(),
+    industry:         (answers.industry || '').trim(),
+    team_size:        answers.team_size || '',
+    revenue:          answers.revenue || '',
+    customer_channel: Array.isArray(answers.channels) ? answers.channels.join(', ') : (answers.channels || ''),
+    tools:            answers.platforms || [],
+    device_os:        answers.os || '',
+    crm:              answers.crm || '',
+    email_provider:   answers.email_provider || '',
+    ai_tools:         Array.isArray(answers.existing_ai) ? answers.existing_ai : (answers.existing_ai ? [answers.existing_ai] : []),
+    pain_points:      answers.time_sinks || [],
+    bottleneck:       (contact.notes || '').trim(),
+  };
+
+  // Show loading
+  document.getElementById('loading-overlay').classList.add('visible');
+  startLoadingAnimation();
+
+  fetch('/api/questionnaire', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+  .then(function (r) {
+    return r.json().then(function (data) { return { ok: r.ok, data: data }; });
+  })
+  .then(function (res) {
+    if (!res.ok) {
+      document.getElementById('loading-overlay').classList.remove('visible');
+      showError(res.data.error || 'Something went wrong. Please try again.');
+      return;
+    }
+    // Success — roadmap emails sent, show confirmation
+    document.getElementById('loading-overlay').classList.remove('visible');
+    document.getElementById('steps-container').innerHTML =
+      '<div class="step-card" style="padding:48px 32px;text-align:center;">' +
+      '<div style="font-size:48px;margin-bottom:16px;">✅</div>' +
+      '<h2 style="font-size:24px;font-weight:800;margin-bottom:8px;">You\'re all set!</h2>' +
+      '<p style="color:var(--muted);font-size:15px;max-width:360px;margin:0 auto 8px;line-height:1.6;">Your automation roadmap is being built. We\'ll have it ready before your call — check your inbox.</p>' +
+      '<p style="color:var(--muted);font-size:14px;max-width:360px;margin:0 auto 28px;line-height:1.5;">See you soon! 👋</p>' +
+      '</div>';
+  })
+  .catch(func

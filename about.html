@@ -125,4 +125,85 @@
           <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,0.04);color:var(--text-2);border:1px solid var(--line);">Operations</span>
           <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,0.04);color:var(--text-2);border:1px solid var(--line);">B2B Sales</span>
           <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,0.04);color:var(--text-2);border:1px solid var(--line);">Manufacturing</span>
-          <span style="fo
+          <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,0.04);color:var(--text-2);border:1px solid var(--line);">AI Strategy</span>
+        </div>
+      </div>
+      <div class="team-card" style="padding:28px;">
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;">
+          <img src="/assets/team/jonathan.jpg" alt="Jonathan Roh, Co-Founder &amp; COO of Ramped AI" width="72" height="72" loading="lazy" decoding="async" style="width:72px;height:72px;border-radius:50%;object-fit:cover;object-position:center 32%;flex-shrink:0;background:var(--bg-3);border:1px solid var(--line);">
+          <div>
+            <h4 style="margin:0;font-size:18px;letter-spacing:-0.01em;">Jonathan Roh</h4>
+            <div class="role" style="color:var(--blue-2);font-weight:600;font-size:13px;margin-top:2px;">Co-Founder &amp; COO</div>
+          </div>
+        </div>
+        <div style="width:32px;height:2px;background:var(--line);margin:14px 0;"></div>
+        <p class="bio" style="font-size:13.5px;color:var(--text-2);line-height:1.7;margin:0 0 12px;">A University of Missouri Trulaske College of Business graduate and Dean's List honoree, Jonathan started his career in commercial banking, working closely with owner-operators across manufacturing, distribution, and professional services.</p>
+        <p class="bio" style="font-size:13.5px;color:var(--text-2);line-height:1.7;margin:0 0 12px;">Hundreds of conversations later, he kept seeing the same pattern: manual workflows wasting hours every week, delaying customer responses, holding back businesses ready to scale. That insight led him to co-found Ramped AI alongside Andrew.</p>
+        <p class="bio" style="font-size:13.5px;color:var(--text-2);line-height:1.7;margin:0 0 16px;">As COO, Jonathan owns day-to-day execution and client delivery — making sure every implementation runs autonomously from week one. A Missouri native, he's based in the Chesterfield area.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,0.04);color:var(--text-2);border:1px solid var(--line);">Operations</span>
+          <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,0.04);color:var(--text-2);border:1px solid var(--line);">Client Delivery</span>
+          <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,0.04);color:var(--text-2);border:1px solid var(--line);">Banking &amp; Finance</span>
+          <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,0.04);color:var(--text-2);border:1px solid var(--line);">Process Design</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 30-day timeline -->
+<section class="section" style="padding-top:48px">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow"><span class="pulse"></span>HOW WE DEPLOY</span>
+      <h2>Same 30 days. <span class="accent">Every engagement.</span></h2>
+    </div>
+    <div class="timeline-wrap" id="timeline-wrap">
+      <div class="tl-card" style="--w:25%"><div class="tl-num">01/04</div><div class="week">Week 1 · Diagnose</div><h3>Map your stack &amp; find the wins.</h3><p>Workshops with your team. Audit of NetSuite, HubSpot, QuickBooks, Slack. Locked deployment plan.</p><div class="tl-bar"></div></div>
+      <div class="tl-card" style="--w:50%"><div class="tl-num">02/04</div><div class="week">Week 2 · Build</div><h3>Wire the agents into production.</h3><p>Custom agent built and integrated with your real systems. First workflow running end-to-end in staging.</p><div class="tl-bar"></div></div>
+      <div class="tl-card" style="--w:75%"><div class="tl-num">03/04</div><div class="week">Week 3 · Test</div><h3>Pressure-test on real volume.</h3><p>Run agents against last quarter's data. Tune the edges. Approval flows wired into Slack.</p><div class="tl-bar"></div></div>
+      <div class="tl-card" style="--w:100%"><div class="tl-num">04/04</div><div class="week">Week 4 · Live</div><h3>Production. Day-one ROI.</h3><p>Agents take live traffic. Daily health checks. Monthly retainer kicks in for ongoing iteration.</p><div class="tl-bar"></div></div>
+    </div>
+  </div>
+</section>
+
+<div id="ramped-final-cta"></div>
+</main>
+
+<div id="ramped-footer"></div>
+<script src="partials.js"></script>
+<script>
+const tlObs=new IntersectionObserver(([e])=>{if(e.isIntersecting){
+  document.querySelectorAll("#timeline-wrap .tl-card").forEach((c,i)=>setTimeout(()=>c.classList.add("in-view"),i*140));
+  tlObs.disconnect();
+}},{threshold:0.2});
+const tw=document.getElementById("timeline-wrap");if(tw)tlObs.observe(tw);
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "name": "Andrew Yoon",
+      "jobTitle": "Co-Founder & CEO",
+      "worksFor": { "@type": "Organization", "name": "Ramped AI", "url": "https://www.30dayramp.com/" },
+      "alumniOf": { "@type": "CollegeOrUniversity", "name": "Saint Louis University" },
+      "image": "https://www.30dayramp.com/assets/team/andrew.jpg",
+      "description": "Andrew founded Xtractor Depot in 2016. After running a fast-scaling physical-goods business, he co-founded Ramped AI to deploy AI departments for operating businesses."
+    },
+    {
+      "@type": "Person",
+      "name": "Jonathan Roh",
+      "jobTitle": "Co-Founder & COO",
+      "worksFor": { "@type": "Organization", "name": "Ramped AI", "url": "https://www.30dayramp.com/" },
+      "alumniOf": { "@type": "CollegeOrUniversity", "name": "University of Missouri — Robert J. Trulaske, Sr. College of Business" },
+      "image": "https://www.30dayramp.com/assets/team/jonathan.jpg",
+      "description": "Jonathan started his career in commercial banking with owner-operators across manufacturing, distribution, and professional services. As COO of Ramped AI, he owns day-to-day execution and client delivery."
+    }
+  ]
+}
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
