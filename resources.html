@@ -88,6 +88,10 @@ const SOURCE_STYLES={
 function chipStyle(src){const s=SOURCE_STYLES[src]||SOURCE_STYLES.default;return `style="background:${s.bg};border:1px solid ${s.border};color:${s.fg};padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;"`;}
 function fmtRel(iso){if(!iso)return"";const d=new Date(iso);if(isNaN(d))return"";const days=Math.floor((Date.now()-d)/86400000);if(days<1)return"today";if(days<2)return"1d ago";if(days<7)return days+"d ago";if(days<30)return Math.floor(days/7)+"w ago";return Math.floor(days/30)+"mo ago";}
 function escHtml(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+/* Some feed items arrive pre-encoded (e.g. "today&#8217;s"); decode entities once
+   so they don't render literally after escHtml re-escapes the leading ampersand. */
+function decodeEntities(s){const t=document.createElement("textarea");t.innerHTML=String(s||"");return t.value;}
+function safeText(s){return escHtml(decodeEntities(s));}
 
 let _items=[];
 function render(filter){
@@ -95,9 +99,9 @@ function render(filter){
   if(!list.length){grid.innerHTML=`<div class="empty" style="grid-column:1/-1;color:var(--text-2);text-align:center;padding:40px 20px;">No items yet — check back soon.</div>`;return}
   grid.innerHTML=list.map(r=>`
     <a class="res-card" href="${escHtml(r.url||"#")}" target="_blank" rel="noopener">
-      <div class="meta"><span ${chipStyle(r.source)}>${escHtml(r.source||"Update")}</span><span style="color:var(--text-3);font-size:11px;">${escHtml(fmtRel(r.published_at))}</span></div>
-      <h3>${escHtml(r.title||"Untitled")}</h3>
-      <p>${escHtml(r.summary||"")}</p>
+      <div class="meta"><span ${chipStyle(r.source)}>${safeText(r.source||"Update")}</span><span style="color:var(--text-3);font-size:11px;">${escHtml(fmtRel(r.published_at))}</span></div>
+      <h3>${safeText(r.title||"Untitled")}</h3>
+      <p>${safeText(r.summary||"")}</p>
       <div class="read">Read →</div>
     </a>`).join("");
 }

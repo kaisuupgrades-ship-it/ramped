@@ -282,10 +282,35 @@ const grid=document.getElementById("cal-grid"),moLabel=document.getElementById("
   slotsEl=document.getElementById("slots"),slotsLabel=document.getElementById("slots-label"),
   summary=document.getElementById("selected-summary");
 let view=new Date();view.setDate(1);let selectedDate=null,selectedSlot=null;
-/* Real availability from /api/availability with cache; falls back to weekday slots if endpoint errors. */
+/* Real availability: GETs /api/availability config (days_available, start_hour, end_hour,
+   slot_duration_min, blocked_dates) once, then computes slot times client-side per date.
+   Falls back to a static weekday template if the endpoint errors. */
 const _slotCache={};
+let _availCfg=null,_availPromise=null;
+const _DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 const _SLOTS_FALLBACK={1:["9:00 AM","10:30 AM","1:00 PM","3:30 PM"],2:["8:30 AM","11:00 AM","2:00 PM"],3:["9:30 AM","12:00 PM","2:30 PM","4:00 PM"],4:["10:00 AM","1:30 PM","3:00 PM"],5:["9:00 AM","11:30 AM"]};
-async function fetchSlots(date){const ymd=date.toISOString().slice(0,10);if(_slotCache[ymd])return _slotCache[ymd];try{const r=await fetch(`/api/availability?date=${ymd}&timezone=${encodeURIComponent(TZ)}`);if(!r.ok)throw 0;const d=await r.json();_slotCache[ymd]=Array.isArray(d.slots)?d.slots:[];return _slotCache[ymd]}catch(e){_slotCache[ymd]=_SLOTS_FALLBACK[date.getDay()]||[];return _slotCache[ymd]}}
+function _genSlots(s,e,dur){const out=[];for(let m=s*60;m<e*60;m+=dur){const h=Math.floor(m/60),mn=m%60,ap=h<12?"AM":"PM",h12=((h+11)%12)+1;out.push(`${h12}:${String(mn).padStart(2,"0")} ${ap}`)}return out}
+async function _getCfg(){if(_availCfg)return _availCfg;if(_availPromise)return _availPromise;_availPromise=(async()=>{try{const r=await fetch('/api/availability');if(!r.ok)throw 0;_availCfg=await r.json()}catch(e){_availCfg={}}return _availCfg})();return _availPromise}
+async function fetchSlots(date){
+  const ymd=date.toISOString().slice(0,10);
+  if(_slotCache[ymd])return _slotCache[ymd];
+  const cfg=await _getCfg();
+  let list=[];
+  if(cfg&&Array.isArray(cfg.days_available)&&typeof cfg.start_hour==="number"&&typeof cfg.end_hour==="number"&&typeof cfg.slot_duration_min==="number"){
+    const dn=_DOW[date.getDay()];
+    const blk=Array.isArray(cfg.blocked_dates)?cfg.blocked_dates:[];
+    if(cfg.days_available.includes(dn)&&!blk.includes(ymd))list=_genSlots(cfg.start_hour,cfg.end_hour,cfg.slot_duration_min);
+  }else{
+    list=_SLOTS_FALLBACK[date.getDay()]||[];
+  }
+  // For today, drop slots in the past
+  const now=new Date();
+  if(date.toDateString()===now.toDateString()){
+    list=list.filter(s=>{const m=s.match(/(\d+):(\d+)\s*(AM|PM)/);if(!m)return true;let h=parseInt(m[1],10);const mm=parseInt(m[2],10);if(m[3]==="PM"&&h<12)h+=12;else if(m[3]==="AM"&&h===12)h=0;const d2=new Date(date);d2.setHours(h,mm,0,0);return d2.getTime()-now.getTime()>30*60*1000});
+  }
+  _slotCache[ymd]=list;
+  return list;
+}
 function render(){
   grid.innerHTML="";
   ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(d=>{const el=document.createElement("div");el.className="dow";el.textContent=d;grid.appendChild(el)});
