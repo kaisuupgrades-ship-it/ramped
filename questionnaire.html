@@ -24,12 +24,12 @@
 .q-actions{display:flex;justify-content:space-between;gap:10px;margin-top:28px;padding-top:18px;border-top:1px solid var(--line);align-items:center}
 .q-actions .skip-btn{background:none;border:none;color:var(--text-3);font-size:13px;font-family:inherit;cursor:pointer}
 .q-actions .skip-btn:hover{color:var(--text-1)}
-/* Brand-colored chip used in the stack picker */
-.brand-mark{display:inline-flex;align-items:center;justify-content:center;
-  width:22px;height:22px;border-radius:5px;flex-shrink:0;
-  font-family:var(--font-mono);font-size:10px;font-weight:700;
-  color:#fff;letter-spacing:-0.02em;line-height:1;margin-right:8px}
-.pill-group.brand-pills .pill-check{display:inline-flex;align-items:center}
+/* Brand logo + chip used in the stack picker. Logos load from Simple Icons CDN
+   (open-source SVG brand marks) over HTTPS. CSP img-src already permits this. */
+.brand-icon{width:18px;height:18px;flex-shrink:0;margin-right:8px;
+  display:inline-block;vertical-align:middle;object-fit:contain}
+.pill-group.brand-pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill-group.brand-pills .pill-check{display:inline-flex;align-items:center;padding:8px 14px 8px 10px}
 </style>
 </head>
 <body>
@@ -39,9 +39,9 @@
 <main id="main">
 
 <section style="padding:48px 0 0">
-  <div class="container">
-    <h1 class="huge" style="text-align:left;font-size:clamp(32px,4.4vw,52px)">Help us <span class="accent">prep your call.</span></h1>
-    <p class="lede">11 short questions. The more context we have, the more specific your roadmap will be when we hop on the call.</p>
+  <div style="max-width:720px;margin:0 auto;padding:0 24px">
+    <h1 class="huge" style="text-align:left;font-size:clamp(32px,4.4vw,52px);margin:0">Help us <span class="accent">prep your call.</span></h1>
+    <p class="lede" style="margin-top:14px">11 short questions. The more context we have, the more specific your roadmap will be when we hop on the call.</p>
   </div>
 </section>
 
@@ -88,18 +88,18 @@
         </div></div>
       <div class="q-step" data-q="6"><h2>What tools are you running on?</h2><p class="sub">Pick all that apply — helps us pre-scope the integration work.</p>
         <div class="pill-group brand-pills">
-          <label class="pill-check"><input type="checkbox" name="stack" value="HubSpot"/><span class="brand-mark" style="background:#FF7A59">H</span>HubSpot</label>
-          <label class="pill-check"><input type="checkbox" name="stack" value="Salesforce"/><span class="brand-mark" style="background:#00A1E0">SF</span>Salesforce</label>
-          <label class="pill-check"><input type="checkbox" name="stack" value="NetSuite"/><span class="brand-mark" style="background:#C74634">N</span>NetSuite</label>
-          <label class="pill-check"><input type="checkbox" name="stack" value="QuickBooks"/><span class="brand-mark" style="background:#2CA01C">Q</span>QuickBooks</label>
-          <label class="pill-check"><input type="checkbox" name="stack" value="Shopify"/><span class="brand-mark" style="background:#95BF47">S</span>Shopify</label>
-          <label class="pill-check"><input type="checkbox" name="stack" value="Slack"/><span class="brand-mark" style="background:#4A154B">#</span>Slack</label>
-          <label class="pill-check"><input type="checkbox" name="stack" value="Gong"/><span class="brand-mark" style="background:#9333EA">G</span>Gong</label>
-          <label class="pill-check"><input type="checkbox" name="stack" value="Zendesk"/><span class="brand-mark" style="background:#03363D">Z</span>Zendesk</label>
-          <label class="pill-check"><input type="checkbox" name="stack" value="Notion"/><span class="brand-mark" style="background:#000;border:1px solid var(--line-2)">N</span>Notion</label>
-          <label class="pill-check"><input type="checkbox" name="stack" value="Asana"/><span class="brand-mark" style="background:#F06A6A">A</span>Asana</label>
-          <label class="pill-check"><input type="checkbox" name="stack" value="Airtable"/><span class="brand-mark" style="background:#FCB400">At</span>Airtable</label>
-          <label class="pill-check"><input type="checkbox" name="stack" value="Google Workspace"/><span class="brand-mark" style="background:#4285F4">G</span>Google Workspace</label>
+          <label class="pill-check"><input type="checkbox" name="stack" value="HubSpot"/><img class="brand-icon" alt="" src="https://cdn.simpleicons.org/hubspot"/>HubSpot</label>
+          <label class="pill-check"><input type="checkbox" name="stack" value="Salesforce"/><img class="brand-icon" alt="" src="https://cdn.simpleicons.org/salesforce"/>Salesforce</label>
+          <label class="pill-check"><input type="checkbox" name="stack" value="NetSuite"/><img class="brand-icon" alt="" src="https://cdn.simpleicons.org/oracle/C74634"/>NetSuite</label>
+          <label class="pill-check"><input type="checkbox" name="stack" value="QuickBooks"/><img class="brand-icon" alt="" src="https://cdn.simpleicons.org/quickbooks"/>QuickBooks</label>
+          <label class="pill-check"><input type="checkbox" name="stack" value="Shopify"/><img class="brand-icon" alt="" src="https://cdn.simpleicons.org/shopify"/>Shopify</label>
+          <label class="pill-check"><input type="checkbox" name="stack" value="Slack"/><img class="brand-icon" alt="" src="https://cdn.simpleicons.org/slack"/>Slack</label>
+          <label class="pill-check"><input type="checkbox" name="stack" value="Gong"/><img class="brand-icon" alt="" src="https://cdn.simpleicons.org/gong"/>Gong</label>
+          <label class="pill-check"><input type="checkbox" name="stack" value="Zendesk"/><img class="brand-icon" alt="" src="https://cdn.simpleicons.org/zendesk"/>Zendesk</label>
+          <label class="pill-check"><input type="checkbox" name="stack" value="Notion"/><img class="brand-icon" alt="" src="https://cdn.simpleicons.org/notion/ffffff"/>Notion</label>
+          <label class="pill-check"><input type="checkbox" name="stack" value="Asana"/><img class="brand-icon" alt="" src="https://cdn.simpleicons.org/asana"/>Asana</label>
+          <label class="pill-check"><input type="checkbox" name="stack" value="Airtable"/><img class="brand-icon" alt="" src="https://cdn.simpleicons.org/airtable"/>Airtable</label>
+          <label class="pill-check"><input type="checkbox" name="stack" value="Google Workspace"/><img class="brand-icon" alt="" src="https://cdn.simpleicons.org/googleworkspace"/>Google Workspace</label>
         </div>
         <div class="field" style="margin-top:14px"><textarea name="stack_other" rows="2" placeholder="Anything else? Custom tools, internal portals, ERPs we missed…" style="font-size:14px"></textarea></div></div>
       <div class="q-step" data-q="7"><h2>Have you tried automating this before?</h2>
