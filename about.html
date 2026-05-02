@@ -12,22 +12,9 @@
 <style>
 .about-hero{padding:80px 0 32px;position:relative}
 .about-hero h1{font-size:clamp(40px,6vw,68px);letter-spacing:-0.035em;line-height:1.04;margin:18px 0 0;font-weight:700;text-wrap:balance;max-width:980px}
-.about-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:48px;align-items:start}
-@media (max-width:900px){.about-grid{grid-template-columns:1fr}}
 .story-block{display:flex;flex-direction:column;gap:18px}
-.story-block p{margin:0;color:var(--text-1);font-size:16px;line-height:1.65;text-wrap:pretty}
+.story-block p{margin:0;color:var(--text-1);font-size:16.5px;line-height:1.7;text-wrap:pretty}
 .story-block p strong{color:var(--text-0)}
-.founder-card{background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005));
-  border:1px solid var(--line);border-radius:20px;padding:28px;position:sticky;top:120px}
-.founder-photo{width:100%;aspect-ratio:1/1;border-radius:14px;margin-bottom:18px;
-  background:repeating-linear-gradient(135deg,#1c2331 0 8px,#161c27 8px 16px);
-  border:1px dashed var(--line-2);display:grid;place-items:center;color:var(--text-3);
-  font-family:var(--font-mono);font-size:12px}
-.founder-name{font-size:22px;font-weight:700;letter-spacing:-0.02em}
-.founder-role{color:var(--text-2);font-size:14px;margin-top:4px}
-.founder-meta{margin-top:18px;display:flex;flex-direction:column;gap:10px;padding-top:18px;border-top:1px solid var(--line)}
-.founder-meta div{font-size:13.5px;color:var(--text-1);display:flex;justify-content:space-between;gap:14px}
-.founder-meta div span:first-child{color:var(--text-3);font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:0.08em}
 .principles-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:8px}
 @media (max-width:800px){.principles-grid{grid-template-columns:1fr}}
 .principle{background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005));
@@ -62,27 +49,14 @@
 
 <section class="section" style="padding-top:32px">
   <div class="container">
-    <div class="about-grid">
-      <div class="story-block">
-        <span class="kicker">Founder note</span>
-        <h2 style="font-size:clamp(26px,3vw,36px);letter-spacing:-0.025em;margin:0;line-height:1.15;text-wrap:balance">Why we started Ramped AI</h2>
-        <p>I spent ten years running operating businesses — distribution, fulfillment, e-commerce. The kind of company where one person wears six hats and "automation" usually means "another spreadsheet."</p>
-        <p>In 2024, I started using AI agents inside <strong>Xtractor Depot</strong> — my industrial-equipment business. The results were absurd. Quote turnaround dropped from 3 days to 8 minutes. We saved 14 hours a week on inventory work. By month three I'd freed up enough capacity to hire a salesperson instead of an admin.</p>
-        <p>Naturally, every operator I knew asked me to build them the same thing. So I did. And I noticed every consultant they'd already hired had given them <em>strategy</em> — slide decks, frameworks, "north stars" — but no working software.</p>
-        <p><strong>Ramped AI is the company we wish had existed.</strong> We don't sell roadmaps. We build, deploy, and run the agents on a flat monthly fee. If they aren't live in 30 days, you don't pay.</p>
-        <p style="color:var(--text-2);font-size:14.5px;margin-top:6px">— Andrew Yoon, Founder</p>
-      </div>
-      <aside class="founder-card">
-        <img src="/assets/team/andrew.jpg" alt="Andrew Yoon, Co-Founder &amp; CEO of Ramped AI" class="founder-photo" style="width:100%;aspect-ratio:1/1;border-radius:14px;margin-bottom:18px;object-fit:cover;object-position:center 32%;background:var(--bg-3);border:1px solid var(--line);">
-        <div class="founder-name">Andrew Yoon</div>
-        <div class="founder-role">Co-Founder &amp; CEO</div>
-        <div class="founder-meta">
-          <div><span>Operating</span><span>10 years</span></div>
-          <div><span>Prev</span><span>Xtractor Depot</span></div>
-          <div><span>Based in</span><span>Los Angeles, CA</span></div>
-          <div><span>Email</span><span><a href="mailto:jon@30dayramp.com" style="color:var(--blue-2)">jon@30dayramp.com</a></span></div>
-        </div>
-      </aside>
+    <div class="story-block" style="max-width:880px;margin:0 auto">
+      <span class="kicker">Founder note</span>
+      <h2 style="font-size:clamp(28px,3.4vw,42px);letter-spacing:-0.025em;margin:0;line-height:1.12;text-wrap:balance">Why we started Ramped AI</h2>
+      <p>I spent ten years running operating businesses — distribution, fulfillment, e-commerce. The kind of company where one person wears six hats and "automation" usually means "another spreadsheet."</p>
+      <p>In 2024, I started using AI agents inside <strong>Xtractor Depot</strong> — my industrial-equipment business. The results were absurd. Quote turnaround dropped from 3 days to 8 minutes. We saved 14 hours a week on inventory work. By month three I'd freed up enough capacity to hire a salesperson instead of an admin.</p>
+      <p>Naturally, every operator I knew asked me to build them the same thing. So I did. And I noticed every consultant they'd already hired had given them <em>strategy</em> — slide decks, frameworks, "north stars" — but no working software.</p>
+      <p><strong>Ramped AI is the company we wish had existed.</strong> We don't sell roadmaps. We build, deploy, and run the agents on a flat monthly fee. If they aren't live in 30 days, you don't pay.</p>
+      <p style="color:var(--text-2);font-size:14.5px;margin-top:6px">— Andrew Yoon, Founder</p>
     </div>
   </div>
 </section>

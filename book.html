@@ -14,6 +14,30 @@
 .book-hero h1{font-size:clamp(36px,5vw,56px);letter-spacing:-0.03em;line-height:1.06;margin:18px 0 0;font-weight:700;text-wrap:balance;max-width:880px}
 .book-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:32px;align-items:start}
 @media (max-width:960px){.book-grid{grid-template-columns:1fr}}
+
+/* form card */
+.form-card{background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005));
+  border:1px solid var(--line);border-radius:20px;padding:32px}
+.form-card h2{margin:0 0 6px;font-size:22px;letter-spacing:-0.02em}
+.form-card p.sub{margin:0 0 22px;color:var(--text-2);font-size:14px;line-height:1.5}
+.form-card .field{margin-bottom:14px}
+.form-card .field:last-of-type{margin-bottom:18px}
+
+/* selected-time summary pill, lives between form fields and submit */
+.summary-pill{background:var(--bg-2);border:1px solid var(--line);border-radius:12px;
+  padding:14px 16px;font-size:14px;color:var(--text-2);margin:6px 0 18px;
+  display:flex;align-items:center;gap:10px;line-height:1.4}
+.summary-pill .ico{flex-shrink:0;width:18px;height:18px;color:var(--text-3)}
+.summary-pill.selected{border-color:rgba(251,146,60,0.35);background:rgba(251,146,60,0.04)}
+.summary-pill.selected .ico{color:var(--orange-2)}
+
+/* trust row under submit */
+.trust-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;
+  font-family:var(--font-mono);font-size:11px;color:var(--text-3);text-transform:uppercase;
+  letter-spacing:0.08em;margin-top:14px}
+.trust-row span{display:inline-flex;align-items:center;gap:6px}
+
+/* calendar card (right) — unchanged from before */
 .cal-card{background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005));
   border:1px solid var(--line);border-radius:20px;padding:28px;position:sticky;top:120px}
 .cal-head{display:flex;align-items:center;gap:14px;padding-bottom:18px;border-bottom:1px solid var(--line);margin-bottom:18px}
@@ -36,24 +60,14 @@
 .cal-day.disabled{color:var(--text-3);opacity:0.4;cursor:default}
 .cal-slots{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
 .cal-slots h4{margin:0 0 12px;font-size:13px;font-weight:600;color:var(--text-1)}
-.slot-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.slot-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;max-height:280px;overflow-y:auto;padding-right:4px}
+.slot-grid::-webkit-scrollbar{width:6px}
+.slot-grid::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:3px}
 .slot{padding:10px 12px;border-radius:8px;background:var(--bg-2);border:1px solid var(--line-2);
-  color:var(--text-0);font-size:13.5px;font-family:var(--font-mono);text-align:center;font-weight:500}
+  color:var(--text-0);font-size:13.5px;font-family:var(--font-mono);text-align:center;font-weight:500;cursor:pointer}
 .slot:hover{border-color:var(--blue);color:var(--blue-2);background:rgba(59,130,246,0.06)}
 .slot.selected{background:linear-gradient(180deg,var(--blue-2),var(--blue));color:#fff;border-color:transparent}
 .cal-empty{color:var(--text-3);font-size:13.5px;padding:20px 0;text-align:center}
-.form-card{background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.005));
-  border:1px solid var(--line);border-radius:20px;padding:32px}
-.form-stepper{display:flex;align-items:center;gap:8px;margin-bottom:24px;font-family:var(--font-mono);font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.08em}
-.form-stepper .bar{flex:1;height:3px;border-radius:999px;background:var(--bg-3);position:relative;overflow:hidden}
-.form-stepper .bar::after{content:"";position:absolute;inset:0;width:var(--prog,8%);background:linear-gradient(90deg,var(--blue),var(--orange));border-radius:999px;transition:width .3s}
-.form-step{display:none}
-.form-step.on{display:block;animation:fade .3s ease}
-@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-.form-step h2{margin:0 0 6px;font-size:22px;letter-spacing:-0.02em}
-.form-step p.sub{margin:0 0 18px;color:var(--text-2);font-size:14px;line-height:1.5}
-.form-actions{display:flex;justify-content:space-between;gap:10px;margin-top:24px;padding-top:18px;border-top:1px solid var(--line)}
-.form-actions .left{color:var(--text-3);font-size:12px;display:flex;align-items:center}
 </style>
 </head>
 <body>
@@ -65,7 +79,7 @@
   <div class="container">
     <span class="eyebrow"><span class="pulse"></span>30-min discovery call · Free · No commitment</span>
     <h1>Book a call. We'll map the wins <span class="accent">in 30 minutes.</span></h1>
-    <p class="lede">Pick a time, tell us about your business, and we'll prep an automation map specific to your stack before we get on the call.</p>
+    <p class="lede">Pick a time, share a few details, and we'll prep an automation map for your stack before we get on the call.</p>
   </div>
 </section>
 
@@ -74,136 +88,29 @@
     <div class="book-grid">
       <!-- Form (left, primary) -->
       <div class="form-card">
-        <div class="form-stepper">
-          <span id="step-counter">Step 1 / 12</span>
-          <div class="bar" id="prog-bar" style="--prog:8%"></div>
-        </div>
+        <h2>Your details</h2>
+        <p class="sub">Just the essentials — we'll send a 2-minute prep questionnaire after you book if you want to dig deeper.</p>
 
         <form id="book-form" novalidate>
-          <!-- 1 -->
-          <div class="form-step on" data-step="1">
-            <h2>What's your name?</h2>
-            <p class="sub">First and last is fine.</p>
-            <div class="field"><label>Full name</label><input name="name" placeholder="Jane Doe" required/></div>
-          </div>
-          <!-- 2 -->
-          <div class="form-step" data-step="2">
-            <h2>Best email to reach you?</h2>
-            <p class="sub">We'll send the calendar invite + prep doc here.</p>
-            <div class="field"><label>Email</label><input name="email" type="email" placeholder="jane@company.com" required/></div>
-          </div>
-          <!-- 3 -->
-          <div class="form-step" data-step="3">
-            <h2>What's your company?</h2>
-            <div class="field-row">
-              <div class="field"><label>Company</label><input name="company" placeholder="Acme Logistics" required/></div>
-              <div class="field"><label>Website</label><input name="website" placeholder="acme.com"/></div>
-            </div>
-          </div>
-          <!-- 4 -->
-          <div class="form-step" data-step="4">
-            <h2>What's your role?</h2>
-            <div class="pill-group">
-              <label class="pill-check"><input type="radio" name="role" value="Founder/CEO"/>Founder / CEO</label>
-              <label class="pill-check"><input type="radio" name="role" value="COO/Ops"/>COO / Head of Ops</label>
-              <label class="pill-check"><input type="radio" name="role" value="CFO/Finance"/>CFO / Finance lead</label>
-              <label class="pill-check"><input type="radio" name="role" value="CRO/Sales"/>CRO / Sales lead</label>
-              <label class="pill-check"><input type="radio" name="role" value="Other"/>Other</label>
-            </div>
-          </div>
-          <!-- 5 -->
-          <div class="form-step" data-step="5">
-            <h2>Team size?</h2>
-            <div class="pill-group">
-              <label class="pill-check"><input type="radio" name="team_size" value="1-10"/>1–10</label>
-              <label class="pill-check"><input type="radio" name="team_size" value="11-50"/>11–50</label>
-              <label class="pill-check"><input type="radio" name="team_size" value="51-200"/>51–200</label>
-              <label class="pill-check"><input type="radio" name="team_size" value="200+"/>200+</label>
-            </div>
-          </div>
-          <!-- 6 -->
-          <div class="form-step" data-step="6">
-            <h2>Annual revenue?</h2>
-            <p class="sub">Rough is fine — helps us scope.</p>
-            <div class="pill-group">
-              <label class="pill-check"><input type="radio" name="revenue" value="<$1M"/>Under $1M</label>
-              <label class="pill-check"><input type="radio" name="revenue" value="$1-5M"/>$1M – $5M</label>
-              <label class="pill-check"><input type="radio" name="revenue" value="$5-20M"/>$5M – $20M</label>
-              <label class="pill-check"><input type="radio" name="revenue" value="$20-100M"/>$20M – $100M</label>
-              <label class="pill-check"><input type="radio" name="revenue" value="$100M+"/>$100M+</label>
-            </div>
-          </div>
-          <!-- 7 -->
-          <div class="form-step" data-step="7">
-            <h2>What kind of business?</h2>
-            <div class="pill-group">
-              <label class="pill-check"><input type="radio" name="industry" value="Distribution"/>Distribution / Wholesale</label>
-              <label class="pill-check"><input type="radio" name="industry" value="Ecommerce"/>E-commerce</label>
-              <label class="pill-check"><input type="radio" name="industry" value="Services"/>Professional services</label>
-              <label class="pill-check"><input type="radio" name="industry" value="SaaS"/>SaaS / Software</label>
-              <label class="pill-check"><input type="radio" name="industry" value="Other"/>Other</label>
-            </div>
-          </div>
-          <!-- 8 -->
-          <div class="form-step" data-step="8">
-            <h2>Where's your team losing the most hours?</h2>
-            <p class="sub">Pick all that apply — we'll dig deeper on the call.</p>
-            <div class="pill-group">
-              <label class="pill-check"><input type="checkbox" name="pain" value="Lead intake"/>Lead intake / qualification</label>
-              <label class="pill-check"><input type="checkbox" name="pain" value="Quoting"/>Quoting / proposals</label>
-              <label class="pill-check"><input type="checkbox" name="pain" value="Order ops"/>Order processing</label>
-              <label class="pill-check"><input type="checkbox" name="pain" value="Inventory"/>Inventory / reorders</label>
-              <label class="pill-check"><input type="checkbox" name="pain" value="Finance"/>Finance / reporting</label>
-              <label class="pill-check"><input type="checkbox" name="pain" value="Customer support"/>Customer support</label>
-              <label class="pill-check"><input type="checkbox" name="pain" value="Recruiting"/>Recruiting / HR</label>
-            </div>
-          </div>
-          <!-- 9 -->
-          <div class="form-step" data-step="9">
-            <h2>Which tools do you run on?</h2>
-            <p class="sub">Helps us pre-scope the integration work.</p>
-            <div class="pill-group">
-              <label class="pill-check"><input type="checkbox" name="stack" value="HubSpot"/>HubSpot</label>
-              <label class="pill-check"><input type="checkbox" name="stack" value="Salesforce"/>Salesforce</label>
-              <label class="pill-check"><input type="checkbox" name="stack" value="NetSuite"/>NetSuite</label>
-              <label class="pill-check"><input type="checkbox" name="stack" value="QuickBooks"/>QuickBooks</label>
-              <label class="pill-check"><input type="checkbox" name="stack" value="Shopify"/>Shopify</label>
-              <label class="pill-check"><input type="checkbox" name="stack" value="Slack"/>Slack</label>
-              <label class="pill-check"><input type="checkbox" name="stack" value="Gong"/>Gong</label>
-              <label class="pill-check"><input type="checkbox" name="stack" value="Zendesk"/>Zendesk</label>
-              <label class="pill-check"><input type="checkbox" name="stack" value="Other"/>Other / custom</label>
-            </div>
-          </div>
-          <!-- 10 -->
-          <div class="form-step" data-step="10">
-            <h2>What's the budget reality?</h2>
-            <p class="sub">No wrong answer — but candor helps the call.</p>
-            <div class="pill-group">
-              <label class="pill-check"><input type="radio" name="budget" value="<$2.5K"/>Under $2.5K / mo</label>
-              <label class="pill-check"><input type="radio" name="budget" value="$2.5-5K"/>$2.5K – $5K / mo</label>
-              <label class="pill-check"><input type="radio" name="budget" value="$5-10K"/>$5K – $10K / mo</label>
-              <label class="pill-check"><input type="radio" name="budget" value="$10K+"/>$10K+ / mo</label>
-              <label class="pill-check"><input type="radio" name="budget" value="exploring"/>Just exploring</label>
-            </div>
-          </div>
-          <!-- 11 -->
-          <div class="form-step" data-step="11">
-            <h2>Anything else we should know?</h2>
-            <p class="sub">Optional. The more context you give, the more prepared we'll be.</p>
-            <div class="field"><label>Notes</label><textarea name="notes" rows="5" placeholder="What you're trying to fix, what you've already tried, anything that would change how we'd approach the call…"></textarea></div>
-          </div>
-          <!-- 12 -->
-          <div class="form-step" data-step="12">
-            <h2>Pick a time on the right →</h2>
-            <p class="sub">Select a date, then a slot. We'll lock the call when you submit.</p>
-            <div id="selected-summary" style="background:var(--bg-2);border:1px solid var(--line);border-radius:12px;padding:16px;font-size:14px;color:var(--text-2)">No slot selected yet.</div>
-            <div class="field" style="margin-top:18px"><label>Phone (optional)</label><input name="phone" placeholder="+1 555 123 4567"/></div>
+          <div class="field"><label>Full name</label><input name="name" placeholder="Jane Doe" required autocomplete="name"/></div>
+          <div class="field"><label>Work email</label><input name="email" type="email" placeholder="jane@company.com" required autocomplete="email"/></div>
+          <div class="field"><label>Company</label><input name="company" placeholder="Acme Logistics" required autocomplete="organization"/></div>
+          <div class="field"><label>Anything we should know? <span style="color:var(--text-3);font-weight:400">(optional)</span></label>
+            <textarea name="notes" rows="3" placeholder="What you're trying to fix, what you've already tried, anything that would change how we'd approach the call…"></textarea></div>
+
+          <div id="selected-summary" class="summary-pill">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span id="summary-text">No time selected yet — pick one on the right →</span>
           </div>
 
-          <div class="form-actions">
-            <button type="button" class="btn btn-ghost" id="btn-back">← Back</button>
-            <div class="left" id="hint">Press <span class="kbd" style="font-family:var(--font-mono);font-size:10px;padding:1px 5px;background:var(--bg-3);border:1px solid var(--line);border-radius:4px;color:var(--text-2)">Enter</span> to continue</div>
-            <button type="button" class="btn btn-primary" id="btn-next">Continue →</button>
+          <button type="submit" class="btn btn-primary btn-large" id="btn-submit" style="width:100%;justify-content:center">Book the call →</button>
+
+          <div class="trust-row">
+            <span>30 min</span>
+            <span>·</span>
+            <span>Google Meet</span>
+            <span>·</span>
+            <span>30-day go-live guarantee</span>
           </div>
         </form>
       </div>
@@ -218,9 +125,9 @@
           </div>
         </div>
         <div class="cal-month">
-          <button id="prev-mo" aria-label="Previous month">‹</button>
+          <button id="prev-mo" type="button" aria-label="Previous month">‹</button>
           <div class="label" id="mo-label">May 2026</div>
-          <button id="next-mo" aria-label="Next month">›</button>
+          <button id="next-mo" type="button" aria-label="Next month">›</button>
         </div>
         <div class="cal-grid" id="cal-grid"></div>
         <div class="cal-slots">
@@ -239,49 +146,57 @@
 <div id="ramped-footer"></div>
 <script src="partials.js"></script>
 <script>
-/* ===== Stepper ===== */
-const steps=[...document.querySelectorAll(".form-step")];
-const total=steps.length;let cur=1;
-const counter=document.getElementById("step-counter"),bar=document.getElementById("prog-bar"),
-  next=document.getElementById("btn-next"),back=document.getElementById("btn-back");
-function show(n){cur=Math.max(1,Math.min(total,n));steps.forEach(s=>s.classList.toggle("on",+s.dataset.step===cur));counter.textContent=`Step ${cur} / ${total}`;bar.style.setProperty("--prog",`${(cur/total)*100}%`);back.style.visibility=cur===1?"hidden":"visible";next.textContent=cur===total?"Confirm booking →":"Continue →";}
-next.addEventListener("click",()=>{if(cur===total){submit();return}show(cur+1)});
-back.addEventListener("click",()=>show(cur-1));
-document.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey&&document.activeElement.tagName!=="TEXTAREA"){e.preventDefault();next.click()}});
-/* ── /api/book + /api/questionnaire integration ──── */
+/* ===== /api/book submit + tier/billing URL params ===== */
 const TZ=(Intl.DateTimeFormat().resolvedOptions().timeZone)||"UTC";
 const _qp=new URLSearchParams(location.search);
 const TIER=_qp.get("tier")||"";const BILLING=_qp.get("billing")||"";
 function _isValidEmail(s){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s||"").trim())}
-function _checks(n){return [...document.querySelectorAll(`input[name="${n}"]:checked`)].map(x=>x.value)}
-function _radio(n){const el=document.querySelector(`input[name="${n}"]:checked`);return el?el.value:""}
-function combineDateAndSlot(date,slot){const m=String(slot).match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);if(!m)return date.toISOString();let h=parseInt(m[1],10);const mm=parseInt(m[2],10);const isPM=m[3].toUpperCase()==="PM";if(isPM&&h<12)h+=12;if(!isPM&&h===12)h=0;const d=new Date(date);d.setHours(h,mm,0,0);return d.toISOString()}
-async function submit(){
-  if(!selectedDate||!selectedSlot){alert("Please select a date and time slot.");show(total);return}
-  const f=document.getElementById("book-form"),fd=new FormData(f);
-  const name=(fd.get("name")||"").toString().trim(),email=(fd.get("email")||"").toString().trim(),company=(fd.get("company")||"").toString().trim();
-  if(!name||!_isValidEmail(email)||!company){alert("Please complete name, email, and company.");show(name?(_isValidEmail(email)?3:2):1);return}
-  const lines=[];const role=_radio("role"),teamSize=_radio("team_size"),revenue=_radio("revenue"),industry=_radio("industry"),budget=_radio("budget"),pains=_checks("pain"),stacks=_checks("stack");
-  const website=(fd.get("website")||"").toString().trim(),phone=(fd.get("phone")||"").toString().trim(),userNotes=(fd.get("notes")||"").toString().trim();
-  if(role)lines.push(`Role: ${role}`);if(teamSize)lines.push(`Team size: ${teamSize}`);if(revenue)lines.push(`Revenue: ${revenue}`);if(industry)lines.push(`Industry: ${industry}`);if(budget)lines.push(`Budget: ${budget}`);if(pains.length)lines.push(`Pains: ${pains.join(", ")}`);if(stacks.length)lines.push(`Stack: ${stacks.join(", ")}`);if(website)lines.push(`Website: ${website}`);if(phone)lines.push(`Phone: ${phone}`);if(userNotes)lines.push(`\n${userNotes}`);
-  const notes=lines.join("\n");const datetime=combineDateAndSlot(selectedDate,selectedSlot);
-  next.disabled=true;next.textContent="Booking…";
+function combineDateAndSlot(date,slot){
+  const m=String(slot).match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+  if(!m)return date.toISOString();
+  let h=parseInt(m[1],10);const mm=parseInt(m[2],10);const isPM=m[3].toUpperCase()==="PM";
+  if(isPM&&h<12)h+=12;if(!isPM&&h===12)h=0;
+  const d=new Date(date);d.setHours(h,mm,0,0);return d.toISOString();
+}
+
+const form=document.getElementById("book-form");
+const submitBtn=document.getElementById("btn-submit");
+form.addEventListener("submit",async e=>{
+  e.preventDefault();
+  const fd=new FormData(form);
+  const name=(fd.get("name")||"").toString().trim();
+  const email=(fd.get("email")||"").toString().trim();
+  const company=(fd.get("company")||"").toString().trim();
+  const notes=(fd.get("notes")||"").toString().trim();
+  if(!name||!_isValidEmail(email)||!company){alert("Please fill in your name, work email, and company.");return}
+  if(!selectedDate||!selectedSlot){alert("Please pick a date and time on the calendar.");return}
+  const datetime=combineDateAndSlot(selectedDate,selectedSlot);
+  submitBtn.disabled=true;submitBtn.textContent="Booking…";
   try{
-    const r=await fetch("/api/book",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({datetime,name,email,company,notes,timezone:TZ,tier:TIER,billing:BILLING})});
+    const r=await fetch("/api/book",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({datetime,name,email,company,notes,timezone:TZ,tier:TIER,billing:BILLING})
+    });
     const data=await r.json().catch(()=>({}));
     if(!r.ok)throw new Error(data.error||"Booking failed");
-    if(data.booking_id||data.id){const bid=data.booking_id||data.id;fetch("/api/questionnaire",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({booking_id:bid,email,role,team_size:teamSize,revenue,industry,pain_points:pains,stack:stacks,budget,website,company})}).catch(()=>{})}
     const q=new URLSearchParams({intent:"booking",date:selectedDate.toISOString().slice(0,10),slot:selectedSlot});
-    if(TIER)q.set("tier",TIER);if(BILLING)q.set("billing",BILLING);
+    if(data.booking_id||data.id)q.set("booking_id",data.booking_id||data.id);
+    if(TIER)q.set("tier",TIER);
+    if(BILLING)q.set("billing",BILLING);
     location.href="/thanks?"+q.toString();
-  }catch(err){next.disabled=false;next.textContent="Confirm booking →";alert(err.message||"Something went wrong. Email jon@30dayramp.com and we'll book you in.")}
-}
+  }catch(err){
+    submitBtn.disabled=false;submitBtn.textContent="Book the call →";
+    alert(err.message||"Something went wrong. Email jon@30dayramp.com and we'll book you in.");
+  }
+});
 
 /* ===== Calendar ===== */
 const grid=document.getElementById("cal-grid"),moLabel=document.getElementById("mo-label"),
   slotsEl=document.getElementById("slots"),slotsLabel=document.getElementById("slots-label"),
-  summary=document.getElementById("selected-summary");
+  summary=document.getElementById("selected-summary"),summaryText=document.getElementById("summary-text");
 let view=new Date();view.setDate(1);let selectedDate=null,selectedSlot=null;
+
 /* Real availability: GETs /api/availability config (days_available, start_hour, end_hour,
    slot_duration_min, blocked_dates) once, then computes slot times client-side per date.
    Falls back to a static weekday template if the endpoint errors. */
@@ -337,19 +252,31 @@ async function renderSlots(){
   const list=await fetchSlots(selectedDate);
   if(!list.length){slotsEl.className="cal-empty";slotsEl.textContent="No slots available — try another date.";return}
   slotsEl.className="slot-grid";slotsEl.innerHTML="";
-  list.forEach(s=>{const b=document.createElement("button");b.type="button";b.className="slot";b.textContent=s;
-    b.addEventListener("click",()=>{selectedSlot=s;document.querySelectorAll(".slot.selected").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");updateSummary();show(total)});
+  list.forEach(s=>{
+    const b=document.createElement("button");b.type="button";b.className="slot";b.textContent=s;
+    b.addEventListener("click",()=>{
+      selectedSlot=s;
+      document.querySelectorAll(".slot.selected").forEach(x=>x.classList.remove("selected"));
+      b.classList.add("selected");
+      updateSummary();
+    });
     slotsEl.appendChild(b);
   });
 }
 function updateSummary(){
-  if(!selectedDate){summary.textContent="No slot selected yet.";return}
+  if(!selectedDate){summaryText.textContent="No time selected yet — pick one on the right →";summary.classList.remove("selected");return}
   const dt=selectedDate.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
-  summary.innerHTML=selectedSlot?`<strong style="color:var(--text-0)">${dt}</strong> at <strong style="color:var(--orange-2)">${selectedSlot}</strong> · 30 min · Google Meet`:`<strong style="color:var(--text-0)">${dt}</strong> · select a time →`;
+  if(selectedSlot){
+    summaryText.innerHTML=`<strong style="color:var(--text-0)">${dt}</strong> at <strong style="color:var(--orange-2)">${selectedSlot}</strong> · 30 min · Google Meet`;
+    summary.classList.add("selected");
+  }else{
+    summaryText.innerHTML=`<strong style="color:var(--text-0)">${dt}</strong> · select a time →`;
+    summary.classList.remove("selected");
+  }
 }
 document.getElementById("prev-mo").addEventListener("click",()=>{view=new Date(view.getFullYear(),view.getMonth()-1,1);render()});
 document.getElementById("next-mo").addEventListener("click",()=>{view=new Date(view.getFullYear(),view.getMonth()+1,1);render()});
-render();show(1);
+render();
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
 </body>
