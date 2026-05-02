@@ -64,9 +64,13 @@
 .slot-grid::-webkit-scrollbar{width:6px}
 .slot-grid::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:3px}
 .slot{padding:10px 12px;border-radius:8px;background:var(--bg-2);border:1px solid var(--line-2);
-  color:var(--text-0);font-size:13.5px;font-family:var(--font-mono);text-align:center;font-weight:500;cursor:pointer}
-.slot:hover{border-color:var(--blue);color:var(--blue-2);background:rgba(59,130,246,0.06)}
+  color:var(--text-0);font-size:13.5px;font-family:var(--font-mono);text-align:center;font-weight:500;cursor:pointer;transition:all .15s}
+.slot:hover:not(.taken){border-color:var(--blue);color:var(--blue-2);background:rgba(59,130,246,0.06)}
 .slot.selected{background:linear-gradient(180deg,var(--blue-2),var(--blue));color:#fff;border-color:transparent}
+.slot.taken{background:transparent;border-color:var(--line);color:var(--text-3);
+  text-decoration:line-through;text-decoration-color:rgba(248,113,113,0.45);
+  cursor:not-allowed;opacity:0.55;font-weight:400}
+.slot.taken:hover{border-color:var(--line);color:var(--text-3);background:transparent}
 .cal-empty{color:var(--text-3);font-size:13.5px;padding:20px 0;text-align:center}
 </style>
 </head>
@@ -206,34 +210,54 @@ const grid=document.getElementById("cal-grid"),moLabel=document.getElementById("
   summary=document.getElementById("selected-summary"),summaryText=document.getElementById("summary-text");
 let view=new Date();view.setDate(1);let selectedDate=null,selectedSlot=null;
 
-/* Real availability: GETs /api/availability config (days_available, start_hour, end_hour,
-   slot_duration_min, blocked_dates) once, then computes slot times client-side per date.
-   Falls back to a static weekday template if the endpoint errors. */
-const _slotCache={};
+/* Real availability: fetches /api/availability config + booked datetimes for
+   the selected date, computes slot times client-side, marks taken ones so they
+   render greyed-out instead of being clickable. Falls back to a static weekday
+   template if the endpoint errors. */
 let _availCfg=null,_availPromise=null;
 const _DOW=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 const _SLOTS_FALLBACK={1:["9:00 AM","10:30 AM","1:00 PM","3:30 PM"],2:["8:30 AM","11:00 AM","2:00 PM"],3:["9:30 AM","12:00 PM","2:30 PM","4:00 PM"],4:["10:00 AM","1:30 PM","3:00 PM"],5:["9:00 AM","11:30 AM"]};
 function _genSlots(s,e,dur){const out=[];for(let m=s*60;m<e*60;m+=dur){const h=Math.floor(m/60),mn=m%60,ap=h<12?"AM":"PM",h12=((h+11)%12)+1;out.push(`${h12}:${String(mn).padStart(2,"0")} ${ap}`)}return out}
 async function _getCfg(){if(_availCfg)return _availCfg;if(_availPromise)return _availPromise;_availPromise=(async()=>{try{const r=await fetch('/api/availability');if(!r.ok)throw 0;_availCfg=await r.json()}catch(e){_availCfg={}}return _availCfg})();return _availPromise}
+/* Format a JS Date as a slot string ("9:00 AM") in the user's local timezone. */
+const _slotFmt=new Intl.DateTimeFormat("en-US",{hour:"numeric",minute:"2-digit",hour12:true,timeZone:TZ});
+const _ymdFmt=new Intl.DateTimeFormat("en-CA",{year:"numeric",month:"2-digit",day:"2-digit",timeZone:TZ});
+function _toSlotString(d){return _slotFmt.format(d).replace(/ | /g," ").replace(/\s+/g," ").trim()}
+function _toUserYmd(d){return _ymdFmt.format(d)}
 async function fetchSlots(date){
+  // Fresh fetch every time — booked status changes minute-to-minute and we want
+  // the calendar to reflect real availability, not a cached snapshot.
   const ymd=date.toISOString().slice(0,10);
-  if(_slotCache[ymd])return _slotCache[ymd];
   const cfg=await _getCfg();
-  let list=[];
+  let times=[];
   if(cfg&&Array.isArray(cfg.days_available)&&typeof cfg.start_hour==="number"&&typeof cfg.end_hour==="number"&&typeof cfg.slot_duration_min==="number"){
     const dn=_DOW[date.getDay()];
     const blk=Array.isArray(cfg.blocked_dates)?cfg.blocked_dates:[];
-    if(cfg.days_available.includes(dn)&&!blk.includes(ymd))list=_genSlots(cfg.start_hour,cfg.end_hour,cfg.slot_duration_min);
+    if(cfg.days_available.includes(dn)&&!blk.includes(ymd))times=_genSlots(cfg.start_hour,cfg.end_hour,cfg.slot_duration_min);
   }else{
-    list=_SLOTS_FALLBACK[date.getDay()]||[];
+    times=_SLOTS_FALLBACK[date.getDay()]||[];
   }
-  // For today, drop slots in the past
+  // For today, drop slots in the past (sub-30-min lead time)
   const now=new Date();
   if(date.toDateString()===now.toDateString()){
-    list=list.filter(s=>{const m=s.match(/(\d+):(\d+)\s*(AM|PM)/);if(!m)return true;let h=parseInt(m[1],10);const mm=parseInt(m[2],10);if(m[3]==="PM"&&h<12)h+=12;else if(m[3]==="AM"&&h===12)h=0;const d2=new Date(date);d2.setHours(h,mm,0,0);return d2.getTime()-now.getTime()>30*60*1000});
+    times=times.filter(s=>{const m=s.match(/(\d+):(\d+)\s*(AM|PM)/);if(!m)return true;let h=parseInt(m[1],10);const mm=parseInt(m[2],10);if(m[3]==="PM"&&h<12)h+=12;else if(m[3]==="AM"&&h===12)h=0;const d2=new Date(date);d2.setHours(h,mm,0,0);return d2.getTime()-now.getTime()>30*60*1000});
   }
-  _slotCache[ymd]=list;
-  return list;
+  // Look up booked datetimes for this date so we can mark them as taken.
+  const userYmdSelected=_toUserYmd(date);
+  const taken=new Set();
+  try{
+    const r=await fetch(`/api/availability?date=${ymd}`);
+    if(r.ok){
+      const d=await r.json();
+      const booked=Array.isArray(d.booked)?d.booked:[];
+      booked.forEach(iso=>{
+        const dt=new Date(iso);
+        if(isNaN(dt))return;
+        if(_toUserYmd(dt)===userYmdSelected)taken.add(_toSlotString(dt));
+      });
+    }
+  }catch(e){/* graceful — show all as available if endpoint errors */}
+  return times.map(t=>({time:t,booked:taken.has(t)}));
 }
 function render(){
   grid.innerHTML="";
@@ -261,14 +285,23 @@ async function renderSlots(){
   const list=await fetchSlots(selectedDate);
   if(!list.length){slotsEl.className="cal-empty";slotsEl.textContent="No slots available — try another date.";return}
   slotsEl.className="slot-grid";slotsEl.innerHTML="";
-  list.forEach(s=>{
-    const b=document.createElement("button");b.type="button";b.className="slot";b.textContent=s;
-    b.addEventListener("click",()=>{
-      selectedSlot=s;
-      document.querySelectorAll(".slot.selected").forEach(x=>x.classList.remove("selected"));
-      b.classList.add("selected");
-      updateSummary();
-    });
+  list.forEach(({time,booked})=>{
+    const b=document.createElement("button");
+    b.type="button";
+    b.className="slot"+(booked?" taken":"");
+    b.textContent=time;
+    if(booked){
+      b.disabled=true;
+      b.setAttribute("aria-disabled","true");
+      b.title="Already booked";
+    }else{
+      b.addEventListener("click",()=>{
+        selectedSlot=time;
+        document.querySelectorAll(".slot.selected").forEach(x=>x.classList.remove("selected"));
+        b.classList.add("selected");
+        updateSummary();
+      });
+    }
     slotsEl.appendChild(b);
   });
 }

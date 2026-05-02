@@ -26,21 +26,38 @@ export default async function handler(req, res) {
   setAdminCors(req, res, 'GET, PUT, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(204).end();
 
-  // GET — public, no auth required
+  // GET — public, no auth required.
+  // Returns availability config. If ?date=YYYY-MM-DD is provided, also returns
+  // `booked` — an array of ISO datetimes for bookings within ±1 day of that
+  // date (wide enough to cover any timezone offset; client filters by user TZ).
   if (req.method === 'GET') {
     const { ok, data } = await supabase('GET', '/availability_settings?id=eq.1&select=days_available,start_hour,end_hour,slot_duration_min,blocked_dates,timezone');
-    if (!ok || !data || data.length === 0) {
-      // Return safe defaults if table is empty
-      return res.status(200).json({
-        days_available: ['Mon','Tue','Wed','Thu','Fri'],
-        start_hour: 8,
-        end_hour: 18,
-        slot_duration_min: 30,
-        blocked_dates: [],
-        timezone: 'America/Chicago',
-      });
+    const config = (ok && data && data.length > 0) ? data[0] : {
+      days_available: ['Mon','Tue','Wed','Thu','Fri'],
+      start_hour: 8,
+      end_hour: 18,
+      slot_duration_min: 30,
+      blocked_dates: [],
+      timezone: 'America/Chicago',
+    };
+
+    const dateParam = (req.query && req.query.date) ? String(req.query.date) : '';
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateParam)) {
+      const baseMs = Date.parse(dateParam + 'T00:00:00.000Z');
+      if (!isNaN(baseMs)) {
+        const dayMs = 24 * 60 * 60 * 1000;
+        const startISO = new Date(baseMs - dayMs).toISOString();
+        const endISO = new Date(baseMs + 2 * dayMs).toISOString();
+        // Any row in bookings at a datetime = that slot is taken. The
+        // UNIQUE(datetime) constraint already enforces this server-side; we
+        // just surface it to the UI here.
+        const url = `/bookings?datetime=gte.${encodeURIComponent(startISO)}&datetime=lt.${encodeURIComponent(endISO)}&select=datetime`;
+        const r = await supabase('GET', url);
+        config.booked = (r.ok && Array.isArray(r.data)) ? r.data.map(b => b.datetime).filter(Boolean) : [];
+      }
     }
-    return res.status(200).json(data[0]);
+
+    return res.status(200).json(config);
   }
 
   // PUT — admin only
