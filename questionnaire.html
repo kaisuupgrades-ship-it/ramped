@@ -24,6 +24,12 @@
 .q-actions{display:flex;justify-content:space-between;gap:10px;margin-top:28px;padding-top:18px;border-top:1px solid var(--line);align-items:center}
 .q-actions .skip-btn{background:none;border:none;color:var(--text-3);font-size:13px;font-family:inherit;cursor:pointer}
 .q-actions .skip-btn:hover{color:var(--text-1)}
+/* Brand-colored chip used in the stack picker */
+.brand-mark{display:inline-flex;align-items:center;justify-content:center;
+  width:22px;height:22px;border-radius:5px;flex-shrink:0;
+  font-family:var(--font-mono);font-size:10px;font-weight:700;
+  color:#fff;letter-spacing:-0.02em;line-height:1;margin-right:8px}
+.pill-group.brand-pills .pill-check{display:inline-flex;align-items:center}
 </style>
 </head>
 <body>
@@ -34,7 +40,6 @@
 
 <section style="padding:48px 0 0">
   <div class="container">
-    <span class="eyebrow"><span class="pulse"></span>Pre-call prep · ~5 minutes</span>
     <h1 class="huge" style="text-align:left;font-size:clamp(32px,4.4vw,52px)">Help us <span class="accent">prep your call.</span></h1>
     <p class="lede">11 short questions. The more context we have, the more specific your roadmap will be when we hop on the call.</p>
   </div>
@@ -81,8 +86,22 @@
           <label class="pill-check"><input type="radio" name="hours" value="25-50"/>25–50</label>
           <label class="pill-check"><input type="radio" name="hours" value="50+"/>50+</label>
         </div></div>
-      <div class="q-step" data-q="6"><h2>What tools are you running on?</h2><p class="sub">The more we know, the more accurate the integration plan.</p>
-        <div class="field"><textarea name="stack" rows="3" placeholder="HubSpot for CRM, NetSuite for ERP, Slack, Google Workspace, custom internal portal…"></textarea></div></div>
+      <div class="q-step" data-q="6"><h2>What tools are you running on?</h2><p class="sub">Pick all that apply — helps us pre-scope the integration work.</p>
+        <div class="pill-group brand-pills">
+          <label class="pill-check"><input type="checkbox" name="stack" value="HubSpot"/><span class="brand-mark" style="background:#FF7A59">H</span>HubSpot</label>
+          <label class="pill-check"><input type="checkbox" name="stack" value="Salesforce"/><span class="brand-mark" style="background:#00A1E0">SF</span>Salesforce</label>
+          <label class="pill-check"><input type="checkbox" name="stack" value="NetSuite"/><span class="brand-mark" style="background:#C74634">N</span>NetSuite</label>
+          <label class="pill-check"><input type="checkbox" name="stack" value="QuickBooks"/><span class="brand-mark" style="background:#2CA01C">Q</span>QuickBooks</label>
+          <label class="pill-check"><input type="checkbox" name="stack" value="Shopify"/><span class="brand-mark" style="background:#95BF47">S</span>Shopify</label>
+          <label class="pill-check"><input type="checkbox" name="stack" value="Slack"/><span class="brand-mark" style="background:#4A154B">#</span>Slack</label>
+          <label class="pill-check"><input type="checkbox" name="stack" value="Gong"/><span class="brand-mark" style="background:#9333EA">G</span>Gong</label>
+          <label class="pill-check"><input type="checkbox" name="stack" value="Zendesk"/><span class="brand-mark" style="background:#03363D">Z</span>Zendesk</label>
+          <label class="pill-check"><input type="checkbox" name="stack" value="Notion"/><span class="brand-mark" style="background:#000;border:1px solid var(--line-2)">N</span>Notion</label>
+          <label class="pill-check"><input type="checkbox" name="stack" value="Asana"/><span class="brand-mark" style="background:#F06A6A">A</span>Asana</label>
+          <label class="pill-check"><input type="checkbox" name="stack" value="Airtable"/><span class="brand-mark" style="background:#FCB400">At</span>Airtable</label>
+          <label class="pill-check"><input type="checkbox" name="stack" value="Google Workspace"/><span class="brand-mark" style="background:#4285F4">G</span>Google Workspace</label>
+        </div>
+        <div class="field" style="margin-top:14px"><textarea name="stack_other" rows="2" placeholder="Anything else? Custom tools, internal portals, ERPs we missed…" style="font-size:14px"></textarea></div></div>
       <div class="q-step" data-q="7"><h2>Have you tried automating this before?</h2>
         <div class="pill-group">
           <label class="pill-check"><input type="radio" name="prior" value="Never"/>Never tried</label>
@@ -139,9 +158,13 @@ function _text(n){const el=document.querySelector(`[name="${n}"]`);return el?Str
 
 async function submitQuestionnaire(){
   next.disabled=true;next.textContent="Submitting…";
+  // stack: combine checked brand pills + optional "other" textarea into one string
+  const stackList=_checks("stack");
+  const stackOther=_text("stack_other");
+  const stackJoined=[...stackList,...(stackOther?[stackOther]:[])].join(", ");
   const payload={booking_id:BID,email:EMAIL,
     business_description:_text("biz"),revenue:_radio("rev"),team_size:_radio("team"),
-    pain_points:_checks("pain"),hours_lost:_radio("hours"),stack:_text("stack"),
+    pain_points:_checks("pain"),hours_lost:_radio("hours"),stack:stackJoined,
     prior_attempts:_radio("prior"),prior_notes:_text("prior_notes"),
     success_definition:_text("success"),budget:_radio("budget"),notes:_text("notes")};
   try{

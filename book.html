@@ -77,7 +77,6 @@
 <main id="main">
 <section class="book-hero">
   <div class="container">
-    <span class="eyebrow"><span class="pulse"></span>30-min discovery call · Free · No commitment</span>
     <h1>Book a call. We'll map the wins <span class="accent">in 30 minutes.</span></h1>
     <p class="lede">Pick a time, share a few details, and we'll prep an automation map for your stack before we get on the call.</p>
   </div>
@@ -180,11 +179,21 @@ form.addEventListener("submit",async e=>{
     });
     const data=await r.json().catch(()=>({}));
     if(!r.ok)throw new Error(data.error||"Booking failed");
-    const q=new URLSearchParams({intent:"booking",date:selectedDate.toISOString().slice(0,10),slot:selectedSlot});
-    if(data.booking_id||data.id)q.set("booking_id",data.booking_id||data.id);
-    if(TIER)q.set("tier",TIER);
-    if(BILLING)q.set("billing",BILLING);
-    location.href="/thanks?"+q.toString();
+    const bid=data.booking_id||data.id;
+    if(bid){
+      // Booking confirmed — send them to the prep questionnaire so the
+      // automation map can be generated before the call.
+      const qp=new URLSearchParams({booking_id:bid,email,date:selectedDate.toISOString().slice(0,10),slot:selectedSlot});
+      if(TIER)qp.set("tier",TIER);
+      if(BILLING)qp.set("billing",BILLING);
+      location.href="/questionnaire?"+qp.toString();
+    }else{
+      // Fallback if API didn't return an id — straight to thanks
+      const q=new URLSearchParams({intent:"booking",date:selectedDate.toISOString().slice(0,10),slot:selectedSlot});
+      if(TIER)q.set("tier",TIER);
+      if(BILLING)q.set("billing",BILLING);
+      location.href="/thanks?"+q.toString();
+    }
   }catch(err){
     submitBtn.disabled=false;submitBtn.textContent="Book the call →";
     alert(err.message||"Something went wrong. Email jon@30dayramp.com and we'll book you in.");
