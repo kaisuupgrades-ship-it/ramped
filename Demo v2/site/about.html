@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>About — Ramped AI</title>
 <meta name="description" content="Built by Andrew Yoon, a 10-year operator and founder of Xtractor Depot. We're an AI implementation team for operating businesses." />
-<link rel="canonical" href="https://www.30dayramp.com/about" />
+<link rel="canonical" href="https://www.30dayramp.com/about.html" />
 <link rel="icon" href="favicon.ico" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="site.css" />
@@ -73,13 +73,13 @@
         <p style="color:var(--text-2);font-size:14.5px;margin-top:6px">— Andrew Yoon, Founder</p>
       </div>
       <aside class="founder-card">
-        <img src="/assets/team/andrew.jpg" alt="Andrew Yoon, Co-Founder &amp; CEO of Ramped AI" class="founder-photo" style="width:100%;aspect-ratio:1/1;border-radius:14px;margin-bottom:18px;object-fit:cover;object-position:center 32%;background:var(--bg-3);border:1px solid var(--line);">
+        <div class="founder-photo">[ founder photo ]</div>
         <div class="founder-name">Andrew Yoon</div>
-        <div class="founder-role">Co-Founder &amp; CEO</div>
+        <div class="founder-role">Founder &amp; CEO</div>
         <div class="founder-meta">
           <div><span>Operating</span><span>10 years</span></div>
           <div><span>Prev</span><span>Xtractor Depot</span></div>
-          <div><span>Based in</span><span>Los Angeles, CA</span></div>
+          <div><span>Based in</span><span>Austin, TX</span></div>
           <div><span>Email</span><span><a href="mailto:jon@30dayramp.com" style="color:var(--blue-2)">jon@30dayramp.com</a></span></div>
         </div>
       </aside>
@@ -108,21 +108,41 @@
       <h2>Small, senior, and shipping.</h2>
       <p>We stay deliberately small so the people scoping your build are the same people writing the code.</p>
     </div>
-    <div class="team-grid" style="grid-template-columns:repeat(2,1fr);max-width:980px;margin:0 auto;">
-      <div class="team-card" style="padding:28px;">
-        <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;">
-          <img src="/assets/team/andrew.jpg" alt="Andrew Yoon, Co-Founder &amp; CEO of Ramped AI" width="72" height="72" loading="lazy" decoding="async" style="width:72px;height:72px;border-radius:50%;object-fit:cover;object-position:center 32%;flex-shrink:0;background:var(--bg-3);border:1px solid var(--line);">
-          <div>
-            <h4 style="margin:0;font-size:18px;letter-spacing:-0.01em;">Andrew Yoon</h4>
-            <div class="role" style="color:var(--blue-2);font-weight:600;font-size:13px;margin-top:2px;">Co-Founder &amp; CEO</div>
-          </div>
-        </div>
-        <div style="width:32px;height:2px;background:var(--line);margin:14px 0;"></div>
-        <p class="bio" style="font-size:13.5px;color:var(--text-2);line-height:1.7;margin:0 0 12px;">Andrew founded Xtractor Depot in 2016, growing it into a multi-industry supplier of precision lab equipment to clients ranging from cannabis operators to SpaceX and Lucid Motors. A Saint Louis University accounting graduate, he started his entrepreneurial journey in college.</p>
-        <p class="bio" style="font-size:13.5px;color:var(--text-2);line-height:1.7;margin:0 0 12px;">Running a fast-scaling physical-goods business exposed a universal gap: no one was building and running AI automation systems for operating businesses on an ongoing basis. That insight became Ramped AI.</p>
-        <p class="bio" style="font-size:13.5px;color:var(--text-2);line-height:1.7;margin:0 0 16px;">Outside the office, Andrew plays ice hockey, golf, tennis, and paintball. He lives in Los Angeles County with his wife Steph and their dogs.</p>
-        <div style="display:flex;flex-wrap:wrap;gap:6px;">
-          <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,0.04);color:var(--text-2);border:1px solid var(--line);">Operations</span>
-          <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,0.04);color:var(--text-2);border:1px solid var(--line);">B2B Sales</span>
-          <span style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,0.04);color:var(--text-2);border:1px solid var(--line);">Manufacturing</span>
-          <span style="fo
+    <div class="team-grid">
+      <div class="team-card"><div class="photo"></div><h4>Andrew Yoon</h4><div class="role">Founder &amp; CEO</div><div class="bio">10-year operator. Founded Xtractor Depot. Runs every discovery call personally.</div></div>
+      <div class="team-card"><div class="photo"></div><h4>Marcus Chen</h4><div class="role">Lead AI Engineer</div><div class="bio">Built agent infrastructure at two YC companies. Owns the integration layer.</div></div>
+      <div class="team-card"><div class="photo"></div><h4>Priya Shah</h4><div class="role">Deployment Lead</div><div class="bio">Former ops director. Runs the 30-day deployment process end-to-end.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 30-day timeline -->
+<section class="section" style="padding-top:48px">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow"><span class="pulse"></span>HOW WE DEPLOY</span>
+      <h2>Same 30 days. <span class="accent">Every engagement.</span></h2>
+    </div>
+    <div class="timeline-wrap" id="timeline-wrap">
+      <div class="tl-card" style="--w:25%"><div class="tl-num">01/04</div><div class="week">Week 1 · Diagnose</div><h3>Map your stack &amp; find the wins.</h3><p>Workshops with your team. Audit of NetSuite, HubSpot, QuickBooks, Slack. Locked deployment plan.</p><div class="tl-bar"></div></div>
+      <div class="tl-card" style="--w:50%"><div class="tl-num">02/04</div><div class="week">Week 2 · Build</div><h3>Wire the agents into production.</h3><p>Custom agent built and integrated with your real systems. First workflow running end-to-end in staging.</p><div class="tl-bar"></div></div>
+      <div class="tl-card" style="--w:75%"><div class="tl-num">03/04</div><div class="week">Week 3 · Test</div><h3>Pressure-test on real volume.</h3><p>Run agents against last quarter's data. Tune the edges. Approval flows wired into Slack.</p><div class="tl-bar"></div></div>
+      <div class="tl-card" style="--w:100%"><div class="tl-num">04/04</div><div class="week">Week 4 · Live</div><h3>Production. Day-one ROI.</h3><p>Agents take live traffic. Daily health checks. Monthly retainer kicks in for ongoing iteration.</p><div class="tl-bar"></div></div>
+    </div>
+  </div>
+</section>
+
+<div id="ramped-final-cta"></div>
+</main>
+
+<div id="ramped-footer"></div>
+<script src="partials.js"></script>
+<script>
+const tlObs=new IntersectionObserver(([e])=>{if(e.isIntersecting){
+  document.querySelectorAll("#timeline-wrap .tl-card").forEach((c,i)=>setTimeout(()=>c.classList.add("in-view"),i*140));
+  tlObs.disconnect();
+}},{threshold:0.2});
+const tw=document.getElementById("timeline-wrap");if(tw)tlObs.observe(tw);
+</script>
+</body>
+</html>

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Resources — Ramped AI</title>
 <meta name="description" content="What we're reading. AI ops news, deployment notes, and field-tested writeups for operators." />
-<link rel="canonical" href="https://www.30dayramp.com/resources" />
+<link rel="canonical" href="https://www.30dayramp.com/resources.html" />
 <link rel="icon" href="favicon.ico" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="site.css" />
@@ -51,11 +51,11 @@
   <div class="container">
     <div class="filters" id="filters">
       <button class="filter on" data-cat="all">All</button>
-      <button class="filter" data-cat="Anthropic">Anthropic</button>
-      <button class="filter" data-cat="OpenAI">OpenAI</button>
-      <button class="filter" data-cat="DeepMind">DeepMind</button>
-      <button class="filter" data-cat="The Batch">The Batch</button>
-      <button class="filter" data-cat="MIT Tech Review">MIT Tech Review</button>
+      <button class="filter" data-cat="agents">Agents</button>
+      <button class="filter" data-cat="ops">Ops</button>
+      <button class="filter" data-cat="finance">Finance</button>
+      <button class="filter" data-cat="sales">Sales</button>
+      <button class="filter" data-cat="news">Industry news</button>
     </div>
 
     <div class="res-grid" id="res-grid">
@@ -74,44 +74,35 @@ const grid=document.getElementById("res-grid");
 function skeletonCard(){return `<div class="res-card"><div class="meta"><div class="skel tag"></div><div class="skel" style="width:50px;height:12px"></div></div><div class="skel title"></div><div class="skel line"></div><div class="skel line" style="width:60%"></div></div>`}
 grid.innerHTML=Array(6).fill(0).map(skeletonCard).join("");
 
-/* Real /api/resources feed — backend pulls from Anthropic / OpenAI / DeepMind /
-   The Batch / MIT Tech Review and returns {items:[{title,url,source,published_at,summary}]}.
-   Source brand chip styling restored from archive. */
-const SOURCE_STYLES={
-  "Anthropic":   {bg:"rgba(251,146,60,0.10)",  border:"rgba(251,146,60,0.35)",  fg:"#fdba74"},
-  "OpenAI":      {bg:"rgba(52,211,153,0.10)",  border:"rgba(52,211,153,0.35)",  fg:"#34d399"},
-  "DeepMind":    {bg:"rgba(59,130,246,0.10)",  border:"rgba(59,130,246,0.35)",  fg:"#60a5fa"},
-  "The Batch":   {bg:"rgba(167,139,250,0.10)", border:"rgba(167,139,250,0.35)", fg:"#a78bfa"},
-  "MIT Tech Review":{bg:"rgba(248,113,113,0.10)",border:"rgba(248,113,113,0.35)",fg:"#f87171"},
-  "default":     {bg:"rgba(255,255,255,0.04)", border:"var(--line-2)",          fg:"var(--text-1)"}
-};
-function chipStyle(src){const s=SOURCE_STYLES[src]||SOURCE_STYLES.default;return `style="background:${s.bg};border:1px solid ${s.border};color:${s.fg};padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;"`;}
-function fmtRel(iso){if(!iso)return"";const d=new Date(iso);if(isNaN(d))return"";const days=Math.floor((Date.now()-d)/86400000);if(days<1)return"today";if(days<2)return"1d ago";if(days<7)return days+"d ago";if(days<30)return Math.floor(days/7)+"w ago";return Math.floor(days/30)+"mo ago";}
-function escHtml(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-
-let _items=[];
+// Mock data — real implementation fetches /api/resources
+const RESOURCES=[
+  {cat:"agents",src:"Anthropic",date:"3d ago",t:"Building agents that hand off cleanly",d:"How to design escalation paths so your agents know when to ask a human — without becoming a chat-only system."},
+  {cat:"ops",src:"Field notes",date:"5d ago",t:"30 days inside a $40M distributor",d:"What we shipped, what broke, and the three integrations we'd skip next time."},
+  {cat:"finance",src:"CFO Brief",date:"1w ago",t:"AI-assisted close: 3 patterns that work",d:"Reconciliation, variance memos, and anomaly detection — what's actually in production at midmarket finance teams."},
+  {cat:"sales",src:"Gong Labs",date:"1w ago",t:"Lead routing speed beats lead scoring",d:"Counterintuitive data on response-time vs. fit-score and what it means for inbound playbooks."},
+  {cat:"news",src:"The Information",date:"2w ago",t:"Anthropic ships agent SDK updates",date:"2w ago",d:"Claude's tool-use API now supports parallel calls and structured handoffs — what it unlocks for operators."},
+  {cat:"agents",src:"Ramped journal",date:"2w ago",t:"Why we ship in 30 days, not 90",d:"The deadline isn't marketing — it's a forcing function for scope. A look at our deployment playbook."},
+  {cat:"ops",src:"Operators Weekly",date:"3w ago",t:"The unsexy automation that paid for itself",d:"PO matching at a midwest wholesaler. $11K/mo savings on what looked like the most boring workflow on the audit."},
+  {cat:"sales",src:"HubSpot blog",date:"3w ago",t:"What 'AI SDR' actually means in 2026",d:"Beyond the marketing copy — what the agents do, what they don't, and where humans still own the loop."},
+  {cat:"finance",src:"a16z",date:"4w ago",t:"AI in the back office: a 2026 map",d:"The category map for AI in finance ops — and why most of it's still services-led, not product-led."},
+];
+const fmtChip={agents:"AGENTS",ops:"OPS",finance:"FINANCE",sales:"SALES",news:"NEWS"};
 function render(filter){
-  const list=(filter==="all")?_items:_items.filter(r=>(r.source||"").toLowerCase()===filter.toLowerCase());
-  if(!list.length){grid.innerHTML=`<div class="empty" style="grid-column:1/-1;color:var(--text-2);text-align:center;padding:40px 20px;">No items yet — check back soon.</div>`;return}
+  const list=filter==="all"?RESOURCES:RESOURCES.filter(r=>r.cat===filter);
+  if(!list.length){grid.innerHTML=`<div class="empty" style="grid-column:1/-1">No items yet for this category — check back soon.</div>`;return}
   grid.innerHTML=list.map(r=>`
-    <a class="res-card" href="${escHtml(r.url||"#")}" target="_blank" rel="noopener">
-      <div class="meta"><span ${chipStyle(r.source)}>${escHtml(r.source||"Update")}</span><span style="color:var(--text-3);font-size:11px;">${escHtml(fmtRel(r.published_at))}</span></div>
-      <h3>${escHtml(r.title||"Untitled")}</h3>
-      <p>${escHtml(r.summary||"")}</p>
+    <a class="res-card" href="#" onclick="event.preventDefault()">
+      <div class="meta"><span class="src">${fmtChip[r.cat]||r.cat.toUpperCase()} · ${r.src}</span><span>${r.date}</span></div>
+      <h3>${r.t}</h3>
+      <p>${r.d}</p>
       <div class="read">Read →</div>
     </a>`).join("");
 }
-
-async function loadResources(){
-  try{
-    const r=await fetch("/api/resources");
-    if(!r.ok)throw 0;
-    const d=await r.json();
-    _items=Array.isArray(d.items)?d.items:(Array.isArray(d)?d:[]);
-    render("all");
-  }catch(e){
-    grid.innerHTML=`<div class="empty" style="grid-column:1/-1;color:var(--text-2);text-align:center;padding:40px 20px;">Couldn't load the latest updates. Refresh in a minute.</div>`;
-  }
-}
 document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>{
-  document.querySelectorAll(".filter")
+  document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("on",x===b));
+  render(b.dataset.cat);
+}));
+setTimeout(()=>render("all"),700);
+</script>
+</body>
+</html>

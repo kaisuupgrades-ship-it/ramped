@@ -1,0 +1,1835 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Ramped AI — Team Chat</title>
+<meta name="viewport" content="width=1440" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    /* Ramped AI palette — electric blue + signal orange on near-black */
+    --bg: #0E1014;
+    --sidebar: #15171C;
+    --sidebar-2: #1B1E25;
+    --rail: #0A0B0F;
+    --chat-bg: #FAFAF7;
+    --chat-panel: #FFFFFF;
+    --ink: #0E1014;
+    --ink-2: #3A3F47;
+    --ink-3: #6B7280;
+    --ink-4: #9CA3AF;
+    --line: #E7E6E1;
+    --line-dark: #23262E;
+    --line-dark-2: #2C2F38;
+    --blue: #2D6BFF;        /* electric blue */
+    --blue-2: #5C8BFF;
+    --blue-soft: #E8EFFF;
+    --orange: #FF6B2C;      /* signal orange */
+    --orange-soft: #FFE7D8;
+    --green: #1FB07A;
+    --yellow: #F4B400;
+    --red: #E5484D;
+    --shadow-sm: 0 1px 2px rgba(13, 16, 22, 0.06);
+    --shadow-md: 0 6px 22px -6px rgba(13, 16, 22, 0.18), 0 2px 6px rgba(13, 16, 22, 0.06);
+    --shadow-lg: 0 24px 60px -20px rgba(13, 16, 22, 0.35), 0 8px 24px -8px rgba(13, 16, 22, 0.12);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+
+  /* ============ APP SHELL ============ */
+  .app {
+    display: grid;
+    grid-template-columns: 64px 280px 1fr;
+    height: 100vh;
+    width: 100vw;
+    background: var(--bg);
+  }
+
+  /* ---------- WORKSPACE RAIL ---------- */
+  .rail {
+    background: var(--rail);
+    border-right: 1px solid var(--line-dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 14px 0;
+    gap: 10px;
+  }
+  .rail-logo {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--blue) 0%, #1A4FD8 100%);
+    display: grid;
+    place-items: center;
+    color: white;
+    font-weight: 800;
+    font-size: 17px;
+    letter-spacing: -0.02em;
+    box-shadow: 0 4px 14px rgba(45, 107, 255, 0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+    position: relative;
+  }
+  .rail-logo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .rail-divider { width: 28px; height: 1px; background: var(--line-dark-2); margin: 4px 0; }
+  .rail-ws {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: var(--sidebar-2);
+    display: grid;
+    place-items: center;
+    color: #C7CBD3;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all .15s ease;
+    position: relative;
+  }
+  .rail-ws.active {
+    background: #1F2230;
+    border-color: var(--blue);
+    color: white;
+  }
+  .rail-ws.active::before {
+    content: "";
+    position: absolute;
+    left: -14px; top: 50%;
+    transform: translateY(-50%);
+    width: 3px; height: 22px;
+    background: white;
+    border-radius: 0 3px 3px 0;
+  }
+  .rail-ws:hover { background: #1F2230; color: white; }
+  .rail-add {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    border: 1px dashed #3A3F4C;
+    color: #7A8190;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all .15s ease;
+  }
+  .rail-add:hover { color: white; border-color: #5A6172; }
+  .rail-spacer { flex: 1; }
+  .rail-avatar {
+    width: 36px; height: 36px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #FF8D4F 0%, var(--orange) 100%);
+    display: grid;
+    place-items: center;
+    color: white;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(255, 107, 44, 0.3);
+  }
+  .rail-avatar::after {
+    content: "";
+    position: absolute;
+    bottom: -2px; right: -2px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--green);
+    border: 2px solid var(--rail);
+  }
+
+  /* ---------- SIDEBAR ---------- */
+  .sidebar {
+    background: var(--sidebar);
+    color: #D8DBE3;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--line-dark);
+    overflow: hidden;
+  }
+  .ws-header {
+    padding: 16px 18px 14px;
+    border-bottom: 1px solid var(--line-dark);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+  .ws-name {
+    font-weight: 700;
+    font-size: 16px;
+    color: white;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .ws-name .chev { color: #8A91A2; font-size: 11px; }
+  .ws-meta { font-size: 12px; color: #8A91A2; margin-top: 2px; display: flex; align-items: center; gap: 6px; }
+  .ws-meta .dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; }
+  .ws-icons { display: flex; gap: 6px; }
+  .ws-icon-btn {
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    background: transparent;
+    border: none;
+    color: #8A91A2;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: all .12s;
+  }
+  .ws-icon-btn:hover { background: var(--sidebar-2); color: white; }
+
+  .sidebar-search {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line-dark);
+  }
+  .search-input {
+    width: 100%;
+    background: var(--sidebar-2);
+    border: 1px solid var(--line-dark-2);
+    border-radius: 8px;
+    padding: 7px 12px 7px 32px;
+    color: #D8DBE3;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+    transition: all .15s;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238A91A2' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='7'/><line x1='21' y1='21' x2='16.65' y2='16.65'/></svg>");
+    background-repeat: no-repeat;
+    background-position: 10px center;
+  }
+  .search-input::placeholder { color: #6E7585; }
+  .search-input:focus { border-color: var(--blue); }
+
+  .nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 6px 16px;
+  }
+  .nav::-webkit-scrollbar { width: 6px; }
+  .nav::-webkit-scrollbar-thumb { background: #2A2D36; border-radius: 3px; }
+
+  .section {
+    padding: 8px 0;
+  }
+  .section-head {
+    display: flex;
+    align-items: center;
+    padding: 4px 12px;
+    color: #8A91A2;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 6px;
+    margin: 0 4px;
+  }
+  .section-head:hover { background: var(--sidebar-2); color: #B8BFCD; }
+  .section-head .caret {
+    width: 14px; display: inline-block;
+    transition: transform .15s;
+    font-size: 10px;
+    color: #6E7585;
+  }
+  .section-head .caret.collapsed { transform: rotate(-90deg); }
+  .section-head .label { flex: 1; margin-left: 4px; }
+  .section-head .add {
+    opacity: 0;
+    width: 18px; height: 18px;
+    border-radius: 4px;
+    display: grid; place-items: center;
+    color: #8A91A2;
+    font-size: 14px;
+    transition: all .12s;
+  }
+  .section-head:hover .add { opacity: 1; }
+  .section-head .add:hover { background: #2A2D36; color: white; }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 12px;
+    margin: 1px 4px;
+    border-radius: 6px;
+    color: #B8BFCD;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 400;
+    transition: background .1s, color .1s;
+    position: relative;
+  }
+  .nav-item:hover { background: var(--sidebar-2); color: white; }
+  .nav-item.active {
+    background: var(--blue);
+    color: white;
+    font-weight: 500;
+  }
+  .nav-item.active .ch-prefix { color: rgba(255,255,255,0.85); }
+  .nav-item.unread { color: white; font-weight: 600; }
+  .nav-item .ch-prefix {
+    color: #8A91A2;
+    font-weight: 400;
+    width: 14px;
+    text-align: center;
+  }
+  .nav-item .ch-icon {
+    width: 14px; height: 14px;
+    color: #8A91A2;
+    flex-shrink: 0;
+  }
+  .nav-item.active .ch-icon { color: rgba(255,255,255,0.9); }
+  .nav-item .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .nav-item .badge {
+    background: var(--orange);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+  }
+  .nav-item .presence {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .nav-item .presence.online { background: var(--green); box-shadow: 0 0 0 1.5px var(--sidebar); }
+  .nav-item .presence.away { background: transparent; border: 1.5px solid #8A91A2; }
+  .nav-item .dm-avatar {
+    width: 18px; height: 18px;
+    border-radius: 4px;
+    display: grid; place-items: center;
+    font-size: 9px;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .nav-item .dm-avatar .pres {
+    position: absolute;
+    bottom: -2px; right: -2px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    border: 1.5px solid var(--sidebar);
+  }
+  .nav-item.active .dm-avatar .pres { border-color: var(--blue); }
+
+  /* ============ MAIN ============ */
+  .main {
+    display: flex;
+    flex-direction: column;
+    background: var(--chat-bg);
+    overflow: hidden;
+    border-radius: 0;
+  }
+
+  /* ---------- TOP BAR ---------- */
+  .topbar {
+    height: 54px;
+    background: var(--chat-panel);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    padding: 0 18px;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+  .ch-header { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .ch-title {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: -0.01em;
+  }
+  .ch-title .ch-hash { color: var(--ink-3); font-weight: 400; }
+  .ch-title .chev { color: var(--ink-4); font-size: 11px; }
+  .ch-meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 12px;
+    color: var(--ink-3);
+    padding-left: 10px;
+    border-left: 1px solid var(--line);
+    margin-left: 4px;
+  }
+  .ch-meta .meta-item { display: flex; align-items: center; gap: 5px; }
+  .members-stack {
+    display: flex;
+    align-items: center;
+  }
+  .members-stack .av {
+    width: 22px; height: 22px;
+    border-radius: 5px;
+    border: 2px solid var(--chat-panel);
+    margin-left: -6px;
+    display: grid; place-items: center;
+    font-size: 10px; font-weight: 700;
+    color: white;
+  }
+  .members-stack .av:first-child { margin-left: 0; }
+  .members-count {
+    margin-left: 6px;
+    font-size: 12px;
+    color: var(--ink-2);
+    font-weight: 500;
+  }
+
+  .topbar-spacer { flex: 1; }
+
+  .global-search {
+    flex: 0 1 460px;
+    height: 34px;
+    background: #F1F1ED;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 8px;
+    color: var(--ink-3);
+    font-size: 13px;
+    cursor: text;
+    transition: all .15s;
+  }
+  .global-search:hover { background: #ECECE7; border-color: #DAD9D2; }
+  .global-search svg { color: var(--ink-3); }
+  .global-search .kbd {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 1px 6px;
+    color: var(--ink-3);
+  }
+
+  .top-actions { display: flex; gap: 4px; align-items: center; }
+  .icon-btn {
+    width: 34px; height: 34px;
+    border-radius: 7px;
+    background: transparent;
+    border: none;
+    color: var(--ink-2);
+    cursor: pointer;
+    display: grid; place-items: center;
+    transition: all .12s;
+    position: relative;
+  }
+  .icon-btn:hover { background: #F1F1ED; color: var(--ink); }
+  .icon-btn .nub {
+    position: absolute;
+    top: 6px; right: 6px;
+    width: 8px; height: 8px;
+    background: var(--orange);
+    border-radius: 50%;
+    border: 1.5px solid white;
+  }
+  .topbar-avatar {
+    width: 30px; height: 30px;
+    border-radius: 7px;
+    background: linear-gradient(135deg, #FF8D4F 0%, var(--orange) 100%);
+    color: white;
+    display: grid; place-items: center;
+    font-weight: 700;
+    font-size: 11px;
+    cursor: pointer;
+    position: relative;
+    margin-left: 6px;
+  }
+  .topbar-avatar::after {
+    content: "";
+    position: absolute;
+    bottom: -2px; right: -2px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--green);
+    border: 2px solid white;
+  }
+
+  /* ---------- CHANNEL DETAIL BAR ---------- */
+  .ch-detail {
+    padding: 14px 28px 12px;
+    border-bottom: 1px solid var(--line);
+    background: var(--chat-panel);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .bot-avatar-lg {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--blue) 0%, #1A4FD8 60%, var(--orange) 140%);
+    display: grid; place-items: center;
+    color: white;
+    font-weight: 800;
+    font-size: 16px;
+    flex-shrink: 0;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(45, 107, 255, 0.25);
+  }
+  .bot-avatar-lg::after {
+    content: "APP";
+    position: absolute;
+    bottom: -4px; right: -8px;
+    background: var(--ink);
+    color: white;
+    font-size: 8px;
+    font-weight: 800;
+    padding: 1px 4px;
+    border-radius: 3px;
+    letter-spacing: 0.04em;
+    border: 2px solid white;
+  }
+  .ch-detail-info { flex: 1; min-width: 0; }
+  .ch-detail-info h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .ch-detail-info p {
+    margin: 2px 0 0;
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+  .ch-detail-actions { display: flex; gap: 8px; }
+  .pill-btn {
+    background: white;
+    border: 1px solid var(--line);
+    color: var(--ink-2);
+    padding: 6px 12px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all .12s;
+    font-family: inherit;
+  }
+  .pill-btn:hover { background: #F7F7F2; border-color: #DAD9D2; }
+  .pill-btn.primary {
+    background: var(--ink);
+    color: white;
+    border-color: var(--ink);
+  }
+  .pill-btn.primary:hover { background: #1F232C; }
+
+  /* ---------- MESSAGES ---------- */
+  .messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px 0 8px;
+    background: var(--chat-bg);
+  }
+  .messages::-webkit-scrollbar { width: 10px; }
+  .messages::-webkit-scrollbar-thumb { background: #D8D7D0; border-radius: 5px; }
+  .messages::-webkit-scrollbar-thumb:hover { background: #BFBFB8; }
+
+  .day-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 14px 28px 8px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+  .day-divider .line { flex: 1; height: 1px; background: var(--line); }
+  .day-divider .pill {
+    background: white;
+    border: 1px solid var(--line);
+    color: var(--ink-2);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 14px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .msg {
+    padding: 8px 28px;
+    display: flex;
+    gap: 12px;
+    position: relative;
+    transition: background .1s;
+  }
+  .msg:hover { background: rgba(45, 107, 255, 0.03); }
+  .msg:hover .msg-actions { opacity: 1; }
+  .msg.compact { padding-top: 2px; padding-bottom: 2px; }
+  .msg.compact .avatar { visibility: hidden; }
+  .msg.compact .timestamp-inline {
+    visibility: hidden;
+    font-size: 11px;
+    color: var(--ink-4);
+    width: 36px;
+    text-align: right;
+    padding-top: 3px;
+    flex-shrink: 0;
+  }
+  .msg.compact:hover .timestamp-inline { visibility: visible; }
+  .msg.compact:hover .avatar { visibility: hidden; }
+
+  .avatar {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    color: white;
+    font-weight: 700;
+    font-size: 13px;
+    overflow: hidden;
+  }
+  .avatar.bot {
+    background: linear-gradient(135deg, var(--blue) 0%, #1A4FD8 60%, var(--orange) 140%);
+    position: relative;
+  }
+  .avatar.bot::before {
+    content: "";
+    position: absolute;
+    inset: 5px;
+    border-radius: 5px;
+    background:
+      radial-gradient(circle at 30% 35%, rgba(255,255,255,0.95) 0 2.2px, transparent 2.5px),
+      radial-gradient(circle at 70% 35%, rgba(255,255,255,0.95) 0 2.2px, transparent 2.5px);
+  }
+  .avatar.bot::after {
+    content: "";
+    position: absolute;
+    bottom: 9px; left: 50%;
+    transform: translateX(-50%);
+    width: 12px; height: 2px;
+    background: rgba(255,255,255,0.9);
+    border-radius: 1px;
+  }
+
+  .msg-body { flex: 1; min-width: 0; }
+  .msg-head {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 2px;
+  }
+  .msg-head .name {
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 14px;
+    letter-spacing: -0.005em;
+  }
+  .msg-head .app-tag {
+    background: #ECECE7;
+    color: var(--ink-2);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 3px;
+    letter-spacing: 0.04em;
+    transform: translateY(-1px);
+  }
+  .msg-head .timestamp {
+    color: var(--ink-4);
+    font-size: 12px;
+    font-weight: 400;
+  }
+  .msg-text {
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.55;
+    word-wrap: break-word;
+  }
+  .msg-text code {
+    background: #F1F1ED;
+    border: 1px solid var(--line);
+    color: #B5375A;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+  }
+  .msg-text .mention {
+    background: #E8EFFF;
+    color: #1A4FD8;
+    padding: 0 4px;
+    border-radius: 3px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .msg-text .mention:hover { background: #D7E3FF; }
+  .msg-text strong { font-weight: 700; }
+  .msg-text em { color: var(--ink-2); }
+
+  /* Workflow card (in chat) */
+  .wf-card {
+    margin-top: 8px;
+    background: white;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--blue);
+    border-radius: 8px;
+    padding: 14px 16px;
+    max-width: 540px;
+    box-shadow: var(--shadow-sm);
+  }
+  .wf-card h4 {
+    margin: 0 0 4px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .wf-card p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--ink-2);
+    line-height: 1.5;
+  }
+  .wf-buttons {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .wf-btn {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 7px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: all .12s;
+    font-family: inherit;
+  }
+  .wf-btn:hover {
+    background: #F7F7F2;
+    border-color: #C8C7BE;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(13, 16, 22, 0.08);
+  }
+  .wf-btn:active { transform: translateY(0); }
+  .wf-btn.primary {
+    background: var(--ink);
+    color: white;
+    border-color: var(--ink);
+  }
+  .wf-btn.primary:hover { background: #1F232C; }
+  .wf-btn.accent {
+    background: var(--blue);
+    color: white;
+    border-color: var(--blue);
+  }
+  .wf-btn.accent:hover { background: #1A4FD8; }
+  .wf-btn.warm {
+    background: var(--orange);
+    color: white;
+    border-color: var(--orange);
+  }
+  .wf-btn.warm:hover { background: #E8551A; }
+  .wf-btn.disabled { opacity: 0.55; cursor: default; pointer-events: none; }
+  .wf-btn .ico { width: 14px; height: 14px; }
+
+  /* Step list (loading states from bot) */
+  .step-list {
+    margin-top: 10px;
+    background: #F7F7F2;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 14px;
+    max-width: 540px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+  }
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 0;
+    color: var(--ink-2);
+  }
+  .step + .step { border-top: 1px dashed #E0DFD8; }
+  .step .ic {
+    width: 16px; height: 16px;
+    flex-shrink: 0;
+    display: grid; place-items: center;
+  }
+  .step .src {
+    color: var(--ink-3);
+    margin-left: auto;
+    font-size: 11px;
+  }
+  .step.done .ic { color: var(--green); }
+  .step.done { color: var(--ink); }
+  .step.running .ic {
+    color: var(--blue);
+  }
+  .step.running .ic .ring {
+    width: 12px; height: 12px;
+    border: 2px solid var(--blue-soft);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  .step.pending { opacity: 0.45; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Result card with details */
+  .result-card {
+    margin-top: 10px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+    max-width: 580px;
+    box-shadow: var(--shadow-sm);
+  }
+  .result-head {
+    padding: 11px 14px;
+    background: linear-gradient(180deg, #FBFBF7 0%, #F7F7F2 100%);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .result-head .tag-ok {
+    background: rgba(31, 176, 122, 0.12);
+    color: var(--green);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: auto;
+  }
+  .result-body { padding: 12px 14px; }
+  .kv {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 6px 12px;
+    font-size: 13px;
+  }
+  .kv dt { color: var(--ink-3); font-weight: 500; }
+  .kv dd { margin: 0; color: var(--ink); font-weight: 500; }
+  .kv dd .src-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #F1F1ED;
+    border: 1px solid var(--line);
+    color: var(--ink-2);
+    padding: 1px 7px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 6px;
+    vertical-align: 1px;
+  }
+  .draft-block {
+    margin-top: 12px;
+    background: #FBFBF7;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: var(--ink-2);
+    line-height: 1.55;
+    font-family: 'Inter', sans-serif;
+    white-space: pre-wrap;
+  }
+  .draft-block .draft-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  /* Reactions */
+  .reactions {
+    margin-top: 6px;
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .reaction {
+    background: #ECECE7;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1px 8px;
+    font-size: 12px;
+    color: var(--ink-2);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all .12s;
+  }
+  .reaction:hover { background: var(--blue-soft); border-color: #BFD2FF; color: var(--blue); }
+  .reaction.mine { background: var(--blue-soft); border-color: #BFD2FF; color: var(--blue); }
+  .reaction .em { font-size: 13px; }
+
+  /* Thread indicator */
+  .thread-indicator {
+    margin-top: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 8px 3px 4px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all .12s;
+  }
+  .thread-indicator:hover { background: white; border: 1px solid var(--line); padding: 2px 7px 2px 3px; }
+  .thread-indicator .stack {
+    display: flex;
+  }
+  .thread-indicator .stack .av {
+    width: 18px; height: 18px;
+    border-radius: 4px;
+    border: 1.5px solid var(--chat-bg);
+    margin-left: -4px;
+    display: grid; place-items: center;
+    font-size: 8px;
+    font-weight: 700;
+    color: white;
+  }
+  .thread-indicator .stack .av:first-child { margin-left: 0; }
+  .thread-indicator .lbl {
+    font-size: 12.5px;
+    color: var(--blue);
+    font-weight: 600;
+  }
+  .thread-indicator .meta { font-size: 11.5px; color: var(--ink-3); font-weight: 400; }
+
+  /* Hover actions */
+  .msg-actions {
+    position: absolute;
+    top: -14px;
+    right: 36px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    padding: 2px;
+    opacity: 0;
+    transition: opacity .12s;
+    z-index: 3;
+  }
+  .msg-action {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    background: transparent;
+    border: none;
+    color: var(--ink-2);
+    cursor: pointer;
+    display: grid; place-items: center;
+    transition: all .12s;
+  }
+  .msg-action:hover { background: #F1F1ED; color: var(--ink); }
+
+  /* Typing indicator */
+  .typing {
+    padding: 4px 28px 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--ink-3);
+    font-size: 12.5px;
+  }
+  .typing .av {
+    width: 22px; height: 22px;
+    border-radius: 5px;
+    background: linear-gradient(135deg, var(--blue) 0%, #1A4FD8 60%, var(--orange) 140%);
+    flex-shrink: 0;
+  }
+  .typing .dots {
+    display: inline-flex;
+    gap: 3px;
+    padding: 5px 9px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+  }
+  .typing .dots span {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--ink-3);
+    animation: bounce 1.2s ease-in-out infinite;
+  }
+  .typing .dots span:nth-child(2) { animation-delay: 0.15s; }
+  .typing .dots span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes bounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-4px); opacity: 1; }
+  }
+
+  /* ---------- COMPOSER ---------- */
+  .composer-wrap {
+    padding: 0 28px 22px;
+    background: var(--chat-bg);
+    flex-shrink: 0;
+  }
+  .composer {
+    background: white;
+    border: 1px solid #DAD9D2;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(13, 16, 22, 0.04);
+    transition: border-color .12s, box-shadow .15s;
+  }
+  .composer:focus-within {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(45, 107, 255, 0.12);
+  }
+  .composer-toolbar {
+    display: flex;
+    align-items: center;
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--line);
+    gap: 1px;
+  }
+  .tb-btn {
+    width: 28px; height: 28px;
+    border-radius: 5px;
+    background: transparent;
+    border: none;
+    color: var(--ink-2);
+    cursor: pointer;
+    display: grid; place-items: center;
+    transition: all .1s;
+  }
+  .tb-btn:hover { background: #F1F1ED; color: var(--ink); }
+  .tb-btn.active { background: #E8EFFF; color: var(--blue); }
+  .tb-divider { width: 1px; height: 18px; background: var(--line); margin: 0 4px; }
+  .tb-spacer { flex: 1; }
+
+  .composer-input {
+    padding: 10px 14px;
+    min-height: 22px;
+    max-height: 200px;
+    overflow-y: auto;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink);
+    outline: none;
+  }
+  .composer-input:empty::before {
+    content: attr(data-placeholder);
+    color: var(--ink-4);
+    pointer-events: none;
+  }
+
+  .composer-foot {
+    display: flex;
+    align-items: center;
+    padding: 6px 8px 6px 10px;
+    gap: 4px;
+  }
+  .foot-left { display: flex; gap: 1px; align-items: center; }
+  .foot-right { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+  .send-btn {
+    background: var(--blue);
+    border: none;
+    color: white;
+    width: 30px; height: 30px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: grid; place-items: center;
+    transition: all .12s;
+  }
+  .send-btn:hover { background: #1A4FD8; transform: translateY(-1px); }
+  .send-btn:disabled { background: #E0DFD8; color: #9CA3AF; cursor: default; transform: none; }
+
+  .composer-hint {
+    margin-top: 6px;
+    font-size: 11.5px;
+    color: var(--ink-4);
+    padding: 0 6px;
+  }
+  .composer-hint .kbd {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 0 4px;
+    color: var(--ink-2);
+  }
+
+  /* Logo mark */
+  .logo-mark {
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    background: linear-gradient(135deg, var(--blue) 0%, var(--orange) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+</style>
+</head>
+<body>
+
+<div class="app" data-screen-label="Ramped Chat — #ramped-ai-bot">
+
+  <!-- Workspace rail -->
+  <aside class="rail">
+    <div class="rail-logo" title="Ramped AI">R</div>
+    <div class="rail-divider"></div>
+    <div class="rail-ws active" title="30dayramp">3D</div>
+    <div class="rail-ws" title="Acme Industries">AC</div>
+    <div class="rail-ws" title="Northwind">NW</div>
+    <div class="rail-add" title="Add workspace">+</div>
+    <div class="rail-spacer"></div>
+    <button class="icon-btn" title="Help" style="color:#7A8190;width:36px;height:36px;border-radius:8px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </button>
+    <div class="rail-avatar" title="Maya Patel">MP</div>
+  </aside>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="ws-header">
+      <div>
+        <div class="ws-name">30dayramp <span class="chev">▾</span></div>
+        <div class="ws-meta"><span class="dot"></span>Maya Patel</div>
+      </div>
+      <div class="ws-icons">
+        <button class="ws-icon-btn" title="Filter">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        </button>
+        <button class="ws-icon-btn" title="New message">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="sidebar-search">
+      <input class="search-input" placeholder="Jump to or search…" />
+    </div>
+
+    <nav class="nav">
+      <div class="section">
+        <div class="section-head">
+          <span class="caret">▾</span>
+          <span class="label">Channels</span>
+          <span class="add">+</span>
+        </div>
+        <div class="nav-item"><span class="ch-prefix">#</span><span class="name">general</span></div>
+        <div class="nav-item"><span class="ch-prefix">#</span><span class="name">announcements</span></div>
+        <div class="nav-item unread"><span class="ch-prefix">#</span><span class="name">sales</span><span class="badge">4</span></div>
+        <div class="nav-item active">
+          <svg class="ch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
+          <span class="name">ramped-ai-bot</span>
+        </div>
+        <div class="nav-item"><span class="ch-prefix">#</span><span class="name">ops-automation</span></div>
+        <div class="nav-item"><span class="ch-prefix">#</span><span class="name">finance</span></div>
+        <div class="nav-item unread"><span class="ch-prefix">#</span><span class="name">customer-success</span><span class="badge">2</span></div>
+        <div class="nav-item"><span class="ch-prefix">🔒</span><span class="name">leadership</span></div>
+        <div class="nav-item"><span class="ch-prefix">#</span><span class="name">random</span></div>
+        <div class="nav-item" style="color:#6E7585;"><span class="ch-prefix">+</span><span class="name">Add channels</span></div>
+      </div>
+
+      <div class="section">
+        <div class="section-head">
+          <span class="caret">▾</span>
+          <span class="label">Direct messages</span>
+          <span class="add">+</span>
+        </div>
+        <div class="nav-item">
+          <span class="dm-avatar" style="background:#3F8CFF;">JK<span class="pres" style="background:#1FB07A;"></span></span>
+          <span class="name">Jordan Kim</span>
+        </div>
+        <div class="nav-item unread">
+          <span class="dm-avatar" style="background:#A065E8;">RC<span class="pres" style="background:#1FB07A;"></span></span>
+          <span class="name">Rachel Chen</span>
+          <span class="badge">1</span>
+        </div>
+        <div class="nav-item">
+          <span class="dm-avatar" style="background:#E5484D;">DM<span class="pres" style="background:transparent;border:1.5px solid #8A91A2;"></span></span>
+          <span class="name">Diego Morales</span>
+        </div>
+        <div class="nav-item">
+          <span class="dm-avatar" style="background:#F4B400;color:#0E1014;">AT<span class="pres" style="background:#1FB07A;"></span></span>
+          <span class="name">Aisha Thomas</span>
+        </div>
+        <div class="nav-item">
+          <span class="dm-avatar" style="background:#1FB07A;">SO<span class="pres" style="background:transparent;border:1.5px solid #8A91A2;"></span></span>
+          <span class="name">Sam Okafor</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head">
+          <span class="caret">▾</span>
+          <span class="label">Huddles</span>
+          <span class="add">+</span>
+        </div>
+        <div class="nav-item" style="color:#8A91A2;">
+          <svg class="ch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+          <span class="name">Start a huddle</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head">
+          <span class="caret">▾</span>
+          <span class="label">Apps</span>
+          <span class="add">+</span>
+        </div>
+        <div class="nav-item">
+          <svg class="ch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/></svg>
+          <span class="name">Ramped Bot</span>
+        </div>
+        <div class="nav-item"><span class="ch-prefix" style="color:#3F8CFF;">●</span><span class="name">HubSpot</span></div>
+        <div class="nav-item"><span class="ch-prefix" style="color:#1FB07A;">●</span><span class="name">NetSuite</span></div>
+        <div class="nav-item"><span class="ch-prefix" style="color:#A065E8;">●</span><span class="name">QuickBooks</span></div>
+        <div class="nav-item"><span class="ch-prefix" style="color:#FF6B2C;">●</span><span class="name">Stripe</span></div>
+        <div class="nav-item"><span class="ch-prefix" style="color:#F4B400;">●</span><span class="name">Gong</span></div>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="ch-header">
+        <div class="ch-title"><span class="ch-hash">#</span>ramped-ai-bot <span class="chev">▾</span></div>
+        <div class="ch-meta">
+          <div class="meta-item">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            <span>14</span>
+          </div>
+          <div class="meta-item">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            <span>Automations &amp; AI runs</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="topbar-spacer"></div>
+
+      <div class="global-search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span>Search 30dayramp</span>
+        <span class="kbd">⌘K</span>
+      </div>
+
+      <div class="top-actions">
+        <button class="icon-btn" title="History">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+        </button>
+        <button class="icon-btn" title="Notifications">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          <span class="nub"></span>
+        </button>
+        <button class="icon-btn" title="Help">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </button>
+        <div class="topbar-avatar" title="Maya Patel">MP</div>
+      </div>
+    </header>
+
+    <!-- Channel detail -->
+    <div class="ch-detail">
+      <div class="bot-avatar-lg">R</div>
+      <div class="ch-detail-info">
+        <h3>Ramped Bot · Workflow automations</h3>
+        <p>Trigger AI workflows across NetSuite, HubSpot, QuickBooks &amp; Stripe — right from chat.</p>
+      </div>
+      <div class="ch-detail-actions">
+        <button class="pill-btn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          Channel details
+        </button>
+        <button class="pill-btn primary">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Connected
+        </button>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="messages" id="messages">
+      <!-- Day divider -->
+      <div class="day-divider">
+        <div class="line"></div>
+        <div class="pill">Today</div>
+        <div class="line"></div>
+      </div>
+
+      <!-- Jordan's message: kick-off -->
+      <div class="msg">
+        <div class="avatar" style="background:linear-gradient(135deg,#5C8BFF,#2D6BFF);">JK</div>
+        <div class="msg-body">
+          <div class="msg-head">
+            <span class="name">Jordan Kim</span>
+            <span class="timestamp">9:42 AM</span>
+          </div>
+          <div class="msg-text">
+            Morning team — putting the bot through its paces this week. <span class="mention">@Ramped Bot</span> heads up, I'll be queuing four runs back to back.
+          </div>
+          <div class="reactions">
+            <span class="reaction"><span class="em">👀</span> 3</span>
+            <span class="reaction mine"><span class="em">🚀</span> 2</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bot intro message with workflow buttons -->
+      <div class="msg" id="msg-bot-intro">
+        <div class="avatar bot"></div>
+        <div class="msg-body">
+          <div class="msg-head">
+            <span class="name">Ramped Bot</span>
+            <span class="app-tag">APP</span>
+            <span class="timestamp">9:43 AM</span>
+          </div>
+          <div class="msg-text">
+            Standing by, <span class="mention">@Jordan</span>. Pick a workflow and I'll handle the orchestration end-to-end.
+          </div>
+          <div class="wf-card">
+            <h4>Run a workflow</h4>
+            <p>I can pull from your connected systems, draft the response, and post results back here. You stay in the loop with one-click approval.</p>
+            <div class="wf-buttons" id="workflow-buttons">
+              <button class="wf-btn" data-flow="lead">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+                Handle inbound lead
+              </button>
+              <button class="wf-btn" data-flow="inventory">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                Automate inventory
+              </button>
+              <button class="wf-btn" data-flow="finance">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                Process finance report
+              </button>
+              <button class="wf-btn" data-flow="sales">
+                <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+                Qualify sales call
+              </button>
+            </div>
+          </div>
+          <div class="reactions">
+            <span class="reaction"><span class="em">⚡</span> 5</span>
+            <span class="reaction"><span class="em">🤖</span> 2</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rachel's compact follow-up -->
+      <div class="msg compact">
+        <div class="timestamp-inline">9:44</div>
+        <div class="avatar" style="background:#A065E8;">RC</div>
+        <div class="msg-body">
+          <div class="msg-text">
+            ooh — let's start with the inbound lead from this morning. ticket <code>#2847</code> just landed in HubSpot.
+          </div>
+        </div>
+      </div>
+
+      <!-- Diego's compact follow-up -->
+      <div class="msg">
+        <div class="avatar" style="background:#E5484D;">DM</div>
+        <div class="msg-body">
+          <div class="msg-head">
+            <span class="name">Diego Morales</span>
+            <span class="timestamp">9:45 AM</span>
+          </div>
+          <div class="msg-text">
+            +1. And after that I want to see the <strong>October finance report</strong> — board meeting tomorrow.
+          </div>
+          <div class="thread-indicator">
+            <div class="stack">
+              <div class="av" style="background:#5C8BFF;">JK</div>
+              <div class="av" style="background:#1FB07A;">SO</div>
+            </div>
+            <span class="lbl">2 replies</span>
+            <span class="meta">Last reply 4 minutes ago</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Anchor for new messages -->
+      <div id="messages-end"></div>
+    </div>
+
+    <!-- Composer -->
+    <div class="composer-wrap">
+      <div class="composer">
+        <div class="composer-toolbar">
+          <button class="tb-btn" title="Bold"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h8a4 4 0 014 4 4 4 0 01-4 4H6z"/><path d="M6 12h9a4 4 0 014 4 4 4 0 01-4 4H6z"/></svg></button>
+          <button class="tb-btn" title="Italic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg></button>
+          <button class="tb-btn" title="Strikethrough"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4H9a3 3 0 00-2.83 4"/><path d="M14 12a4 4 0 010 8H6"/><line x1="4" y1="12" x2="20" y2="12"/></svg></button>
+          <div class="tb-divider"></div>
+          <button class="tb-btn" title="Link"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></button>
+          <button class="tb-btn" title="Ordered list"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 6h1v4"/><path d="M4 10h2"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></button>
+          <button class="tb-btn" title="Bulleted list"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></button>
+          <button class="tb-btn" title="Quote"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.75-2-2-2H4c-1.25 0-2 .75-2 2v4c0 1.25.75 2 2 2h3"/><path d="M14 21c3 0 7-1 7-8V5c0-1.25-.75-2-2-2h-4c-1.25 0-2 .75-2 2v4c0 1.25.75 2 2 2h3"/></svg></button>
+          <div class="tb-divider"></div>
+          <button class="tb-btn" title="Code"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></button>
+          <button class="tb-btn" title="Code block"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><polyline points="8 13 6 15 8 17"/><polyline points="13 13 15 15 13 17"/></svg></button>
+          <div class="tb-spacer"></div>
+          <button class="tb-btn" title="More"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg></button>
+        </div>
+
+        <div class="composer-input" id="composer-input" contenteditable="true" data-placeholder="Message #ramped-ai-bot"></div>
+
+        <div class="composer-foot">
+          <div class="foot-left">
+            <button class="tb-btn" title="Attach"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg></button>
+            <button class="tb-btn" title="Mention"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 006 0v-1a10 10 0 10-3.92 7.94"/></svg></button>
+            <button class="tb-btn" title="Emoji"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></button>
+            <button class="tb-btn" title="Record"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
+            <button class="tb-btn" title="Schedule"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></button>
+            <button class="tb-btn" title="Workflows"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></button>
+          </div>
+          <div class="foot-right">
+            <button class="send-btn" id="send-btn" disabled title="Send (⏎)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="composer-hint"><span class="kbd">⏎</span> to send · <span class="kbd">Shift</span> + <span class="kbd">⏎</span> for new line · type <span class="kbd">/</span> for shortcuts</div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Speaker notes / interactive logic -->
+<script>
+(function() {
+  const messagesEl = document.getElementById('messages');
+  const endEl = document.getElementById('messages-end');
+  const composerInput = document.getElementById('composer-input');
+  const sendBtn = document.getElementById('send-btn');
+
+  function scrollToEnd() {
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function nowTime() {
+    const d = new Date();
+    let h = d.getHours();
+    const m = String(d.getMinutes()).padStart(2, '0');
+    const ap = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    return `${h}:${m} ${ap}`;
+  }
+
+  // Insert before #messages-end so we always remain at bottom
+  function appendNode(node) {
+    endEl.before(node);
+    scrollToEnd();
+  }
+
+  // Build a typing indicator element
+  function buildTyping() {
+    const t = document.createElement('div');
+    t.className = 'typing';
+    t.innerHTML = `
+      <div class="av"></div>
+      <div class="dots"><span></span><span></span><span></span></div>
+      <span><strong style="color:#0E1014;">Ramped Bot</strong> is typing…</span>
+    `;
+    return t;
+  }
+
+  // Build a bot message scaffold
+  function buildBotMessage(time) {
+    const wrap = document.createElement('div');
+    wrap.className = 'msg';
+    wrap.innerHTML = `
+      <div class="avatar bot"></div>
+      <div class="msg-body">
+        <div class="msg-head">
+          <span class="name">Ramped Bot</span>
+          <span class="app-tag">APP</span>
+          <span class="timestamp">${time}</span>
+        </div>
+        <div class="msg-text"></div>
+      </div>
+    `;
+    return wrap;
+  }
+
+  // Build a user message
+  function buildUserMessage(name, initials, color, text, time) {
+    const wrap = document.createElement('div');
+    wrap.className = 'msg';
+    wrap.innerHTML = `
+      <div class="avatar" style="background:${color}">${initials}</div>
+      <div class="msg-body">
+        <div class="msg-head">
+          <span class="name">${name}</span>
+          <span class="timestamp">${time}</span>
+        </div>
+        <div class="msg-text"></div>
+      </div>
+    `;
+    wrap.querySelector('.msg-text').textContent = text;
+    return wrap;
+  }
+
+  // Workflow definitions
+  const FLOWS = {
+    lead: {
+      kickoff: 'On it — running <strong>Inbound Lead Handler</strong> for ticket <code>#HS-2847</code>. I\'ll enrich, score, draft a reply, and prep the next-step playbook.',
+      steps: [
+        { label: 'Pulling lead from HubSpot',           src: 'HubSpot',   ms: 1100 },
+        { label: 'Enriching firmographics via Clearbit', src: 'Clearbit',  ms: 1400 },
+        { label: 'Scoring intent + ICP fit',             src: 'Ramped AI', ms: 900  },
+        { label: 'Drafting personalized response',      src: 'Ramped AI', ms: 1300 }
+      ],
+      result: function() {
+        const c = document.createElement('div');
+        c.innerHTML = `
+          <div class="msg-text">Done — lead's a <strong>strong fit</strong>. Draft is ready for your review.</div>
+          <div class="result-card">
+            <div class="result-head">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Inbound Lead · #HS-2847
+              <span class="tag-ok">ICP score 92</span>
+            </div>
+            <div class="result-body">
+              <dl class="kv">
+                <dt>Contact</dt><dd>Priya Shah · VP RevOps <span class="src-pill">●HubSpot</span></dd>
+                <dt>Company</dt><dd>Northbeam Logistics · 480 emp · Series C <span class="src-pill">●Clearbit</span></dd>
+                <dt>Form</dt><dd>"Demo request — replacing Zapier + Workato"</dd>
+                <dt>Owner</dt><dd>Auto-routed to <span style="color:#2D6BFF;font-weight:600;">@Rachel Chen</span> (round-robin, EMEA)</dd>
+              </dl>
+              <div class="draft-block"><span class="draft-label">Draft reply · personalized</span>Hi Priya — saw your note about consolidating Zapier &amp; Workato. We're seeing teams cut RevOps tooling spend ~38% by routing both through Ramped AI. Happy to walk through how Northbeam could move on this in &lt; 2 weeks. Tomorrow 11:30 ET work?</div>
+            </div>
+          </div>
+          <div class="wf-buttons">
+            <button class="wf-btn primary"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send draft</button>
+            <button class="wf-btn">View draft</button>
+            <button class="wf-btn">Open in HubSpot</button>
+            <button class="wf-btn">Edit</button>
+          </div>
+          <div class="reactions">
+            <span class="reaction mine"><span class="em">🔥</span> 1</span>
+          </div>
+        `;
+        return c;
+      }
+    },
+    inventory: {
+      kickoff: 'Running <strong>Inventory Reconciler</strong> for order <code>#NS-2847</code> across the open warehouse channels.',
+      steps: [
+        { label: 'Pulling order #NS-2847 from NetSuite',   src: 'NetSuite',  ms: 1300 },
+        { label: 'Cross-checking SKUs against Shopify',    src: 'Shopify',   ms: 1100 },
+        { label: 'Reconciling against 3PL ledger',         src: 'ShipBob',   ms: 1200 },
+        { label: 'Flagging discrepancies for review',      src: 'Ramped AI', ms: 900  }
+      ],
+      result: function() {
+        const c = document.createElement('div');
+        c.innerHTML = `
+          <div class="msg-text">Reconciled order <code>#NS-2847</code> — found <strong>2 discrepancies</strong> worth ~$1,840. Adjustments are staged for approval.</div>
+          <div class="result-card">
+            <div class="result-head">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+              Order #NS-2847 · 14 line items
+              <span class="tag-ok">2 deltas found</span>
+            </div>
+            <div class="result-body">
+              <dl class="kv">
+                <dt>Customer</dt><dd>Marigold Café Group <span class="src-pill">●NetSuite</span></dd>
+                <dt>SKU mismatch</dt><dd><code>BLD-204</code> · NetSuite shows 24, 3PL shows 18 (−6) <span class="src-pill">●ShipBob</span></dd>
+                <dt>Pricing delta</dt><dd><code>ESP-019</code> · Shopify $42.00 vs NetSuite $38.50</dd>
+                <dt>Recommended</dt><dd>Adjust NetSuite + write back to Shopify (auto-staged)</dd>
+              </dl>
+            </div>
+          </div>
+          <div class="wf-buttons">
+            <button class="wf-btn accent">Apply adjustments</button>
+            <button class="wf-btn">View order in NetSuite</button>
+            <button class="wf-btn">Notify warehouse</button>
+            <button class="wf-btn">Export CSV</button>
+          </div>
+        `;
+        return c;
+      }
+    },
+    finance: {
+      kickoff: 'Spinning up <strong>October Finance Report</strong> — pulling the books, reconciling cash, drafting variance commentary.',
+      steps: [
+        { label: 'Pulling October GL from QuickBooks',     src: 'QuickBooks', ms: 1300 },
+        { label: 'Reconciling deposits with Stripe',       src: 'Stripe',     ms: 1100 },
+        { label: 'Computing variance vs. plan',            src: 'Ramped AI',  ms: 1000 },
+        { label: 'Drafting executive summary',             src: 'Ramped AI',  ms: 1200 }
+      ],
+      result: function() {
+        const c = document.createElement('div');
+        c.innerHTML = `
+          <div class="msg-text">October close is in. Revenue <strong>+8.4% vs plan</strong>, OpEx flat. Draft summary is ready for the board deck.</div>
+          <div class="result-card">
+            <div class="result-head">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+              October 2026 — Finance summary
+              <span class="tag-ok">Reconciled</span>
+            </div>
+            <div class="result-body">
+              <dl class="kv">
+                <dt>Revenue</dt><dd>$1.842M · <span style="color:#1FB07A;font-weight:600;">+8.4% vs plan</span> <span class="src-pill">●QuickBooks</span></dd>
+                <dt>Cash collected</dt><dd>$1.671M · 18 invoices reconciled <span class="src-pill">●Stripe</span></dd>
+                <dt>OpEx</dt><dd>$1.118M · in line with plan</dd>
+                <dt>Net new ARR</dt><dd>$214K (4 logos)</dd>
+              </dl>
+              <div class="draft-block"><span class="draft-label">Draft commentary</span>October closed at $1.84M revenue, beating plan by 8.4% on the back of strong mid-market expansion (3 of 4 new logos &gt; $50K ACV). Cash collections improved to a 91% collection rate (vs 86% in September). OpEx held flat — sales hiring deferred one cycle. Recommended call-out for the board: pipeline coverage for Q1 is 3.2x, the strongest entry to a quarter we've seen.</div>
+            </div>
+          </div>
+          <div class="wf-buttons">
+            <button class="wf-btn primary">Post to #leadership</button>
+            <button class="wf-btn">View in QuickBooks</button>
+            <button class="wf-btn">Open variance sheet</button>
+            <button class="wf-btn">Edit draft</button>
+          </div>
+        `;
+        return c;
+      }
+    },
+    sales: {
+      kickoff: 'Running <strong>Sales Call Qualifier</strong> on the latest Gong recording.',
+      steps: [
+        { label: 'Pulling latest call from Gong',          src: 'Gong',      ms: 1100 },
+        { label: 'Extracting BANT + MEDDPICC signals',     src: 'Ramped AI', ms: 1300 },
+        { label: 'Cross-referencing HubSpot opportunity',  src: 'HubSpot',   ms: 1000 },
+        { label: 'Drafting next-step plan',                src: 'Ramped AI', ms: 1100 }
+      ],
+      result: function() {
+        const c = document.createElement('div');
+        c.innerHTML = `
+          <div class="msg-text">Call qualified — <strong>Stage 3 / Evaluation</strong>. Two risks flagged. Next-step plan is ready.</div>
+          <div class="result-card">
+            <div class="result-head">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+              Discovery · Northbeam Logistics · 42 min
+              <span class="tag-ok">MEDDPICC 6/8</span>
+            </div>
+            <div class="result-body">
+              <dl class="kv">
+                <dt>Champion</dt><dd>Priya Shah · VP RevOps <span class="src-pill">●HubSpot</span></dd>
+                <dt>Pain</dt><dd>Manual lead routing across 3 tools, 14-min avg response</dd>
+                <dt>Budget</dt><dd>$80–120K confirmed — Q1 close target</dd>
+                <dt>Risks</dt><dd><span style="color:#E5484D;font-weight:600;">No exec sponsor identified</span> · Decision criteria unclear</dd>
+                <dt>Next step</dt><dd>Multithread to CRO; technical deep dive Tue</dd>
+              </dl>
+            </div>
+          </div>
+          <div class="wf-buttons">
+            <button class="wf-btn accent">Update opportunity</button>
+            <button class="wf-btn">View call in Gong</button>
+            <button class="wf-btn">Send next-step email</button>
+            <button class="wf-btn">Loop in CRO</button>
+          </div>
+        `;
+        return c;
+      }
+    }
+  };
+
+  // Run a flow: typing → kickoff text → step list (live) → result card
+  async function runFlow(flowKey, btnEl) {
+    const flow = FLOWS[flowKey];
+    if (!flow) return;
+
+    // Disable all workflow buttons in the original card
+    const origCard = document.getElementById('msg-bot-intro');
+    origCard.querySelectorAll('.wf-buttons .wf-btn').forEach(b => {
+      if (b !== btnEl) b.classList.add('disabled');
+      else { b.style.background = '#2D6BFF'; b.style.color = 'white'; b.style.borderColor = '#2D6BFF'; }
+    });
+
+    // 1) Typing indicator
+    const typing = buildTyping();
+    appendNode(typing);
+    await wait(900);
+
+    // 2) Replace with bot kickoff message
+    typing.remove();
+    const botMsg = buildBotMessage(nowTime());
+    botMsg.querySelector('.msg-text').innerHTML = flow.kickoff;
+    // Add step list scaffold
+    const stepList = document.createElement('div');
+    stepList.className = 'step-list';
+    flow.steps.forEach((s, i) => {
+      const row = document.createElement('div');
+      row.className = 'step pending';
+      row.dataset.idx = i;
+      row.innerHTML = `
+        <div class="ic">${i === 0 ? svgRing() : svgCircle()}</div>
+        <div class="lbl">${s.label}</div>
+        <div class="src">${s.src}</div>
+      `;
+      stepList.appendChild(row);
+    });
+    botMsg.querySelector('.msg-body').appendChild(stepList);
+    appendNode(botMsg);
+
+    // 3) Animate steps
+    for (let i = 0; i < flow.steps.length; i++) {
+      const row = stepList.querySelector(`.step[data-idx="${i}"]`);
+      row.classList.remove('pending');
+      row.classList.add('running');
+      row.querySelector('.ic').innerHTML = svgRing();
+      await wait(flow.steps[i].ms);
+      row.classList.remove('running');
+      row.classList.add('done');
+      row.querySelector('.ic').innerHTML = svgCheck();
+      // start next
+      if (i + 1 < flow.steps.length) {
+        const next = stepList.querySelector(`.step[data-idx="${i+1}"]`);
+        next.classList.remove('pending');
+      }
+      scrollToEnd();
+    }
+
+    // 4) Add typing indicator briefly while result composes
+    const typing2 = buildTyping();
+    typing2.querySelector('span:last-child').innerHTML = '<strong style="color:#0E1014;">Ramped Bot</strong> is composing the result…';
+    appendNode(typing2);
+    await wait(800);
+    typing2.remove();
+
+    // 5) Result card as a NEW message from the bot
+    const resultMsg = buildBotMessage(nowTime());
+    const resultContent = flow.result();
+    resultMsg.querySelector('.msg-body').innerHTML = `
+      <div class="msg-head">
+        <span class="name">Ramped Bot</span>
+        <span class="app-tag">APP</span>
+        <span class="timestamp">${nowTime()}</span>
+      </div>
+    ` + resultContent.innerHTML;
+    appendNode(resultMsg);
+
+    // Wire up result buttons (acknowledgement only)
+    resultMsg.querySelectorAll('.wf-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        if (b.classList.contains('ack')) return;
+        const orig = b.innerHTML;
+        b.classList.add('ack');
+        b.innerHTML = '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Done';
+        b.style.background = '#1FB07A';
+        b.style.color = 'white';
+        b.style.borderColor = '#1FB07A';
+        setTimeout(() => {
+          b.innerHTML = orig;
+          b.style.background = '';
+          b.style.color = '';
+          b.style.borderColor = '';
+          b.classList.remove('ack');
+        }, 1800);
+      });
+    });
+  }
+
+  function svgRing() { return '<div class="ring"></div>'; }
+  function svgCircle() { return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>'; }
+  function svgCheck() { return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'; }
+
+  function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  // Wire up the workflow buttons
+  document.querySelectorAll('#workflow-buttons .wf-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      runFlow(btn.dataset.flow, btn);
+    });
+  });
+
+  // Composer: enable send when input has content; pressing send appends a Maya message
+  function updateSend() {
+    const txt = composerInput.textContent.trim();
+    sendBtn.disabled = txt.length === 0;
+  }
+  composerInput.addEventListener('input', updateSend);
+  composerInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+  sendBtn.addEventListener('click', sendMessage);
+
+  function sendMessage() {
+    const txt = composerInput.textContent.trim();
+    if (!txt) return;
+    const msg = buildUserMessage('Maya Patel', 'MP', 'linear-gradient(135deg,#FF8D4F,#FF6B2C)', txt, nowTime());
+    appendNode(msg);
+    composerInput.textContent = '';
+    updateSend();
+
+    // Light auto-reply if message mentions a flow keyword
+    const lower = txt.toLowerCase();
+    let hit = null;
+    if (/lead|inbound|hubspot/.test(lower)) hit = 'lead';
+    else if (/inventory|order|netsuite/.test(lower)) hit = 'inventory';
+    else if (/finance|report|quickbooks|month|october/.test(lower)) hit = 'finance';
+    else if (/sales|gong|call|qualif/.test(lower)) hit = 'sales';
+
+    if (hit) {
+      setTimeout(() => {
+        const typing = buildTyping();
+        appendNode(typing);
+        setTimeout(() => {
+          typing.remove();
+          const acks = {
+            lead: 'Got it — kicking off the inbound lead workflow now.',
+            inventory: 'On it — running the inventory reconciler.',
+            finance: 'Pulling the finance close — one moment.',
+            sales: 'Opening the sales call to qualify it.'
+          };
+          const bot = buildBotMessage(nowTime());
+          bot.querySelector('.msg-text').textContent = acks[hit];
+          appendNode(bot);
+          setTimeout(() => runFlow(hit, document.querySelector(`#workflow-buttons .wf-btn[data-flow="${hit}"]`)), 600);
+        }, 900);
+      }, 400);
+    }
+  }
+
+  // Initial scroll
+  setTimeout(scrollToEnd, 50);
+})();
+</script>
+
+</body>
+</html>

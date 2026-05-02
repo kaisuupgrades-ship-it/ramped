@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Get your free AI roadmap — Ramped AI</title>
 <meta name="description" content="A personalized 30-day AI deployment roadmap, scoped to your business. Free. No call required." />
-<link rel="canonical" href="https://www.30dayramp.com/free-roadmap" />
+<link rel="canonical" href="https://www.30dayramp.com/free-roadmap.html" />
 <link rel="icon" href="favicon.ico" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="site.css" />
@@ -106,7 +106,7 @@
           <div class="muted" style="font-size:12px;margin-top:14px">Avg. 6 pages · personalized to your stack and role.</div>
         </div>
         <div style="font-size:13px;color:var(--text-2);line-height:1.55;padding:14px 18px;border-left:2px solid var(--orange);background:rgba(251,146,60,0.06);border-radius:0 8px 8px 0">
-          Want to skip the doc? <a href="/book" style="color:var(--orange-2);font-weight:600">Book a 30-min call →</a> and we'll walk you through it live.
+          Want to skip the doc? <a href="book.html" style="color:var(--orange-2);font-weight:600">Book a 30-min call →</a> and we'll walk you through it live.
         </div>
       </aside>
     </div>
@@ -119,6 +119,7 @@
 <div id="ramped-footer"></div>
 <script src="partials.js"></script>
 <script>
-/* /api/free-roadmap — anonymous lead-magnet flow. Posts to api/free-roadmap.js
-   which: (a) writes to leads + automation_maps tables, (b) generates a roadmap
-   via Anthropic, (c) emails the roadmap to the pros
+document.getElementById("rm-form").addEventListener("submit",e=>{e.preventDefault();location.href="thanks.html?intent=roadmap"});
+</script>
+</body>
+</html>

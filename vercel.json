@@ -22,6 +22,16 @@
   ],
   "redirects": [
     {
+      "source": "/client-demo",
+      "destination": "/agent-library",
+      "permanent": true
+    },
+    {
+      "source": "/demo",
+      "destination": "/agent-library",
+      "permanent": true
+    },
+    {
       "source": "/questionnaire-preview",
       "destination": "/book",
       "permanent": false

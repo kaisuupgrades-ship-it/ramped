@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Pre-call questionnaire — Ramped AI</title>
 <meta name="description" content="Help us prep your discovery call. 11 short questions — takes about 5 minutes." />
-<link rel="canonical" href="https://www.30dayramp.com/questionnaire" />
+<link rel="canonical" href="https://www.30dayramp.com/questionnaire.html" />
 <link rel="icon" href="favicon.ico" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="site.css" />
@@ -121,16 +121,12 @@
 <div id="ramped-footer"></div>
 <script src="partials.js"></script>
 <script>
-/* /api/questionnaire submission. Pulls booking_id + email from URL params
-   (set by post-booking redirect). Endpoint requires booking_id since 2026-04-29. */
-const _qp=new URLSearchParams(location.search);
-const BID=_qp.get("booking_id")||_qp.get("bid")||"";
-const EMAIL=_qp.get("email")||"";
-if(!BID&&!EMAIL){location.replace("/book");}
-
 const steps=[...document.querySelectorAll(".q-step")],total=steps.length;let cur=1;
 const counter=document.getElementById("q-counter"),bar=document.getElementById("q-bar"),
   next=document.getElementById("q-next"),back=document.getElementById("q-back"),skip=document.getElementById("q-skip");
 function show(n){cur=Math.max(1,Math.min(total,n));steps.forEach(s=>s.classList.toggle("on",+s.dataset.q===cur));counter.textContent=`Question ${cur} / ${total}`;bar.style.setProperty("--prog",`${(cur/total)*100}%`);back.style.visibility=cur===1?"hidden":"visible";next.textContent=cur===total?"Submit →":"Continue →"}
-
-function _radio(n){const el=docum
+next.addEventListener("click",()=>{if(cur===total){location.href="thanks.html?intent=questionnaire";return}show(cur+1)});
+back.addEventListener("click",()=>show(cur-1));skip.addEventListener("click",()=>{if(cur===total){location.href="thanks.html?intent=questionnaire";return}show(cur+1)});
+</script>
+</body>
+</html>

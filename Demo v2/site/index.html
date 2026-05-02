@@ -134,12 +134,12 @@
 
 <header class="mast" role="banner">
   <div class="mast-bar">
-    <a href="/" class="brand"><img src="logo.png" alt=""/><span class="brand-name">Ramped AI</span></a>
+    <a href="index.html" class="brand"><img src="logo.png" alt=""/><span class="brand-name">Ramped AI</span></a>
     <nav class="nav" aria-label="Primary">
-      <a class="desk" href="/about">About</a>
+      <a class="desk" href="about.html">About</a>
       <a class="desk" href="#pricing">Pricing</a>
-      <a class="desk" href="/comparison">Compare</a>
-      <a class="btn btn-primary btn-sm nav-cta" href="/book">Book a call →</a>
+      <a class="desk" href="comparison.html">Compare</a>
+      <a class="btn btn-primary btn-sm nav-cta" href="book.html">Book a call →</a>
     </nav>
   </div>
   <div class="ticker" aria-label="Key stats">
@@ -169,8 +169,8 @@
     <h1 class="huge" style="text-align:left">Your AI department,<br/><span class="accent">live in 30 days.</span></h1>
     <p class="lede">Done-for-you AI implementation. We build, deploy, and run AI agents inside your operating business — automating your highest-friction workflows on a flat monthly fee.</p>
     <div class="hero-ctas">
-      <a class="btn btn-primary btn-large" href="/book">Book a discovery call →</a>
-      <a class="btn btn-ghost btn-large" href="/free-roadmap">Get your free roadmap</a>
+      <a class="btn btn-primary btn-large" href="book.html">Book a discovery call →</a>
+      <a class="btn btn-ghost btn-large" href="free-roadmap.html">Get your free roadmap</a>
     </div>
     <div class="hero-guarantee">
       <div class="shield" aria-hidden="true">
@@ -296,7 +296,7 @@
       <details class="faq-item"><summary>How long does onboarding take?</summary><p>Most clients are live within 30 days. We run a structured onboarding — discovery, build, test, launch — and your first automation is typically running in week two.</p></details>
     </div>
     <div style="margin-top:28px;text-align:center">
-      <a class="btn btn-blue" href="/questionnaire">Get your free automation map →</a>
+      <a class="btn btn-blue" href="questionnaire.html">Get your free automation map →</a>
       <div class="muted" style="font-size:13px;margin-top:10px">2-minute questionnaire · your personalized AI deployment map, free.</div>
     </div>
   </div>
@@ -309,7 +309,7 @@
       <span class="kicker" style="align-self:center">Pricing</span>
       <h2>Simple, performance-backed pricing.</h2>
       <p style="max-width:640px">We guarantee your AI agent goes live within 30 days — or you get a full refund. No partial payments, no fine print.</p>
-      <div class="muted" style="font-size:13.5px">Wondering how this compares to hiring a VA? <a href="/comparison" style="color:var(--blue-2)">See the full breakdown →</a></div>
+      <div class="muted" style="font-size:13.5px">Wondering how this compares to hiring a VA? <a href="comparison.html" style="color:var(--blue-2)">See the full breakdown →</a></div>
     </div>
     <div style="text-align:center">
       <div class="billing-toggle">
@@ -378,7 +378,7 @@
         <span>If your AI agent isn't live and running within 30 days, you get a full refund. No questions, no partial payments, no fine print.</span>
       </div>
     </div>
-    <div style="text-align:center;margin-top:18px;color:var(--text-2);font-size:14px">Not ready to commit? <a href="/book" style="color:var(--blue-2)"><strong>Book a free 30-minute discovery call first.</strong></a></div>
+    <div style="text-align:center;margin-top:18px;color:var(--text-2);font-size:14px">Not ready to commit? <a href="book.html" style="color:var(--blue-2)"><strong>Book a free 30-minute discovery call first.</strong></a></div>
   </div>
 </section>
 
@@ -390,8 +390,8 @@
       <h2>Ready to ramp <span class="accent">your AI department?</span></h2>
       <p>30-minute call. We'll map your highest-leverage automation, scope a deployment plan, and show you the exact ROI math — free, no commitment.</p>
       <div class="cta-row">
-        <a class="btn btn-primary btn-large" href="/book">Book a discovery call →</a>
-        <a class="btn btn-ghost btn-large" href="/free-roadmap">Get your free roadmap</a>
+        <a class="btn btn-primary btn-large" href="book.html">Book a discovery call →</a>
+        <a class="btn btn-ghost btn-large" href="free-roadmap.html">Get your free roadmap</a>
       </div>
       <div class="cta-trust">
         <span>Free · No commitment</span>
@@ -411,10 +411,10 @@
       <nav class="foot-nav" aria-label="Footer">
         <a href="#how-it-works">How it works</a>
         <a href="#pricing">Pricing</a>
-        <a href="/about">About</a>
-        <a href="/comparison">Compare</a>
-        <a href="/book">Book a call</a>
-        <a href="/privacy">Privacy</a>
+        <a href="about.html">About</a>
+        <a href="comparison.html">Compare</a>
+        <a href="book.html">Book a call</a>
+        <a href="privacy.html">Privacy</a>
       </nav>
     </div>
     <div class="foot-bottom">
@@ -593,7 +593,7 @@ async function runWF(id){
   // branch buttons
   const bwrap=el("div",{class:"branch-wrap"});
   bwrap.innerHTML=`<div class="branch-row">
-    <a class="branch-btn primary" href="/book">📅 Book a discovery call</a>
+    <a class="branch-btn primary" href="book.html">📅 Book a discovery call</a>
     <button class="branch-btn" data-action="another">↻ Run another playbook</button>
   </div>`;
   bwrap.querySelector('[data-action="another"]').addEventListener("click",()=>{
@@ -610,6 +610,5 @@ async function runWF(id){
 addBot("Morning — I've been live for <strong>30 days</strong>. I've trained on your Northwind data, mapped your tools, and I'm ready to run real work. <strong>Pick a playbook</strong> and I'll execute it end-to-end.",{time:"9:14 AM"});
 addPicker();
 </script>
-<script defer src="/_vercel/insights/script.js"></script>
 </body>
 </html>
