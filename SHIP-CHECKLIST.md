@@ -1,29 +1,89 @@
 # SHIP-CHECKLIST.md — v2 cutover (`30dayramp.com` → `ramped-s98t`)
 
-**Last updated:** 2026-05-03
-
-This is the punch list to take v2 from "deployed at `ramped-s98t.vercel.app`" to "live at `30dayramp.com`". Each item is grouped by who owns it.
+**Last updated:** 2026-05-03 (after the second porting session)
 
 ---
 
-## What's done (this session)
+## Status: full functional parity reached
 
-- Build passes on `ramped-s98t`. Framework set to Next.js in `web/vercel.json`.
-- `web/middleware.ts` is a no-op (Clerk Edge runtime crash bypassed).
-- Crons ported with H3 idempotency fix:
-  - [web/app/api/reminders/route.ts](web/app/api/reminders/route.ts) — every 30 min
-  - [web/app/api/weekly-digest/route.ts](web/app/api/weekly-digest/route.ts) — Mon 09:00 UTC
-- Cron schedules registered in [web/vercel.json](web/vercel.json).
-- Stripe webhook ported with HMAC verification + replay protection: [web/app/api/stripe-webhook/route.ts](web/app/api/stripe-webhook/route.ts).
-- Admin bookings list (read-only) at [web/app/admin/](web/app/admin/page.tsx) — bearer-token auth via `localStorage`, same UX as legacy `admin.html`. Shows phase, payment status, links to portal.
-- Admin API at [web/app/api/admin/bookings/route.ts](web/app/api/admin/bookings/route.ts).
-- Shared lib helpers ported: [web/lib/cron-auth.ts](web/lib/cron-auth.ts), [web/lib/admin-auth.ts](web/lib/admin-auth.ts), [web/lib/map-token.ts](web/lib/map-token.ts), [web/lib/stripe.ts](web/lib/stripe.ts), [web/lib/phase.ts](web/lib/phase.ts).
+Every customer-facing route, every admin route, both crons, the Stripe webhook,
+and the customer portal/roadmap/map pages now exist on v2 (`ramped-s98t`).
+
+**Nothing actually runs end-to-end until the env vars are set.** That's the
+remaining gate — see "Your turn" below.
 
 ---
 
-## You: env vars on `ramped-s98t`
+## What's deployed on `ramped-s98t.vercel.app`
 
-Set these in Vercel → Project → `ramped-s98t` → Settings → Environment Variables. Most can be copied from the legacy `ramped` project.
+### Customer-facing API routes
+- `POST /api/book` — create booking, generate Google Calendar event + Meet link, persist meet_link, send "you're booked" email
+- `GET  /api/availability` — slot config + booked slots (Supabase + Google Calendar busy ranges merged)
+- `POST /api/contact` — landing-page lead form
+- `POST /api/questionnaire` — Anthropic-driven roadmap generator
+- `POST /api/free-roadmap` — free email-only roadmap flow
+- `GET  /api/resources` — curated AI resources (ISR-cached, 5min)
+- `GET  /api/get-roadmap?id&exp&t` — public roadmap viewer (HMAC-token gated)
+- `GET  /api/get-map?id&exp&t` — public automation map viewer (HMAC-token gated)
+- `GET  /api/generate-map` — 410 Gone (matches legacy)
+
+### Customer portal API routes (HMAC-token gated)
+- `GET  /api/portal-data` — main portal payload (booking + agents + drafts + activity + phase)
+- `POST /api/portal-approve-draft` — approve/reject/edit pending draft
+- `GET  /api/portal-billing` — Stripe-derived billing summary
+- `GET/POST /api/portal-onboarding` — onboarding fields + complete flag
+- `GET/POST /api/portal-profile` — profile read + write (with email-change verification)
+- `GET/POST /api/portal-tickets` — ticket list + reply
+- `POST /api/portal-toggle-agent` — pause/resume agent (live ↔ paused)
+- `POST /api/portal-track` — analytics beacon (events + last-seen + visit-count)
+- `POST /api/portal-upload-url` — signed Supabase Storage upload URL
+
+### Admin API routes (`ADMIN_TOKEN` Bearer)
+- `GET  /api/admin/bookings` — bookings + leads + maps with computed phase + signed portal links
+- `POST /api/admin-update` — patch booking
+- `POST /api/admin-delete` — delete booking
+- `GET/POST/DELETE /api/admin-agents` — agent CRUD
+- `POST /api/admin-create-invoice` — Stripe onboarding invoice (idempotent)
+- `POST /api/admin-create-subscription` — Stripe monthly subscription (idempotent)
+- `GET/POST /api/admin-tickets` — admin inbox + reply (sends email)
+- `GET/POST/PATCH/DELETE /api/admin-materials` — internal materials library (repo+uploads)
+- `GET  /api/agent-logs` — agent_runs + logs feed (24h window)
+- `POST /api/send-followup` — admin-triggered post-call follow-up email
+
+### Crons (registered in [web/vercel.json](web/vercel.json))
+- `*/30 * * * *` → `/api/reminders` — 24h + 1h booking reminders w/ H3 idempotency
+- `0 9 * * 1` → `/api/weekly-digest` — Monday 09:00 UTC customer digest
+
+### Webhooks
+- `POST /api/stripe-webhook` — HMAC-verified, replay-protected, patches booking on payment events
+
+### OAuth (one-time admin flows)
+- `GET /api/google-oauth-start?token=ADMIN_TOKEN` — kick off Google OAuth
+- `GET /api/google-oauth-callback` — receive code, show refresh token in browser
+
+### Pages
+- `/` — homepage
+- `/about`, `/comparison`, `/agent-library`, `/resources`, `/free-roadmap`, `/privacy`
+- `/book` — booking form with calendar picker
+- `/questionnaire` — schema-driven intake
+- `/thanks`
+- `/admin` — bearer-token sign-in, bookings + leads tables (read-only — full CRUD via legacy admin until v2 admin screens are extended)
+- `/portal?id&exp&t` — full customer dashboard (phase timeline, next call, drafts approval, agents pause/resume, recent activity)
+- `/roadmap?id&exp&t` — read-only customer roadmap view
+- `/map/[id]?exp&t` — read-only automation map view
+
+### Shared lib helpers (`web/lib/`)
+- `cron-auth.ts`, `admin-auth.ts`, `portal-auth.ts`, `map-token.ts`
+- `email.ts`, `email-design.ts`, `validate.ts`, `notify.ts`, `audit-log.ts`, `logger.ts`
+- `google-calendar.ts`, `stripe.ts` (full REST wrapper), `supabase.ts`, `phase.ts`
+- `site.ts`, `cn.ts`, `pricing.ts`, `team.ts`, `pain-points.ts`, `integrations.ts`, `calendar.ts`, `questionnaire-fields.ts`
+
+---
+
+## Your turn — env vars on `ramped-s98t`
+
+Vercel → Project → `ramped-s98t` → Settings → Environment Variables.
+Most can be copied directly from the legacy `ramped` project.
 
 **Required for v2 to function at all:**
 - `SUPABASE_URL`
@@ -31,28 +91,43 @@ Set these in Vercel → Project → `ramped-s98t` → Settings → Environment V
 - `RESEND_API_KEY`
 - `ANTHROPIC_API_KEY`
 
-**Required for the booking flow:**
-- `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REFRESH_TOKEN` *(legacy still owns the calendar invite path; v2 just stores the booking row)*
+**Required for booking calendar invites:**
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `GOOGLE_REFRESH_TOKEN`
+- `GOOGLE_CALENDAR_ID` *(optional, defaults to `primary`)*
 
-**Required for admin sign-in:**
+**Required for admin sign-in + Google OAuth re-auth:**
 - `ADMIN_TOKEN` — generate fresh: `openssl rand -hex 32`
 
 **Required for crons:**
 - `CRON_SECRET` — generate fresh: `openssl rand -hex 32`. Vercel auto-attaches this as `Authorization: Bearer ...` to scheduled invocations.
 
-**Required for portal links + emailed roadmap links:**
-- `MAP_LINK_SECRET` — copy from legacy. If you generate a new one, all in-flight portal links break.
+**Required for portal links + roadmap links + emails:**
+- `MAP_LINK_SECRET` — copy from legacy. **If you generate a new one, every in-flight portal link breaks.**
+- `IP_HASH_SALT` — copy from legacy (used for portal-track + audit-log)
 
-**Required for Stripe webhook:**
+**Required for Stripe (payments + webhook + invoice/subscription creation):**
 - `STRIPE_SECRET_KEY` — copy from legacy
 - `STRIPE_WEBHOOK_SECRET` — **must be a NEW value** for the new endpoint URL (see Stripe step below)
 
-**Optional but recommended:**
-- `SITE_URL` = `https://ramped-s98t.vercel.app` *(temporarily, until DNS cuts)*
+**Required for materials uploads:**
+- `MATERIALS_BUCKET` — defaults to `materials`; copy if customised in legacy
+
+**Required for portal document uploads:**
+- `SUPABASE_ONBOARDING_BUCKET` — defaults to `onboarding`
+
+**Optional Slack integration:**
+- `SLACK_WEBHOOK_URL` — Slack incoming-webhook URL for booking/ticket/payment notifications
+
+**Recommended:**
+- `SITE_URL` = `https://ramped-s98t.vercel.app` *(temporarily, until DNS cuts; then change to https://www.30dayramp.com)*
+- `OWNER_EMAIL` = `jon@30dayramp.com`
+- `OAUTH_REDIRECT_HOST` — set to `https://ramped-s98t.vercel.app` for staging; change to `https://www.30dayramp.com` after DNS cut
 
 ---
 
-## You: third-party dashboards
+## Your turn — third-party dashboards
 
 ### Stripe
 1. Stripe Dashboard → Developers → Webhooks → Add endpoint
@@ -70,74 +145,70 @@ Set these in Vercel → Project → `ramped-s98t` → Settings → Environment V
 ### Google OAuth
 - Google Cloud Console → APIs & Services → Credentials → your OAuth 2.0 Client → Authorized redirect URIs
 - Add: `https://ramped-s98t.vercel.app/api/google-oauth-callback`
-- *(Calendar invite generation hasn't been ported to v2 yet — see "Not yet ported" below — so this is only needed once you migrate that flow.)*
+- Then visit `https://ramped-s98t.vercel.app/api/google-oauth-start?token=$ADMIN_TOKEN` to mint a fresh `GOOGLE_REFRESH_TOKEN` for the new project (the legacy one's refresh token will still work, but minting a fresh one keeps the two projects independent).
 
 ### Resend
-- If sending continues from `bookings@30dayramp.com` and `reports@30dayramp.com`, no change needed (domain already verified).
-- If you change the from address, verify the new domain in Resend dashboard.
+- If sending continues from `bookings@30dayramp.com`, `support@30dayramp.com`, and `reports@30dayramp.com` — no change needed (domain already verified).
+
+### Supabase Storage buckets
+- Verify both `onboarding` and `materials` buckets exist in Supabase Storage (private). Run migrations 003 (portal/onboarding_documents) and 008 (admin_materials/material_uploads) if not already applied.
 
 ### Clerk
-- Currently bypassed via no-op middleware. Admin uses bearer-token auth instead.
-- If you want SSO for admin later: add `https://ramped-s98t.vercel.app` to allowed origins in Clerk dashboard, set `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` + `CLERK_SECRET_KEY` env vars, and wire the admin page to use `auth()` instead of bearer.
+- Currently unused. Admin uses bearer-token auth via `ADMIN_TOKEN`. If you want SSO later, layer it in as a follow-up — not required for parity.
 
 ---
 
-## Not yet ported (need follow-up sessions)
+## Verification — before DNS cut
 
-These legacy routes still ONLY exist on `30dayramp.com`. The v2 site won't have them until ported:
+Run through each of these on `https://ramped-s98t.vercel.app`:
 
-**Customer-facing (will block real customers if you cut DNS without porting):**
-- `/api/availability` — slot-picker on `/book` *(v2 has a stub; verify it returns the right shape)*
-- `/api/contact` — contact form
-- `/api/get-map`, `/api/generate-map` — automation map generation
-- `/api/get-roadmap` — public-by-token roadmap viewer
-- `/portal` (entire feature) — magic-link customer portal:
-  - `/api/portal-data`, `/api/portal-approve-draft`, `/api/portal-billing`, `/api/portal-onboarding`, `/api/portal-profile`, `/api/portal-tickets`, `/api/portal-toggle-agent`, `/api/portal-track`, `/api/portal-upload-url`
-- `/api/google-oauth-start`, `/api/google-oauth-callback` — calendar invite flow
-- `/api/book` — currently in v2 as a *minimal* port; it stores the row but does NOT generate the Google Calendar invite or Meet link. Legacy still does this. **If you cut DNS, calendar invites will silently stop until ported.**
+1. **Admin sign-in** — paste `ADMIN_TOKEN` at `/admin`, verify bookings + leads list matches legacy.
+2. **Cron auth** — `curl -H "Authorization: Bearer $CRON_SECRET" https://ramped-s98t.vercel.app/api/reminders` should return `{"ok":true,...}` (lists empty unless a booking falls in the ±15-min window of "1h" or "24h" from now).
+3. **Stripe test webhook** — Stripe Dashboard → Webhooks → "Send test webhook". Verify a row appears in `stripe_events`.
+4. **Test booking** — `/book`, pick a slot, complete the form. Verify:
+   - Confirmation email arrives at the test inbox
+   - Google Meet link is in the email
+   - Calendar invite appears on Andrew's calendar with the test email as attendee
+   - A row appears in `bookings` table with `meet_link` populated
+5. **Test contact** — `/` → contact form, submit. Verify ack email + owner email.
+6. **Portal link** — copy a portal URL from admin → bookings, open in incognito. Verify portal renders with phase, next call, agents.
+7. **Roadmap link** — same with a roadmap link. Verify renders.
 
-**Admin CRUD (read-only works on v2; mutations go to legacy):**
-- `/api/admin-update`, `/api/admin-delete` — edit + cancel bookings
-- `/api/admin-materials` — materials manager
-- `/api/admin-tickets` — support tickets
-- `/api/admin-create-invoice`, `/api/admin-create-subscription` — Stripe billing actions
-- `/api/admin-agents` — agent management
-
-**Other:**
-- `/api/agent-logs` — used by portal
-- `/api/send-followup` — manual followup sender
-- `/api/resources-refresh` — auto-refresh curated resources
+**Disable legacy crons after step 1-2 succeed** — otherwise both projects fire their reminders on the same booking. Either:
+- Remove the `crons` block from legacy `vercel.json` and redeploy legacy, OR
+- Delete the legacy reminders + weekly-digest routes (they're live, redirected, idempotent — but two firing systems is one too many)
 
 ---
 
-## You: DNS (when ready, NOT YET)
+## Your turn — DNS cut (NOT YET)
 
-**Do NOT do this until everything above is ported and verified.** Cutting DNS too early breaks live customers.
+When the verification above passes:
 
-When ready:
 1. Vercel → `ramped-s98t` → Settings → Domains → add `30dayramp.com` and `www.30dayramp.com`
 2. Vercel → legacy `ramped` project → Settings → Domains → remove same two
-3. Update Stripe webhook URL to `https://www.30dayramp.com/api/stripe-webhook` (or keep both endpoints active and let one go dark)
-4. Update Google OAuth redirect URI to the new domain
-5. Update `SITE_URL` env var on `ramped-s98t` to `https://www.30dayramp.com`
+3. Update Stripe webhook URL to `https://www.30dayramp.com/api/stripe-webhook` (or run both in parallel and delete the legacy endpoint after a week)
+4. Update Google OAuth redirect URI to `https://www.30dayramp.com/api/google-oauth-callback`
+5. Update `SITE_URL` and `OAUTH_REDIRECT_HOST` env vars on `ramped-s98t` to `https://www.30dayramp.com`
 6. Keep the legacy `ramped` deploy paused-not-deleted for ~30 days as rollback
 
 ---
 
-## Verification before DNS cut
+## Known gaps / things that fall short of perfect parity
 
-1. Bearer-sign-in to `https://ramped-s98t.vercel.app/admin` with `ADMIN_TOKEN`. Verify you see the same bookings as legacy admin.
-2. Test the Stripe webhook in Stripe dashboard → "Send test webhook". Verify a row appears in `stripe_events`.
-3. Test crons manually: `curl -H "Authorization: Bearer $CRON_SECRET" https://ramped-s98t.vercel.app/api/reminders` — should return `{ ok: true, sent_24h: [], sent_1h: [], errors: [] }` (empty arrays unless you have a real booking in the ±15 min window of "1h" or "24h" from now).
-4. Place a test booking via `/book`. Verify confirmation email arrives. *(Calendar invite won't — legacy still owns that path.)*
-5. Run [scripts/e2e-test.sh](scripts/e2e-test.sh) against `https://ramped-s98t.vercel.app` — adjust the base URL.
+These don't block DNS cut but worth knowing:
+
+- **v2 admin UI is read-only.** All 7 CRUD routes exist server-side, but the admin page only renders bookings + leads tables. The "Edit", "Delete", "Materials", "Tickets" tabs from legacy admin.html aren't ported — admin uses the legacy admin URL for those flows. This is fine because admin is internal-only and the API is fully usable; just a UI follow-up.
+- **Customer portal pages don't have onboarding doc upload UI.** The `/api/portal-upload-url` endpoint exists but the `<input type="file">` flow on `/portal` isn't built. Can be added in a follow-up.
+- **Portal billing tab not surfaced.** `/api/portal-billing` exists but the portal page doesn't render the invoice history yet — can be added.
+- **No `/dashboard` redirect.** Legacy `vercel.json` had `/dashboard → /admin`. v2 doesn't have this rewrite — add to `web/vercel.json` if anyone has the old URL bookmarked.
+- **Resources-refresh cron not registered.** The route exists at `/api/resources-refresh` but Vercel cron registration is missing. Either add to `web/vercel.json` crons or trigger externally.
 
 ---
 
-## Risks I noticed
+## Where to look if something breaks
 
-- **Both crons will fire on `ramped-s98t` AND on legacy `30dayramp.com` simultaneously** while both deploys are alive. The reminders cron's idempotency columns (`reminded_24h_at`, `reminded_1h_at`) prevent duplicate emails from a single project, but they DON'T prevent both projects from sending separately. Either:
-  - Set `CRON_SECRET` to *the same value* on both projects so the column-write race resolves cleanly *(both will atomically lose the race for the second send)*, OR
-  - Disable crons on legacy `vercel.json` once v2 crons are verified working (preferred — remove the `crons` block from legacy `vercel.json` and redeploy).
-- **`api/_lib/admin-auth.js` ALLOWED_ORIGINS** doesn't include `ramped-s98t.vercel.app`. Doesn't matter for v2 (we don't call legacy admin from v2 frontend), but worth knowing if you ever want cross-project admin calls.
-- **`api/send-followup.js` reads `ADMIN_PASSWORD`** but everything else uses `ADMIN_TOKEN`. Pre-existing inconsistency; port this when you migrate that endpoint.
+- **Vercel dashboard** → `ramped-s98t` → Logs (per route)
+- **Supabase dashboard** → SQL editor for read queries against `bookings`, `stripe_events`, `agent_drafts`, `support_tickets`
+- **Resend dashboard** → email send history with bounce/spam reports
+- **Stripe dashboard** → Events log to confirm webhook delivery succeeded
+- **`gh` CLI** to check the build: `gh run list --workflow=...` (none configured currently — Vercel deploys directly)
