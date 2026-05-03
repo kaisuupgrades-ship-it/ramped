@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { supabaseRest } from "@/lib/supabase";
 import { defaultConfig, type AvailabilityConfig } from "@/lib/calendar";
+import { getBusyRanges, isCalendarConfigured } from "@/lib/google-calendar";
 
 export const runtime = "nodejs";
 export const revalidate = 0;
@@ -9,7 +10,9 @@ export const revalidate = 0;
  * GET /api/availability                    → config only
  * GET /api/availability?date=YYYY-MM-DD    → config + booked[] (ISO datetimes)
  *
- * Used by the calendar to render slots and grey out taken ones.
+ * `booked[]` merges Supabase bookings AND Google Calendar busy ranges so the
+ * picker greys out everything that's actually unavailable, not just rows in our
+ * DB. Calendar busy ranges are expanded to 30-minute aligned slots.
  */
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -24,17 +27,37 @@ export async function GET(req: NextRequest) {
       ? { ...cfgRes.data[0] }
       : { ...defaultConfig };
 
-  // If date is provided, attach booked datetimes for that date (±1 day window
-  // covers any user timezone offset; the client filters by local TZ).
   if (/^\d{4}-\d{2}-\d{2}$/.test(dateParam)) {
     const baseMs = Date.parse(`${dateParam}T00:00:00.000Z`);
     if (!Number.isNaN(baseMs)) {
       const dayMs = 24 * 60 * 60 * 1000;
       const startISO = new Date(baseMs - dayMs).toISOString();
       const endISO = new Date(baseMs + 2 * dayMs).toISOString();
+
+      const booked: string[] = [];
+
+      // 1. Supabase bookings
       const url = `/bookings?datetime=gte.${encodeURIComponent(startISO)}&datetime=lt.${encodeURIComponent(endISO)}&select=datetime`;
       const r = await supabaseRest<{ datetime: string }[]>("GET", url);
-      config.booked = r.ok && Array.isArray(r.data) ? r.data.map((b) => b.datetime).filter(Boolean) : [];
+      if (r.ok && Array.isArray(r.data)) {
+        for (const b of r.data) if (b.datetime) booked.push(b.datetime);
+      }
+
+      // 2. Google Calendar busy ranges (expanded to 30-min slots aligned to busy.start)
+      if (isCalendarConfigured()) {
+        try {
+          const busy = await getBusyRanges(startISO, endISO);
+          for (const b of busy) {
+            const s = new Date(b.start).getTime();
+            const e = new Date(b.end).getTime();
+            for (let t = s; t < e; t += 30 * 60_000) booked.push(new Date(t).toISOString());
+          }
+        } catch (err) {
+          console.error("Google freeBusy failed:", (err as Error).message);
+        }
+      }
+
+      config.booked = booked;
     }
   }
 
