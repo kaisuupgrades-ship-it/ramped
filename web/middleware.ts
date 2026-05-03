@@ -1,27 +1,21 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-
 /**
- * Clerk auth middleware.
+ * No-op middleware — intentional.
  *
- * /admin/* and /portal/* are gated. Everything else is public.
- * The customer portal will get its own signed-token check inside the route
- * handler (separate from Clerk session), so we keep it loose here for now.
+ * We tried Clerk's clerkMiddleware here originally, but Clerk's newer SDK
+ * imports Node-only APIs (#crypto, safe-node-apis) that don't run in Vercel's
+ * Edge runtime. Next.js 15.2 added experimental nodejs runtime for middleware,
+ * but it's still flag-gated and not stable enough to rely on.
+ *
+ * Instead, auth is enforced at the page/route level via auth.protect() inside
+ * server components and route handlers. See app/admin/page.tsx for the pattern.
+ * This keeps the middleware step lightweight and the runtime question moot.
  */
-const isProtectedRoute = createRouteMatcher([
-  "/admin(.*)",
-]);
-
-export default clerkMiddleware(async (auth, req) => {
-  if (isProtectedRoute(req)) {
-    await auth.protect();
-  }
-});
+export default function middleware() {
+  // intentionally empty
+}
 
 export const config = {
-  matcher: [
-    // Skip Next.js internals + all static files
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Always run for API routes
-    "/(api|trpc)(.*)",
-  ],
+  // Match nothing — middleware doesn't run on any path. Page-level auth checks
+  // handle protected routes.
+  matcher: [],
 };
