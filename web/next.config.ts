@@ -10,9 +10,9 @@ const config: NextConfig = {
   },
   // Tighten production bundles
   poweredByHeader: false,
-  experimental: {
-    typedRoutes: true,
-  },
+  // typedRoutes intentionally OFF for now — re-enable after Button's href type
+  // is broadened to accept external URLs (currently breaks the strict
+  // `<Link href>` constraint that typedRoutes enforces).
   async headers() {
     return [
       {
