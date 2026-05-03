@@ -71,7 +71,7 @@
 <section style="padding:48px 0 0">
   <div style="max-width:720px;margin:0 auto;padding:0 24px">
     <h1 class="huge" style="text-align:left;font-size:clamp(32px,4.4vw,52px);margin:0">Help us <span class="accent">prep your call.</span></h1>
-    <p class="lede" style="margin-top:14px">11 short questions. The more context we have, the more specific your roadmap will be when we hop on the call.</p>
+    <p class="lede" style="margin-top:14px"><span id="q-total-copy">A few</span> short questions. The more context we have, the more specific your roadmap will be when we hop on the call.</p>
   </div>
 </section>
 
@@ -82,78 +82,11 @@
       <div class="bar" id="q-bar" style="--prog:9%"></div>
     </div>
     <form id="q-form">
-      <div class="q-step on" data-q="1"><h2>What does your business do?</h2><p class="sub">A sentence or two — the kind of pitch you'd give at a dinner party.</p>
-        <div class="field"><textarea name="biz" rows="4" placeholder="We sell industrial equipment to mid-sized contractors across the US…"></textarea></div></div>
-      <div class="q-step" data-q="2"><h2>What's your annual revenue?</h2>
-        <div class="pill-group">
-          <label class="pill-check"><input type="radio" name="rev" value="<$1M"/>Under $1M</label>
-          <label class="pill-check"><input type="radio" name="rev" value="$1-5M"/>$1M – $5M</label>
-          <label class="pill-check"><input type="radio" name="rev" value="$5-20M"/>$5M – $20M</label>
-          <label class="pill-check"><input type="radio" name="rev" value="$20-100M"/>$20M – $100M</label>
-          <label class="pill-check"><input type="radio" name="rev" value="$100M+"/>$100M+</label>
-        </div></div>
-      <div class="q-step" data-q="3"><h2>How many people on the team?</h2>
-        <div class="pill-group">
-          <label class="pill-check"><input type="radio" name="team" value="1-10"/>1–10</label>
-          <label class="pill-check"><input type="radio" name="team" value="11-50"/>11–50</label>
-          <label class="pill-check"><input type="radio" name="team" value="51-200"/>51–200</label>
-          <label class="pill-check"><input type="radio" name="team" value="200+"/>200+</label>
-        </div></div>
-      <div class="q-step" data-q="4"><h2>What workflows eat the most time?</h2><p class="sub">Pick all that apply.</p>
-        <div class="pill-group">
-          <label class="pill-check"><input type="checkbox" name="pain" value="Lead intake"/>Lead intake</label>
-          <label class="pill-check"><input type="checkbox" name="pain" value="Quoting"/>Quoting</label>
-          <label class="pill-check"><input type="checkbox" name="pain" value="Order ops"/>Order ops</label>
-          <label class="pill-check"><input type="checkbox" name="pain" value="Inventory"/>Inventory</label>
-          <label class="pill-check"><input type="checkbox" name="pain" value="Finance"/>Finance / reporting</label>
-          <label class="pill-check"><input type="checkbox" name="pain" value="Support"/>Customer support</label>
-          <label class="pill-check"><input type="checkbox" name="pain" value="Recruiting"/>Recruiting</label>
-        </div></div>
-      <div class="q-step" data-q="5"><h2>How many hours per week does that cost the team?</h2>
-        <div class="pill-group">
-          <label class="pill-check"><input type="radio" name="hours" value="<10"/>Under 10</label>
-          <label class="pill-check"><input type="radio" name="hours" value="10-25"/>10–25</label>
-          <label class="pill-check"><input type="radio" name="hours" value="25-50"/>25–50</label>
-          <label class="pill-check"><input type="radio" name="hours" value="50+"/>50+</label>
-        </div></div>
-      <div class="q-step" data-q="6"><h2>What tools are you running on?</h2><p class="sub">Pick all that apply — helps us pre-scope the integration work.</p>
-        <div class="pill-group brand-pills">
-          <label class="pill-check"><input type="checkbox" name="stack" value="HubSpot"/><img class="brand-icon" alt="" src="https://cdn.simpleicons.org/hubspot"/>HubSpot</label>
-          <label class="pill-check"><input type="checkbox" name="stack" value="Salesforce"/><img class="brand-icon" alt="" src="https://cdn.simpleicons.org/salesforce"/>Salesforce</label>
-          <label class="pill-check"><input type="checkbox" name="stack" value="NetSuite"/><img class="brand-icon" alt="" src="https://cdn.simpleicons.org/oracle/C74634"/>NetSuite</label>
-          <label class="pill-check"><input type="checkbox" name="stack" value="QuickBooks"/><img class="brand-icon" alt="" src="https://cdn.simpleicons.org/quickbooks"/>QuickBooks</label>
-          <label class="pill-check"><input type="checkbox" name="stack" value="Shopify"/><img class="brand-icon" alt="" src="https://cdn.simpleicons.org/shopify"/>Shopify</label>
-          <label class="pill-check"><input type="checkbox" name="stack" value="Slack"/><img class="brand-icon" alt="" src="https://cdn.simpleicons.org/slack"/>Slack</label>
-          <label class="pill-check"><input type="checkbox" name="stack" value="Gong"/><img class="brand-icon" alt="" src="https://cdn.simpleicons.org/gong"/>Gong</label>
-          <label class="pill-check"><input type="checkbox" name="stack" value="Zendesk"/><img class="brand-icon" alt="" src="https://cdn.simpleicons.org/zendesk"/>Zendesk</label>
-          <label class="pill-check"><input type="checkbox" name="stack" value="Notion"/><img class="brand-icon" alt="" src="https://cdn.simpleicons.org/notion/ffffff"/>Notion</label>
-          <label class="pill-check"><input type="checkbox" name="stack" value="Asana"/><img class="brand-icon" alt="" src="https://cdn.simpleicons.org/asana"/>Asana</label>
-          <label class="pill-check"><input type="checkbox" name="stack" value="Airtable"/><img class="brand-icon" alt="" src="https://cdn.simpleicons.org/airtable"/>Airtable</label>
-          <label class="pill-check"><input type="checkbox" name="stack" value="Google Workspace"/><img class="brand-icon" alt="" src="https://cdn.simpleicons.org/googleworkspace"/>Google Workspace</label>
-        </div>
-        <div class="field" style="margin-top:14px"><textarea name="stack_other" rows="2" placeholder="Anything else? Custom tools, internal portals, ERPs we missed…" style="font-size:14px"></textarea></div></div>
-      <div class="q-step" data-q="7"><h2>Have you tried automating this before?</h2>
-        <div class="pill-group">
-          <label class="pill-check"><input type="radio" name="prior" value="Never"/>Never tried</label>
-          <label class="pill-check"><input type="radio" name="prior" value="Zapier/Make"/>Zapier / Make</label>
-          <label class="pill-check"><input type="radio" name="prior" value="ChatGPT"/>ChatGPT / Copilot</label>
-          <label class="pill-check"><input type="radio" name="prior" value="Internal build"/>Internal build</label>
-          <label class="pill-check"><input type="radio" name="prior" value="Consultant"/>Hired a consultant</label>
-        </div></div>
-      <div class="q-step" data-q="8"><h2>What worked? What didn't?</h2><p class="sub">Skip if not applicable.</p>
-        <div class="field"><textarea name="prior_notes" rows="4" placeholder="Zapier got us 60% of the way but kept breaking on edge cases…"></textarea></div></div>
-      <div class="q-step" data-q="9"><h2>If we get this right, what changes?</h2><p class="sub">What does success look like in 90 days?</p>
-        <div class="field"><textarea name="success" rows="4" placeholder="My ops lead stops working weekends. We respond to leads in under an hour. I can hire a salesperson instead of an admin…"></textarea></div></div>
-      <div class="q-step" data-q="10"><h2>What's the budget reality?</h2>
-        <div class="pill-group">
-          <label class="pill-check"><input type="radio" name="budget" value="<$2.5K"/>Under $2.5K / mo</label>
-          <label class="pill-check"><input type="radio" name="budget" value="$2.5-5K"/>$2.5K – $5K / mo</label>
-          <label class="pill-check"><input type="radio" name="budget" value="$5-10K"/>$5K – $10K / mo</label>
-          <label class="pill-check"><input type="radio" name="budget" value="$10K+"/>$10K+ / mo</label>
-          <label class="pill-check"><input type="radio" name="budget" value="exploring"/>Just exploring</label>
-        </div></div>
-      <div class="q-step" data-q="11"><h2>Anything else we should know?</h2><p class="sub">Optional — anything that would change how we'd run the call.</p>
-        <div class="field"><textarea name="notes" rows="5" placeholder="Constraints, deadlines, internal politics, related projects, etc."></textarea></div></div>
+      <!-- Steps are rendered from /lib/questionnaire-schema.js at page load. The
+           single source of truth lives there — both this form and
+           /api/questionnaire.js read the same schema, so a field rename can
+           never half-ship. -->
+      <div id="q-steps-host"></div>
 
       <div class="q-actions">
         <button type="button" class="btn btn-ghost" id="q-back">← Back</button>
@@ -193,28 +126,131 @@
 
 <div id="ramped-footer"></div>
 <script src="partials.js"></script>
-<script>
-/* /api/questionnaire submission. Pulls booking_id + email from URL params
-   (set by post-booking redirect). Endpoint requires booking_id since 2026-04-29. */
-const _qp=new URLSearchParams(location.search);
-const BID=_qp.get("booking_id")||_qp.get("bid")||"";
-const EMAIL=_qp.get("email")||"";
-if(!BID&&!EMAIL){location.replace("/book");}
+<script type="module">
+/* The form is now rendered FROM the centralized schema at /lib/questionnaire-schema.js.
+   The same module is imported by /api/questionnaire.js, so renaming a field
+   updates both the form and the prompt at once. The drift bug is gone. */
+import { FIELDS, FIELD_TYPES, TOTAL_QUESTIONS } from "/lib/questionnaire-schema.js";
 
-const steps=[...document.querySelectorAll(".q-step")],total=steps.length;let cur=1;
-const counter=document.getElementById("q-counter"),bar=document.getElementById("q-bar"),
-  next=document.getElementById("q-next"),back=document.getElementById("q-back"),skip=document.getElementById("q-skip");
-function show(n){cur=Math.max(1,Math.min(total,n));steps.forEach(s=>s.classList.toggle("on",+s.dataset.q===cur));counter.textContent=`Question ${cur} / ${total}`;bar.style.setProperty("--prog",`${(cur/total)*100}%`);back.style.visibility=cur===1?"hidden":"visible";next.textContent=cur===total?"Submit →":"Continue →"}
+/* ── URL params ───────────────────────────────────────────────────────────── */
+const _qp = new URLSearchParams(location.search);
+const BID   = _qp.get("booking_id") || _qp.get("bid") || "";
+const EMAIL = _qp.get("email") || "";
+if (!BID && !EMAIL) location.replace("/book");
 
-function _radio(n){const el=document.querySelector(`input[name="${n}"]:checked`);return el?el.value:"";}
-function _checks(n){return [...document.querySelectorAll(`input[name="${n}"]:checked`)].map(x=>x.value);}
-function _text(n){const el=document.querySelector(`[name="${n}"]`);return el?String(el.value||"").trim():"";}
+/* ── Render the q-steps from the schema ──────────────────────────────────── */
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  }[c]));
+}
 
-/* Progressive status copy shown while /api/questionnaire runs the Anthropic
-   call. The user sees real-time progress (rather than a frozen "Submitting…"
-   button) so they know the page isn't broken. Each entry: [t_seconds, copy,
-   pct_progress]. */
-const _GEN_STAGES=[
+function brandIconImg(opt) {
+  if (!opt.icon) return "";
+  const url = opt.color
+    ? `https://cdn.simpleicons.org/${opt.icon}/${opt.color.replace("#", "")}`
+    : `https://cdn.simpleicons.org/${opt.icon}`;
+  return `<img class="brand-icon" alt="" src="${esc(url)}"/>`;
+}
+
+function renderField(f) {
+  if (f.type === FIELD_TYPES.TEXTAREA) {
+    return `<div class="field"><textarea name="${esc(f.id)}" rows="${f.rows || 4}" placeholder="${esc(f.placeholder || "")}"></textarea></div>`;
+  }
+  if (f.type === FIELD_TYPES.TEXT) {
+    return `<div class="field"><input type="text" name="${esc(f.id)}" placeholder="${esc(f.placeholder || "")}" autocomplete="off"/></div>`;
+  }
+  if (f.type === FIELD_TYPES.RADIO_PILLS) {
+    return `<div class="pill-group">${f.options.map(opt =>
+      `<label class="pill-check"><input type="radio" name="${esc(f.id)}" value="${esc(opt.value)}"/>${esc(opt.label || opt.value)}</label>`
+    ).join("")}</div>`;
+  }
+  if (f.type === FIELD_TYPES.CHECKBOX_PILLS) {
+    return `<div class="pill-group">${f.options.map(opt =>
+      `<label class="pill-check"><input type="checkbox" name="${esc(f.id)}" value="${esc(opt.value)}"/>${esc(opt.label || opt.value)}</label>`
+    ).join("")}</div>`;
+  }
+  if (f.type === FIELD_TYPES.BRAND_PILLS) {
+    const pills = f.options.map(opt =>
+      `<label class="pill-check"><input type="checkbox" name="${esc(f.id)}" value="${esc(opt.value)}"/>${brandIconImg(opt)}${esc(opt.label || opt.value)}</label>`
+    ).join("");
+    const other = f.otherField
+      ? `<div class="field" style="margin-top:14px"><textarea name="${esc(f.otherField.id)}" rows="2" placeholder="${esc(f.otherField.placeholder || "")}" style="font-size:14px"></textarea></div>`
+      : "";
+    return `<div class="pill-group brand-pills">${pills}</div>${other}`;
+  }
+  if (f.type === FIELD_TYPES.BRAND_RADIO) {
+    return `<div class="pill-group brand-pills">${f.options.map(opt =>
+      `<label class="pill-check"><input type="radio" name="${esc(f.id)}" value="${esc(opt.value)}"/>${brandIconImg(opt)}${esc(opt.label || opt.value)}</label>`
+    ).join("")}</div>`;
+  }
+  return "";
+}
+
+const stepsHost = document.getElementById("q-steps-host");
+stepsHost.innerHTML = FIELDS.map((f, i) =>
+  `<div class="q-step${i === 0 ? " on" : ""}" data-q="${i + 1}">
+     <h2>${esc(f.title)}</h2>
+     ${f.sub ? `<p class="sub">${esc(f.sub)}</p>` : ""}
+     ${renderField(f)}
+   </div>`
+).join("");
+
+// Lede copy reflects the schema's question count automatically.
+const totalCopyEl = document.getElementById("q-total-copy");
+if (totalCopyEl) totalCopyEl.textContent = `${TOTAL_QUESTIONS} short`;
+
+/* ── Stepper ─────────────────────────────────────────────────────────────── */
+const steps   = [...document.querySelectorAll(".q-step")];
+const total   = steps.length; // = TOTAL_QUESTIONS
+let   cur     = 1;
+const counter = document.getElementById("q-counter");
+const bar     = document.getElementById("q-bar");
+const nextBtn = document.getElementById("q-next");
+const backBtn = document.getElementById("q-back");
+const skipBtn = document.getElementById("q-skip");
+
+function show(n) {
+  cur = Math.max(1, Math.min(total, n));
+  steps.forEach(s => s.classList.toggle("on", +s.dataset.q === cur));
+  counter.textContent = `Question ${cur} / ${total}`;
+  bar.style.setProperty("--prog", `${(cur / total) * 100}%`);
+  backBtn.style.visibility = cur === 1 ? "hidden" : "visible";
+  nextBtn.textContent = cur === total ? "Submit →" : "Continue →";
+}
+show(1);
+
+/* ── Read values for each schema field ───────────────────────────────────── */
+function _radio(n) { const el = document.querySelector(`input[name="${n}"]:checked`); return el ? el.value : ""; }
+function _checks(n) { return [...document.querySelectorAll(`input[name="${n}"]:checked`)].map(x => x.value); }
+function _text(n) { const el = document.querySelector(`[name="${n}"]`); return el ? String(el.value || "").trim() : ""; }
+
+function readFieldValue(f) {
+  switch (f.type) {
+    case FIELD_TYPES.TEXTAREA:        return _text(f.id);
+    case FIELD_TYPES.TEXT:            return _text(f.id);
+    case FIELD_TYPES.RADIO_PILLS:     return _radio(f.id);
+    case FIELD_TYPES.BRAND_RADIO:     return _radio(f.id);
+    case FIELD_TYPES.CHECKBOX_PILLS:  return _checks(f.id);
+    case FIELD_TYPES.BRAND_PILLS:     return _checks(f.id);
+    default:                          return "";
+  }
+}
+
+function buildPayload() {
+  const out = { booking_id: BID, email: EMAIL };
+  for (const f of FIELDS) {
+    out[f.id] = readFieldValue(f);
+    if (f.otherField) {
+      const otherVal = _text(f.otherField.id);
+      if (otherVal) out[f.otherField.id] = otherVal;
+    }
+  }
+  return out;
+}
+
+/* ── Generating-state UX (unchanged behavior, schema-agnostic) ───────────── */
+const _GEN_STAGES = [
   [0,  "Reading your responses…",                    8],
   [6,  "Mapping your stack to integration points…",  22],
   [14, "Identifying highest-leverage workflows…",    40],
@@ -223,70 +259,68 @@ const _GEN_STAGES=[
   [55, "Polishing the final document…",              88],
   [75, "Almost there — just a few more seconds…",    96],
 ];
-let _genTimer=null,_genStart=0;
-function startGenerating(){
-  document.querySelector(".q-stepper").style.display="none";
-  document.getElementById("q-form").style.display="none";
-  const panel=document.getElementById("q-generating");
+let _genTimer = null, _genStart = 0;
+function startGenerating() {
+  document.querySelector(".q-stepper").style.display = "none";
+  document.getElementById("q-form").style.display = "none";
+  const panel = document.getElementById("q-generating");
   panel.classList.add("on");
-  panel.scrollIntoView({behavior:"smooth",block:"center"});
-  _genStart=Date.now();
-  const statusEl=document.getElementById("gen-status");
-  const etaEl=document.getElementById("gen-eta");
-  const progEl=panel.querySelector(".progress");
-  function tick(){
-    const t=(Date.now()-_genStart)/1000;
-    let stage=_GEN_STAGES[0];
-    for(const s of _GEN_STAGES)if(t>=s[0])stage=s;
-    statusEl.textContent=stage[1];
-    progEl.style.setProperty("--p",stage[2]+"%");
-    progEl.setAttribute("aria-valuenow",String(Math.round(stage[2])));
-    const remaining=Math.max(0,Math.round(75-t));
-    etaEl.textContent=remaining>5
-      ? `~${remaining} seconds remaining`
-      : "Wrapping up…";
-  }
+  panel.scrollIntoView({ behavior: "smooth", block: "center" });
+  _genStart = Date.now();
+  const statusEl = document.getElementById("gen-status");
+  const etaEl    = document.getElementById("gen-eta");
+  const progEl   = panel.querySelector(".progress");
+  const tick = () => {
+    const t = (Date.now() - _genStart) / 1000;
+    let stage = _GEN_STAGES[0];
+    for (const s of _GEN_STAGES) if (t >= s[0]) stage = s;
+    statusEl.textContent = stage[1];
+    progEl.style.setProperty("--p", stage[2] + "%");
+    progEl.setAttribute("aria-valuenow", String(Math.round(stage[2])));
+    const remaining = Math.max(0, Math.round(75 - t));
+    etaEl.textContent = remaining > 5 ? `~${remaining} seconds remaining` : "Wrapping up…";
+  };
   tick();
-  _genTimer=setInterval(tick,1000);
+  _genTimer = setInterval(tick, 1000);
 }
-function stopGenerating(){
-  if(_genTimer){clearInterval(_genTimer);_genTimer=null}
-  document.querySelector(".q-stepper").style.display="";
-  document.getElementById("q-form").style.display="";
+function stopGenerating() {
+  if (_genTimer) { clearInterval(_genTimer); _genTimer = null; }
+  document.querySelector(".q-stepper").style.display = "";
+  document.getElementById("q-form").style.display = "";
   document.getElementById("q-generating").classList.remove("on");
 }
-async function submitQuestionnaire(){
-  next.disabled=true;skip.disabled=true;back.disabled=true;
-  // stack: combine checked brand pills + optional "other" textarea into one string
-  const stackList=_checks("stack");
-  const stackOther=_text("stack_other");
-  const stackJoined=[...stackList,...(stackOther?[stackOther]:[])].join(", ");
-  const payload={booking_id:BID,email:EMAIL,
-    business_description:_text("biz"),revenue:_radio("rev"),team_size:_radio("team"),
-    pain_points:_checks("pain"),hours_lost:_radio("hours"),stack:stackJoined,
-    prior_attempts:_radio("prior"),prior_notes:_text("prior_notes"),
-    success_definition:_text("success"),budget:_radio("budget"),notes:_text("notes")};
+
+/* ── Submit ──────────────────────────────────────────────────────────────── */
+async function submitQuestionnaire() {
+  nextBtn.disabled = true; skipBtn.disabled = true; backBtn.disabled = true;
+  const payload = buildPayload();
   startGenerating();
-  try{
-    const r=await fetch("/api/questionnaire",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
-    if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.error||"Submission failed");}
-    // Pin the progress bar to 100% briefly so the redirect doesn't feel like a jump-cut.
-    const progEl=document.querySelector(".q-generating .progress");
-    if(progEl)progEl.style.setProperty("--p","100%");
-    document.getElementById("gen-status").textContent="Done. Redirecting…";
-    document.getElementById("gen-eta").textContent="Sending your map →";
-    setTimeout(()=>{location.href="/thanks?intent=questionnaire"},600);
-  }catch(err){
+  try {
+    const r = await fetch("/api/questionnaire", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!r.ok) {
+      const d = await r.json().catch(() => ({}));
+      throw new Error(d.error || "Submission failed");
+    }
+    const progEl = document.querySelector(".q-generating .progress");
+    if (progEl) progEl.style.setProperty("--p", "100%");
+    document.getElementById("gen-status").textContent = "Done. Redirecting…";
+    document.getElementById("gen-eta").textContent    = "Sending your map →";
+    setTimeout(() => { location.href = "/thanks?intent=questionnaire"; }, 600);
+  } catch (err) {
     stopGenerating();
-    next.disabled=false;skip.disabled=false;back.disabled=false;
-    next.textContent="Submit →";
-    alert(err.message||"Something went wrong. Email jon@30dayramp.com and we'll get this in.");
+    nextBtn.disabled = false; skipBtn.disabled = false; backBtn.disabled = false;
+    nextBtn.textContent = "Submit →";
+    alert(err.message || "Something went wrong. Email jon@30dayramp.com and we'll get this in.");
   }
 }
 
-next.addEventListener("click",()=>{if(cur===total){submitQuestionnaire();return}show(cur+1)});
-back.addEventListener("click",()=>show(cur-1));
-skip.addEventListener("click",()=>{if(cur===total){submitQuestionnaire();return}show(cur+1)});
+nextBtn.addEventListener("click", () => { if (cur === total) { submitQuestionnaire(); return; } show(cur + 1); });
+backBtn.addEventListener("click", () => show(cur - 1));
+skipBtn.addEventListener("click", () => { if (cur === total) { submitQuestionnaire(); return; } show(cur + 1); });
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
 </body>

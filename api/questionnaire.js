@@ -10,6 +10,9 @@
 import { isValidEmail, truncate, checkRateLimit, getClientIp } from './_lib/validate.js';
 import { signMapToken, isMapTokenConfigured } from './_lib/map-token.js';
 import { wrapEmail, emailHero, emailBody, emailCtaCard, emailInfoCard, emailSignoff } from './_lib/email-design.js';
+// Single source of truth for questionnaire fields. The frontend renders the
+// form from the same module — a field rename can't half-ship.
+import { buildPromptContext, validatePayload } from '../lib/questionnaire-schema.js';
 
 const SUPABASE_URL  = process.env.SUPABASE_URL;
 const SUPABASE_KEY  = process.env.SUPABASE_SERVICE_KEY;
@@ -47,11 +50,15 @@ function esc(s) {
 
 // ── Claude: grade + roadmap ──────────────────────────────────────────────────
 async function analyzeProspect(booking, qData) {
-  if (!ANTHROPIC_KEY) return { grade: null, gradeSummary: null, roadmap: null };
+  if (!ANTHROPIC_KEY) {
+    console.warn('[questionnaire] ANTHROPIC_API_KEY not set — skipping analysis');
+    return { grade: null, gradeSummary: null, roadmap: null, failure: 'no_key' };
+  }
 
-  const painText  = (qData.pain_points || []).join(', ') || qData.bottleneck || '—';
-  const toolsText = (qData.integrations || qData.tools || []).join(', ') || '—';
-  const aiText    = (qData.ai_tools || []).join(', ') || '—';
+  // The prospect-summary block is built by the centralized schema so the
+  // prompt always reflects the same field set the form posted. No more
+  // form/prompt drift (audit 2026-05-02).
+  const prospectBlock = buildPromptContext(qData, booking);
 
   const prompt = `You are an AI automation consultant at Ramped AI. Ramped AI builds done-for-you AI agent implementations for small and mid-size businesses.
 
@@ -70,22 +77,9 @@ C (Lukewarm): Vague pain, 2-5 team, early stage, unclear budget
 D (Poor fit): Solo, no budget signal, no clear pain
 
 PROSPECT DATA:
-- Name: ${booking.name || '—'}
-- Company: ${booking.company || '—'}
-- Industry: ${qData.industry || '—'}
-- Team size: ${qData.team_size || '—'}
-- Annual revenue: ${qData.revenue || '—'}
-- How clients find them: ${qData.lead_source || '—'}
-- How customers contact them: ${(qData.inbound || qData.customer_channel) || '—'}
-- Pain points: ${painText}
-- Platforms & integrations: ${toolsText}
-- CRM: ${qData.crm || '—'}
-- Email provider: ${qData.email_provider || '—'}
-- OS: ${qData.device_os || '—'}
-- AI tools already using: ${aiText}
-- Tier interest: ${(booking.tier) || '—'}
-- What they want AI to handle first: ${qData.automation_goal || '—'}
-- Notes: ${booking.notes || '—'}
+${prospectBlock}
+
+Even if some fields are blank ("—"), do your best with what's available. The prospect may have skipped questions — infer reasonably and note any gaps in grade_summary.
 
 Respond with ONLY valid JSON — no markdown, no text outside the JSON:
 {
@@ -131,23 +125,39 @@ Rules:
     });
     if (!r.ok) {
       const errBody = await r.text();
-      console.error('Claude analysis failed:', r.status, errBody);
-      return { grade: null, gradeSummary: null, roadmap: null };
+      console.error('[questionnaire] Anthropic API non-200:', r.status, errBody.slice(0, 500));
+      return { grade: null, gradeSummary: null, roadmap: null, failure: `api_${r.status}` };
     }
     const json = await r.json();
     const raw  = json.content?.[0]?.text || '';
+    if (!raw) {
+      console.error('[questionnaire] Anthropic returned empty content', { stop_reason: json.stop_reason });
+      return { grade: null, gradeSummary: null, roadmap: null, failure: 'empty_response' };
+    }
     // Strip markdown code fences if Claude wraps the JSON
     const cleaned = raw.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
-    const parsed = JSON.parse(cleaned);
+    let parsed;
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch (e) {
+      console.error('[questionnaire] Anthropic JSON.parse failed:', e.message, '— raw response:', cleaned.slice(0, 800));
+      return { grade: null, gradeSummary: null, roadmap: null, failure: 'parse_error' };
+    }
     const grade  = String(parsed.grade || '').toUpperCase().charAt(0) || null;
+    const roadmap = parsed.roadmap || null;
+    if (!roadmap) {
+      console.error('[questionnaire] Anthropic returned no roadmap field — keys:', Object.keys(parsed));
+      return { grade: null, gradeSummary: null, roadmap: null, failure: 'no_roadmap' };
+    }
     return {
       grade: ['A','B','C','D'].includes(grade) ? grade : null,
       gradeSummary: parsed.grade_summary || null,
-      roadmap: parsed.roadmap || null,
+      roadmap,
+      failure: null,
     };
   } catch (e) {
-    console.error('Claude analysis error:', e.message);
-    return { grade: null, gradeSummary: null, roadmap: null };
+    console.error('[questionnaire] Anthropic call threw:', e.message);
+    return { grade: null, gradeSummary: null, roadmap: null, failure: 'exception' };
   }
 }
 
@@ -275,8 +285,10 @@ export default async function handler(req, res) {
   const bookingId = booking.id;
   const effectiveTier = tier || booking.tier;
 
-  // Analyze: grade + roadmap (single Claude call)
-  const { grade, gradeSummary, roadmap } = await analyzeProspect(
+  // Analyze: grade + roadmap (single Claude call). The `failure` field tells
+  // us why a missing roadmap happened so the fallback path can give the owner
+  // a useful alert instead of "something failed".
+  const { grade, gradeSummary, roadmap, failure } = await analyzeProspect(
     { ...booking, tier: effectiveTier },
     qData
   );
@@ -539,7 +551,53 @@ export default async function handler(req, res) {
     }));
   }
 
-  return res.status(200).json({ success: true, updated: true, grade: grade || null, emails_sent: !!RESEND_KEY });
+  // Silent-failure fallback. If the AI call failed for any reason, the
+  // customer used to get nothing — confused why they filled out a form for no
+  // result. Now they always get a graceful message + Andrew gets an alert he
+  // can manually act on.
+  if (!roadmap && RESEND_KEY) {
+    const firstName = (booking.name || email).split(/\s+/)[0];
+    const fallbackInner =
+      emailHero({
+        eyebrow: 'Got it',
+        headline: `Thanks, ${esc(firstName)}. We've got your prep.`,
+        sub: 'Your automation roadmap is being prepared.',
+      }) +
+      emailBody(`We received your responses. Andrew is personally reviewing what you sent and will get a tailored automation roadmap to your inbox before your call. If you don't see it within 24 hours, just reply to this email and we'll send it manually.`) +
+      emailInfoCard({
+        eyebrow: 'In the meantime',
+        title: 'Have something to share before the call?',
+        body: 'A doc, a screenshot, an example email — anything that would help us prep further. Just reply to this thread.',
+      }) +
+      emailSignoff({ name: 'Jon', extra: 'See you on the call.' });
+    await sendEmail(email, `We've got your prep, ${firstName}`, wrapEmail({
+      subject: `We've got your prep, ${firstName}`,
+      preheader: 'Your automation roadmap is being prepared — arriving before your call.',
+      innerRows: fallbackInner,
+      siteUrl: SITE_URL,
+    }));
+
+    // Internal alert so Andrew/Jon can intervene before the call instead of
+    // discovering the gap on the call itself.
+    const alertBody =
+      `<h2 style="margin:0 0 12px;font-size:18px;color:#0B1220">⚠ Automation map generation failed</h2>` +
+      `<p style="margin:0 0 8px"><strong>Customer:</strong> ${esc(booking.name || '—')} (${esc(email)})</p>` +
+      `<p style="margin:0 0 8px"><strong>Company:</strong> ${esc(booking.company || '—')}</p>` +
+      `<p style="margin:0 0 8px"><strong>Booking ID:</strong> ${esc(bookingId)}</p>` +
+      `<p style="margin:0 0 8px"><strong>Failure mode:</strong> <code>${esc(failure || 'unknown')}</code></p>` +
+      `<p style="margin:0 0 12px;color:#5B6272">The customer got the graceful fallback email. Build their roadmap manually before the call — questionnaire data is in the bookings.questionnaire JSONB column.</p>` +
+      `<p style="margin:0;text-align:center"><a href="https://www.30dayramp.com/admin" style="display:inline-block;padding:10px 22px;background:#1F4FFF;color:#fff;font-weight:700;border-radius:8px;text-decoration:none">Open admin →</a></p>`;
+    await sendEmail(OWNER_EMAIL, `[ALERT] Roadmap generation failed for ${booking.company || email}`, alertBody);
+  }
+
+  return res.status(200).json({
+    success: true,
+    updated: true,
+    grade: grade || null,
+    roadmap_generated: !!roadmap,
+    failure: failure || null,
+    emails_sent: !!RESEND_KEY,
+  });
 }
 
 
