@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import PortalClient from "./PortalClient";
+import RoadmapClient from "./RoadmapClient";
 
 export const metadata: Metadata = {
-  title: "Client portal",
+  title: "Your automation roadmap",
   robots: "noindex, nofollow",
 };
 
@@ -12,7 +12,7 @@ interface Props {
   searchParams: Promise<{ id?: string; exp?: string; t?: string }>;
 }
 
-export default async function PortalPage({ searchParams }: Props) {
+export default async function RoadmapPage({ searchParams }: Props) {
   const sp = await searchParams;
-  return <PortalClient id={sp.id ?? ""} exp={sp.exp ?? ""} t={sp.t ?? ""} />;
+  return <RoadmapClient id={sp.id ?? ""} exp={sp.exp ?? ""} t={sp.t ?? ""} />;
 }
