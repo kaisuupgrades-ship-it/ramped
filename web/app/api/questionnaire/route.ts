@@ -79,27 +79,34 @@ export async function POST(req: NextRequest) {
     profile_updated_at: new Date().toISOString(),
   });
 
-  // ── Customer email
+  // ── Emails (await both — fire-and-forget gets killed when the route returns
+  //   on Vercel serverless, which is why customer roadmap emails were not
+  //   delivering. We await Promise.all so the customer + owner sends complete
+  //   before we send the response.)
   const firstName = (booking.name || booking.email).split(/\s+/)[0];
-  if (analysis.roadmap) {
-    const agentCount = Array.isArray((analysis.roadmap as { top_agents?: unknown[] }).top_agents)
-      ? ((analysis.roadmap as { top_agents: unknown[] }).top_agents.length)
-      : 0;
-    const summary = (analysis.roadmap as { summary?: string }).summary ?? "";
-    sendEmail({
-      to: booking.email,
-      subject: `Your automation roadmap is ready, ${firstName}`,
-      html: emailShell(`
-        <h2 style="margin:0 0 12px;font-size:22px;color:#f4f6fa">Your automation roadmap is ready, ${escapeHtml(firstName)}.</h2>
-        <p style="margin:0 0 16px">Based on your answers — we'll walk through this together on the call.</p>
-        ${summary ? `<blockquote style="margin:16px 0;padding:14px 18px;border-left:3px solid #3b82f6;color:#c8d0dc;background:rgba(59,130,246,0.06);border-radius:0 8px 8px 0">"${escapeHtml(summary)}"</blockquote>` : ""}
-        <p style="margin:0 0 16px"><strong style="color:#f4f6fa">${agentCount}</strong> AI agents · 30-day go-live · full refund if we miss it.</p>
-        <p style="margin:24px 0;color:#929bab;font-size:13px">This is a starting point — on the call we'll prioritize what makes sense to ship first. No pressure, no pitch.</p>
-      `),
-    }).catch((e) => console.error("[questionnaire] customer roadmap email failed", e));
-  } else {
+
+  const customerEmail = (async () => {
+    if (analysis.roadmap) {
+      const agentCount = Array.isArray((analysis.roadmap as { top_agents?: unknown[] }).top_agents)
+        ? ((analysis.roadmap as { top_agents: unknown[] }).top_agents.length)
+        : 0;
+      const summary = (analysis.roadmap as { summary?: string }).summary ?? "";
+      const result = await sendEmail({
+        to: booking.email,
+        subject: `Your automation roadmap is ready, ${firstName}`,
+        html: emailShell(`
+          <h2 style="margin:0 0 12px;font-size:22px;color:#f4f6fa">Your automation roadmap is ready, ${escapeHtml(firstName)}.</h2>
+          <p style="margin:0 0 16px">Based on your answers — we'll walk through this together on the call.</p>
+          ${summary ? `<blockquote style="margin:16px 0;padding:14px 18px;border-left:3px solid #3b82f6;color:#c8d0dc;background:rgba(59,130,246,0.06);border-radius:0 8px 8px 0">"${escapeHtml(summary)}"</blockquote>` : ""}
+          <p style="margin:0 0 16px"><strong style="color:#f4f6fa">${agentCount}</strong> AI agents · 30-day go-live · full refund if we miss it.</p>
+          <p style="margin:24px 0;color:#929bab;font-size:13px">This is a starting point — on the call we'll prioritize what makes sense to ship first. No pressure, no pitch.</p>
+        `),
+      });
+      if (!result.ok) console.error("[questionnaire] customer roadmap email failed:", result.error);
+      return result;
+    }
     // Silent-failure fallback — customer gets something graceful even if Anthropic broke.
-    sendEmail({
+    const result = await sendEmail({
       to: booking.email,
       subject: `We've got your prep, ${firstName}`,
       html: emailShell(`
@@ -107,11 +114,12 @@ export async function POST(req: NextRequest) {
         <p style="margin:0 0 16px">We received your responses. Andrew is personally reviewing what you sent and will get a tailored automation roadmap to your inbox before your call.</p>
         <p style="margin:0 0 16px">If you don't see it within 24 hours, just reply to this email.</p>
       `),
-    }).catch(() => {});
-  }
+    });
+    if (!result.ok) console.error("[questionnaire] customer fallback email failed:", result.error);
+    return result;
+  })();
 
-  // ── Owner alert (always — gives Jon visibility either way)
-  sendEmail({
+  const ownerEmail = sendEmail({
     to: site.email,
     subject: analysis.roadmap
       ? `[${analysis.grade ?? "?"}] Questionnaire submitted: ${booking.name} · ${booking.company}`
@@ -122,9 +130,11 @@ export async function POST(req: NextRequest) {
       <p style="margin:0 0 6px"><strong>Company:</strong> ${escapeHtml(booking.company ?? "—")}</p>
       ${analysis.gradeSummary ? `<p style="margin:8px 0;color:#c8d0dc">${escapeHtml(analysis.gradeSummary)}</p>` : ""}
       ${analysis.failure ? `<p style="margin:8px 0;color:#f87171"><strong>Failure mode:</strong> <code>${escapeHtml(analysis.failure)}</code> — manual roadmap needed.</p>` : ""}
-      <p style="margin:14px 0"><a href="${site.tagline ? "https://www.30dayramp.com" : "#"}/admin" style="color:#60a5fa;font-weight:600">View in admin →</a></p>
+      <p style="margin:14px 0"><a href="https://www.30dayramp.com/admin" style="color:#60a5fa;font-weight:600">View in admin →</a></p>
     `),
-  }).catch(() => {});
+  }).then((r) => { if (!r.ok) console.error("[questionnaire] owner email failed:", r.error); return r; });
+
+  await Promise.all([customerEmail, ownerEmail]);
 
   return NextResponse.json({
     ok: true,
