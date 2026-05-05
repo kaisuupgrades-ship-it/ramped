@@ -31,15 +31,28 @@ function brandIconUrl(opt: FieldOption): string | null {
     : `https://cdn.simpleicons.org/${opt.icon}`;
 }
 
-export function QuestionnaireForm() {
+export interface QuestionnaireFormProps {
+  /** Provide booking_id directly (inline-on-/book mode). If omitted, falls back to URL param. */
+  bookingId?: string;
+  /** Provide email directly (inline mode). If omitted, falls back to URL param. */
+  email?: string;
+  /** When provided, called instead of redirecting to /thanks. Lets the parent
+   *  render a "done" state inline. Receives "submitted" or "skipped". */
+  onComplete?: (intent: "submitted" | "skipped") => void;
+}
+
+export function QuestionnaireForm(props: QuestionnaireFormProps = {}) {
   const router = useRouter();
   const params = useSearchParams();
-  const bookingId = params.get("booking_id") ?? "";
-  const email = params.get("email") ?? "";
+  const bookingId = props.bookingId ?? params.get("booking_id") ?? "";
+  const email = props.email ?? params.get("email") ?? "";
+  const inline = typeof props.onComplete === "function";
 
   React.useEffect(() => {
-    if (!bookingId && !email) router.replace("/book");
-  }, [bookingId, email, router]);
+    // Standalone-page mode only: bounce back to /book if there's no context.
+    // Inline mode means the parent already knows the booking exists.
+    if (!inline && !bookingId && !email) router.replace("/book");
+  }, [inline, bookingId, email, router]);
 
   // initialize each field with the right empty type
   const initial: FormState = React.useMemo(() => {
@@ -100,9 +113,13 @@ export function QuestionnaireForm() {
         const d = await r.json().catch(() => ({}));
         throw new Error((d as { error?: string }).error ?? "Submission failed");
       }
-      // pin progress + redirect
-      setGenStage([100, "Done. Redirecting…", 100]);
-      setTimeout(() => router.push("/thanks?intent=questionnaire"), 600);
+      // pin progress, then either hand back to parent or redirect
+      setGenStage([100, "Done.", 100]);
+      if (inline && props.onComplete) {
+        setTimeout(() => props.onComplete!("submitted"), 600);
+      } else {
+        setTimeout(() => router.push("/thanks?intent=questionnaire"), 600);
+      }
     } catch (e) {
       setGenerating(false);
       setSubmitting(false);
@@ -150,6 +167,19 @@ export function QuestionnaireForm() {
 
   return (
     <div className="bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-9">
+      {/* Inline-mode escape hatch — matches the legacy "Skip for now" affordance. */}
+      {inline && (
+        <div className="flex justify-end mb-3">
+          <button
+            type="button"
+            onClick={() => props.onComplete && props.onComplete("skipped")}
+            className="text-text-3 text-[12.5px] hover:text-text-1 underline-offset-2 hover:underline"
+          >
+            Skip the questionnaire — we&apos;ll email you a link
+          </button>
+        </div>
+      )}
+
       {/* Stepper */}
       <div className="flex items-center gap-2.5 mb-7 font-mono text-[11px] uppercase tracking-[0.08em] text-text-3">
         <span>Question {step} / {TOTAL_QUESTIONS}</span>

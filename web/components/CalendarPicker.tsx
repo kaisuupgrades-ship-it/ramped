@@ -6,9 +6,8 @@ import {
   bookedSlotSet,
   defaultConfig,
   dropPastSlots,
-  generateSlotStrings,
   slotsForDate,
-  toSlotStringInTZ,
+  tzAbbrevForDate,
   ymdLocal,
   type AvailabilityConfig,
 } from "@/lib/calendar";
@@ -99,6 +98,9 @@ export function CalendarPicker(props: CalendarPickerProps) {
     ? selectedDate.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })
     : "Pick a date";
 
+  // Timezone abbrev for the selected date (honors DST).
+  const tzAbbrev = selectedDate ? tzAbbrevForDate(selectedDate, timezone) : "";
+
   return (
     <div className="bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-7">
       {/* Header */}
@@ -143,6 +145,7 @@ export function CalendarPicker(props: CalendarPickerProps) {
           const dow = date.getDay();
           const past = date < today;
           const has = !past && dow >= 1 && dow <= 5;
+          const isToday = ymdLocal(date) === ymdLocal(today);
           const isSelected = selectedDate && ymdLocal(selectedDate) === ymdLocal(date);
           return (
             <button
@@ -156,7 +159,10 @@ export function CalendarPicker(props: CalendarPickerProps) {
                 has && !isSelected && "text-blue-2 font-semibold bg-blue/[0.06] border-blue/25 hover:bg-blue/[0.14] cursor-pointer",
                 isSelected && "bg-gradient-to-b from-orange-2 to-orange text-[#1a0e05] border-transparent font-bold",
                 !has && "text-text-3 opacity-40 cursor-default",
+                // Today ring — shown only when not selected (selected uses gradient, would clash)
+                isToday && !isSelected && "ring-2 ring-blue-2/70 ring-offset-2 ring-offset-bg-1",
               )}
+              aria-current={isToday ? "date" : undefined}
             >
               {date.getDate()}
             </button>
@@ -166,7 +172,12 @@ export function CalendarPicker(props: CalendarPickerProps) {
 
       {/* Slots */}
       <div className="mt-4 pt-4 border-t border-line">
-        <h4 className="m-0 mb-3 text-[13px] font-semibold text-text-1">{slotsLabel}</h4>
+        <h4 className="m-0 mb-1 text-[13px] font-semibold text-text-1">{slotsLabel}</h4>
+        {selectedDate && tzAbbrev && (
+          <p className="m-0 mb-3 text-[12px] text-text-3 leading-relaxed">
+            Times shown in your local timezone · <span className="font-semibold text-text-1">{timezone.replace(/_/g, " ")}</span>
+          </p>
+        )}
         {!selectedDate ? (
           <div className="text-text-3 text-[13.5px] py-5 text-center">Select a date with availability to see open times.</div>
         ) : slotsLoading ? (
@@ -174,7 +185,7 @@ export function CalendarPicker(props: CalendarPickerProps) {
         ) : slots.length === 0 ? (
           <div className="text-text-3 text-[13.5px] py-5 text-center">No slots available — try another date.</div>
         ) : (
-          <div className="grid grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1">
+          <div className="grid grid-cols-2 gap-2">
             {slots.map(({ time, booked }) => {
               const isSelected = selectedSlot === time;
               return (
@@ -192,7 +203,7 @@ export function CalendarPicker(props: CalendarPickerProps) {
                     booked && "bg-transparent border border-line text-text-3 line-through decoration-bad/50 cursor-not-allowed opacity-55 font-normal",
                   )}
                 >
-                  {time}
+                  {tzAbbrev ? `${time} ${tzAbbrev}` : time}
                 </button>
               );
             })}

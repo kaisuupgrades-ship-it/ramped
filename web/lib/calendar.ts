@@ -87,7 +87,7 @@ export function ymdLocal(d: Date): string {
   return `${y}-${m}-${day}`;
 }
 
-/** Format a Date as a slot string ("9:00 AM") in the given timezone. */
+/** Format a Date as a slot string ("9:00 AM") in the given timezone — no zone abbrev. */
 export function toSlotStringInTZ(d: Date, tz: string): string {
   return new Intl.DateTimeFormat("en-US", {
     hour: "numeric",
@@ -95,6 +95,29 @@ export function toSlotStringInTZ(d: Date, tz: string): string {
     hour12: true,
     timeZone: tz,
   }).format(d);
+}
+
+/** Format a Date as a slot label with timezone abbrev ("9:00 AM CST") in the given timezone. */
+export function toSlotLabelInTZ(d: Date, tz: string): string {
+  return new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: tz,
+    timeZoneName: "short",
+  }).format(d);
+}
+
+/** Get the short timezone abbrev (e.g. "CST", "EST", "GMT+1") for a given date in a given timezone.
+ *  We pull it via Intl.DateTimeFormat parts and return just the timeZoneName fragment.
+ *  This honors DST — Chicago in June returns "CDT", in December returns "CST". */
+export function tzAbbrevForDate(d: Date, tz: string): string {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: tz,
+    timeZoneName: "short",
+    hour: "numeric",
+  }).formatToParts(d);
+  return parts.find((p) => p.type === "timeZoneName")?.value ?? "";
 }
 
 /** Format a Date as YYYY-MM-DD in the given timezone. */
