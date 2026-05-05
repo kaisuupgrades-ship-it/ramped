@@ -64,22 +64,48 @@ export default function ComparisonPage() {
             that runs on day one and gets better every week.
           </p>
 
-          <Card className="mt-8 p-0 overflow-hidden">
-            <div className="grid grid-cols-[1.4fr_1.3fr_1.3fr] text-[13px]">
-              <div className="px-5 py-4 font-mono text-[10.5px] uppercase tracking-[0.08em] text-text-3 border-b border-line">Dimension</div>
-              <div className="px-5 py-4 font-mono text-[10.5px] uppercase tracking-[0.08em] text-text-3 border-b border-line border-l border-line">Virtual Assistant</div>
-              <div className="px-5 py-4 font-mono text-[10.5px] uppercase tracking-[0.08em] text-orange-2 font-semibold border-b border-line border-l border-line">Ramped AI agent</div>
-              {dimensions.flatMap((row, i) => {
+          {/* Desktop: 3-column grid. Mobile: stacked cards (one per dimension)
+              so 375px viewports don't have to horizontal-scroll a tight grid. */}
+          <Card className="mt-8 p-0 overflow-hidden hidden sm:block">
+            <div role="table" aria-label="VA vs AI agent comparison" className="grid grid-cols-[1.4fr_1.3fr_1.3fr] text-[13px]">
+              <div role="row" className="contents">
+                <div role="columnheader" className="px-5 py-4 font-mono text-[10.5px] uppercase tracking-[0.08em] text-text-3 border-b border-line">Dimension</div>
+                <div role="columnheader" className="px-5 py-4 font-mono text-[10.5px] uppercase tracking-[0.08em] text-text-3 border-b border-line border-l border-line">Virtual Assistant</div>
+                <div role="columnheader" className="px-5 py-4 font-mono text-[10.5px] uppercase tracking-[0.08em] text-orange-2 font-semibold border-b border-line border-l border-line">Ramped AI agent</div>
+              </div>
+              {dimensions.map((row, i) => {
                 const last = i === dimensions.length - 1;
                 const b = last ? "" : "border-b border-line";
-                return [
-                  <div key={`${row.dim}-d`} className={`px-5 py-3.5 text-text-0 font-semibold ${b}`}>{row.dim}</div>,
-                  <div key={`${row.dim}-va`} className={`px-5 py-3.5 text-text-2 border-l border-line ${b}`}>{row.va}</div>,
-                  <div key={`${row.dim}-ai`} className={`px-5 py-3.5 text-orange-2 border-l border-line ${b}`}>{row.ai}</div>,
-                ];
+                return (
+                  <div role="row" key={row.dim} className="contents">
+                    <div role="rowheader" className={`px-5 py-3.5 text-text-0 font-semibold ${b}`}>{row.dim}</div>
+                    <div role="cell" className={`px-5 py-3.5 text-text-2 border-l border-line ${b}`}>{row.va}</div>
+                    <div role="cell" className={`px-5 py-3.5 text-orange-2 border-l border-line ${b}`}>{row.ai}</div>
+                  </div>
+                );
               })}
             </div>
           </Card>
+
+          {/* Mobile: card-per-dimension. Each card has VA on the left, AI on
+              the right, side by side at 50/50 — fits comfortably at 375px. */}
+          <div className="mt-8 sm:hidden flex flex-col gap-3">
+            {dimensions.map((row) => (
+              <Card key={`m-${row.dim}`} className="p-4">
+                <div className="font-mono text-[10.5px] uppercase tracking-[0.08em] text-text-3 mb-2.5">{row.dim}</div>
+                <div className="grid grid-cols-2 gap-3 text-[13px]">
+                  <div>
+                    <div className="font-mono text-[10px] uppercase tracking-[0.08em] text-text-3 mb-1">VA</div>
+                    <div className="text-text-2 leading-snug">{row.va}</div>
+                  </div>
+                  <div>
+                    <div className="font-mono text-[10px] uppercase tracking-[0.08em] text-orange-2 font-semibold mb-1">Ramped</div>
+                    <div className="text-orange-2 leading-snug">{row.ai}</div>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
         </div>
       </section>
 

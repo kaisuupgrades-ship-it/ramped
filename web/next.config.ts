@@ -13,6 +13,14 @@ const config: NextConfig = {
   // typedRoutes intentionally OFF for now — re-enable after Button's href type
   // is broadened to accept external URLs (currently breaks the strict
   // `<Link href>` constraint that typedRoutes enforces).
+  async redirects() {
+    return [
+      // Bare /pricing → homepage anchor. The nav links use /#pricing already,
+      // but external links / Google indexes / bookmarks may hit /pricing
+      // directly and we don't want them to 404.
+      { source: "/pricing", destination: "/#pricing", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

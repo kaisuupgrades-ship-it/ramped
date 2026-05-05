@@ -150,7 +150,7 @@ export const FIELDS: Field[] = [
     options: [
       { value: "HubSpot",     icon: "hubspot",    color: "#FF7A59" },
       { value: "Salesforce",  icon: "salesforce", color: "#00A1E0" },
-      { value: "Pipedrive",   icon: "pipedrive",  color: "#1A1A1A" },
+      { value: "Pipedrive",   icon: null }, // Simple Icons dropped pipedrive; Iconify only has a wide wordmark that renders as a sliver at 16px
       { value: "Other CRM",   icon: null },
       { value: "No CRM yet",  icon: null,         label: "No CRM yet" },
     ],

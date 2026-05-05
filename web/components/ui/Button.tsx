@@ -36,9 +36,22 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ variant = "primary", size = "md", href, external, className, children, ...props }, ref) => {
     const classes = cn(baseStyles, variants[variant], sizes[size], className);
     if (href) {
-      const linkProps = external ? { href, target: "_blank", rel: "noopener noreferrer" } : { href };
+      // Forward onClick (and onPointer*, etc.) to Link so callers can wire
+      // dismiss handlers on header CTAs that navigate.
+      const { onClick, onMouseDown, onFocus, onBlur, "aria-label": ariaLabel } = props as React.AnchorHTMLAttributes<HTMLAnchorElement>;
+      const linkProps = external
+        ? { href, target: "_blank", rel: "noopener noreferrer" }
+        : { href };
       return (
-        <Link {...linkProps} className={classes}>
+        <Link
+          {...linkProps}
+          className={classes}
+          onClick={onClick as React.MouseEventHandler<HTMLAnchorElement> | undefined}
+          onMouseDown={onMouseDown as React.MouseEventHandler<HTMLAnchorElement> | undefined}
+          onFocus={onFocus as React.FocusEventHandler<HTMLAnchorElement> | undefined}
+          onBlur={onBlur as React.FocusEventHandler<HTMLAnchorElement> | undefined}
+          aria-label={ariaLabel}
+        >
           {children}
         </Link>
       );

@@ -30,7 +30,6 @@ export const navLinks = [
 ] as const;
 
 export const footerLinks = [
-  { href: "/#how-it-works", label: "How it works" },
   { href: "/#pricing", label: "Pricing" },
   { href: "/about", label: "About" },
   { href: "/comparison", label: "Compare" },

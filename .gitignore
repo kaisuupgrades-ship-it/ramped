@@ -23,3 +23,6 @@ Thumbs.db
 # Prototype extracted files (temp working dir)
 _proto_extracted/
 Ramped AI Prototype.standalone.html
+
+.vercel
+.env*.local

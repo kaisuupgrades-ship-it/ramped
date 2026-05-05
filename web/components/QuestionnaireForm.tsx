@@ -24,22 +24,57 @@ const GEN_STAGES: ReadonlyArray<readonly [number, string, number]> = [
   [75, "Almost there — just a few more seconds…",    96],
 ];
 
+/** Iconify fallbacks for slugs Simple Icons has dropped (Microsoft, Salesforce,
+ *  Slack, Oracle/NetSuite, Pipedrive — these companies requested removal from
+ *  Simple Icons, so we serve them from the more permissive Iconify "logos" set
+ *  instead. NetSuite is part of Oracle so we serve the Oracle mark for it.) */
+const ICONIFY_FALLBACK: Record<string, string> = {
+  slack: "logos:slack-icon",
+  salesforce: "logos:salesforce",
+  microsoftoutlook: "vscode-icons:file-type-outlook",
+  oracle: "logos:oracle",
+  pipedrive: "logos:pipedrive",
+};
+
 function brandIconUrl(opt: FieldOption): string | null {
   if (!opt.icon) return null;
+  if (ICONIFY_FALLBACK[opt.icon]) {
+    return `https://api.iconify.design/${ICONIFY_FALLBACK[opt.icon]}.svg`;
+  }
   return opt.color
     ? `https://cdn.simpleicons.org/${opt.icon}/${opt.color.replace("#", "")}`
     : `https://cdn.simpleicons.org/${opt.icon}`;
 }
 
-export function QuestionnaireForm() {
+export interface QuestionnaireFormProps {
+  /** Provide booking_id directly (inline-on-/book mode). If omitted, falls back to URL param. */
+  bookingId?: string;
+  /** Provide email directly (inline mode). If omitted, falls back to URL param. */
+  email?: string;
+  /** When provided, called instead of redirecting to /thanks. Lets the parent
+   *  render a "done" state inline. Receives "submitted" or "skipped". */
+  onComplete?: (intent: "submitted" | "skipped") => void;
+  /** When set to "free-roadmap", the form POSTs to /api/free-roadmap and
+   *  expects `leadIntake` for name/email/company. Default "booking" is the
+   *  post-booking flow that requires bookingId. */
+  mode?: "booking" | "free-roadmap";
+  /** Required when mode==="free-roadmap" — no booking row exists, so the
+   *  intake fields are sent in the payload alongside the questionnaire data. */
+  leadIntake?: { name: string; email: string; company: string };
+}
+
+export function QuestionnaireForm(props: QuestionnaireFormProps = {}) {
   const router = useRouter();
   const params = useSearchParams();
-  const bookingId = params.get("booking_id") ?? "";
-  const email = params.get("email") ?? "";
+  const bookingId = props.bookingId ?? params.get("booking_id") ?? "";
+  const email = props.email ?? params.get("email") ?? "";
+  const inline = typeof props.onComplete === "function";
 
   React.useEffect(() => {
-    if (!bookingId && !email) router.replace("/book");
-  }, [bookingId, email, router]);
+    // Standalone-page mode only: bounce back to /book if there's no context.
+    // Inline + free-roadmap modes mean the parent owns the context.
+    if (!inline && props.mode !== "free-roadmap" && !bookingId && !email) router.replace("/book");
+  }, [inline, props.mode, bookingId, email, router]);
 
   // initialize each field with the right empty type
   const initial: FormState = React.useMemo(() => {
@@ -86,12 +121,20 @@ export function QuestionnaireForm() {
     setSubmitting(true);
     setGenerating(true);
     try {
-      const payload: Record<string, unknown> = { booking_id: bookingId, email: email || undefined };
+      const isFreeRoadmap = props.mode === "free-roadmap";
+      const payload: Record<string, unknown> = isFreeRoadmap
+        ? {
+            name: props.leadIntake?.name ?? "",
+            email: props.leadIntake?.email ?? email,
+            company: props.leadIntake?.company ?? "",
+          }
+        : { booking_id: bookingId, email: email || undefined };
       for (const f of FIELDS) {
         payload[f.id] = state[f.id];
         if (f.otherField && state[f.otherField.id]) payload[f.otherField.id] = state[f.otherField.id];
       }
-      const r = await fetch("/api/questionnaire", {
+      const endpoint = isFreeRoadmap ? "/api/free-roadmap" : "/api/questionnaire";
+      const r = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -100,9 +143,13 @@ export function QuestionnaireForm() {
         const d = await r.json().catch(() => ({}));
         throw new Error((d as { error?: string }).error ?? "Submission failed");
       }
-      // pin progress + redirect
-      setGenStage([100, "Done. Redirecting…", 100]);
-      setTimeout(() => router.push("/thanks?intent=questionnaire"), 600);
+      // pin progress, then either hand back to parent or redirect
+      setGenStage([100, "Done.", 100]);
+      if (inline && props.onComplete) {
+        setTimeout(() => props.onComplete!("submitted"), 600);
+      } else {
+        setTimeout(() => router.push("/thanks?intent=questionnaire"), 600);
+      }
     } catch (e) {
       setGenerating(false);
       setSubmitting(false);
@@ -119,9 +166,9 @@ export function QuestionnaireForm() {
     const remaining = Math.max(0, Math.round(75 - genElapsed));
     const eta = remaining > 5 ? `~${remaining} seconds remaining` : "Wrapping up…";
     return (
-      <div className="bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-9" aria-live="polite">
+      <div className="bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-9" aria-live="polite" aria-busy="true">
         <div className="relative w-20 h-20 rounded-2xl bg-blue/10 border border-blue/30 grid place-items-center mx-auto mb-5">
-          <span className="absolute inset-[-4px] rounded-3xl border-2 border-blue-2 opacity-0 animate-[gen-ring_2.4s_ease-out_infinite]" aria-hidden="true" />
+          <span className="absolute inset-[-4px] rounded-3xl border-2 border-blue-2 opacity-0 motion-safe:animate-[gen-ring_2.4s_ease-out_infinite]" aria-hidden="true" />
           <svg viewBox="0 0 24 24" width={36} height={36} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="text-blue-2">
             <path d="M9.663 17h4.673M12 3v1M5.6 5.6l.7.7M3 12h1M20 12h1M18.4 5.6l-.7.7M8 14a4 4 0 1 1 8 0c0 1.5-.5 2-1 3h-6c-.5-1-1-1.5-1-3z" />
           </svg>
@@ -131,7 +178,7 @@ export function QuestionnaireForm() {
           Claude is reading your responses and mapping the highest-leverage workflows we&apos;d build for you. This usually takes <strong className="text-text-1">30 to 60 seconds</strong>.
         </p>
         <div className="mt-5 mx-auto max-w-lg flex items-center justify-center gap-2.5 bg-bg-2 border border-line rounded-xl py-3.5 px-4 font-mono text-[13px]">
-          <span className="w-2 h-2 rounded-full bg-blue animate-pulse shrink-0" />
+          <span className="w-2 h-2 rounded-full bg-blue motion-safe:animate-pulse shrink-0" />
           <span className="text-text-1">{genStage[1]}</span>
         </div>
         <div className="mt-4 mx-auto max-w-lg h-1 rounded-full bg-bg-3 overflow-hidden">
@@ -150,6 +197,19 @@ export function QuestionnaireForm() {
 
   return (
     <div className="bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-9">
+      {/* Inline-mode escape hatch — matches the legacy "Skip for now" affordance. */}
+      {inline && (
+        <div className="flex justify-end mb-3">
+          <button
+            type="button"
+            onClick={() => props.onComplete && props.onComplete("skipped")}
+            className="text-text-3 text-[12.5px] hover:text-text-1 underline-offset-2 hover:underline"
+          >
+            Skip the questionnaire — we&apos;ll email you a link
+          </button>
+        </div>
+      )}
+
       {/* Stepper */}
       <div className="flex items-center gap-2.5 mb-7 font-mono text-[11px] uppercase tracking-[0.08em] text-text-3">
         <span>Question {step} / {TOTAL_QUESTIONS}</span>
