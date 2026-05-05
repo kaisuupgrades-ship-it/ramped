@@ -11,9 +11,35 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://www.30dayramp.com/about" },
 };
 
+/** Person JSON-LD for Andrew — the founder. Helps Google's knowledge
+ *  panel understand who's behind the company. */
+const aboutJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      name: "Andrew Yoon",
+      jobTitle: "Founder",
+      worksFor: { "@type": "Organization", name: "Ramped AI", url: "https://www.30dayramp.com" },
+      description:
+        "Founder of Ramped AI. Operator with 10+ years running distribution, fulfillment, and e-commerce businesses; founded Xtractor Depot before building Ramped AI to deploy the AI agents he wished he'd had.",
+    },
+    {
+      "@type": "AboutPage",
+      url: "https://www.30dayramp.com/about",
+      name: "About Ramped AI",
+      isPartOf: { "@type": "WebSite", url: "https://www.30dayramp.com" },
+    },
+  ],
+};
+
 export default function AboutPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutJsonLd) }}
+      />
       {/* Hero */}
       <section className="px-6 pt-16 pb-12">
         <div className="max-w-[1180px] mx-auto">
