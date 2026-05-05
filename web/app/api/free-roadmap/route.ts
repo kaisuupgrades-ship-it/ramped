@@ -64,11 +64,13 @@ export async function POST(req: NextRequest) {
 
   // ── 1. Save lead. Pull pain_points + stack out of the questionnaire so
   //   the leads admin view still has structured columns (legacy parity).
-  const painPoints = Array.isArray(qData.pains) ? qData.pains : [];
+  //   Field IDs match questionnaire-fields.ts: pain_points, tools, crm,
+  //   email_provider, bottleneck (NOT pains/platforms/email_system/anything_else).
+  const painPoints = Array.isArray(qData.pain_points) ? qData.pain_points : [];
   const stack: string[] = [];
-  if (Array.isArray(qData.platforms)) stack.push(...(qData.platforms as string[]));
+  if (Array.isArray(qData.tools)) stack.push(...(qData.tools as string[]));
   if (typeof qData.crm === "string" && qData.crm) stack.push(qData.crm);
-  if (typeof qData.email_system === "string" && qData.email_system) stack.push(qData.email_system);
+  if (typeof qData.email_provider === "string" && qData.email_provider) stack.push(qData.email_provider);
 
   let leadId: string | null = null;
   const leadRes = await supabaseRest<{ id: string }[]>("POST", "/leads", {
@@ -79,7 +81,7 @@ export async function POST(req: NextRequest) {
     team_size: typeof qData.team_size === "string" ? qData.team_size : null,
     pain_points: painPoints,
     stack,
-    notes: typeof qData.anything_else === "string" ? qData.anything_else : "",
+    notes: typeof qData.bottleneck === "string" ? qData.bottleneck : "",
     source: "free-roadmap",
   });
   if (leadRes.ok && Array.isArray(leadRes.data) && leadRes.data[0]?.id) {
@@ -100,7 +102,7 @@ export async function POST(req: NextRequest) {
       tier: null,
       team_size: typeof qData.team_size === "string" ? qData.team_size : null,
       role: null,
-      notes: typeof qData.anything_else === "string" ? qData.anything_else : null,
+      notes: typeof qData.bottleneck === "string" ? qData.bottleneck : null,
     },
     qData,
   );
