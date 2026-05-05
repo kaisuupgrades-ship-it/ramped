@@ -1,14 +1,32 @@
 "use client";
 
 /**
- * Homepage interactive demo. Pick a playbook → bot types → process steps
- * activate one-by-one with a fill bar → integrations light up → success card
- * with metrics + "agent learned" insight + branch buttons.
+ * Homepage interactive demo — Slack-native multi-channel.
  *
- * Ported from the legacy index.html state machine. Keeps the V4 dark visuals.
+ * The user lands in #general where Ramped Bot offers 4 playbooks. Picking one
+ * runs the full agent state machine inline (typing → bot intro → process
+ * card with per-step timing + spinning indicators → integration pills going
+ * live → progress bar → success card with metrics + "agent learned" insight
+ * → branch buttons).
+ *
+ * On completion the agent ALSO posts a clean summary into the target channel
+ * (#sales-pod / #inventory-alerts / #finance-leads / #deal-room), an unread
+ * badge appears on that channel in the sidebar, and the success card gets a
+ * "View in #channel →" jump link. Channels persist across runs so a user
+ * who tries multiple playbooks ends up with a populated workspace.
+ *
+ * Other channels show pre-populated ambient activity (real-feeling history)
+ * plus any agent posts from this session. Switching channels mid-run is OK
+ * — the workflow keeps progressing in the background.
  */
 import * as React from "react";
 import Link from "next/link";
+
+// ============================================================================
+// Types
+// ============================================================================
+
+type ChannelId = "general" | "sales-pod" | "deal-room" | "finance-leads" | "inventory-alerts";
 
 type IntegrationId = "hubspot" | "clearbit" | "calendar" | "slack" | "netsuite" | "quickbooks" | "gong";
 
@@ -38,7 +56,53 @@ interface Workflow {
   metrics: Metric[];
   aha: string;
   detail: string;
+  /** Where the clean post lands when this workflow completes. */
+  targetChannelId: Exclude<ChannelId, "general">;
+  /** One-line headline used inside the cross-channel post. */
+  channelPostTitle: string;
+  /** One-line body used inside the cross-channel post. */
+  channelPostBody: string;
+  /** Subset of metrics shown inline in the cross-channel post. */
+  channelPostMetrics: Metric[];
 }
+
+type StepState = "pending" | "active" | "done";
+
+interface RunState {
+  workflow: Workflow;
+  stepStates: StepState[];
+  liveIntegrations: Set<IntegrationId>;
+  fillPct: number;
+  showTyping: boolean;
+  showIntro: boolean;
+  showProcess: boolean;
+  showSuccess: boolean;
+  showCrossPost: boolean;
+  showBranches: boolean;
+}
+
+interface AmbientMsg {
+  id: string;
+  author: string;
+  initial: string;
+  isBot?: boolean;
+  /** Avatar bg color for non-bot users. */
+  avatarBg?: string;
+  relativeTime: string;
+  text: string;
+  /** Optional rich attachment (used for agent posts). */
+  attachment?: {
+    title: string;
+    metrics: Metric[];
+    sourceWorkflowId?: Workflow["id"];
+  };
+  /** Marks this as a session post (vs pre-existing ambient). */
+  fromThisSession?: boolean;
+}
+
+// ============================================================================
+// Workflows
+// ============================================================================
 
 const WORKFLOWS: Workflow[] = [
   {
@@ -66,6 +130,13 @@ const WORKFLOWS: Workflow[] = [
     ],
     aha: "Agent learned from your last 12 closed-won deals — Sara fits the profile of a 32-day cycle, so I queued a tighter follow-up cadence.",
     detail: "Sent a Loom recap to Sara, looped in <strong>@marcus</strong> as AE, and dropped the Northwind brief into the deal record. Next touch fires in 26 hours if no reply.",
+    targetChannelId: "sales-pod",
+    channelPostTitle: "New lead routed: Sara Chen, Northwind Logistics",
+    channelPostBody: "Enriched, scored 94/100, meeting booked Thursday. <strong>@marcus</strong> assigned. Loom recap sent.",
+    channelPostMetrics: [
+      { l: "Time to first touch", v: "47s", c: "accent" },
+      { l: "Pipeline added", v: "$12,400", c: "green" },
+    ],
   },
   {
     id: "inventory",
@@ -92,6 +163,13 @@ const WORKFLOWS: Workflow[] = [
     ],
     aha: "Three SKUs hit a seasonality spike I haven't seen before — paused those for a human review instead of auto-firing.",
     detail: "POs sit in <code>Pending Approval</code> in NetSuite. The 3 flagged items are in <strong>#inventory-alerts</strong> with my reasoning attached.",
+    targetChannelId: "inventory-alerts",
+    channelPostTitle: "Inventory pass complete — 62 SKUs reordered",
+    channelPostBody: "POs in NetSuite pending approval. <strong>3 SKUs flagged</strong> for human review (seasonality spike).",
+    channelPostMetrics: [
+      { l: "POs generated", v: "62", c: "accent" },
+      { l: "Stockouts prevented", v: "$84,200", c: "green" },
+    ],
   },
   {
     id: "finance",
@@ -118,6 +196,13 @@ const WORKFLOWS: Workflow[] = [
     ],
     aha: "Spotted a recurring duplicate from one vendor across June and July — I held those out and flagged for AP review before they hit the memo.",
     detail: "Memo and charts are in <strong>#finance-leads</strong>. Two notes added for the CFO: <strong>OpEx</strong> ran hot on cloud spend, and <strong>headcount</strong> came in under by $86k.",
+    targetChannelId: "finance-leads",
+    channelPostTitle: "Q3 close packet ready",
+    channelPostBody: "Variance memo + board-ready charts attached. <strong>+4.2% vs plan.</strong> CFO notes inline.",
+    channelPostMetrics: [
+      { l: "Variance vs plan", v: "+4.2%", c: "green" },
+      { l: "Memo turnaround", v: "9 min", c: "accent" },
+    ],
   },
   {
     id: "sales",
@@ -144,6 +229,13 @@ const WORKFLOWS: Workflow[] = [
     ],
     aha: "Their CTO mentioned a 6-week procurement freeze — I flagged the timeline and pre-built a phased rollout option for your follow-up.",
     detail: "Updated <strong>Acme Robotics — Pilot</strong> in HubSpot. Follow-up email is in your drafts. Two flags: budget signed-off, but legal review may add 2 weeks.",
+    targetChannelId: "deal-room",
+    channelPostTitle: "Acme Robotics qualified — Stage 3",
+    channelPostBody: "MEDDIC <strong>78%</strong>. $148k deal. Champion confirmed. Procurement freeze flagged for Friday&apos;s call.",
+    channelPostMetrics: [
+      { l: "MEDDIC score", v: "78%", c: "accent" },
+      { l: "Deal size", v: "$148k", c: "green" },
+    ],
   },
 ];
 
@@ -157,19 +249,57 @@ const IMETA: Record<IntegrationId, { l: string; a: string; bg: string }> = {
   gong: { l: "Gong", a: "G", bg: "#ef4444" },
 };
 
-type StepState = "pending" | "active" | "done";
+// ============================================================================
+// Channel ambient activity (pre-existing messages — make it feel lived-in)
+// ============================================================================
 
-interface RunState {
-  workflow: Workflow;
-  stepStates: StepState[];
-  liveIntegrations: Set<IntegrationId>;
-  fillPct: number;
-  showTyping: boolean;
-  showIntro: boolean;
-  showProcess: boolean;
-  showSuccess: boolean;
-  showBranches: boolean;
-}
+const CHANNEL_LABELS: Record<ChannelId, string> = {
+  general: "general",
+  "sales-pod": "sales-pod",
+  "deal-room": "deal-room",
+  "finance-leads": "finance-leads",
+  "inventory-alerts": "inventory-alerts",
+};
+
+const CHANNEL_DESCRIPTIONS: Record<ChannelId, string> = {
+  general: "Northwind workspace · all signal flows here",
+  "sales-pod": "AEs, sales ops, ICP playbooks",
+  "deal-room": "Active opportunities + handoffs",
+  "finance-leads": "Close cycle, variance, board prep",
+  "inventory-alerts": "Stock thresholds, reorders, supplier signal",
+};
+
+const AMBIENT: Record<ChannelId, AmbientMsg[]> = {
+  general: [
+    { id: "g1", author: "Andrew", initial: "A", avatarBg: "#fb923c", relativeTime: "4d ago", text: "team — Slack is our source of truth now. all signal flows through here." },
+    { id: "g2", author: "Ramped Bot", initial: "", isBot: true, relativeTime: "yesterday", text: "Daily summary: 3 deals advanced, 2 stalled, 1 lost. Full thread in <strong>#sales-pod</strong>." },
+    { id: "g3", author: "Marcus", initial: "M", avatarBg: "#3b82f6", relativeTime: "12m ago", text: "@ramped-bot can you handle the inbound from the demo form? Sara Chen — looks legit." },
+  ],
+  "sales-pod": [
+    { id: "sp1", author: "Sara", initial: "S", avatarBg: "#a855f7", relativeTime: "2d ago", text: "Q4 ICP playbook is live. Old one archived." },
+    { id: "sp2", author: "Ramped Bot", initial: "", isBot: true, relativeTime: "8h ago", text: "Scored <strong>11 new leads</strong> overnight — 3 hot, 4 warm, 4 cold. Hot ones queued for AE review." },
+    { id: "sp3", author: "Marcus", initial: "M", avatarBg: "#3b82f6", relativeTime: "1h ago", text: "Acme Robotics call moved to Friday — heads up." },
+  ],
+  "deal-room": [
+    { id: "dr1", author: "Ramped Bot", initial: "", isBot: true, relativeTime: "yesterday", text: "<strong>Acme Robotics</strong> → Stage 2. Champion: Mark Vargas (CTO)." },
+    { id: "dr2", author: "Marcus", initial: "M", avatarBg: "#3b82f6", relativeTime: "5h ago", text: "Pinnacle contract sent. Need legal review by EOD." },
+    { id: "dr3", author: "Lina", initial: "L", avatarBg: "#34d399", relativeTime: "1h ago", text: "Acme procurement said 6-week freeze. We have a workaround?" },
+  ],
+  "finance-leads": [
+    { id: "f1", author: "Andrew", initial: "A", avatarBg: "#fb923c", relativeTime: "4d ago", text: "Q3 close target: <strong>Friday</strong>. Need actuals + variance walk by then." },
+    { id: "f2", author: "Ramped Bot", initial: "", isBot: true, relativeTime: "2d ago", text: "Reconciliation queue: 1,247 items remaining. Working through them now." },
+    { id: "f3", author: "Priya", initial: "P", avatarBg: "#60a5fa", relativeTime: "yesterday", text: "All AP entries clean. Ready for close." },
+  ],
+  "inventory-alerts": [
+    { id: "i1", author: "Ramped Bot", initial: "", isBot: true, relativeTime: "6d ago", text: "Weekly pass — 18 SKUs flagged, 12 reordered automatically. Full diff in thread." },
+    { id: "i2", author: "Ramped Bot", initial: "", isBot: true, relativeTime: "3d ago", text: "<strong>ALERT:</strong> SKU XR-4421 below safety stock. Reorder queued." },
+    { id: "i3", author: "Devon", initial: "D", avatarBg: "#f59e0b", relativeTime: "yesterday", text: "Acknowledged — supplier confirmed 5-day lead." },
+  ],
+};
+
+// ============================================================================
+// Helpers
+// ============================================================================
 
 function stamp(): string {
   const d = new Date();
@@ -191,11 +321,38 @@ function wait(ms: number, signal: AbortSignal): Promise<void> {
   });
 }
 
+function emptyChannelMap<T>(make: () => T): Record<ChannelId, T> {
+  return {
+    general: make(),
+    "sales-pod": make(),
+    "deal-room": make(),
+    "finance-leads": make(),
+    "inventory-alerts": make(),
+  };
+}
+
+const CHANNEL_ORDER: ChannelId[] = ["general", "sales-pod", "deal-room", "finance-leads", "inventory-alerts"];
+
+// ============================================================================
+// Component
+// ============================================================================
+
 export function HomepageDemo() {
+  const [activeChannelId, setActiveChannelId] = React.useState<ChannelId>("general");
   const [run, setRun] = React.useState<RunState | null>(null);
   const [running, setRunning] = React.useState(false);
-  const [reduceMotion, setReduceMotion] = React.useState(false);
   const [introTime] = React.useState<string>("9:14 AM");
+
+  // Cross-channel state. `sessionPosts` are agent posts that landed during
+  // this session; they appear in their target channel (newest at the bottom).
+  const [sessionPosts, setSessionPosts] = React.useState<Record<ChannelId, AmbientMsg[]>>(
+    () => emptyChannelMap<AmbientMsg[]>(() => []),
+  );
+  const [unreads, setUnreads] = React.useState<Record<ChannelId, number>>(
+    () => emptyChannelMap<number>(() => 0),
+  );
+
+  const [reduceMotion, setReduceMotion] = React.useState(false);
   const abortRef = React.useRef<AbortController | null>(null);
   const streamRef = React.useRef<HTMLDivElement>(null);
 
@@ -207,7 +364,7 @@ export function HomepageDemo() {
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
-  // Auto-scroll the chat stream when new content lands.
+  // Auto-scroll to bottom whenever the active stream content updates.
   React.useEffect(() => {
     if (streamRef.current) {
       streamRef.current.scrollTop = streamRef.current.scrollHeight;
@@ -216,6 +373,11 @@ export function HomepageDemo() {
 
   React.useEffect(() => () => abortRef.current?.abort(), []);
 
+  function selectChannel(id: ChannelId) {
+    setActiveChannelId(id);
+    setUnreads((u) => (u[id] ? { ...u, [id]: 0 } : u));
+  }
+
   async function runWF(wf: Workflow) {
     if (running) return;
     setRunning(true);
@@ -223,6 +385,10 @@ export function HomepageDemo() {
     const ctl = new AbortController();
     abortRef.current = ctl;
     const speed = reduceMotion ? 4 : 1;
+
+    // Reset to #general so the run is visible to the user.
+    setActiveChannelId("general");
+    setUnreads((u) => (u.general ? { ...u, general: 0 } : u));
 
     const initial: RunState = {
       workflow: wf,
@@ -233,6 +399,7 @@ export function HomepageDemo() {
       showIntro: false,
       showProcess: false,
       showSuccess: false,
+      showCrossPost: false,
       showBranches: false,
     };
     setRun(initial);
@@ -290,7 +457,26 @@ export function HomepageDemo() {
 
       await wait(350 / speed, ctl.signal);
       setRun((r) => r && { ...r, showSuccess: true });
-      await wait(400 / speed, ctl.signal);
+      await wait(550 / speed, ctl.signal);
+
+      // Cross-post into the target channel: append a "from this session"
+      // bot message + bump the channel's unread badge if not currently viewed.
+      const post: AmbientMsg = {
+        id: `${wf.id}-${Date.now()}`,
+        author: "Ramped Bot",
+        initial: "",
+        isBot: true,
+        relativeTime: "just now",
+        text: wf.channelPostBody,
+        attachment: { title: wf.channelPostTitle, metrics: wf.channelPostMetrics, sourceWorkflowId: wf.id },
+        fromThisSession: true,
+      };
+      setSessionPosts((p) => ({ ...p, [wf.targetChannelId]: [...p[wf.targetChannelId], post] }));
+      // Channel posts are landing while user is in #general, so always badge.
+      setUnreads((u) => ({ ...u, [wf.targetChannelId]: u[wf.targetChannelId] + 1 }));
+
+      setRun((r) => r && { ...r, showCrossPost: true });
+      await wait(300 / speed, ctl.signal);
       setRun((r) => r && { ...r, showBranches: true });
     } catch (e) {
       if (!(e instanceof DOMException && e.name === "AbortError")) throw e;
@@ -305,9 +491,17 @@ export function HomepageDemo() {
     setRunning(false);
   }
 
+  function jumpToChannel(id: ChannelId) {
+    selectChannel(id);
+  }
+
+  const isGeneral = activeChannelId === "general";
+  const ambientForActive = AMBIENT[activeChannelId];
+  const sessionForActive = sessionPosts[activeChannelId];
+
   return (
-    <div className="bg-bg-1 border border-line rounded-2xl overflow-hidden grid lg:grid-cols-[240px_1fr] min-h-[480px]">
-      {/* Sidebar */}
+    <div className="bg-bg-1 border border-line rounded-2xl overflow-hidden grid lg:grid-cols-[240px_1fr] min-h-[520px]">
+      {/* ============== Sidebar ============== */}
       <aside className="hidden lg:flex flex-col gap-4 p-4 bg-bg-0 border-r border-line">
         <div className="flex items-center gap-2.5 px-2">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue to-orange grid place-items-center text-[#07090d] font-bold text-sm">N</div>
@@ -316,14 +510,37 @@ export function HomepageDemo() {
             <div className="text-[11px] text-text-3">12 agents online</div>
           </div>
         </div>
+
         <div>
           <div className="text-[10.5px] uppercase tracking-[0.1em] text-text-3 font-semibold px-2.5 py-1.5">Channels</div>
-          {["general", "sales-pod", "deal-room", "finance-leads", "inventory-alerts"].map((c) => (
-            <div key={c} className="flex items-center gap-1.5 px-2.5 py-1.5 text-[13px] text-text-2 hover:text-text-0 hover:bg-bg-2 rounded-md cursor-default">
-              <span className="text-text-3">#</span> {c}
-            </div>
-          ))}
+          {CHANNEL_ORDER.map((c) => {
+            const isActive = activeChannelId === c;
+            const unread = unreads[c];
+            return (
+              <button
+                key={c}
+                type="button"
+                onClick={() => selectChannel(c)}
+                className={`group flex items-center gap-1.5 px-2.5 py-1.5 text-[13px] rounded-md w-full text-left transition-colors ${
+                  isActive
+                    ? "bg-blue/[0.10] text-text-0"
+                    : unread > 0
+                    ? "text-text-0 hover:bg-bg-2"
+                    : "text-text-2 hover:text-text-0 hover:bg-bg-2"
+                }`}
+              >
+                <span className={isActive ? "text-blue-2" : "text-text-3"}>#</span>
+                <span className={unread > 0 && !isActive ? "font-semibold" : ""}>{c}</span>
+                {unread > 0 && (
+                  <span className="ml-auto inline-flex items-center justify-center min-w-[18px] h-[18px] px-1.5 text-[10px] font-mono font-bold rounded-full bg-blue text-white">
+                    {unread}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
+
         <div>
           <div className="text-[10.5px] uppercase tracking-[0.1em] text-text-3 font-semibold px-2.5 py-1.5">AI Agents</div>
           <div className="flex items-center gap-1.5 px-2.5 py-1.5 text-[13px] text-text-0 bg-blue/[0.10] rounded-md">
@@ -331,12 +548,13 @@ export function HomepageDemo() {
             <span className="ml-auto text-[9.5px] font-mono font-bold tracking-wider px-1.5 py-0.5 rounded bg-good/15 text-good">LIVE</span>
           </div>
           <div className="flex items-center gap-1.5 px-2.5 py-1.5 text-[13px] text-text-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-text-3" /> Ops Agent
+            <span className={`w-1.5 h-1.5 rounded-full ${running && run?.workflow.id === "inventory" ? "bg-orange motion-safe:animate-pulse" : "bg-text-3"}`} /> Ops Agent
           </div>
           <div className="flex items-center gap-1.5 px-2.5 py-1.5 text-[13px] text-text-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-text-3" /> Finance Agent
+            <span className={`w-1.5 h-1.5 rounded-full ${running && run?.workflow.id === "finance" ? "bg-purple motion-safe:animate-pulse" : "bg-text-3"}`} /> Finance Agent
           </div>
         </div>
+
         <div className="mt-auto p-3 rounded-xl bg-bg-2 border border-line">
           <div className="text-[11px] text-text-3">Day</div>
           <div className="text-2xl font-bold text-text-0">30 / 30</div>
@@ -344,141 +562,64 @@ export function HomepageDemo() {
         </div>
       </aside>
 
-      {/* Chat */}
+      {/* ============== Chat panel ============== */}
       <div className="flex flex-col min-w-0">
         <header className="border-b border-line px-6 py-3.5 flex items-center gap-3.5 bg-bg-1">
-          <div className="w-9 h-9 rounded-lg bg-white p-1 grid place-items-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="" className="w-full h-full object-contain" />
-          </div>
-          <div className="flex-1">
-            <div className="font-semibold text-[15px] text-text-0">Ramped Bot</div>
-            <div className="text-[12px] text-text-2">Your AI department · trained on Northwind data</div>
-          </div>
+          {isGeneral ? (
+            <>
+              <div className="w-9 h-9 rounded-lg bg-white p-1 grid place-items-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/logo.png" alt="" className="w-full h-full object-contain" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="font-semibold text-[15px] text-text-0 truncate">Ramped Bot</div>
+                <div className="text-[12px] text-text-2 truncate">Your AI department · trained on Northwind data</div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="w-9 h-9 rounded-lg bg-bg-3 border border-line grid place-items-center text-text-0 font-bold">#</div>
+              <div className="flex-1 min-w-0">
+                <div className="font-semibold text-[15px] text-text-0 truncate">{CHANNEL_LABELS[activeChannelId]}</div>
+                <div className="text-[12px] text-text-2 truncate">{CHANNEL_DESCRIPTIONS[activeChannelId]}</div>
+              </div>
+            </>
+          )}
           <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-mono text-good">
             <span className="w-1.5 h-1.5 rounded-full bg-good motion-safe:animate-pulse" /> Online
           </span>
         </header>
 
-        <div ref={streamRef} className="flex-1 px-6 py-5 space-y-5 overflow-y-auto max-h-[640px]">
-          {/* Bot intro (always shown) */}
-          <BotMsg time={introTime}>
-            <div className="text-[14.5px] text-text-1 leading-relaxed">
-              Morning — I&apos;ve been live for <strong className="text-text-0">30 days</strong>. I&apos;ve trained on your Northwind data, mapped your tools, and I&apos;m ready to run real work. <strong className="text-text-0">Pick a playbook</strong> and I&apos;ll execute it end-to-end.
-            </div>
-            {!run && (
-              <div className="mt-3.5 grid sm:grid-cols-2 gap-2 max-w-[560px]">
-                {WORKFLOWS.map((p) => (
-                  <button
-                    key={p.id}
-                    type="button"
-                    disabled={running}
-                    onClick={() => runWF(p)}
-                    className="text-left bg-gradient-to-b from-[rgba(255,255,255,0.04)] to-[rgba(255,255,255,0.01)] border border-line-2 rounded-xl px-3.5 py-3 flex items-center gap-2.5 transition-all duration-150 hover:border-blue hover:bg-blue/[0.06] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <span className="w-8 h-8 rounded-lg grid place-items-center text-base flex-shrink-0" style={{ background: p.iconBg }}>{p.icon}</span>
-                    <span className="flex flex-col leading-tight">
-                      <span className="text-text-0 font-semibold text-[13.5px]">{p.title}</span>
-                      <span className="text-text-3 text-[11.5px] font-mono">{p.subtitle}</span>
-                    </span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </BotMsg>
-
-          {run && (
-            <>
-              <UserMsg text={run.workflow.userPrompt} />
-              {run.showTyping && <TypingMsg />}
-              {run.showIntro && <BotMsg><div className="text-[14.5px] text-text-1 leading-relaxed">{run.workflow.intro}</div></BotMsg>}
-              {run.showProcess && (
-                <div className="pl-12">
-                  <div className="rounded-xl border border-line bg-bg-2 p-4">
-                    <div className="space-y-2">
-                      {run.workflow.steps.map((s, i) => (
-                        <ProcessStep key={i} label={s.l} state={run.stepStates[i]} duration={s.ms} />
-                      ))}
-                    </div>
-                    <div className="mt-3 h-1 rounded-full bg-bg-3 overflow-hidden">
-                      <div className="h-full rounded-full bg-gradient-to-r from-blue to-orange transition-[width] duration-[300ms]" style={{ width: `${run.fillPct}%` }} />
-                    </div>
-                  </div>
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {run.workflow.integrations.map((iid) => {
-                      const meta = IMETA[iid];
-                      const live = run.liveIntegrations.has(iid);
-                      return (
-                        <span
-                          key={iid}
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[12px] font-medium transition-colors ${
-                            live ? "border-good/40 bg-good/[0.08] text-text-0" : "border-line-2 bg-bg-2 text-text-2"
-                          }`}
-                        >
-                          <span className={`w-1.5 h-1.5 rounded-full ${live ? "bg-good motion-safe:animate-pulse" : "bg-text-3"}`} />
-                          <span className="w-4 h-4 rounded grid place-items-center text-[9px] font-bold text-white" style={{ background: meta.bg }}>{meta.a}</span>
-                          {meta.l}
-                        </span>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-              {run.showSuccess && (
-                <BotMsg>
-                  <div className="rounded-xl border border-line bg-bg-2 p-4">
-                    <div className="flex items-center gap-2.5 mb-3">
-                      <span className="w-6 h-6 rounded-full bg-good grid place-items-center flex-shrink-0">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#07090d" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                      </span>
-                      <div className="font-semibold text-[14.5px] text-text-0">{run.workflow.successTitle}</div>
-                    </div>
-                    <div className="grid sm:grid-cols-3 gap-2.5">
-                      {run.workflow.metrics.map((m) => (
-                        <div key={m.l} className="rounded-lg border border-line bg-bg-3 px-3 py-2.5">
-                          <div className="text-[10.5px] uppercase tracking-[0.06em] text-text-3 font-semibold">{m.l}</div>
-                          <div className={`mt-1 text-[18px] font-bold tracking-tight tabular-nums ${m.c === "accent" ? "text-orange-2" : m.c === "green" ? "text-good" : "text-text-0"}`}>{m.v}</div>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="mt-3 px-3.5 py-2.5 rounded-r-lg border-l-2 border-orange bg-orange/[0.06] text-[13px] text-text-1 flex gap-2">
-                      <span className="text-orange">✦</span>
-                      <span><strong className="text-orange-2">Agent learned from your data —</strong> {run.workflow.aha}</span>
-                    </div>
-                    <div
-                      className="mt-3 text-[13.5px] text-text-1 leading-snug [&_strong]:text-text-0 [&_code]:font-mono [&_code]:text-[12.5px] [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:bg-bg-3 [&_code]:border [&_code]:border-line"
-                      dangerouslySetInnerHTML={{ __html: run.workflow.detail }}
-                    />
-                  </div>
-                </BotMsg>
-              )}
-              {run.showBranches && (
-                <div className="pl-12 flex flex-wrap gap-2">
-                  <Link
-                    href="/book"
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-orange text-[#07090d] font-semibold text-[13px] hover:bg-orange-2 transition-colors"
-                  >
-                    📅 Book a discovery call
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={reset}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-bg-2 border border-line-2 text-text-1 font-semibold text-[13px] hover:bg-bg-3 hover:text-text-0 transition-colors"
-                  >
-                    ↻ Run another playbook
-                  </button>
-                </div>
-              )}
-            </>
+        <div ref={streamRef} className="flex-1 px-6 py-5 space-y-5 overflow-y-auto max-h-[680px]">
+          {isGeneral ? (
+            <GeneralChannel
+              run={run}
+              running={running}
+              introTime={introTime}
+              onPickPlaybook={runWF}
+              onReset={reset}
+              onJumpToChannel={jumpToChannel}
+            />
+          ) : (
+            <NonGeneralChannel
+              channelId={activeChannelId}
+              ambient={ambientForActive}
+              session={sessionForActive}
+              running={running}
+              activeWorkflow={run?.workflow}
+            />
           )}
         </div>
 
+        {/* Composer */}
         <div className="border-t border-line px-5 py-3.5">
           <div className="bg-bg-2 border border-line-2 rounded-xl px-3.5 py-2.5 flex items-center gap-2.5">
             <span className="text-text-3">+</span>
-            <span className="flex-1 text-[13.5px] text-text-3">Ask Ramped Bot anything, or pick a playbook above…</span>
+            <span className="flex-1 text-[13.5px] text-text-3 truncate">
+              {isGeneral
+                ? "Ask Ramped Bot anything, or pick a playbook above…"
+                : `Message #${CHANNEL_LABELS[activeChannelId]}`}
+            </span>
             <span className="text-[10.5px] font-mono text-text-3 hidden sm:flex items-center gap-1">
               <kbd className="px-1.5 py-0.5 rounded bg-bg-3 border border-line-2 text-text-2">⌘</kbd>
               <kbd className="px-1.5 py-0.5 rounded bg-bg-3 border border-line-2 text-text-2">K</kbd>
@@ -492,6 +633,291 @@ export function HomepageDemo() {
     </div>
   );
 }
+
+// ============================================================================
+// Channel renderers
+// ============================================================================
+
+function GeneralChannel({
+  run,
+  running,
+  introTime,
+  onPickPlaybook,
+  onReset,
+  onJumpToChannel,
+}: {
+  run: RunState | null;
+  running: boolean;
+  introTime: string;
+  onPickPlaybook: (wf: Workflow) => void;
+  onReset: () => void;
+  onJumpToChannel: (id: ChannelId) => void;
+}) {
+  return (
+    <>
+      {/* Initial bot intro + playbook picker (only when no run is in progress). */}
+      <BotMsg time={introTime}>
+        <div className="text-[14.5px] text-text-1 leading-relaxed">
+          Morning — I&apos;ve been live for <strong className="text-text-0">30 days</strong>. I&apos;ve trained on your Northwind data, mapped your tools, and I&apos;m ready to run real work. <strong className="text-text-0">Pick a playbook</strong> and I&apos;ll execute it end-to-end.
+        </div>
+        {!run && (
+          <div className="mt-3.5 grid sm:grid-cols-2 gap-2 max-w-[560px]">
+            {WORKFLOWS.map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                disabled={running}
+                onClick={() => onPickPlaybook(p)}
+                className="text-left bg-gradient-to-b from-[rgba(255,255,255,0.04)] to-[rgba(255,255,255,0.01)] border border-line-2 rounded-xl px-3.5 py-3 flex items-center gap-2.5 transition-all duration-150 hover:border-blue hover:bg-blue/[0.06] hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span className="w-8 h-8 rounded-lg grid place-items-center text-base flex-shrink-0" style={{ background: p.iconBg }}>{p.icon}</span>
+                <span className="flex flex-col leading-tight">
+                  <span className="text-text-0 font-semibold text-[13.5px]">{p.title}</span>
+                  <span className="text-text-3 text-[11.5px] font-mono">{p.subtitle}</span>
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+      </BotMsg>
+
+      {run && (
+        <>
+          <UserMsg text={run.workflow.userPrompt} />
+          {run.showTyping && <TypingMsg />}
+          {run.showIntro && (
+            <BotMsg>
+              <div className="text-[14.5px] text-text-1 leading-relaxed">{run.workflow.intro}</div>
+            </BotMsg>
+          )}
+          {run.showProcess && (
+            <div className="pl-12">
+              <div className="rounded-xl border border-line bg-bg-2 p-4">
+                <div className="space-y-2">
+                  {run.workflow.steps.map((s, i) => (
+                    <ProcessStep key={i} label={s.l} state={run.stepStates[i]} duration={s.ms} />
+                  ))}
+                </div>
+                <div className="mt-3 h-1 rounded-full bg-bg-3 overflow-hidden">
+                  <div className="h-full rounded-full bg-gradient-to-r from-blue to-orange transition-[width] duration-[300ms]" style={{ width: `${run.fillPct}%` }} />
+                </div>
+              </div>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {run.workflow.integrations.map((iid) => {
+                  const meta = IMETA[iid];
+                  const live = run.liveIntegrations.has(iid);
+                  return (
+                    <span
+                      key={iid}
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[12px] font-medium transition-colors ${
+                        live ? "border-good/40 bg-good/[0.08] text-text-0" : "border-line-2 bg-bg-2 text-text-2"
+                      }`}
+                    >
+                      <span className={`w-1.5 h-1.5 rounded-full ${live ? "bg-good motion-safe:animate-pulse" : "bg-text-3"}`} />
+                      <span className="w-4 h-4 rounded grid place-items-center text-[9px] font-bold text-white" style={{ background: meta.bg }}>{meta.a}</span>
+                      {meta.l}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+          {run.showSuccess && (
+            <BotMsg>
+              <div className="rounded-xl border border-line bg-bg-2 p-4">
+                <div className="flex items-center gap-2.5 mb-3">
+                  <span className="w-6 h-6 rounded-full bg-good grid place-items-center flex-shrink-0">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#07090d" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  </span>
+                  <div className="font-semibold text-[14.5px] text-text-0">{run.workflow.successTitle}</div>
+                </div>
+                <div className="grid sm:grid-cols-3 gap-2.5">
+                  {run.workflow.metrics.map((m) => (
+                    <div key={m.l} className="rounded-lg border border-line bg-bg-3 px-3 py-2.5">
+                      <div className="text-[10.5px] uppercase tracking-[0.06em] text-text-3 font-semibold">{m.l}</div>
+                      <div className={`mt-1 text-[18px] font-bold tracking-tight tabular-nums ${m.c === "accent" ? "text-orange-2" : m.c === "green" ? "text-good" : "text-text-0"}`}>{m.v}</div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-3 px-3.5 py-2.5 rounded-r-lg border-l-2 border-orange bg-orange/[0.06] text-[13px] text-text-1 flex gap-2">
+                  <span className="text-orange">✦</span>
+                  <span><strong className="text-orange-2">Agent learned from your data —</strong> {run.workflow.aha}</span>
+                </div>
+                <div
+                  className="mt-3 text-[13.5px] text-text-1 leading-snug [&_strong]:text-text-0 [&_code]:font-mono [&_code]:text-[12.5px] [&_code]:px-1 [&_code]:py-0.5 [&_code]:rounded [&_code]:bg-bg-3 [&_code]:border [&_code]:border-line"
+                  dangerouslySetInnerHTML={{ __html: run.workflow.detail }}
+                />
+              </div>
+            </BotMsg>
+          )}
+          {run.showCrossPost && (
+            <CrossPostNotice
+              channelId={run.workflow.targetChannelId}
+              title={run.workflow.channelPostTitle}
+              onJump={() => onJumpToChannel(run.workflow.targetChannelId)}
+            />
+          )}
+          {run.showBranches && (
+            <div className="pl-12 flex flex-wrap gap-2">
+              <Link
+                href="/book"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-orange text-[#07090d] font-semibold text-[13px] hover:bg-orange-2 transition-colors"
+              >
+                📅 Book a discovery call
+              </Link>
+              <button
+                type="button"
+                onClick={() => onJumpToChannel(run.workflow.targetChannelId)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-blue/[0.12] border border-blue/40 text-blue-2 font-semibold text-[13px] hover:bg-blue/[0.18] transition-colors"
+              >
+                → View in #{CHANNEL_LABELS[run.workflow.targetChannelId]}
+              </button>
+              <button
+                type="button"
+                onClick={onReset}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-bg-2 border border-line-2 text-text-1 font-semibold text-[13px] hover:bg-bg-3 hover:text-text-0 transition-colors"
+              >
+                ↻ Run another playbook
+              </button>
+            </div>
+          )}
+        </>
+      )}
+    </>
+  );
+}
+
+function NonGeneralChannel({
+  channelId,
+  ambient,
+  session,
+  running,
+  activeWorkflow,
+}: {
+  channelId: ChannelId;
+  ambient: AmbientMsg[];
+  session: AmbientMsg[];
+  running: boolean;
+  activeWorkflow?: Workflow;
+}) {
+  const isWorking = running && activeWorkflow?.targetChannelId === channelId;
+  return (
+    <>
+      {ambient.map((m) => (
+        <ChannelMessage key={m.id} m={m} />
+      ))}
+      {session.length > 0 && (
+        <div className="flex items-center gap-3 text-[10.5px] uppercase tracking-[0.1em] text-blue-2 font-semibold">
+          <span className="h-px flex-1 bg-blue/30" />
+          New
+          <span className="h-px flex-1 bg-blue/30" />
+        </div>
+      )}
+      {session.map((m) => (
+        <ChannelMessage key={m.id} m={m} />
+      ))}
+      {isWorking && (
+        <div className="grid grid-cols-[36px_1fr] gap-3 opacity-80">
+          <div className="w-9 h-9 rounded-lg bg-white p-1 grid place-items-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="" className="w-full h-full object-contain" />
+          </div>
+          <div className="text-[12.5px] text-text-2 italic flex items-center gap-2">
+            <span
+              className="w-3 h-3 rounded-full border-2 border-blue border-t-transparent"
+              style={{ animation: "homepageDemoSpin 0.7s linear infinite" }}
+              aria-hidden="true"
+            />
+            Ramped Bot is working on this channel…
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+function ChannelMessage({ m }: { m: AmbientMsg }) {
+  return (
+    <div className={`grid grid-cols-[36px_1fr] gap-3 ${m.fromThisSession ? "[&_.msg-name]:text-blue-2" : ""}`}>
+      {m.isBot ? (
+        <div className="w-9 h-9 rounded-lg bg-white p-1 grid place-items-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.png" alt="" className="w-full h-full object-contain" />
+        </div>
+      ) : (
+        <div
+          className="w-9 h-9 rounded-lg grid place-items-center font-semibold text-[13px] text-[#07090d]"
+          style={{ background: m.avatarBg ?? "#3b82f6" }}
+        >
+          {m.initial}
+        </div>
+      )}
+      <div>
+        <div className="flex items-center gap-2 mb-1">
+          <span className="msg-name font-semibold text-[14px] text-text-0">{m.author}</span>
+          {m.isBot && <span className="text-[10px] font-mono font-bold tracking-wider px-1.5 py-0.5 rounded bg-blue/15 text-blue-2">AI</span>}
+          <span className="text-[11px] text-text-3">{m.relativeTime}</span>
+        </div>
+        <div
+          className="text-[14.5px] text-text-1 leading-relaxed [&_strong]:text-text-0"
+          dangerouslySetInnerHTML={{ __html: m.text }}
+        />
+        {m.attachment && (
+          <div className="mt-2 rounded-lg border-l-2 border-blue bg-bg-2 px-3.5 py-2.5">
+            <div className="text-[13.5px] font-semibold text-text-0">{m.attachment.title}</div>
+            {m.attachment.metrics.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2">
+                {m.attachment.metrics.map((mt) => (
+                  <div key={mt.l}>
+                    <div className="text-[10px] uppercase tracking-[0.06em] text-text-3 font-semibold">{mt.l}</div>
+                    <div className={`text-[15.5px] font-bold tabular-nums leading-tight ${mt.c === "accent" ? "text-orange-2" : mt.c === "green" ? "text-good" : "text-text-0"}`}>{mt.v}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function CrossPostNotice({
+  channelId,
+  title,
+  onJump,
+}: {
+  channelId: ChannelId;
+  title: string;
+  onJump: () => void;
+}) {
+  return (
+    <div className="pl-12">
+      <button
+        type="button"
+        onClick={onJump}
+        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-blue/[0.08] border border-blue/30 text-[12.5px] hover:bg-blue/[0.14] transition-colors max-w-full text-left"
+      >
+        <span className="w-4 h-4 rounded-full bg-blue/20 grid place-items-center flex-shrink-0">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" className="text-blue-2" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </span>
+        <span className="text-text-1 truncate">
+          Posted <span className="text-text-0 font-semibold">&ldquo;{title}&rdquo;</span> to{" "}
+          <span className="text-blue-2 font-semibold">#{CHANNEL_LABELS[channelId]}</span>
+        </span>
+        <span className="text-blue-2 font-semibold flex-shrink-0">→</span>
+      </button>
+    </div>
+  );
+}
+
+// ============================================================================
+// Building blocks (BotMsg, UserMsg, TypingMsg, ProcessStep)
+// ============================================================================
 
 function BotMsg({ time, children }: { time?: string; children: React.ReactNode }) {
   return (
