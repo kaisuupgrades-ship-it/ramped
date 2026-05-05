@@ -186,7 +186,7 @@ export default function HomePage() {
       {/* Interactive demo — Slack-style preview of what an AI agent looks like in production */}
       <section className="px-6 py-10">
         <div className="max-w-[1180px] mx-auto">
-          <div className="text-center max-w-2xl mx-auto mb-8">
+          <div className="text-center max-w-3xl mx-auto mb-8">
             <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-blue-2 font-semibold mb-3 inline-flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-good motion-safe:animate-pulse" /> Day 30 · Live
             </div>
@@ -236,7 +236,7 @@ export default function HomePage() {
       {/* Timeline / How it works */}
       <section id="how-it-works" className="px-6 py-20">
         <div className="max-w-[1180px] mx-auto">
-          <div className="text-center max-w-2xl mx-auto mb-12">
+          <div className="text-center max-w-3xl mx-auto mb-12">
             <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-blue-2 font-semibold mb-3 inline-flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-orange-2 motion-safe:animate-pulse" /> 30-day deployment · built-in guarantee
             </div>
@@ -255,7 +255,7 @@ export default function HomePage() {
       {/* FAQ */}
       <section id="faq" className="px-6 py-20">
         <div className="max-w-[920px] mx-auto">
-          <div className="text-center max-w-2xl mx-auto mb-10">
+          <div className="text-center max-w-3xl mx-auto mb-10">
             <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-blue-2 font-semibold mb-3">FAQ</div>
             <h2 className="text-[clamp(28px,3.6vw,42px)] tracking-tight font-bold m-0">Common questions</h2>
             <p className="mt-3 text-text-1 leading-relaxed">
@@ -293,11 +293,11 @@ export default function HomePage() {
       </section>
 
       {/* Pricing */}
-      <section id="pricing" className="px-6 py-24">
+      <section id="pricing" className="px-6 py-20">
         <div className="max-w-[1180px] mx-auto">
-          <div className="text-center max-w-2xl mx-auto mb-12">
+          <div className="text-center max-w-3xl mx-auto mb-12">
             <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-blue-2 font-semibold mb-3">Pricing</div>
-            <h2 className="text-[clamp(32px,4.5vw,52px)] leading-[1.1] tracking-tight font-bold m-0">
+            <h2 className="text-[clamp(28px,3.6vw,42px)] tracking-tight font-bold m-0">
               Simple, performance-backed pricing.
             </h2>
             <p className="mt-4 text-text-1 leading-relaxed">
@@ -332,7 +332,7 @@ export default function HomePage() {
         <div className="max-w-[1180px] mx-auto">
           <Card className="text-center p-12 bg-gradient-to-br from-blue/[0.08] via-bg-2 to-orange/[0.06]">
             <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-blue-2 font-semibold mb-4">30-day guarantee · or your money back</div>
-            <h2 className="text-[clamp(32px,4vw,48px)] tracking-tight font-bold m-0 max-w-2xl mx-auto">
+            <h2 className="text-[clamp(28px,3.6vw,42px)] tracking-tight font-bold m-0 max-w-3xl mx-auto">
               Ready to ramp <span className="gradient-text">your AI department?</span>
             </h2>
             <p className="mt-5 max-w-xl mx-auto text-text-1 leading-relaxed">

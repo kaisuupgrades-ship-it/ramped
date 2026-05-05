@@ -57,6 +57,16 @@
   box-sizing: border-box;
 }
 
+/* Global heading line-balancing — prevents the "widow word" pattern where
+   the last 1-2 words of a heading collapse onto their own line. Major
+   browsers (Chrome 114+, Safari 17.4+, Firefox 121+) implement
+   `text-wrap: balance`; older browsers fall back to default wrapping. */
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
 html,
 body {
   margin: 0;
