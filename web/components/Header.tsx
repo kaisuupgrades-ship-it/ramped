@@ -8,7 +8,7 @@ export function Header() {
       <div className="max-w-[1180px] mx-auto px-6 flex items-center justify-between h-[68px]">
         <Link href="/" className="flex items-center gap-2.5 font-bold tracking-tight">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="" className="w-8 h-8 object-contain" />
+          <img src="/logo.png" alt="Ramped AI" className="w-8 h-8 object-contain" />
           <span className="text-text-0">Ramped AI</span>
         </Link>
         <nav aria-label="Primary" className="hidden md:flex items-center gap-7">

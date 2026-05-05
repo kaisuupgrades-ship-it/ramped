@@ -110,7 +110,7 @@ export function ResourcesClient() {
                 key={r.id ?? r.url ?? i}
                 href={r.url || "#"}
                 target="_blank"
-                rel="noopener"
+                rel="noopener noreferrer"
                 className="block bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-2xl p-5 hover:border-line-2 transition-colors"
               >
                 <div className="flex items-center justify-between gap-2 mb-3">

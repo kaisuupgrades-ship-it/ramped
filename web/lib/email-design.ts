@@ -128,3 +128,71 @@ export function emailSignoff({ name = "Jon", extra = "" }: { name?: string; extr
 export function emailSpacer(height: number = 16): string {
   return `<tr><td style="background:#FFFFFF;height:${height}px;line-height:${height}px;font-size:0;">&nbsp;</td></tr>`;
 }
+
+/** Three-column stat grid like "5 / 30 / $0" used in roadmap emails.
+ *  Items: { value, label, accent? }. accent="good" colors the value green;
+ *  default is blue. Email-client safe: tables-only, no flex/grid. */
+export function emailStatsGrid(items: Array<{ value: string; label: string; accent?: "blue" | "good" }>): string {
+  const cells = items.map((it) => {
+    const color = it.accent === "good" ? "#0F7A4B" : "#1F4FFF";
+    return `<td width="${Math.floor(100 / items.length)}%" style="padding:18px 12px;text-align:center;background:#FAFAF7;border:1px solid #E6E4DC;border-radius:10px;vertical-align:top;">
+      <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:30px;line-height:1;letter-spacing:-0.02em;color:${color};">${it.value}</div>
+      <div style="font-family:'Helvetica Neue',Arial,sans-serif;margin-top:8px;font-size:10.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#5B6272;">${it.label}</div>
+    </td>`;
+  }).join('<td width="2%" style="font-size:0;line-height:0;">&nbsp;</td>');
+  return `<tr><td class="ep" style="background:#FFFFFF;padding:6px 36px 22px;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"><tr>${cells}</tr></table>
+  </td></tr>`;
+}
+
+/** Numbered agent card like the legacy roadmap email. Number badge on left,
+ *  title + channel chip + description, and a "Saves X" green callout. */
+export function emailAgentCard({
+  number, title, channel, body, savings,
+}: {
+  number: number;
+  title: string;
+  channel?: string;
+  body: string;
+  savings?: string;
+}): string {
+  return `<tr><td class="ep" style="background:#FFFFFF;padding:0 36px 14px;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="border:1px solid #E6E4DC;border-radius:12px;">
+      <tr>
+        <td width="44" style="vertical-align:top;padding:18px 0 18px 18px;">
+          <div style="width:28px;height:28px;border-radius:14px;background:#1F4FFF;color:#FFFFFF;text-align:center;line-height:28px;font-family:'Helvetica Neue',Arial,sans-serif;font-weight:700;font-size:13px;">${number}</div>
+        </td>
+        <td style="vertical-align:top;padding:18px 18px 18px 12px;">
+          <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
+            <tr>
+              <td style="vertical-align:top;font-family:'Helvetica Neue',Arial,sans-serif;font-weight:700;font-size:15px;color:#0B1220;line-height:1.3;">${title}</td>
+              ${channel ? `<td align="right" style="vertical-align:top;white-space:nowrap;font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;color:#1F4FFF;background:#EEF3FF;border-radius:999px;padding:4px 10px;">${channel}</td>` : ""}
+            </tr>
+          </table>
+          <p style="margin:8px 0 0;font-family:'Helvetica Neue',Arial,sans-serif;font-size:13.5px;color:#374151;line-height:1.55;">${body}</p>
+          ${savings ? `<div style="display:inline-block;margin-top:10px;padding:6px 12px;background:#E6F6EE;border-radius:999px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:11.5px;font-weight:700;color:#0F7A4B;">⏱ Saves ${savings}</div>` : ""}
+        </td>
+      </tr>
+    </table>
+  </td></tr>`;
+}
+
+/** Eyebrow + section heading as a row in the email layout. */
+export function emailSection(eyebrow: string, headline?: string): string {
+  return `<tr><td class="ep" style="background:#FFFFFF;padding:14px 36px 8px;">
+    <p style="margin:0 0 ${headline ? "6px" : "0"};font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#5B6272;">${eyebrow}</p>
+    ${headline ? `<h3 style="margin:0;font-family:'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:18px;line-height:1.3;color:#0B1220;letter-spacing:-0.01em;">${headline}</h3>` : ""}
+  </td></tr>`;
+}
+
+/** Big "your opportunity" callout with quote-style left bar. */
+export function emailOpportunityCallout(quote: string): string {
+  return `<tr><td class="ep" style="background:#FFFFFF;padding:6px 36px 18px;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="background:#EEF3FF;border-left:3px solid #1F4FFF;border-radius:0 10px 10px 0;">
+      <tr><td style="padding:18px 22px;">
+        <p style="margin:0 0 8px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#1F4FFF;">Your opportunity</p>
+        <p style="margin:0;font-family:'Helvetica Neue',Arial,sans-serif;font-style:italic;font-size:14.5px;line-height:1.6;color:#0B1220;">${quote}</p>
+      </td></tr>
+    </table>
+  </td></tr>`;
+}

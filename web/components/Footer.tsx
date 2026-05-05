@@ -8,7 +8,7 @@ export function Footer() {
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="flex items-center gap-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="" className="w-8 h-8 object-contain" />
+            <img src="/logo.png" alt="Ramped AI" className="w-8 h-8 object-contain" />
             <div>
               <div className="font-semibold text-text-0">{site.name}</div>
               <div className="text-text-3 text-[13px]">AI implementation for operating businesses.</div>

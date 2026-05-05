@@ -3,6 +3,10 @@ import { supabaseRest } from "@/lib/supabase";
 import { sendEmail, emailShell } from "@/lib/email";
 import { buildPromptContext, validatePayload } from "@/lib/questionnaire-fields";
 import { site } from "@/lib/site";
+import {
+  wrapEmail, emailHero, emailBody, emailCtaCard, emailSignoff,
+  emailStatsGrid, emailAgentCard, emailSection, emailOpportunityCallout,
+} from "@/lib/email-design";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
@@ -87,20 +91,60 @@ export async function POST(req: NextRequest) {
 
   const customerEmail = (async () => {
     if (analysis.roadmap) {
-      const agentCount = Array.isArray((analysis.roadmap as { top_agents?: unknown[] }).top_agents)
-        ? ((analysis.roadmap as { top_agents: unknown[] }).top_agents.length)
-        : 0;
-      const summary = (analysis.roadmap as { summary?: string }).summary ?? "";
+      const roadmap = analysis.roadmap as {
+        summary?: string;
+        top_agents?: Array<{
+          name?: string;
+          channel?: string;
+          what_it_does?: string;
+          hours_saved?: string;
+          integrations?: string[];
+        }>;
+      };
+      const agents = Array.isArray(roadmap.top_agents) ? roadmap.top_agents : [];
+      const summary = roadmap.summary ?? "";
+
+      const innerRows =
+        emailHero({
+          eyebrow: "Your roadmap",
+          headline: `${escapeHtml(firstName)}, your automation roadmap is ready.`,
+          sub: "Based on your answers — we'll walk through this together on the call.",
+        }) +
+        (summary ? emailOpportunityCallout(escapeHtml(summary)) : "") +
+        emailStatsGrid([
+          { value: String(agents.length || 5), label: "AI Agents" },
+          { value: "30", label: "Day go-live" },
+          { value: "$0", label: "If we miss it", accent: "good" },
+        ]) +
+        emailSection("What we'd build for you") +
+        agents.map((a, i) => emailAgentCard({
+          number: i + 1,
+          title: escapeHtml(a.name ?? `Agent ${i + 1}`),
+          channel: a.channel ? escapeHtml(a.channel) : (Array.isArray(a.integrations) && a.integrations.length ? escapeHtml(a.integrations.slice(0, 2).join(" + ")) : undefined),
+          body: escapeHtml(a.what_it_does ?? ""),
+          savings: a.hours_saved ? escapeHtml(a.hours_saved) : undefined,
+        })).join("") +
+        emailCtaCard({
+          eyebrow: "Next up",
+          title: `We'll walk through this on the call.`,
+          body: "On the discovery call we'll prioritize which agent to ship first, scope the build, and quote you exact pricing. No pressure, no pitch.",
+          ctaHref: `${process.env.SITE_URL ?? "https://www.30dayramp.com"}/book`,
+          ctaLabel: "Confirm or reschedule →",
+        }) +
+        emailSignoff({
+          name: "Jon",
+          extra: "Questions before the call? Just reply to this email — it goes straight to me.",
+        });
+
       const result = await sendEmail({
         to: booking.email,
         subject: `Your automation roadmap is ready, ${firstName}`,
-        html: emailShell(`
-          <h2 style="margin:0 0 12px;font-size:22px;color:#f4f6fa">Your automation roadmap is ready, ${escapeHtml(firstName)}.</h2>
-          <p style="margin:0 0 16px">Based on your answers — we'll walk through this together on the call.</p>
-          ${summary ? `<blockquote style="margin:16px 0;padding:14px 18px;border-left:3px solid #3b82f6;color:#c8d0dc;background:rgba(59,130,246,0.06);border-radius:0 8px 8px 0">"${escapeHtml(summary)}"</blockquote>` : ""}
-          <p style="margin:0 0 16px"><strong style="color:#f4f6fa">${agentCount}</strong> AI agents · 30-day go-live · full refund if we miss it.</p>
-          <p style="margin:24px 0;color:#929bab;font-size:13px">This is a starting point — on the call we'll prioritize what makes sense to ship first. No pressure, no pitch.</p>
-        `),
+        html: wrapEmail({
+          subject: `Your automation roadmap is ready, ${firstName}`,
+          preheader: summary || `${agents.length} AI agents tailored to your stack. 30-day go-live or full refund.`,
+          innerRows,
+          siteUrl: process.env.SITE_URL ?? "https://www.30dayramp.com",
+        }),
       });
       if (!result.ok) console.error("[questionnaire] customer roadmap email failed:", result.error);
       return result;

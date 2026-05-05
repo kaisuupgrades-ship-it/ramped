@@ -218,7 +218,7 @@ function ConfirmationPanel({
             <p className="m-0 mt-2.5 text-[14px] text-text-2 leading-relaxed">
               A calendar invite with the Google Meet link is on its way to <strong className="text-text-1">{phase.email}</strong>.
               {phase.meetLink && (
-                <> You can also join directly: <a href={phase.meetLink} target="_blank" rel="noopener" className="text-blue-2 underline-offset-2 hover:underline">Open Google Meet ↗</a>.</>
+                <> You can also join directly: <a href={phase.meetLink} target="_blank" rel="noopener noreferrer" className="text-blue-2 underline-offset-2 hover:underline">Open Google Meet ↗</a>.</>
               )}
             </p>
           </div>

@@ -151,9 +151,9 @@ export function QuestionnaireForm(props: QuestionnaireFormProps = {}) {
     const remaining = Math.max(0, Math.round(75 - genElapsed));
     const eta = remaining > 5 ? `~${remaining} seconds remaining` : "Wrapping up…";
     return (
-      <div className="bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-9" aria-live="polite">
+      <div className="bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-9" aria-live="polite" aria-busy="true">
         <div className="relative w-20 h-20 rounded-2xl bg-blue/10 border border-blue/30 grid place-items-center mx-auto mb-5">
-          <span className="absolute inset-[-4px] rounded-3xl border-2 border-blue-2 opacity-0 animate-[gen-ring_2.4s_ease-out_infinite]" aria-hidden="true" />
+          <span className="absolute inset-[-4px] rounded-3xl border-2 border-blue-2 opacity-0 motion-safe:animate-[gen-ring_2.4s_ease-out_infinite]" aria-hidden="true" />
           <svg viewBox="0 0 24 24" width={36} height={36} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="text-blue-2">
             <path d="M9.663 17h4.673M12 3v1M5.6 5.6l.7.7M3 12h1M20 12h1M18.4 5.6l-.7.7M8 14a4 4 0 1 1 8 0c0 1.5-.5 2-1 3h-6c-.5-1-1-1.5-1-3z" />
           </svg>
@@ -163,7 +163,7 @@ export function QuestionnaireForm(props: QuestionnaireFormProps = {}) {
           Claude is reading your responses and mapping the highest-leverage workflows we&apos;d build for you. This usually takes <strong className="text-text-1">30 to 60 seconds</strong>.
         </p>
         <div className="mt-5 mx-auto max-w-lg flex items-center justify-center gap-2.5 bg-bg-2 border border-line rounded-xl py-3.5 px-4 font-mono text-[13px]">
-          <span className="w-2 h-2 rounded-full bg-blue animate-pulse shrink-0" />
+          <span className="w-2 h-2 rounded-full bg-blue motion-safe:animate-pulse shrink-0" />
           <span className="text-text-1">{genStage[1]}</span>
         </div>
         <div className="mt-4 mx-auto max-w-lg h-1 rounded-full bg-bg-3 overflow-hidden">

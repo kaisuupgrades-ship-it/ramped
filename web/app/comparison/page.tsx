@@ -65,18 +65,22 @@ export default function ComparisonPage() {
           </p>
 
           <Card className="mt-8 p-0 overflow-hidden">
-            <div className="grid grid-cols-[1.4fr_1.3fr_1.3fr] text-[13px]">
-              <div className="px-5 py-4 font-mono text-[10.5px] uppercase tracking-[0.08em] text-text-3 border-b border-line">Dimension</div>
-              <div className="px-5 py-4 font-mono text-[10.5px] uppercase tracking-[0.08em] text-text-3 border-b border-line border-l border-line">Virtual Assistant</div>
-              <div className="px-5 py-4 font-mono text-[10.5px] uppercase tracking-[0.08em] text-orange-2 font-semibold border-b border-line border-l border-line">Ramped AI agent</div>
-              {dimensions.flatMap((row, i) => {
+            <div role="table" aria-label="VA vs AI agent comparison" className="grid grid-cols-[1.4fr_1.3fr_1.3fr] text-[13px]">
+              <div role="row" className="contents">
+                <div role="columnheader" className="px-5 py-4 font-mono text-[10.5px] uppercase tracking-[0.08em] text-text-3 border-b border-line">Dimension</div>
+                <div role="columnheader" className="px-5 py-4 font-mono text-[10.5px] uppercase tracking-[0.08em] text-text-3 border-b border-line border-l border-line">Virtual Assistant</div>
+                <div role="columnheader" className="px-5 py-4 font-mono text-[10.5px] uppercase tracking-[0.08em] text-orange-2 font-semibold border-b border-line border-l border-line">Ramped AI agent</div>
+              </div>
+              {dimensions.map((row, i) => {
                 const last = i === dimensions.length - 1;
                 const b = last ? "" : "border-b border-line";
-                return [
-                  <div key={`${row.dim}-d`} className={`px-5 py-3.5 text-text-0 font-semibold ${b}`}>{row.dim}</div>,
-                  <div key={`${row.dim}-va`} className={`px-5 py-3.5 text-text-2 border-l border-line ${b}`}>{row.va}</div>,
-                  <div key={`${row.dim}-ai`} className={`px-5 py-3.5 text-orange-2 border-l border-line ${b}`}>{row.ai}</div>,
-                ];
+                return (
+                  <div role="row" key={row.dim} className="contents">
+                    <div role="rowheader" className={`px-5 py-3.5 text-text-0 font-semibold ${b}`}>{row.dim}</div>
+                    <div role="cell" className={`px-5 py-3.5 text-text-2 border-l border-line ${b}`}>{row.va}</div>
+                    <div role="cell" className={`px-5 py-3.5 text-orange-2 border-l border-line ${b}`}>{row.ai}</div>
+                  </div>
+                );
               })}
             </div>
           </Card>
