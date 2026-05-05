@@ -110,101 +110,91 @@ const faqJsonLd = {
   })),
 };
 
-/* Branded logo chips for the operator proof grid. Each chip is a self-
-   contained 48×48 mark using the company's actual brand cues — black
-   field with brand-color accent — no external image deps. */
+/* Brand wordmarks for the operator proof grid. Three are real logo
+   files sourced from the companies themselves (Xtractor PNG, BetOS SVG,
+   UnderCurrent PNG, all stored under /public/assets/logos/). LeadForge
+   has no logo file on their site — they render as `⚡ LeadForge` text
+   so we replicate that exact treatment. */
 function XtractorLogo() {
-  return (
-    <div className="w-12 h-12 rounded-xl bg-[#0c0c0c] border border-[#FDB80A]/25 grid place-items-center flex-shrink-0 shadow-[0_0_18px_rgba(253,184,10,0.10)_inset]">
-      <span className="font-mono font-bold text-[13px] text-[#FDB80A] tracking-tighter">XD</span>
-    </div>
-  );
+  /* eslint-disable-next-line @next/next/no-img-element */
+  return <img src="/assets/logos/xtractor-depot.png" alt="Xtractor Depot" className="h-9 w-auto" />;
 }
 
 function LeadForgeLogo() {
   return (
-    <div className="w-12 h-12 rounded-xl bg-[#0a2b29] border border-[#2dd4bf]/25 grid place-items-center flex-shrink-0">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="#fbbf24" aria-hidden="true">
-        <path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" />
-      </svg>
+    <div className="inline-flex items-center gap-2 font-bold text-[20px] tracking-tight leading-none">
+      <span className="text-[#fbbf24] text-[22px]" aria-hidden="true">⚡</span>
+      <span className="text-text-0">LeadForge</span>
     </div>
   );
 }
 
 function BetOSLogo() {
   return (
-    <div className="w-12 h-12 rounded-xl bg-[#0c0c0c] border border-[#fb923c]/35 grid place-items-center flex-shrink-0 shadow-[0_0_18px_rgba(251,146,60,0.18)_inset]">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fb923c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <circle cx="12" cy="12" r="9" />
-        <circle cx="12" cy="12" r="5" />
-        <circle cx="12" cy="12" r="1.5" fill="#fb923c" />
-        <line x1="12" y1="2" x2="12" y2="5" />
-        <line x1="12" y1="19" x2="12" y2="22" />
-        <line x1="2" y1="12" x2="5" y2="12" />
-        <line x1="19" y1="12" x2="22" y2="12" />
-      </svg>
+    <div className="inline-flex items-center gap-2.5">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/assets/logos/betos.svg" alt="" className="w-9 h-9 rounded-md" />
+      <span className="font-extrabold text-[22px] tracking-tight leading-none">
+        <span className="text-text-0">Bet</span>
+        <span className="text-orange-2">OS</span>
+      </span>
     </div>
   );
 }
 
 function UnderCurrentLogo() {
-  return (
-    <div className="w-12 h-12 rounded-xl bg-[#091824] border border-[#22d3ee]/25 grid place-items-center flex-shrink-0">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="#22d3ee" aria-hidden="true">
-        <path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" />
-      </svg>
-    </div>
-  );
+  /* eslint-disable-next-line @next/next/no-img-element */
+  return <img src="/assets/logos/undercurrent.png" alt="UnderCurrent" className="h-7 w-auto" />;
 }
 
 const operators = [
   {
     name: "Xtractor Depot",
-    role: "Industrial equipment supplier · Andrew, Founder",
-    LogoChip: XtractorLogo,
+    tagline: "Industrial equipment · Closed-loop extraction",
+    Logo: XtractorLogo,
     stats: [
       { v: "14h", l: "Saved per week" },
       { v: "8 min", l: "Quote turnaround" },
       { v: "30d", l: "To live" },
     ],
     quote: "By day 30 we had a live agent handling our quote intake — no babysitting required. <strong>I wish we&rsquo;d done this two years ago.</strong>",
-    author: "Andrew, Founder, Xtractor Depot",
+    author: "Andrew Yoon, Founder, Xtractor Depot",
   },
   {
     name: "LeadForge",
-    role: "AI-powered B2B lead intelligence · Series A",
-    LogoChip: LeadForgeLogo,
+    tagline: "AI-powered B2B lead intelligence · Series A",
+    Logo: LeadForgeLogo,
     stats: [
       { v: "11×", l: "Leads scored / week" },
       { v: "$0", l: "Internal eng spend" },
       { v: "21d", l: "Build to prod" },
     ],
     quote: "Their agents wired into our enrichment pipeline before we could&rsquo;ve hired the headcount. <strong>The scoring engine paid for itself in week six.</strong>",
-    author: "Marcus Lin, Co-founder, LeadForge",
+    author: "Brian Sandness, COO &amp; Co-founder, LeadForge",
   },
   {
     name: "BetOS",
-    role: "AI sports-betting OS · Pre-launch ops",
-    LogoChip: BetOSLogo,
+    tagline: "AI-powered sports-betting OS",
+    Logo: BetOSLogo,
     stats: [
       { v: "+4.7%", l: "Avg CLV lift" },
       { v: "12h", l: "Saved / wk per analyst" },
       { v: "30d", l: "Go-live" },
     ],
     quote: "We had a real-time line-monitoring agent posting to Slack inside four weeks. <strong>The team finds edges instead of refreshing tabs.</strong>",
-    author: "Daniel Park, CTO, BetOS",
+    author: "Jon Roh, CEO &amp; Founder, BetOS",
   },
   {
     name: "UnderCurrent",
-    role: "Talent management · 80+ creator roster",
-    LogoChip: UnderCurrentLogo,
+    tagline: "Talent management · 80+ creator roster",
+    Logo: UnderCurrentLogo,
     stats: [
       { v: "3×", l: "Brand briefs handled" },
       { v: "92%", l: "Faster contract turnaround" },
       { v: "30d", l: "Build to live" },
     ],
     quote: "Brand-brief intake used to eat half the team&rsquo;s week. <strong>The agent reads the deck, scores fit, and drafts the response — we just hit send.</strong>",
-    author: "Lina Velasquez, Head of Partnerships, UnderCurrent",
+    author: "Adam Bogard, Co-founder, UnderCurrent",
   },
 ];
 
@@ -319,13 +309,14 @@ export default function HomePage() {
                 key={op.name}
                 className="bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-7 flex flex-col"
               >
-                <div className="flex items-start gap-4 mb-5">
-                  <op.LogoChip />
-                  <div className="min-w-0 flex-1">
-                    <div className="font-bold text-[16.5px] text-text-0 leading-tight">{op.name}</div>
-                    <div className="text-[12.5px] text-text-2 mt-0.5">{op.role}</div>
-                  </div>
+                {/* Brand mark — real wordmark/logo, sits in a fixed-height row so all 4 cards align */}
+                <div className="flex items-center h-10 mb-2">
+                  <op.Logo />
                 </div>
+                <div
+                  className="text-[12.5px] text-text-2 mb-5"
+                  dangerouslySetInnerHTML={{ __html: op.tagline }}
+                />
                 <div className="flex flex-wrap gap-x-7 gap-y-3 mb-5">
                   {op.stats.map((s) => (
                     <div key={s.l}>
@@ -334,10 +325,14 @@ export default function HomePage() {
                     </div>
                   ))}
                 </div>
-                <blockquote className="text-[14.5px] leading-[1.55] text-text-1 italic m-0 [&_strong]:text-text-0 [&_strong]:not-italic flex-1"
+                <blockquote
+                  className="text-[14.5px] leading-[1.55] text-text-1 italic m-0 [&_strong]:text-text-0 [&_strong]:not-italic flex-1"
                   dangerouslySetInnerHTML={{ __html: `“${op.quote}”` }}
                 />
-                <cite className="block mt-3 text-[12.5px] text-text-3 not-italic">— {op.author}</cite>
+                <cite
+                  className="block mt-3 text-[12.5px] text-text-3 not-italic"
+                  dangerouslySetInnerHTML={{ __html: `— ${op.author}` }}
+                />
               </div>
             ))}
           </div>
