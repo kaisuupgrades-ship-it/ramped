@@ -1,12 +1,82 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/core";
 import { tiers, formatPrice } from "@/lib/pricing";
 import { team, founderNote } from "@/lib/team";
+import { site } from "@/lib/site";
+
+export const metadata: Metadata = {
+  title: { absolute: `${site.name} — ${site.tagline}` },
+  description: site.description,
+  alternates: { canonical: "https://www.30dayramp.com/" },
+};
+
+/** JSON-LD structured data — gives Google + LLM crawlers a clean
+ *  understanding of what this business is and what we sell. */
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Ramped AI",
+    url: "https://www.30dayramp.com",
+    logo: "https://www.30dayramp.com/logo.png",
+    description:
+      "Done-for-you AI implementation. We build, deploy, and run AI agents inside your operating business — automating your highest-friction workflows on a flat monthly fee.",
+    founder: { "@type": "Person", name: "Andrew Yoon" },
+    contactPoint: {
+      "@type": "ContactPoint",
+      email: "jon@30dayramp.com",
+      contactType: "Sales",
+      areaServed: "US",
+      availableLanguage: ["English"],
+    },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Ramped AI",
+    url: "https://www.30dayramp.com",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: "https://www.30dayramp.com/resources?q={search_term_string}",
+      "query-input": "required name=search_term_string",
+    },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    serviceType: "AI Agent Implementation",
+    provider: { "@type": "Organization", name: "Ramped AI" },
+    areaServed: "US",
+    description:
+      "Done-for-you AI agent implementation for small and mid-size operating businesses. Build, deploy, and run AI agents inside your existing tools (Slack, email, CRM) — 30 days from kickoff to live, or full refund.",
+    offers: [
+      {
+        "@type": "Offer",
+        name: "Starter",
+        price: "2500",
+        priceCurrency: "USD",
+        priceSpecification: { "@type": "UnitPriceSpecification", price: "2500", priceCurrency: "USD", unitText: "MONTH" },
+      },
+      {
+        "@type": "Offer",
+        name: "Growth",
+        price: "5000",
+        priceCurrency: "USD",
+        priceSpecification: { "@type": "UnitPriceSpecification", price: "5000", priceCurrency: "USD", unitText: "MONTH" },
+      },
+    ],
+  },
+];
 
 export default function HomePage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Hero */}
       <section className="px-6 pt-16 pb-8">
         <div className="max-w-[1180px] mx-auto">
