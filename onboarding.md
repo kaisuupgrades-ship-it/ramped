@@ -7,6 +7,10 @@
 
 ---
 
+> **⚠️ Two Vercel projects are currently live.** See [Section 2: Two Active Projects](#two-active-projects) before making any changes.
+
+---
+
 ## Table of Contents
 
 1. [What This Is](#1-what-this-is)
@@ -45,7 +49,48 @@ The website does several things:
 
 ---
 
-## 2. Getting Access
+## 2. Two Active Projects
+
+### Overview
+
+There are currently **two separate Vercel deployments** running simultaneously while v2 is being validated. Do not confuse them.
+
+| | **v1 (current production)** | **v2 (in progress)** |
+|---|---|---|
+| **Branch** | `main` | `v2` |
+| **Stack** | Vanilla HTML + Vercel Serverless | Next.js 15 (app in `web/` subfolder) |
+| **Domain** | `30dayramp.com` ← live traffic | Vercel preview URL only |
+| **Status** | 🟢 Production — do not break | 🔧 In development |
+| **Root dir** | `/` (repo root) | `/web` |
+| **Build** | None — static HTML deployed as-is | `npm run build` (Next.js) |
+| **Env vars** | Shared via Vercel (v1 project) | **Separate** env vars in v2 Vercel project |
+
+### The plan
+
+Jon is keeping both live until v2 is confirmed stable, then pointing `30dayramp.com` to v2. **The domain switch has not happened yet.**
+
+### Rules during transition
+
+- **Bug fixes and content changes for the live site** → work on `main` branch, deploy via v1 project
+- **New feature development** → work on `v2` branch, test on v2 Vercel preview URL
+- **Never push v2 code changes to `main`** and vice versa — they're different codebases
+- **Always confirm which project you're deploying to** before running `vercel --prod`
+- **Env vars are not shared** between projects — if you add a new secret for v2, you must add it to the v2 Vercel project specifically
+
+### Working on v2 locally
+
+```bash
+git checkout v2
+cd web
+npm install
+npm run dev    # Next.js dev server at http://localhost:3000
+```
+
+v2 is a standard Next.js 15 app with a build step (`npm run build`). All the "no build step" rules in this doc apply only to v1/main.
+
+---
+
+## Getting Access
 
 You'll need access to the following. Ask Jon for credentials or invitations:
 
