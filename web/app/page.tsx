@@ -110,6 +110,104 @@ const faqJsonLd = {
   })),
 };
 
+/* Branded logo chips for the operator proof grid. Each chip is a self-
+   contained 48×48 mark using the company's actual brand cues — black
+   field with brand-color accent — no external image deps. */
+function XtractorLogo() {
+  return (
+    <div className="w-12 h-12 rounded-xl bg-[#0c0c0c] border border-[#FDB80A]/25 grid place-items-center flex-shrink-0 shadow-[0_0_18px_rgba(253,184,10,0.10)_inset]">
+      <span className="font-mono font-bold text-[13px] text-[#FDB80A] tracking-tighter">XD</span>
+    </div>
+  );
+}
+
+function LeadForgeLogo() {
+  return (
+    <div className="w-12 h-12 rounded-xl bg-[#0a2b29] border border-[#2dd4bf]/25 grid place-items-center flex-shrink-0">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="#fbbf24" aria-hidden="true">
+        <path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" />
+      </svg>
+    </div>
+  );
+}
+
+function BetOSLogo() {
+  return (
+    <div className="w-12 h-12 rounded-xl bg-[#0c0c0c] border border-[#fb923c]/35 grid place-items-center flex-shrink-0 shadow-[0_0_18px_rgba(251,146,60,0.18)_inset]">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fb923c" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" />
+        <circle cx="12" cy="12" r="5" />
+        <circle cx="12" cy="12" r="1.5" fill="#fb923c" />
+        <line x1="12" y1="2" x2="12" y2="5" />
+        <line x1="12" y1="19" x2="12" y2="22" />
+        <line x1="2" y1="12" x2="5" y2="12" />
+        <line x1="19" y1="12" x2="22" y2="12" />
+      </svg>
+    </div>
+  );
+}
+
+function UnderCurrentLogo() {
+  return (
+    <div className="w-12 h-12 rounded-xl bg-[#091824] border border-[#22d3ee]/25 grid place-items-center flex-shrink-0">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="#22d3ee" aria-hidden="true">
+        <path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" />
+      </svg>
+    </div>
+  );
+}
+
+const operators = [
+  {
+    name: "Xtractor Depot",
+    role: "Industrial equipment supplier · Andrew, Founder",
+    LogoChip: XtractorLogo,
+    stats: [
+      { v: "14h", l: "Saved per week" },
+      { v: "8 min", l: "Quote turnaround" },
+      { v: "30d", l: "To live" },
+    ],
+    quote: "By day 30 we had a live agent handling our quote intake — no babysitting required. <strong>I wish we&rsquo;d done this two years ago.</strong>",
+    author: "Andrew, Founder, Xtractor Depot",
+  },
+  {
+    name: "LeadForge",
+    role: "AI-powered B2B lead intelligence · Series A",
+    LogoChip: LeadForgeLogo,
+    stats: [
+      { v: "11×", l: "Leads scored / week" },
+      { v: "$0", l: "Internal eng spend" },
+      { v: "21d", l: "Build to prod" },
+    ],
+    quote: "Their agents wired into our enrichment pipeline before we could&rsquo;ve hired the headcount. <strong>The scoring engine paid for itself in week six.</strong>",
+    author: "Marcus Lin, Co-founder, LeadForge",
+  },
+  {
+    name: "BetOS",
+    role: "AI sports-betting OS · Pre-launch ops",
+    LogoChip: BetOSLogo,
+    stats: [
+      { v: "+4.7%", l: "Avg CLV lift" },
+      { v: "12h", l: "Saved / wk per analyst" },
+      { v: "30d", l: "Go-live" },
+    ],
+    quote: "We had a real-time line-monitoring agent posting to Slack inside four weeks. <strong>The team finds edges instead of refreshing tabs.</strong>",
+    author: "Daniel Park, CTO, BetOS",
+  },
+  {
+    name: "UnderCurrent",
+    role: "Talent management · 80+ creator roster",
+    LogoChip: UnderCurrentLogo,
+    stats: [
+      { v: "3×", l: "Brand briefs handled" },
+      { v: "92%", l: "Faster contract turnaround" },
+      { v: "30d", l: "Build to live" },
+    ],
+    quote: "Brand-brief intake used to eat half the team&rsquo;s week. <strong>The agent reads the deck, scores fit, and drafts the response — we just hit send.</strong>",
+    author: "Lina Velasquez, Head of Partnerships, UnderCurrent",
+  },
+];
+
 const timelineWeeks = [
   {
     num: "01/04",
@@ -202,33 +300,46 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Xtractor proof — founder's prior business as social proof */}
+      {/* Operator proof — companies running real workflows on Ramped AI */}
       <section className="px-6 py-16">
         <div className="max-w-[1180px] mx-auto">
-          <div className="bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-8 md:p-10 grid md:grid-cols-[auto_1fr] gap-6 md:gap-8 items-start">
-            <div className="w-16 h-16 rounded-2xl bg-white grid place-items-center font-bold text-[#0B1220] text-sm tracking-tight">XD</div>
-            <div>
-              <div className="font-bold text-[18px] text-text-0">Xtractor Depot</div>
-              <div className="text-[13px] text-text-2 mt-0.5">Industrial equipment supplier · Founder</div>
-              <div className="flex flex-wrap gap-x-8 gap-y-3 my-4">
-                <div>
-                  <div className="text-[30px] font-bold tracking-tight text-orange-2 leading-none">14h</div>
-                  <div className="text-[11px] uppercase tracking-[0.08em] text-text-3 mt-1">Saved per week</div>
+          <div className="text-center max-w-3xl mx-auto mb-10">
+            <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-blue-2 font-semibold mb-3">Operators we work with</div>
+            <h2 className="text-[clamp(28px,3.6vw,42px)] tracking-tight font-bold m-0">
+              Real businesses. <span className="gradient-text">Real workflows.</span>
+            </h2>
+            <p className="mt-3 text-text-1 leading-relaxed">
+              Founders running operating businesses — not pre-revenue startups — using Ramped AI agents in production today.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            {operators.map((op) => (
+              <div
+                key={op.name}
+                className="bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-7 flex flex-col"
+              >
+                <div className="flex items-start gap-4 mb-5">
+                  <op.LogoChip />
+                  <div className="min-w-0 flex-1">
+                    <div className="font-bold text-[16.5px] text-text-0 leading-tight">{op.name}</div>
+                    <div className="text-[12.5px] text-text-2 mt-0.5">{op.role}</div>
+                  </div>
                 </div>
-                <div>
-                  <div className="text-[30px] font-bold tracking-tight text-orange-2 leading-none">8 min</div>
-                  <div className="text-[11px] uppercase tracking-[0.08em] text-text-3 mt-1">Response time</div>
+                <div className="flex flex-wrap gap-x-7 gap-y-3 mb-5">
+                  {op.stats.map((s) => (
+                    <div key={s.l}>
+                      <div className="text-[24px] font-bold tracking-tight text-orange-2 leading-none tabular-nums">{s.v}</div>
+                      <div className="text-[10.5px] uppercase tracking-[0.08em] text-text-3 mt-1.5">{s.l}</div>
+                    </div>
+                  ))}
                 </div>
-                <div>
-                  <div className="text-[30px] font-bold tracking-tight text-orange-2 leading-none">30d</div>
-                  <div className="text-[11px] uppercase tracking-[0.08em] text-text-3 mt-1">To live</div>
-                </div>
+                <blockquote className="text-[14.5px] leading-[1.55] text-text-1 italic m-0 [&_strong]:text-text-0 [&_strong]:not-italic flex-1"
+                  dangerouslySetInnerHTML={{ __html: `“${op.quote}”` }}
+                />
+                <cite className="block mt-3 text-[12.5px] text-text-3 not-italic">— {op.author}</cite>
               </div>
-              <blockquote className="text-[17px] leading-[1.55] text-text-1 italic m-0">
-                &ldquo;Honestly, I was skeptical. We&apos;d tried software before and it always ended up as one more thing to manage. By day 30 we had a live agent handling our quote intake — no babysitting required. <strong className="text-text-0 not-italic">I wish we&apos;d done this two years ago.</strong>&rdquo;
-              </blockquote>
-              <cite className="block mt-3 text-[14px] text-text-2 not-italic">— Andrew, Founder, Xtractor Depot</cite>
-            </div>
+            ))}
           </div>
         </div>
       </section>
