@@ -26,3 +26,6 @@ Ramped AI Prototype.standalone.html
 
 .vercel
 .env*.local
+
+# Local Claude Code session state (locks, scheduled tasks)
+.claude/
