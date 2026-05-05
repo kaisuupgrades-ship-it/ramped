@@ -6,7 +6,43 @@ export const metadata: Metadata = {
   title: "VA vs AI agents — the honest comparison",
   description: "Same work. Faster. More accurate. A fraction of the cost. And it doesn't quit at month nine for a better offer.",
   alternates: { canonical: "https://www.30dayramp.com/comparison" },
+  openGraph: {
+    type: "article",
+    title: "VA vs AI agents — the honest comparison",
+    description: "Same work. Faster. More accurate. A fraction of the cost. And it doesn't quit at month nine for a better offer.",
+    url: "https://www.30dayramp.com/comparison",
+    images: ["/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "VA vs AI agents — the honest comparison",
+    description: "Same work. Faster. More accurate. A fraction of the cost. And it doesn't quit at month nine for a better offer.",
+    images: ["/og-image.png"],
+  },
 };
+
+/** Article + ItemList JSON-LD for the comparison page. Helps Google
+ *  show this in results for "VA vs AI agents" queries with a richer
+ *  snippet (table-style, sometimes featured-snippet eligible). */
+const comparisonJsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: "VA vs AI agents — the honest comparison",
+    description: "Same work. Faster. More accurate. A fraction of the cost.",
+    author: { "@type": "Organization", name: "Ramped AI" },
+    publisher: { "@type": "Organization", name: "Ramped AI", logo: { "@type": "ImageObject", url: "https://www.30dayramp.com/logo.png" } },
+    mainEntityOfPage: "https://www.30dayramp.com/comparison",
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.30dayramp.com/" },
+      { "@type": "ListItem", position: 2, name: "Compare", item: "https://www.30dayramp.com/comparison" },
+    ],
+  },
+];
 
 const heroStats = [
   { eyebrow: "AVG. ANNUAL COST",  value: "$30K",  sub: "vs $60–90K for a full-time VA team" },
@@ -31,6 +67,10 @@ const dimensions = [
 export default function ComparisonPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(comparisonJsonLd) }}
+      />
       {/* Hero */}
       <section className="px-6 pt-16 pb-10">
         <div className="max-w-[1180px] mx-auto">

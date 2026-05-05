@@ -9,6 +9,19 @@ export const metadata: Metadata = {
   title: "About",
   description: `Meet the team behind ${site.name} — operators who built the AI department they wished they'd had.`,
   alternates: { canonical: "https://www.30dayramp.com/about" },
+  openGraph: {
+    type: "profile",
+    title: `About — ${site.name}`,
+    description: `Meet the team behind ${site.name} — operators who built the AI department they wished they'd had.`,
+    url: "https://www.30dayramp.com/about",
+    images: ["/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `About — ${site.name}`,
+    description: `Meet the team behind ${site.name} — operators who built the AI department they wished they'd had.`,
+    images: ["/og-image.png"],
+  },
 };
 
 /** Person JSON-LD for Andrew — the founder. Helps Google's knowledge
@@ -29,6 +42,13 @@ const aboutJsonLd = {
       url: "https://www.30dayramp.com/about",
       name: "About Ramped AI",
       isPartOf: { "@type": "WebSite", url: "https://www.30dayramp.com" },
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://www.30dayramp.com/" },
+        { "@type": "ListItem", position: 2, name: "About", item: "https://www.30dayramp.com/about" },
+      ],
     },
   ],
 };

@@ -8,7 +8,7 @@ export const site = {
   domain: "30dayramp.com",
   tagline: "Your AI department, live in 30 days.",
   description:
-    "Done-for-you AI implementation. We build, deploy, and run AI agents inside your operating business — automating your highest-friction workflows on a flat monthly fee.",
+    "Done-for-you AI agents inside your operating business — automating your highest-friction workflows on a flat monthly fee. Live in 30 days, or refund.",
   email: "jon@30dayramp.com",
   callDuration: "30-min",
   guaranteeDays: 30,

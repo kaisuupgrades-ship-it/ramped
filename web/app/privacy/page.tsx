@@ -6,6 +6,19 @@ export const metadata: Metadata = {
   title: "Privacy policy",
   description: `How ${site.name} collects, uses, and protects your information.`,
   alternates: { canonical: "https://www.30dayramp.com/privacy" },
+  openGraph: {
+    type: "article",
+    title: `Privacy policy — ${site.name}`,
+    description: `How ${site.name} collects, uses, and protects your information.`,
+    url: "https://www.30dayramp.com/privacy",
+    images: ["/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Privacy policy — ${site.name}`,
+    description: `How ${site.name} collects, uses, and protects your information.`,
+    images: ["/og-image.png"],
+  },
 };
 
 const sections = [

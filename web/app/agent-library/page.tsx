@@ -6,7 +6,45 @@ export const metadata: Metadata = {
   title: "Agent library — what an AI department actually does, all day",
   description: "Four scenarios from production deployments, played out workflow-by-workflow. No demos. No marketing magic. Just the work.",
   alternates: { canonical: "https://www.30dayramp.com/agent-library" },
+  openGraph: {
+    type: "article",
+    title: "Agent library — what an AI department actually does, all day",
+    description: "Four scenarios from production deployments, played out workflow-by-workflow. No demos. No marketing magic. Just the work.",
+    url: "https://www.30dayramp.com/agent-library",
+    images: ["/og-image.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Agent library — what an AI department actually does, all day",
+    description: "Four scenarios from production deployments, played out workflow-by-workflow. No demos. No marketing magic. Just the work.",
+    images: ["/og-image.png"],
+  },
 };
+
+const agentLibraryJsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "AI agent scenarios — four production playbooks",
+    description: "Four scenarios from production deployments: inbound lead routing, inventory reorder, finance close, and sales-call qualification.",
+    url: "https://www.30dayramp.com/agent-library",
+    numberOfItems: 4,
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inbound lead routing" },
+      { "@type": "ListItem", position: 2, name: "Inventory reorder & SKU forecast" },
+      { "@type": "ListItem", position: 3, name: "Finance close & variance memo" },
+      { "@type": "ListItem", position: 4, name: "Sales call qualification (MEDDIC)" },
+    ],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.30dayramp.com/" },
+      { "@type": "ListItem", position: 2, name: "Agent library", item: "https://www.30dayramp.com/agent-library" },
+    ],
+  },
+];
 
 const scenarios = [
   {
@@ -62,6 +100,10 @@ const scenarios = [
 export default function AgentLibraryPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(agentLibraryJsonLd) }}
+      />
       <section className="px-6 pt-16 pb-10">
         <div className="max-w-[1180px] mx-auto">
           <h1 className="text-[clamp(36px,5vw,56px)] tracking-tight font-bold leading-[1.06] m-0 max-w-3xl">
