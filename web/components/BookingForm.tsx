@@ -225,8 +225,11 @@ function ConfirmationPanel({
         </div>
       </div>
 
-      {/* Questionnaire (or "all set" footer once submitted/skipped) */}
-      {phase.questionnaireState === "open" ? (
+      {/* Questionnaire (or "all set" footer once submitted/skipped).
+          If the booking lacked an id (env-vars-missing-on-preview, race, etc.)
+          we can't submit the questionnaire inline — show the "we'll email a
+          link" panel so the user isn't trapped in a 400 loop. */}
+      {phase.questionnaireState === "open" && phase.bookingId ? (
         <>
           <div className="text-center">
             <p className="m-0 font-mono text-[11px] uppercase tracking-[0.08em] text-text-3">One more thing — optional</p>
@@ -242,7 +245,7 @@ function ConfirmationPanel({
           />
         </>
       ) : (
-        <DonePanel intent={phase.questionnaireState} email={phase.email} />
+        <DonePanel intent={phase.questionnaireState === "submitted" ? "submitted" : "skipped"} email={phase.email} />
       )}
 
       <p className="text-center text-[12.5px] text-text-3">

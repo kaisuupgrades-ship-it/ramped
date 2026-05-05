@@ -24,8 +24,23 @@ const GEN_STAGES: ReadonlyArray<readonly [number, string, number]> = [
   [75, "Almost there — just a few more seconds…",    96],
 ];
 
+/** Iconify fallbacks for slugs Simple Icons has dropped (Microsoft, Salesforce,
+ *  Slack, Oracle/NetSuite, Pipedrive — these companies requested removal from
+ *  Simple Icons, so we serve them from the more permissive Iconify "logos" set
+ *  instead. NetSuite is part of Oracle so we serve the Oracle mark for it.) */
+const ICONIFY_FALLBACK: Record<string, string> = {
+  slack: "logos:slack-icon",
+  salesforce: "logos:salesforce",
+  microsoftoutlook: "vscode-icons:file-type-outlook",
+  oracle: "logos:oracle",
+  pipedrive: "logos:pipedrive",
+};
+
 function brandIconUrl(opt: FieldOption): string | null {
   if (!opt.icon) return null;
+  if (ICONIFY_FALLBACK[opt.icon]) {
+    return `https://api.iconify.design/${ICONIFY_FALLBACK[opt.icon]}.svg`;
+  }
   return opt.color
     ? `https://cdn.simpleicons.org/${opt.icon}/${opt.color.replace("#", "")}`
     : `https://cdn.simpleicons.org/${opt.icon}`;
