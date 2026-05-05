@@ -64,6 +64,29 @@ interface Workflow {
   channelPostBody: string;
   /** Subset of metrics shown inline in the cross-channel post. */
   channelPostMetrics: Metric[];
+  /** Reactions teammates leave on the cross-post (animated in shortly after). */
+  channelPostReactions: Reaction[];
+  /** A teammate replies in thread after the post lands. */
+  channelPostReply: Reply;
+}
+
+interface Reaction {
+  emoji: string;
+  count: number;
+  /** True for reactions the current user (You) added — renders highlighted. */
+  byYou?: boolean;
+}
+
+interface Reply {
+  author: string;
+  initial: string;
+  avatarBg: string;
+  /** HTML allowed (for emoji + bolds). */
+  text: string;
+  /** Delay (ms) after the post lands before this teammate "starts typing". */
+  typingDelayMs: number;
+  /** How long the typing dots show before the reply actually lands. */
+  typingDurationMs: number;
 }
 
 type StepState = "pending" | "active" | "done";
@@ -98,6 +121,13 @@ interface AmbientMsg {
   };
   /** Marks this as a session post (vs pre-existing ambient). */
   fromThisSession?: boolean;
+  /** Reactions on this message (rendered as a chip row below). */
+  reactions?: Reaction[];
+  /** Threaded replies under this message. */
+  replies?: AmbientMsg[];
+  /** When set, renders a "<author> is typing…" indicator below the message
+   *  (used briefly before a reply lands). */
+  typingReplyAuthor?: { name: string; initial: string; avatarBg: string };
 }
 
 // ============================================================================
@@ -137,6 +167,19 @@ const WORKFLOWS: Workflow[] = [
       { l: "Time to first touch", v: "47s", c: "accent" },
       { l: "Pipeline added", v: "$12,400", c: "green" },
     ],
+    channelPostReactions: [
+      { emoji: "🔥", count: 3 },
+      { emoji: "👀", count: 2 },
+      { emoji: "🚀", count: 1 },
+    ],
+    channelPostReply: {
+      author: "Marcus",
+      initial: "M",
+      avatarBg: "#3b82f6",
+      text: "🔥 taking it. forwarding the Loom to Sara now and locking the slot.",
+      typingDelayMs: 1200,
+      typingDurationMs: 1400,
+    },
   },
   {
     id: "inventory",
@@ -170,6 +213,19 @@ const WORKFLOWS: Workflow[] = [
       { l: "POs generated", v: "62", c: "accent" },
       { l: "Stockouts prevented", v: "$84,200", c: "green" },
     ],
+    channelPostReactions: [
+      { emoji: "✅", count: 4 },
+      { emoji: "📦", count: 2 },
+      { emoji: "🙏", count: 2 },
+    ],
+    channelPostReply: {
+      author: "Devon",
+      initial: "D",
+      avatarBg: "#f59e0b",
+      text: "Approving the POs on my side. supplier looped in for the 3 flagged SKUs — will report back by EOD.",
+      typingDelayMs: 1300,
+      typingDurationMs: 1600,
+    },
   },
   {
     id: "finance",
@@ -203,6 +259,19 @@ const WORKFLOWS: Workflow[] = [
       { l: "Variance vs plan", v: "+4.2%", c: "green" },
       { l: "Memo turnaround", v: "9 min", c: "accent" },
     ],
+    channelPostReactions: [
+      { emoji: "🙏", count: 4 },
+      { emoji: "✅", count: 3 },
+      { emoji: "🔥", count: 1 },
+    ],
+    channelPostReply: {
+      author: "Priya",
+      initial: "P",
+      avatarBg: "#60a5fa",
+      text: "🙏 saved me four hours. forwarding to Andrew + the CFO now. footnotes look clean.",
+      typingDelayMs: 1100,
+      typingDurationMs: 1500,
+    },
   },
   {
     id: "sales",
@@ -236,6 +305,19 @@ const WORKFLOWS: Workflow[] = [
       { l: "MEDDIC score", v: "78%", c: "accent" },
       { l: "Deal size", v: "$148k", c: "green" },
     ],
+    channelPostReactions: [
+      { emoji: "👀", count: 5 },
+      { emoji: "🚀", count: 2 },
+      { emoji: "💰", count: 1 },
+    ],
+    channelPostReply: {
+      author: "Lina",
+      initial: "L",
+      avatarBg: "#34d399",
+      text: "watching this one — keep me looped on the procurement workaround. legal review timing is the long pole.",
+      typingDelayMs: 1400,
+      typingDurationMs: 1500,
+    },
   },
 ];
 
@@ -339,6 +421,12 @@ const CHANNEL_ORDER: ChannelId[] = ["general", "sales-pod", "deal-room", "financ
 
 export function HomepageDemo() {
   const [activeChannelId, setActiveChannelId] = React.useState<ChannelId>("general");
+  // Live ref so the run effect can read the *current* channel without stale
+  // closure capture (matters for unread-badge logic when the user jumps
+  // into the target channel mid-run).
+  const activeChannelIdRef = React.useRef<ChannelId>(activeChannelId);
+  React.useEffect(() => { activeChannelIdRef.current = activeChannelId; }, [activeChannelId]);
+
   const [run, setRun] = React.useState<RunState | null>(null);
   const [running, setRunning] = React.useState(false);
   const [introTime] = React.useState<string>("9:14 AM");
@@ -461,8 +549,9 @@ export function HomepageDemo() {
 
       // Cross-post into the target channel: append a "from this session"
       // bot message + bump the channel's unread badge if not currently viewed.
+      const postId = `${wf.id}-${Date.now()}`;
       const post: AmbientMsg = {
-        id: `${wf.id}-${Date.now()}`,
+        id: postId,
         author: "Ramped Bot",
         initial: "",
         isBot: true,
@@ -472,12 +561,23 @@ export function HomepageDemo() {
         fromThisSession: true,
       };
       setSessionPosts((p) => ({ ...p, [wf.targetChannelId]: [...p[wf.targetChannelId], post] }));
-      // Channel posts are landing while user is in #general, so always badge.
-      setUnreads((u) => ({ ...u, [wf.targetChannelId]: u[wf.targetChannelId] + 1 }));
+      // Only badge if the user is *not* currently viewing the target channel.
+      if (activeChannelIdRef.current !== wf.targetChannelId) {
+        setUnreads((u) => ({ ...u, [wf.targetChannelId]: u[wf.targetChannelId] + 1 }));
+      }
 
       setRun((r) => r && { ...r, showCrossPost: true });
       await wait(300 / speed, ctl.signal);
       setRun((r) => r && { ...r, showBranches: true });
+
+      // Channel keeps "living" after the agent finishes — first reactions
+      // animate in, then a teammate types and replies in thread. Done in
+      // background so the run promise resolves quickly and the user can
+      // already click branches; if they jump into the target channel the
+      // animation is still going.
+      animatePostLifecycle(wf, postId, ctl.signal, speed).catch((e) => {
+        if (!(e instanceof DOMException && e.name === "AbortError")) throw e;
+      });
     } catch (e) {
       if (!(e instanceof DOMException && e.name === "AbortError")) throw e;
     } finally {
@@ -493,6 +593,60 @@ export function HomepageDemo() {
 
   function jumpToChannel(id: ChannelId) {
     selectChannel(id);
+  }
+
+  /** Mutate one post in `sessionPosts[channelId]` by id. */
+  function updatePost(channelId: ChannelId, postId: string, patch: (m: AmbientMsg) => AmbientMsg) {
+    setSessionPosts((p) => ({
+      ...p,
+      [channelId]: p[channelId].map((m) => (m.id === postId ? patch(m) : m)),
+    }));
+  }
+
+  /** After a cross-post lands: reactions animate in, then a teammate types
+   *  and replies in thread. Aborts cleanly if the run is cancelled. */
+  async function animatePostLifecycle(wf: Workflow, postId: string, signal: AbortSignal, speed: number) {
+    const targetId = wf.targetChannelId;
+
+    // Reactions land first (channel feels social before the reply hits).
+    await wait(900 / speed, signal);
+    updatePost(targetId, postId, (m) => ({ ...m, reactions: wf.channelPostReactions }));
+
+    // Then the teammate "starts typing" in thread.
+    await wait(wf.channelPostReply.typingDelayMs / speed, signal);
+    updatePost(targetId, postId, (m) => ({
+      ...m,
+      typingReplyAuthor: {
+        name: wf.channelPostReply.author,
+        initial: wf.channelPostReply.initial,
+        avatarBg: wf.channelPostReply.avatarBg,
+      },
+    }));
+
+    // Reply lands.
+    await wait(wf.channelPostReply.typingDurationMs / speed, signal);
+    updatePost(targetId, postId, (m) => ({
+      ...m,
+      typingReplyAuthor: undefined,
+      replies: [
+        ...(m.replies ?? []),
+        {
+          id: `${postId}-reply`,
+          author: wf.channelPostReply.author,
+          initial: wf.channelPostReply.initial,
+          avatarBg: wf.channelPostReply.avatarBg,
+          relativeTime: "just now",
+          text: wf.channelPostReply.text,
+        },
+      ],
+    }));
+
+    // If the user is viewing a *different* channel when the reply lands, badge
+    // the target so they notice (the post was already badged on landing, so
+    // we only re-badge if the user has since cleared it by visiting).
+    if (activeChannelIdRef.current !== targetId) {
+      setUnreads((u) => ({ ...u, [targetId]: u[targetId] + 1 }));
+    }
   }
 
   const isGeneral = activeChannelId === "general";
@@ -516,6 +670,10 @@ export function HomepageDemo() {
           {CHANNEL_ORDER.map((c) => {
             const isActive = activeChannelId === c;
             const unread = unreads[c];
+            // Pulse the target channel while the agent is mid-run, before the
+            // cross-post has actually landed — visual cue that the agent is
+            // about to post here.
+            const isAgentTargeting = !!(running && run && run.workflow.targetChannelId === c && !run.showCrossPost);
             return (
               <button
                 key={c}
@@ -531,7 +689,13 @@ export function HomepageDemo() {
               >
                 <span className={isActive ? "text-blue-2" : "text-text-3"}>#</span>
                 <span className={unread > 0 && !isActive ? "font-semibold" : ""}>{c}</span>
-                {unread > 0 && (
+                {isAgentTargeting && !isActive && (
+                  <span className="ml-auto inline-flex items-center gap-1 text-[10px] font-mono font-semibold text-orange-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-orange-2 motion-safe:animate-pulse" />
+                    agent
+                  </span>
+                )}
+                {!isAgentTargeting && unread > 0 && (
                   <span className="ml-auto inline-flex items-center justify-center min-w-[18px] h-[18px] px-1.5 text-[10px] font-mono font-bold rounded-full bg-blue text-white">
                     {unread}
                   </span>
@@ -838,30 +1002,32 @@ function NonGeneralChannel({
   );
 }
 
-function ChannelMessage({ m }: { m: AmbientMsg }) {
+function ChannelMessage({ m, threaded = false }: { m: AmbientMsg; threaded?: boolean }) {
+  const avatarSize = threaded ? "w-7 h-7 text-[12px]" : "w-9 h-9 text-[13px]";
+  const gridCols = threaded ? "grid-cols-[28px_1fr]" : "grid-cols-[36px_1fr]";
   return (
-    <div className={`grid grid-cols-[36px_1fr] gap-3 ${m.fromThisSession ? "[&_.msg-name]:text-blue-2" : ""}`}>
+    <div className={`grid ${gridCols} gap-3 ${m.fromThisSession ? "[&_.msg-name]:text-blue-2" : ""}`}>
       {m.isBot ? (
-        <div className="w-9 h-9 rounded-lg bg-white p-1 grid place-items-center">
+        <div className={`${avatarSize} rounded-lg bg-white p-1 grid place-items-center`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="" className="w-full h-full object-contain" />
         </div>
       ) : (
         <div
-          className="w-9 h-9 rounded-lg grid place-items-center font-semibold text-[13px] text-[#07090d]"
+          className={`${avatarSize} rounded-lg grid place-items-center font-semibold text-[#07090d]`}
           style={{ background: m.avatarBg ?? "#3b82f6" }}
         >
           {m.initial}
         </div>
       )}
-      <div>
+      <div className="min-w-0">
         <div className="flex items-center gap-2 mb-1">
-          <span className="msg-name font-semibold text-[14px] text-text-0">{m.author}</span>
+          <span className={`msg-name font-semibold ${threaded ? "text-[13px]" : "text-[14px]"} text-text-0`}>{m.author}</span>
           {m.isBot && <span className="text-[10px] font-mono font-bold tracking-wider px-1.5 py-0.5 rounded bg-blue/15 text-blue-2">AI</span>}
           <span className="text-[11px] text-text-3">{m.relativeTime}</span>
         </div>
         <div
-          className="text-[14.5px] text-text-1 leading-relaxed [&_strong]:text-text-0"
+          className={`${threaded ? "text-[13.5px]" : "text-[14.5px]"} text-text-1 leading-relaxed [&_strong]:text-text-0`}
           dangerouslySetInnerHTML={{ __html: m.text }}
         />
         {m.attachment && (
@@ -875,6 +1041,64 @@ function ChannelMessage({ m }: { m: AmbientMsg }) {
                     <div className={`text-[15.5px] font-bold tabular-nums leading-tight ${mt.c === "accent" ? "text-orange-2" : mt.c === "green" ? "text-good" : "text-text-0"}`}>{mt.v}</div>
                   </div>
                 ))}
+              </div>
+            )}
+          </div>
+        )}
+        {/* Reactions bar */}
+        {m.reactions && m.reactions.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {m.reactions.map((r) => (
+              <span
+                key={r.emoji}
+                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[12px] tabular-nums transition-colors cursor-default ${
+                  r.byYou ? "border-blue/50 bg-blue/[0.12] text-blue-2" : "border-line-2 bg-bg-2 text-text-1 hover:border-line"
+                }`}
+              >
+                <span aria-hidden="true">{r.emoji}</span>
+                <span className="font-mono font-semibold">{r.count}</span>
+              </span>
+            ))}
+            <button
+              type="button"
+              className="inline-flex items-center px-2 py-0.5 rounded-full border border-line-2 bg-bg-2 text-text-3 text-[12px] hover:text-text-1 hover:border-line cursor-default"
+              aria-label="Add reaction"
+              tabIndex={-1}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+                <line x1="9" y1="9" x2="9.01" y2="9" />
+                <line x1="15" y1="9" x2="15.01" y2="9" />
+                <line x1="19" y1="3" x2="22" y2="3" />
+                <line x1="20.5" y1="1.5" x2="20.5" y2="4.5" />
+              </svg>
+            </button>
+          </div>
+        )}
+        {/* Threaded replies */}
+        {((m.replies && m.replies.length > 0) || m.typingReplyAuthor) && (
+          <div className="mt-3 border-l-2 border-line/70 pl-4 space-y-3">
+            {m.replies?.map((r) => (
+              <ChannelMessage key={r.id} m={r} threaded />
+            ))}
+            {m.typingReplyAuthor && (
+              <div className="grid grid-cols-[28px_1fr] gap-3">
+                <div
+                  className="w-7 h-7 rounded-lg grid place-items-center font-semibold text-[12px] text-[#07090d]"
+                  style={{ background: m.typingReplyAuthor.avatarBg }}
+                >
+                  {m.typingReplyAuthor.initial}
+                </div>
+                <div className="flex items-center gap-2 text-[12.5px] text-text-2 italic">
+                  <span className="font-semibold not-italic text-text-1">{m.typingReplyAuthor.name}</span>
+                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-bg-2 border border-line">
+                    <Dot delay={0} />
+                    <Dot delay={150} />
+                    <Dot delay={300} />
+                  </span>
+                  <span>typing…</span>
+                </div>
               </div>
             )}
           </div>
