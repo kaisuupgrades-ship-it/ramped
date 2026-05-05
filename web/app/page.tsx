@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/core";
-import { tiers, formatPrice } from "@/lib/pricing";
-import { team, founderNote } from "@/lib/team";
+import { HomepageDemo } from "@/components/HomepageDemo";
+import { TimelineCards } from "@/components/TimelineCards";
+import { PricingTiers } from "@/components/PricingTiers";
+import { founderNote } from "@/lib/team";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -139,13 +141,6 @@ const timelineWeeks = [
   },
 ];
 
-const playbooks = [
-  { icon: "🎯", title: "Handle inbound lead", sub: "HubSpot → Slack → Calendar" },
-  { icon: "📦", title: "Automate inventory", sub: "NetSuite reorder + SKU forecast" },
-  { icon: "📊", title: "Process finance report", sub: "QuickBooks → variance memo" },
-  { icon: "📞", title: "Qualify sales call", sub: "Gong recap + MEDDIC scoring" },
-];
-
 export default function HomePage() {
   return (
     <>
@@ -203,107 +198,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="bg-bg-1 border border-line rounded-2xl overflow-hidden grid lg:grid-cols-[240px_1fr] min-h-[480px]">
-            {/* Sidebar */}
-            <aside className="hidden lg:flex flex-col gap-4 p-4 bg-bg-0 border-r border-line">
-              <div className="flex items-center gap-2.5 px-2">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue to-orange grid place-items-center text-[#07090d] font-bold text-sm">N</div>
-                <div>
-                  <div className="font-semibold text-[14px] text-text-0">Northwind</div>
-                  <div className="text-[11px] text-text-3">12 agents online</div>
-                </div>
-              </div>
-              <div>
-                <div className="text-[10.5px] uppercase tracking-[0.1em] text-text-3 font-semibold px-2.5 py-1.5">Channels</div>
-                {["general", "sales-pod", "deal-room", "finance-leads", "inventory-alerts"].map((c) => (
-                  <div key={c} className="flex items-center gap-1.5 px-2.5 py-1.5 text-[13px] text-text-2 hover:text-text-0 hover:bg-bg-2 rounded-md cursor-default">
-                    <span className="text-text-3">#</span> {c}
-                  </div>
-                ))}
-              </div>
-              <div>
-                <div className="text-[10.5px] uppercase tracking-[0.1em] text-text-3 font-semibold px-2.5 py-1.5">AI Agents</div>
-                <div className="flex items-center gap-1.5 px-2.5 py-1.5 text-[13px] text-text-0 bg-blue/[0.10] rounded-md">
-                  <span className="w-1.5 h-1.5 rounded-full bg-good motion-safe:animate-pulse" /> Ramped Bot
-                  <span className="ml-auto text-[9.5px] font-mono font-bold tracking-wider px-1.5 py-0.5 rounded bg-good/15 text-good">LIVE</span>
-                </div>
-                <div className="flex items-center gap-1.5 px-2.5 py-1.5 text-[13px] text-text-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-text-3" /> Ops Agent
-                </div>
-                <div className="flex items-center gap-1.5 px-2.5 py-1.5 text-[13px] text-text-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-text-3" /> Finance Agent
-                </div>
-              </div>
-              <div className="mt-auto p-3 rounded-xl bg-bg-2 border border-line">
-                <div className="text-[11px] text-text-3">Day</div>
-                <div className="text-2xl font-bold text-text-0">30 / 30</div>
-                <div className="text-[12px] text-good flex items-center gap-1">● Deployment complete</div>
-              </div>
-            </aside>
-
-            {/* Chat */}
-            <div className="flex flex-col min-w-0">
-              <header className="border-b border-line px-6 py-3.5 flex items-center gap-3.5 bg-bg-1">
-                <div className="w-9 h-9 rounded-lg bg-white p-1 grid place-items-center">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/logo.png" alt="" className="w-full h-full object-contain" />
-                </div>
-                <div className="flex-1">
-                  <div className="font-semibold text-[15px] text-text-0">Ramped Bot</div>
-                  <div className="text-[12px] text-text-2">Your AI department · trained on Northwind data</div>
-                </div>
-                <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-mono text-good">
-                  <span className="w-1.5 h-1.5 rounded-full bg-good motion-safe:animate-pulse" /> Online
-                </span>
-              </header>
-              <div className="flex-1 px-6 py-5 space-y-5">
-                {/* Bot intro */}
-                <div className="grid grid-cols-[36px_1fr] gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-white p-1 grid place-items-center">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/logo.png" alt="" className="w-full h-full object-contain" />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-semibold text-[14px] text-text-0">Ramped Bot</span>
-                      <span className="text-[10px] font-mono font-bold tracking-wider px-1.5 py-0.5 rounded bg-blue/15 text-blue-2">AI</span>
-                      <span className="text-[11px] text-text-3">9:14 AM</span>
-                    </div>
-                    <div className="text-[14.5px] text-text-1 leading-relaxed">
-                      Morning — I&apos;ve been live for <strong className="text-text-0">30 days</strong>. I&apos;ve trained on your Northwind data, mapped your tools, and I&apos;m ready to run real work. <strong className="text-text-0">Pick a playbook</strong> and I&apos;ll execute it end-to-end.
-                    </div>
-                    <div className="mt-3.5 grid sm:grid-cols-2 gap-2 max-w-[560px]">
-                      {playbooks.map((p) => (
-                        <div
-                          key={p.title}
-                          className="text-left bg-gradient-to-b from-[rgba(255,255,255,0.04)] to-[rgba(255,255,255,0.01)] border border-line-2 rounded-xl px-3.5 py-3 flex items-center gap-2.5 transition-all duration-150 hover:border-blue hover:bg-blue/[0.06] cursor-default"
-                        >
-                          <span className="text-xl flex-shrink-0">{p.icon}</span>
-                          <span className="flex flex-col leading-tight">
-                            <span className="text-text-0 font-semibold text-[13.5px]">{p.title}</span>
-                            <span className="text-text-3 text-[11.5px] font-mono">{p.sub}</span>
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="border-t border-line px-5 py-3.5">
-                <div className="bg-bg-2 border border-line-2 rounded-xl px-3.5 py-2.5 flex items-center gap-2.5">
-                  <span className="text-text-3">+</span>
-                  <span className="flex-1 text-[13.5px] text-text-3">Ask Ramped Bot anything, or pick a playbook above…</span>
-                  <span className="text-[10.5px] font-mono text-text-3 hidden sm:flex items-center gap-1">
-                    <kbd className="px-1.5 py-0.5 rounded bg-bg-3 border border-line-2 text-text-2">⌘</kbd>
-                    <kbd className="px-1.5 py-0.5 rounded bg-bg-3 border border-line-2 text-text-2">K</kbd>
-                  </span>
-                </div>
-                <div className="mt-2.5 text-[11px] text-text-3 px-1 flex items-center justify-between flex-wrap gap-2">
-                  <span>Connected to <span className="text-text-1 font-semibold">HubSpot</span>, <span className="text-text-1 font-semibold">NetSuite</span>, <span className="text-text-1 font-semibold">QuickBooks</span>, <span className="text-text-1 font-semibold">Gong</span>, <span className="text-text-1 font-semibold">Slack</span></span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <HomepageDemo />
         </div>
       </section>
 
@@ -353,19 +248,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-4">
-            {timelineWeeks.map((t) => (
-              <div key={t.num} className="bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-2xl p-7 relative overflow-hidden">
-                <div className="font-mono text-[12px] tracking-[0.08em] text-text-3 mb-2">{t.num}</div>
-                <div className="text-[12.5px] font-mono uppercase tracking-[0.08em] text-blue-2 font-semibold mb-3">{t.week}</div>
-                <h3 className="text-[20px] font-bold tracking-tight m-0 text-text-0">{t.title}</h3>
-                <p className="mt-2 text-[14.5px] leading-relaxed text-text-1 m-0">{t.body}</p>
-                <div className="mt-5 h-1 rounded-full bg-bg-3 overflow-hidden">
-                  <div className="h-full rounded-full bg-gradient-to-r from-blue to-orange" style={{ width: t.width }} />
-                </div>
-              </div>
-            ))}
-          </div>
+          <TimelineCards weeks={timelineWeeks} />
         </div>
       </section>
 
@@ -426,50 +309,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-5">
-            {tiers.map((t) => (
-              <div
-                key={t.id}
-                className={`bg-gradient-to-b ${t.highlighted ? "from-orange/10 to-bg-2 border-orange/40" : "from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border-line"} border rounded-2xl p-7 flex flex-col`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="m-0 text-lg font-semibold">{t.name}</h3>
-                  {t.badge && (
-                    <span className="text-[11px] font-mono font-semibold uppercase tracking-[0.06em] text-orange-2 inline-flex items-center gap-1">
-                      <span aria-hidden="true">★</span> {t.badge}
-                    </span>
-                  )}
-                </div>
-                <div className="text-text-3 font-mono text-[11px] uppercase tracking-[0.08em] mb-5">{t.bestFor}</div>
-                {t.price ? (
-                  <>
-                    <div className="text-[44px] font-bold tracking-tight leading-none">
-                      ${formatPrice(t.price.annual)}<span className="text-text-3 text-base font-normal">/mo</span>
-                    </div>
-                    <div className="mt-1 text-[13px] text-text-2">
-                      billed annually · save ${formatPrice(t.price.annualSavings)} · + ${formatPrice(t.price.onboarding)} onboarding
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="text-[40px] font-bold tracking-tight leading-none">From $10K<span className="text-text-3 text-base font-normal">/mo</span></div>
-                    <div className="mt-1 text-[13px] text-text-2">Scoped on call · Custom SLA</div>
-                  </>
-                )}
-                <ul className="mt-6 space-y-2.5 text-[14px] text-text-1 list-none p-0 flex-1">
-                  {t.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2.5">
-                      <span className="text-good flex-shrink-0 mt-0.5">✓</span>
-                      <span>{f}</span>
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-7">
-                  <Button href={t.cta.href} variant={t.highlighted ? "primary" : "secondary"} className="w-full">{t.cta.label}</Button>
-                </div>
-              </div>
-            ))}
-          </div>
+          <PricingTiers />
         </div>
       </section>
 
