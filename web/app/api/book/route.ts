@@ -143,7 +143,7 @@ export async function POST(req: NextRequest) {
       notes: notes || null,
       timezone: timezone || null,
       tier: tier || null,
-      billing: billing || null,
+      billing_cadence: billing || null,
       status: "scheduled",
     });
     if (!insertRes.ok) {
