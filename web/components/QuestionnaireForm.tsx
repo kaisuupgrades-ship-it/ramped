@@ -54,6 +54,13 @@ export interface QuestionnaireFormProps {
   /** When provided, called instead of redirecting to /thanks. Lets the parent
    *  render a "done" state inline. Receives "submitted" or "skipped". */
   onComplete?: (intent: "submitted" | "skipped") => void;
+  /** When set to "free-roadmap", the form POSTs to /api/free-roadmap and
+   *  expects `leadIntake` for name/email/company. Default "booking" is the
+   *  post-booking flow that requires bookingId. */
+  mode?: "booking" | "free-roadmap";
+  /** Required when mode==="free-roadmap" — no booking row exists, so the
+   *  intake fields are sent in the payload alongside the questionnaire data. */
+  leadIntake?: { name: string; email: string; company: string };
 }
 
 export function QuestionnaireForm(props: QuestionnaireFormProps = {}) {
@@ -65,9 +72,9 @@ export function QuestionnaireForm(props: QuestionnaireFormProps = {}) {
 
   React.useEffect(() => {
     // Standalone-page mode only: bounce back to /book if there's no context.
-    // Inline mode means the parent already knows the booking exists.
-    if (!inline && !bookingId && !email) router.replace("/book");
-  }, [inline, bookingId, email, router]);
+    // Inline + free-roadmap modes mean the parent owns the context.
+    if (!inline && props.mode !== "free-roadmap" && !bookingId && !email) router.replace("/book");
+  }, [inline, props.mode, bookingId, email, router]);
 
   // initialize each field with the right empty type
   const initial: FormState = React.useMemo(() => {
@@ -114,12 +121,20 @@ export function QuestionnaireForm(props: QuestionnaireFormProps = {}) {
     setSubmitting(true);
     setGenerating(true);
     try {
-      const payload: Record<string, unknown> = { booking_id: bookingId, email: email || undefined };
+      const isFreeRoadmap = props.mode === "free-roadmap";
+      const payload: Record<string, unknown> = isFreeRoadmap
+        ? {
+            name: props.leadIntake?.name ?? "",
+            email: props.leadIntake?.email ?? email,
+            company: props.leadIntake?.company ?? "",
+          }
+        : { booking_id: bookingId, email: email || undefined };
       for (const f of FIELDS) {
         payload[f.id] = state[f.id];
         if (f.otherField && state[f.otherField.id]) payload[f.otherField.id] = state[f.otherField.id];
       }
-      const r = await fetch("/api/questionnaire", {
+      const endpoint = isFreeRoadmap ? "/api/free-roadmap" : "/api/questionnaire";
+      const r = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

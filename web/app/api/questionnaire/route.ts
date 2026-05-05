@@ -1,22 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { supabaseRest } from "@/lib/supabase";
 import { sendEmail, emailShell } from "@/lib/email";
-import { buildPromptContext, validatePayload } from "@/lib/questionnaire-fields";
+import { validatePayload } from "@/lib/questionnaire-fields";
 import { site } from "@/lib/site";
-import {
-  wrapEmail, emailHero, emailBody, emailCtaCard, emailSignoff,
-  emailStatsGrid, emailAgentCard, emailSection, emailOpportunityCallout,
-} from "@/lib/email-design";
+import { wrapEmail } from "@/lib/email-design";
+import { analyzeProspect, buildRoadmapEmailRows, roadmapEmailMeta, escapeHtml } from "@/lib/anthropic-analyze";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
-
-interface AnalysisResult {
-  grade: "A" | "B" | "C" | "D" | null;
-  gradeSummary: string | null;
-  roadmap: Record<string, unknown> | null;
-  failure: string | null;
-}
 
 /**
  * POST /api/questionnaire
@@ -73,7 +64,15 @@ export async function POST(req: NextRequest) {
   const { booking_id: _bid, email: _e, ...qData } = data;
 
   // ── Anthropic analysis (single call: grade + roadmap)
-  const analysis = await analyzeProspect(booking, qData);
+  const analysis = await analyzeProspect(
+    {
+      name: booking.name,
+      company: booking.company,
+      tier: booking.tier,
+      notes: booking.notes,
+    },
+    qData,
+  );
 
   // ── Persist
   await supabaseRest("PATCH", `/bookings?id=eq.${encodeURIComponent(bookingId)}`, {
@@ -91,57 +90,26 @@ export async function POST(req: NextRequest) {
 
   const customerEmail = (async () => {
     if (analysis.roadmap) {
-      const roadmap = analysis.roadmap as {
-        summary?: string;
-        top_agents?: Array<{
-          name?: string;
-          channel?: string;
-          what_it_does?: string;
-          hours_saved?: string;
-          integrations?: string[];
-        }>;
-      };
-      const agents = Array.isArray(roadmap.top_agents) ? roadmap.top_agents : [];
-      const summary = roadmap.summary ?? "";
-
-      const innerRows =
-        emailHero({
-          eyebrow: "Your roadmap",
-          headline: `${escapeHtml(firstName)}, your automation roadmap is ready.`,
-          sub: "Based on your answers — we'll walk through this together on the call.",
-        }) +
-        (summary ? emailOpportunityCallout(escapeHtml(summary)) : "") +
-        emailStatsGrid([
-          { value: String(agents.length || 5), label: "AI Agents" },
-          { value: "30", label: "Day go-live" },
-          { value: "$0", label: "If we miss it", accent: "good" },
-        ]) +
-        emailSection("What we'd build for you") +
-        agents.map((a, i) => emailAgentCard({
-          number: i + 1,
-          title: escapeHtml(a.name ?? `Agent ${i + 1}`),
-          channel: a.channel ? escapeHtml(a.channel) : (Array.isArray(a.integrations) && a.integrations.length ? escapeHtml(a.integrations.slice(0, 2).join(" + ")) : undefined),
-          body: escapeHtml(a.what_it_does ?? ""),
-          savings: a.hours_saved ? escapeHtml(a.hours_saved) : undefined,
-        })).join("") +
-        emailCtaCard({
-          eyebrow: "Next up",
-          title: `We'll walk through this on the call.`,
-          body: "On the discovery call we'll prioritize which agent to ship first, scope the build, and quote you exact pricing. No pressure, no pitch.",
-          ctaHref: `${process.env.SITE_URL ?? "https://www.30dayramp.com"}/book`,
-          ctaLabel: "Confirm or reschedule →",
-        }) +
-        emailSignoff({
-          name: "Jon",
-          extra: "Questions before the call? Just reply to this email — it goes straight to me.",
-        });
+      const meta = roadmapEmailMeta({
+        firstName,
+        roadmap: analysis.roadmap as { summary?: string; top_agents?: unknown[] },
+      });
+      const innerRows = buildRoadmapEmailRows({
+        firstName,
+        roadmap: analysis.roadmap as Parameters<typeof buildRoadmapEmailRows>[0]["roadmap"],
+        ctaHref: `${process.env.SITE_URL ?? "https://www.30dayramp.com"}/book`,
+        ctaLabel: "Confirm or reschedule →",
+        ctaTitle: `We'll walk through this on the call.`,
+        ctaBody: "On the discovery call we'll prioritize which agent to ship first, scope the build, and quote you exact pricing. No pressure, no pitch.",
+        signoffExtra: "Questions before the call? Just reply to this email — it goes straight to me.",
+      });
 
       const result = await sendEmail({
         to: booking.email,
-        subject: `Your automation roadmap is ready, ${firstName}`,
+        subject: meta.subject,
         html: wrapEmail({
-          subject: `Your automation roadmap is ready, ${firstName}`,
-          preheader: summary || `${agents.length} AI agents tailored to your stack. 30-day go-live or full refund.`,
+          subject: meta.subject,
+          preheader: meta.preheader,
           innerRows,
           siteUrl: process.env.SITE_URL ?? "https://www.30dayramp.com",
         }),
@@ -186,109 +154,4 @@ export async function POST(req: NextRequest) {
     roadmap_generated: !!analysis.roadmap,
     failure: analysis.failure,
   });
-}
-
-/* ------------------------------------------------------------------------- */
-
-async function analyzeProspect(
-  booking: { name: string; company: string; tier: string | null; notes: string | null },
-  qData: Record<string, unknown>,
-): Promise<AnalysisResult> {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  const model = process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-5";
-  if (!apiKey) {
-    console.warn("[questionnaire] ANTHROPIC_API_KEY not set — skipping analysis");
-    return { grade: null, gradeSummary: null, roadmap: null, failure: "no_key" };
-  }
-
-  const prospectBlock = buildPromptContext(qData, booking);
-
-  const prompt = `You are an AI automation consultant at Ramped AI. We build done-for-you AI agent implementations for small and mid-size operating businesses.
-
-Each AI agent we build:
-- Lives inside the client's existing tools (Slack, email, CRM, etc.) — no new apps to learn
-- Handles repetitive tasks automatically: follow-ups, reporting, scheduling, responses
-- Is triggered by real business events (new CRM contact, form submission, daily schedule, etc.)
-- Saves the team hours each week
-
-Your job: grade this prospect and produce a personalized automation roadmap. Write everything from the client's perspective — focus on outcomes and time saved, not technology. Use plain language ("AI agent", "automation", "assistant"), never internal product names.
-
-GRADING:
-A (Hot): Clear specific pain, 10+ team OR $500K+ revenue, decision-maker signal, premium tier interest.
-B (Warm): Good pain awareness, 5-10 team, $100K-$500K revenue, clear use case, some budget signal.
-C (Lukewarm): Vague pain, 2-5 team, early stage, unclear budget.
-D (Poor fit): Solo, no budget signal, no clear pain.
-
-PROSPECT DATA:
-${prospectBlock}
-
-Even if some fields are blank ("—"), do your best with what's available — note any gaps in grade_summary.
-
-Respond with ONLY valid JSON — no markdown fences, no text outside the JSON:
-{
-  "grade": "A",
-  "grade_summary": "2-3 sentences explaining grade + key signals",
-  "roadmap": {
-    "summary": "2-3 sentences of the biggest automation opportunity in plain language",
-    "top_agents": [
-      {
-        "name": "e.g. Lead Response Agent",
-        "channel": "WhatsApp / Slack / Telegram / etc",
-        "what_it_does": "1-2 sentences from the client's perspective",
-        "trigger": "What triggers it",
-        "integrations": ["Tool1", "Tool2"],
-        "hours_saved": "X-Y hours/week"
-      }
-    ],
-    "quick_wins": ["Win 1", "Win 2", "Win 3"],
-    "week_1_focus": "Most impactful agent to build first and why",
-    "recommended_tier": "starter or growth or enterprise"
-  }
-}
-
-Rules: 3-5 top_agents, prioritized by pain points and existing channels. Be SPECIFIC — name their tools.`;
-
-  try {
-    const r = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({ model, max_tokens: 1500, messages: [{ role: "user", content: prompt }] }),
-    });
-    if (!r.ok) {
-      const errBody = await r.text();
-      console.error("[questionnaire] Anthropic non-200:", r.status, errBody.slice(0, 500));
-      return { grade: null, gradeSummary: null, roadmap: null, failure: `api_${r.status}` };
-    }
-    const json = await r.json() as { content?: Array<{ text?: string }>; stop_reason?: string };
-    const raw = json.content?.[0]?.text ?? "";
-    if (!raw) return { grade: null, gradeSummary: null, roadmap: null, failure: "empty_response" };
-    const cleaned = raw.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
-    let parsed: { grade?: string; grade_summary?: string; roadmap?: Record<string, unknown> };
-    try {
-      parsed = JSON.parse(cleaned);
-    } catch (e) {
-      console.error("[questionnaire] JSON.parse failed:", e instanceof Error ? e.message : e, "—", cleaned.slice(0, 800));
-      return { grade: null, gradeSummary: null, roadmap: null, failure: "parse_error" };
-    }
-    const grade = String(parsed.grade ?? "").toUpperCase().charAt(0);
-    return {
-      grade: ["A", "B", "C", "D"].includes(grade) ? (grade as "A" | "B" | "C" | "D") : null,
-      gradeSummary: parsed.grade_summary ?? null,
-      roadmap: parsed.roadmap ?? null,
-      failure: parsed.roadmap ? null : "no_roadmap",
-    };
-  } catch (e) {
-    console.error("[questionnaire] Anthropic call threw:", e instanceof Error ? e.message : e);
-    return { grade: null, gradeSummary: null, roadmap: null, failure: "exception" };
-  }
-}
-
-function escapeHtml(s: string): string {
-  return s.replace(/[&<>"']/g, (c) =>
-    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c] ?? c)
-  );
 }
