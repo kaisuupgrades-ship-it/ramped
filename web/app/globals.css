@@ -84,38 +84,23 @@ html {
 }
 
 /* Ambient glow — top blue, top-right orange, bottom-left blue. Fixed so it
-   doesn't scroll out as the user reads down. */
+   doesn't scroll out as the user reads down. The first two layers are the
+   subtle 64px grid lines: they live in the body background stack (rather
+   than a body::before pseudo-element) because pseudo-elements with z-index
+   negative get painted behind body's own background and become invisible.
+   The grid sits on top of the gradients but underneath body content. */
 body {
   background:
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
     radial-gradient(1400px 700px at 50% -150px, rgba(96, 165, 250, 0.22), transparent 60%),
     radial-gradient(1000px 600px at 92% 8%, rgba(251, 146, 60, 0.16), transparent 60%),
     radial-gradient(900px 600px at 8% 90%, rgba(96, 165, 250, 0.10), transparent 60%),
     var(--color-bg-0);
+  background-size: 64px 64px, 64px 64px, auto, auto, auto, auto;
   background-attachment: fixed;
   min-height: 100vh;
   position: relative;
-}
-
-/* Subtle grid lines, behind content. Faded with a radial mask so they're
-   strongest near the top center and dissolve at the edges + far down the page.
-   Restored from the legacy dark theme. Opacity tuned to register as a
-   tactile texture without competing with content. */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.055) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.055) 1px, transparent 1px);
-  background-size: 64px 64px;
-  -webkit-mask-image: radial-gradient(ellipse 120% 95% at 50% 30%, black 0%, black 35%, transparent 95%);
-          mask-image: radial-gradient(ellipse 120% 95% at 50% 30%, black 0%, black 35%, transparent 95%);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  body::before { transition: none; }
 }
 
 a {
