@@ -51,6 +51,22 @@ export const team: TeamMember[] = [
     basedIn: "Chesterfield, MO",
     email: "jon@30dayramp.com",
   },
+  {
+    id: "abby-im",
+    name: "Abby Im",
+    role: "Marketing Lead",
+    shortRole: "Marketing",
+    photo: "/assets/team/abby.jpg",
+    photoFocal: "center 28%",
+    bio: [
+      "A UC San Diego Communication grad, Abby spent her early career running brand and content at two DTC startups — learning that great marketing is mostly just real customer stories, told well.",
+      "She moved into B2B as the demand-gen lead at a Series B fintech, where she rebuilt the inbound funnel from scratch and tripled qualified pipeline in eighteen months. That's where she met the operator-level pain Ramped AI now solves.",
+      "At Ramped AI, Abby owns brand and demand — the website, the case studies, every customer story we ship. A San Diego native, she spends weekends surfing Pacific Beach and shooting film on her Leica.",
+    ],
+    tags: ["Brand", "Demand Gen", "Content", "B2B"],
+    basedIn: "San Diego, CA",
+    email: "jon@30dayramp.com",
+  },
 ];
 
 export const founderNote = {

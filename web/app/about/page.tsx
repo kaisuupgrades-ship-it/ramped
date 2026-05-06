@@ -123,7 +123,7 @@ export default function AboutPage() {
               We stay deliberately small so the people scoping your build are the same people writing the code.
             </p>
           </div>
-          <div className="grid md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
             {team.map((m) => (
               <Card key={m.id} className="p-7">
                 <div className="flex items-center gap-4 mb-4">
