@@ -53,7 +53,7 @@ export function PricingTiers() {
           return (
             <div
               key={t.id}
-              className={`bg-gradient-to-b ${t.highlighted ? "from-orange/10 to-bg-2 border-orange/40" : "from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border-line"} border rounded-2xl p-7 flex flex-col`}
+              className={`bg-bg-1 bg-gradient-to-b ${t.highlighted ? "from-orange/10 to-bg-2 border-orange/40" : "from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border-line"} border rounded-2xl p-7 flex flex-col`}
             >
               <div className="flex items-center justify-between mb-2">
                 <h3 className="m-0 text-lg font-semibold">{t.name}</h3>

@@ -67,7 +67,7 @@ export function FreeRoadmapForm() {
   if (phase.kind === "done") {
     const isSubmitted = phase.intent === "submitted";
     return (
-      <div className="bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-9 text-center">
+      <div className="bg-bg-1 bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-9 text-center">
         <div className="w-12 h-12 rounded-2xl bg-blue/10 border border-blue/30 grid place-items-center mx-auto mb-5">
           <svg viewBox="0 0 24 24" width={22} height={22} fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" className="text-blue-2">
             <polyline points="20 6 9 17 4 12" />
@@ -98,7 +98,7 @@ export function FreeRoadmapForm() {
   return (
     <form
       onSubmit={onIntakeSubmit}
-      className="bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-8"
+      className="bg-bg-1 bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-8"
       noValidate
     >
       <p className="m-0 mb-1 font-mono text-[11px] uppercase tracking-[0.08em] text-text-3">Step 1 of 2</p>

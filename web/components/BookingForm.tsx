@@ -91,7 +91,7 @@ export function BookingForm({ tier, billing }: BookingFormProps) {
             Lives above the form so it's the first thing readers see. */}
         <CoverageAndGuarantee />
 
-        <form onSubmit={onSubmit} className="bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-8" noValidate>
+        <form onSubmit={onSubmit} className="bg-bg-1 bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-8" noValidate>
           <h2 className="m-0 mb-1.5 text-[22px] font-semibold tracking-tight">Your details</h2>
           <p className="m-0 mb-5 text-text-2 text-sm leading-relaxed">
             Just the essentials — we&apos;ll send a 2-minute prep questionnaire after you book if you want to dig deeper.
@@ -162,7 +162,7 @@ function CoverageAndGuarantee() {
     "Honest assessment — if it's not a fit, we'll tell you",
   ];
   return (
-    <div className="bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-7">
+    <div className="bg-bg-1 bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-7">
       <p className="m-0 mb-3 font-mono text-[11px] uppercase tracking-[0.08em] text-text-3">What we&apos;ll cover</p>
       <ul className="list-none p-0 m-0 flex flex-col gap-2.5">
         {items.map((it) => (
@@ -203,7 +203,7 @@ function ConfirmationPanel({
   return (
     <div className="max-w-3xl mx-auto flex flex-col gap-6">
       {/* Confirmation card */}
-      <div className="bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-9">
+      <div className="bg-bg-1 bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-9">
         <div className="flex items-start gap-4">
           <div className="w-12 h-12 rounded-2xl bg-blue/10 border border-blue/30 grid place-items-center flex-shrink-0">
             <svg viewBox="0 0 24 24" width={22} height={22} fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" className="text-blue-2">
@@ -261,7 +261,7 @@ function ConfirmationPanel({
 function DonePanel({ intent, email }: { intent: "submitted" | "skipped"; email: string }) {
   const isSubmitted = intent === "submitted";
   return (
-    <div className="bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-7 text-center">
+    <div className="bg-bg-1 bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-7 text-center">
       <p className="m-0 font-mono text-[11px] uppercase tracking-[0.08em] text-text-3">{isSubmitted ? "All done" : "No problem"}</p>
       <h3 className="m-0 mt-1.5 text-[20px] font-semibold tracking-tight">
         {isSubmitted ? "Your automation map is being built." : "We'll email you a link to fill it out later."}

@@ -102,7 +102,7 @@ export function CalendarPicker(props: CalendarPickerProps) {
   const tzAbbrev = selectedDate ? tzAbbrevForDate(selectedDate, timezone) : "";
 
   return (
-    <div className="bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-7">
+    <div className="bg-bg-1 bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-7">
       {/* Header */}
       <div className="flex items-center gap-3.5 pb-4 mb-4 border-b border-line">
         <div className="w-12 h-12 rounded-[10px] bg-white p-1.5 grid place-items-center">

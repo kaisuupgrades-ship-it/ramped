@@ -39,7 +39,7 @@ export function TimelineCards({ weeks }: { weeks: Week[] }) {
       {weeks.map((t, i) => (
         <div
           key={t.num}
-          className={`bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-2xl p-7 relative overflow-hidden transition-all duration-700 ease-out ${
+          className={`bg-bg-1 bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-2xl p-7 relative overflow-hidden transition-all duration-700 ease-out ${
             inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
           }`}
           style={{ transitionDelay: inView ? `${i * 140}ms` : "0ms" }}

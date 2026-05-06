@@ -10,7 +10,10 @@ export function Card({ className, children, ...props }: React.HTMLAttributes<HTM
   return (
     <div
       className={cn(
-        "bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)]",
+        // Solid bg-bg-1 base sits underneath the translucent white-tint
+        // gradient. The base is what hides the body grid lines from
+        // showing through the card.
+        "bg-bg-1 bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)]",
         "border border-line rounded-[20px] p-8",
         className,
       )}

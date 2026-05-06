@@ -166,7 +166,7 @@ export function QuestionnaireForm(props: QuestionnaireFormProps = {}) {
     const remaining = Math.max(0, Math.round(75 - genElapsed));
     const eta = remaining > 5 ? `~${remaining} seconds remaining` : "Wrapping up…";
     return (
-      <div className="bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-9" aria-live="polite" aria-busy="true">
+      <div className="bg-bg-1 bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-9" aria-live="polite" aria-busy="true">
         <div className="relative w-20 h-20 rounded-2xl bg-blue/10 border border-blue/30 grid place-items-center mx-auto mb-5">
           <span className="absolute inset-[-4px] rounded-3xl border-2 border-blue-2 opacity-0 motion-safe:animate-[gen-ring_2.4s_ease-out_infinite]" aria-hidden="true" />
           <svg viewBox="0 0 24 24" width={36} height={36} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="text-blue-2">
@@ -196,7 +196,7 @@ export function QuestionnaireForm(props: QuestionnaireFormProps = {}) {
   const f = FIELDS[step - 1];
 
   return (
-    <div className="bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-9">
+    <div className="bg-bg-1 bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-9">
       {/* Inline-mode escape hatch — matches the legacy "Skip for now" affordance. */}
       {inline && (
         <div className="flex justify-end mb-3">

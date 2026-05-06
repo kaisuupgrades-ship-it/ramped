@@ -307,7 +307,7 @@ export default function HomePage() {
             {operators.map((op) => (
               <div
                 key={op.name}
-                className="bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-7 flex flex-col"
+                className="bg-bg-1 bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-[20px] p-7 flex flex-col"
               >
                 {/* Brand mark — real wordmark/logo, sits in a fixed-height row so all 4 cards align */}
                 <div className="flex items-center h-10 mb-2">
@@ -372,7 +372,7 @@ export default function HomePage() {
             {faqs.map((f) => (
               <details
                 key={f.q}
-                className="group bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-xl px-5 py-4 transition-colors open:border-line-2 [&_summary::-webkit-details-marker]:hidden"
+                className="group bg-bg-1 bg-gradient-to-b from-[rgba(255,255,255,0.03)] to-[rgba(255,255,255,0.005)] border border-line rounded-xl px-5 py-4 transition-colors open:border-line-2 [&_summary::-webkit-details-marker]:hidden"
               >
                 <summary className="flex items-start justify-between gap-4 cursor-pointer list-none text-text-0 font-semibold text-[15.5px] leading-snug">
                   <span>{f.q}</span>
