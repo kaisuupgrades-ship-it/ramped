@@ -98,7 +98,8 @@ body {
 
 /* Subtle grid lines, behind content. Faded with a radial mask so they're
    strongest near the top center and dissolve at the edges + far down the page.
-   Restored from the legacy dark theme. */
+   Restored from the legacy dark theme. Opacity tuned to register as a
+   tactile texture without competing with content. */
 body::before {
   content: "";
   position: fixed;
@@ -106,11 +107,11 @@ body::before {
   z-index: -1;
   pointer-events: none;
   background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    linear-gradient(to right, rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.055) 1px, transparent 1px);
   background-size: 64px 64px;
-  -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 25%, black 0%, transparent 80%);
-          mask-image: radial-gradient(ellipse 90% 70% at 50% 25%, black 0%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 120% 95% at 50% 30%, black 0%, black 35%, transparent 95%);
+          mask-image: radial-gradient(ellipse 120% 95% at 50% 30%, black 0%, black 35%, transparent 95%);
 }
 
 @media (prefers-reduced-motion: reduce) {
