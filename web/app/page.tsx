@@ -242,21 +242,21 @@ export default function HomePage() {
       />
       {/* Hero */}
       <section className="px-6 pt-16 pb-8">
-        <div className="max-w-[1180px] mx-auto">
-          <h1 className="text-[clamp(40px,7vw,84px)] leading-[1.04] tracking-[-0.035em] font-bold m-0 max-w-3xl">
+        <div className="max-w-[1180px] mx-auto text-center">
+          <h1 className="text-[clamp(36px,5.8vw,68px)] leading-[1.04] tracking-[-0.035em] font-bold m-0 max-w-4xl mx-auto">
             Your AI department,
             <br />
             <span className="gradient-text">live in 30 days.</span>
           </h1>
-          <p className="mt-6 max-w-xl text-[17px] text-text-1 leading-relaxed">
+          <p className="mt-6 max-w-xl mx-auto text-[17px] text-text-1 leading-relaxed">
             Done-for-you AI implementation. We build, deploy, and run AI agents inside your operating business —
             automating your highest-friction workflows on a flat monthly fee.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-wrap gap-3 justify-center">
             <Button href="/book" size="lg" variant="primary">Book a discovery call →</Button>
             <Button href="/free-roadmap" size="lg" variant="secondary">Get your free roadmap</Button>
           </div>
-          <div className="mt-7 inline-flex items-center gap-3 px-4 py-3 rounded-xl bg-orange/[0.05] border border-orange/30">
+          <div className="mt-7 inline-flex items-center gap-3 px-4 py-3 rounded-xl bg-orange/[0.05] border border-orange/30 text-left">
             <svg viewBox="0 0 24 24" width={20} height={20} fill="none" stroke="currentColor" strokeWidth={2} className="text-orange-2 flex-shrink-0">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeLinejoin="round" />
             </svg>

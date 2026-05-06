@@ -62,12 +62,12 @@ export default function AboutPage() {
       />
       {/* Hero */}
       <section className="px-6 pt-16 pb-12">
-        <div className="max-w-[1180px] mx-auto">
-          <h1 className="text-[clamp(40px,6vw,68px)] leading-[1.04] tracking-[-0.035em] font-bold m-0 max-w-3xl">
+        <div className="max-w-[1180px] mx-auto text-center">
+          <h1 className="text-[clamp(36px,5vw,56px)] leading-[1.06] tracking-[-0.035em] font-bold m-0 max-w-4xl mx-auto">
             We&apos;re operators who got tired of{" "}
             <span className="gradient-text">AI consultants who don&apos;t ship.</span>
           </h1>
-          <p className="mt-6 max-w-2xl text-text-1 text-[17px] leading-relaxed">
+          <p className="mt-6 max-w-2xl mx-auto text-text-1 text-[17px] leading-relaxed">
             So we built the company we wished existed — one that builds and runs the agents
             instead of selling you another strategy deck.
           </p>
