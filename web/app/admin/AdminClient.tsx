@@ -27,12 +27,52 @@ interface Booking {
 
 interface Lead { id: string; email: string; created_at: string; source?: string | null }
 
+interface BotClient {
+  id: string;
+  name: string;
+  slug: string;
+  droplet_id: string | null;
+  droplet_ip: string | null;
+  vps_status: string | null;
+  hermes_url: string | null;
+  api_server_key: string | null;
+  created_at: string | null;
+  last_active_at: string | null;
+  notes: string | null;
+  latest_code: string | null;
+}
+
 interface AdminPayload {
   configured: boolean;
   portal_links_enabled?: boolean;
   bookings: Booking[];
   leads: Lead[];
   maps?: unknown[];
+}
+
+type BotVpsStatus = "pending" | "provisioning" | "awaiting_oauth" | "active" | "deactivated";
+
+const BOT_STATUS_META: Record<BotVpsStatus | "unknown", { label: string; dot: string }> = {
+  pending:        { label: "Pending",        dot: "bg-text-3" },
+  provisioning:   { label: "Provisioning",   dot: "bg-yellow-400" },
+  awaiting_oauth: { label: "Awaiting OAuth", dot: "bg-orange" },
+  active:         { label: "Active",         dot: "bg-good" },
+  deactivated:    { label: "Deactivated",    dot: "bg-bad" },
+  unknown:        { label: "Unknown",        dot: "bg-text-3" },
+};
+
+function formatSetupCode(code: string | null): string {
+  if (!code) return "—";
+  return code.length >= 8 ? `${code.slice(0, 4)}-${code.slice(4)}` : code;
+}
+
+function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
 }
 
 const TOKEN_KEY = "ramped:adminToken";
@@ -65,7 +105,126 @@ export default function AdminClient() {
   const [data, setData] = useState<AdminPayload | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [tab, setTab] = useState<"bookings" | "leads">("bookings");
+  const [tab, setTab] = useState<"bookings" | "leads" | "bots">("bookings");
+
+  const [bots, setBots] = useState<BotClient[] | null>(null);
+  const [botsLoading, setBotsLoading] = useState(false);
+  const [botsError, setBotsError] = useState<string | null>(null);
+  const [healthStatuses, setHealthStatuses] = useState<Record<string, "online" | "offline">>({});
+  const [resetConfirm, setResetConfirm] = useState<Record<string, boolean>>({});
+  const [showNewBotForm, setShowNewBotForm] = useState(false);
+  const [newBotName, setNewBotName] = useState("");
+  const [newBotSlug, setNewBotSlug] = useState("");
+  const [newBotSlugEdited, setNewBotSlugEdited] = useState(false);
+  const [newBotSubmitting, setNewBotSubmitting] = useState(false);
+  const [newBotResult, setNewBotResult] = useState<{ name: string; slug: string; code: string } | null>(null);
+  const [newBotError, setNewBotError] = useState<string | null>(null);
+
+  const loadBots = async () => {
+    if (!token) return;
+    setBotsLoading(true);
+    setBotsError(null);
+    try {
+      const r = await fetch("/api/bot-clients", { headers: { Authorization: `Bearer ${token}` } });
+      if (!r.ok) throw new Error(`API ${r.status}`);
+      const json = (await r.json()) as { clients: BotClient[] };
+      setBots(json.clients);
+    } catch (e) {
+      setBotsError(e instanceof Error ? e.message : "Failed to load bot clients");
+    } finally {
+      setBotsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (tab === "bots" && bots === null && token && !botsLoading) {
+      loadBots();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab, token]);
+
+  const handleGenerateCode = async (clientId: string) => {
+    const r = await fetch("/api/bot-generate-code", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ client_id: clientId }),
+    });
+    if (!r.ok) {
+      alert(`Failed to generate code (${r.status})`);
+      return;
+    }
+    await loadBots();
+  };
+
+  const handleHealth = async () => {
+    const r = await fetch("/api/bot-vps-status", { headers: { Authorization: `Bearer ${token}` } });
+    if (!r.ok) {
+      alert(`Health check failed (${r.status})`);
+      return;
+    }
+    const json = (await r.json()) as { statuses: Record<string, "online" | "offline"> };
+    setHealthStatuses(json.statuses);
+  };
+
+  const handleResetLimit = async (clientId: string) => {
+    const r = await fetch("/api/bot-reset-rate-limit", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ client_id: clientId }),
+    });
+    if (!r.ok) {
+      alert(`Reset failed (${r.status})`);
+      return;
+    }
+    setResetConfirm((s) => ({ ...s, [clientId]: true }));
+    setTimeout(() => {
+      setResetConfirm((s) => {
+        const { [clientId]: _, ...rest } = s;
+        return rest;
+      });
+    }, 2000);
+  };
+
+  const handleRevoke = async (clientId: string, name: string) => {
+    if (!confirm(`Revoke "${name}"? This deactivates the client and expires unclaimed codes.`)) return;
+    const r = await fetch("/api/bot-revoke", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ client_id: clientId }),
+    });
+    if (!r.ok) {
+      alert(`Revoke failed (${r.status})`);
+      return;
+    }
+    await loadBots();
+  };
+
+  const handleNewBotSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setNewBotError(null);
+    setNewBotSubmitting(true);
+    try {
+      const r = await fetch("/api/bot-provision", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newBotName.trim(), slug: newBotSlug.trim() }),
+      });
+      if (!r.ok) {
+        const j = (await r.json().catch(() => ({}))) as { error?: string };
+        throw new Error(j.error || `API ${r.status}`);
+      }
+      const j = (await r.json()) as { client: BotClient; code: string };
+      setNewBotResult({ name: j.client.name, slug: j.client.slug, code: j.code });
+      setNewBotName("");
+      setNewBotSlug("");
+      setNewBotSlugEdited(false);
+      await loadBots();
+    } catch (err) {
+      setNewBotError(err instanceof Error ? err.message : "Failed to provision client");
+    } finally {
+      setNewBotSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     const stored = typeof window !== "undefined" ? localStorage.getItem(TOKEN_KEY) : null;
@@ -201,6 +360,12 @@ export default function AdminClient() {
           >
             Leads ({leads.length})
           </button>
+          <button
+            onClick={() => setTab("bots")}
+            className={`px-4 py-2 rounded-lg text-[13.5px] font-medium border transition-colors ${tab === "bots" ? "bg-blue/10 border-blue/40 text-blue-2" : "bg-bg-2 border-line-2 text-text-1 hover:bg-bg-3"}`}
+          >
+            Ramped Bot{bots ? ` (${bots.length})` : ""}
+          </button>
         </div>
 
         {tab === "bookings" && (
@@ -300,6 +465,175 @@ export default function AdminClient() {
               </table>
             </div>
           </Card>
+        )}
+
+        {tab === "bots" && (
+          <>
+            <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
+              <div className="text-text-2 text-[13px]">
+                {botsLoading ? "Loading..." : bots ? `${bots.length} client${bots.length === 1 ? "" : "s"}` : ""}
+                {botsError && <span className="text-bad ml-2">· {botsError}</span>}
+              </div>
+              <div className="flex gap-2">
+                <Button onClick={handleHealth} variant="secondary" size="sm">Run health check</Button>
+                <Button onClick={() => { setShowNewBotForm(true); setNewBotResult(null); setNewBotError(null); }} variant="primary" size="sm">+ New Client</Button>
+              </div>
+            </div>
+
+            {showNewBotForm && (
+              <Card className="mb-6 p-6">
+                {newBotResult ? (
+                  <div>
+                    <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-good font-semibold mb-2">Provisioned</div>
+                    <h3 className="text-[20px] font-bold text-text-0 mb-3">{newBotResult.name}</h3>
+                    <p className="text-text-2 text-[13.5px] mb-4">
+                      Slug: <code className="font-mono text-text-1 bg-bg-2 px-1.5 py-0.5 rounded">{newBotResult.slug}</code>
+                    </p>
+                    <div className="bg-bg-2 border border-line-2 rounded-xl p-4 mb-4">
+                      <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-3 mb-1">Setup code (24h)</div>
+                      <div className="font-mono text-[22px] tracking-[0.15em] text-text-0 font-semibold">{formatSetupCode(newBotResult.code)}</div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button onClick={() => { setNewBotResult(null); setShowNewBotForm(false); }} variant="primary" size="sm">Done</Button>
+                      <Button onClick={() => setNewBotResult(null)} variant="ghost" size="sm">Add another</Button>
+                    </div>
+                  </div>
+                ) : (
+                  <form onSubmit={handleNewBotSubmit}>
+                    <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-blue-2 font-semibold mb-3">New Ramped Bot client</div>
+                    <Field label="Name">
+                      <Input
+                        autoFocus
+                        value={newBotName}
+                        onChange={(e) => {
+                          const v = e.target.value;
+                          setNewBotName(v);
+                          if (!newBotSlugEdited) setNewBotSlug(slugify(v));
+                        }}
+                        placeholder="Acme Holdings"
+                      />
+                    </Field>
+                    <Field label="Slug" hint={newBotSlug ? `https://${newBotSlug}.bot.30dayramp.com` : "lowercase alphanumeric + hyphens"}>
+                      <Input
+                        value={newBotSlug}
+                        onChange={(e) => { setNewBotSlug(e.target.value.toLowerCase()); setNewBotSlugEdited(true); }}
+                        placeholder="acme-holdings"
+                      />
+                    </Field>
+                    {newBotError && <p className="text-bad text-[13px] mb-3">{newBotError}</p>}
+                    <div className="flex gap-2">
+                      <Button type="submit" variant="primary" size="sm" disabled={newBotSubmitting || !newBotName.trim() || !newBotSlug.trim()}>
+                        {newBotSubmitting ? "Provisioning..." : "Provision"}
+                      </Button>
+                      <Button type="button" onClick={() => { setShowNewBotForm(false); setNewBotError(null); }} variant="ghost" size="sm">Cancel</Button>
+                    </div>
+                  </form>
+                )}
+              </Card>
+            )}
+
+            <Card className="p-0 overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-[13.5px]">
+                  <thead className="bg-bg-3 text-text-3">
+                    <tr>
+                      <th className="text-left font-mono text-[11px] uppercase tracking-[0.06em] px-4 py-3">Name</th>
+                      <th className="text-left font-mono text-[11px] uppercase tracking-[0.06em] px-4 py-3">Slug</th>
+                      <th className="text-left font-mono text-[11px] uppercase tracking-[0.06em] px-4 py-3">Status</th>
+                      <th className="text-left font-mono text-[11px] uppercase tracking-[0.06em] px-4 py-3">IP</th>
+                      <th className="text-left font-mono text-[11px] uppercase tracking-[0.06em] px-4 py-3">Setup Code</th>
+                      <th className="text-left font-mono text-[11px] uppercase tracking-[0.06em] px-4 py-3">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {!bots && !botsLoading && (
+                      <tr><td colSpan={6} className="px-4 py-12 text-center text-text-3">Click "Ramped Bot" tab to load.</td></tr>
+                    )}
+                    {bots && bots.length === 0 && (
+                      <tr><td colSpan={6} className="px-4 py-12 text-center text-text-3">No clients yet.</td></tr>
+                    )}
+                    {bots && bots.map((c) => {
+                      const statusKey = (c.vps_status ?? "unknown") as BotVpsStatus | "unknown";
+                      const meta = BOT_STATUS_META[statusKey] ?? BOT_STATUS_META.unknown;
+                      const health = healthStatuses[c.id];
+                      return (
+                        <tr key={c.id} className="border-t border-line">
+                          <td className="px-4 py-3 align-top">
+                            <div className="text-text-0 font-medium">{c.name}</div>
+                            {c.created_at && (
+                              <div className="text-[12px] text-text-3 font-mono">
+                                {new Date(c.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 align-top text-text-1 font-mono text-[12.5px]">{c.slug}</td>
+                          <td className="px-4 py-3 align-top">
+                            <div className="inline-flex items-center gap-2">
+                              <span className={`inline-block w-2 h-2 rounded-full ${meta.dot}`} />
+                              <span className="text-text-1">{meta.label}</span>
+                            </div>
+                            {health && (
+                              <div className={`text-[11px] mt-1 font-mono ${health === "online" ? "text-good" : "text-bad"}`}>
+                                {health === "online" ? "✓ online" : "✗ offline"}
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 align-top text-text-2 font-mono text-[12.5px]">{c.droplet_ip || "—"}</td>
+                          <td className="px-4 py-3 align-top">
+                            <span className="font-mono text-text-1 tracking-[0.1em]">{formatSetupCode(c.latest_code)}</span>
+                          </td>
+                          <td className="px-4 py-3 align-top">
+                            <div className="flex flex-wrap gap-2">
+                              <button
+                                onClick={() => handleGenerateCode(c.id)}
+                                className="px-2.5 py-1 rounded-lg text-[12px] font-medium border border-line-2 bg-bg-2 text-text-1 hover:bg-bg-3 transition-colors"
+                              >
+                                New Code
+                              </button>
+                              <button
+                                onClick={handleHealth}
+                                className="px-2.5 py-1 rounded-lg text-[12px] font-medium border border-line-2 bg-bg-2 text-text-1 hover:bg-bg-3 transition-colors"
+                              >
+                                Health
+                              </button>
+                              {resetConfirm[c.id] ? (
+                                <span className="px-2.5 py-1 rounded-lg text-[12px] font-medium border border-good/40 bg-good/10 text-good">
+                                  ✓ Reset
+                                </span>
+                              ) : (
+                                <button
+                                  onClick={() => handleResetLimit(c.id)}
+                                  className="px-2.5 py-1 rounded-lg text-[12px] font-medium border border-line-2 bg-bg-2 text-text-1 hover:bg-bg-3 transition-colors"
+                                >
+                                  Reset Limit
+                                </button>
+                              )}
+                              <button
+                                onClick={() => handleRevoke(c.id, c.name)}
+                                className="px-2.5 py-1 rounded-lg text-[12px] font-medium border border-bad/40 bg-bad/10 text-bad hover:bg-bad/20 transition-colors"
+                              >
+                                Revoke
+                              </button>
+                              {c.vps_status === "awaiting_oauth" && (
+                                <a
+                                  href={`https://${c.slug}.bot.30dayramp.com:10255`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="px-2.5 py-1 rounded-lg text-[12px] font-medium border border-blue/40 bg-blue/10 text-blue-2 hover:bg-blue/20 transition-colors"
+                                >
+                                  Open OneCLI →
+                                </a>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          </>
         )}
 
         <p className="mt-8 text-[12px] text-text-3">
