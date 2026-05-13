@@ -10,6 +10,23 @@ const IP_LIMIT_PER_HOUR = 10;
 const CODE_LIMIT_PER_HOUR = 20;
 const TOO_MANY_MSG = "Too many attempts. Contact support.";
 
+// Electron app fetches this endpoint cross-origin (no normal browser Origin).
+// Allow any origin for this single public claim endpoint.
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+} as const;
+
+function withCors(res: NextResponse): NextResponse {
+  for (const [k, v] of Object.entries(CORS_HEADERS)) res.headers.set(k, v);
+  return res;
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: CORS_HEADERS });
+}
+
 interface CodeRow {
   id: string;
   client_id: string;
@@ -31,15 +48,15 @@ function clientIp(req: NextRequest): string {
 
 export async function POST(req: NextRequest) {
   if (!SUPABASE_URL || !SUPABASE_KEY) {
-    return NextResponse.json({ error: "Database not configured" }, { status: 503 });
+    return withCors(NextResponse.json({ error: "Database not configured" }, { status: 503 }));
   }
 
   let body: { code?: unknown };
-  try { body = await req.json(); } catch { return NextResponse.json({ error: "Invalid JSON" }, { status: 400 }); }
+  try { body = await req.json(); } catch { return withCors(NextResponse.json({ error: "Invalid JSON" }, { status: 400 })); }
 
   const rawCode = typeof body.code === "string" ? body.code : "";
   const code = rawCode.trim().toUpperCase().replace(/-/g, "");
-  if (!code) return NextResponse.json({ error: "code is required" }, { status: 400 });
+  if (!code) return withCors(NextResponse.json({ error: "code is required" }, { status: 400 }));
 
   const ip = clientIp(req);
   const headers = {
@@ -72,7 +89,7 @@ export async function POST(req: NextRequest) {
   );
   const ipCount = parseContentRangeTotal(ipCountRes.headers.get("content-range"));
   if (ipCount > IP_LIMIT_PER_HOUR) {
-    return NextResponse.json({ error: TOO_MANY_MSG }, { status: 429 });
+    return withCors(NextResponse.json({ error: TOO_MANY_MSG }, { status: 429 }));
   }
 
   const codeCountRes = await fetch(
@@ -81,7 +98,7 @@ export async function POST(req: NextRequest) {
   );
   const codeCount = parseContentRangeTotal(codeCountRes.headers.get("content-range"));
   if (codeCount > CODE_LIMIT_PER_HOUR) {
-    return NextResponse.json({ error: TOO_MANY_MSG }, { status: 429 });
+    return withCors(NextResponse.json({ error: TOO_MANY_MSG }, { status: 429 }));
   }
 
   // 4. Look up the code.
@@ -90,12 +107,12 @@ export async function POST(req: NextRequest) {
   const lookupUrl = `${SUPABASE_URL}/rest/v1/ramped_bot_setup_codes?select=${encodeURIComponent(selectCols)}&code=eq.${encodeURIComponent(code)}&claimed_at=is.null&expires_at=gt.${encodeURIComponent(nowIso)}`;
   const lookupRes = await fetch(lookupUrl, { headers });
   if (!lookupRes.ok) {
-    return NextResponse.json({ error: "Lookup failed" }, { status: 500 });
+    return withCors(NextResponse.json({ error: "Lookup failed" }, { status: 500 }));
   }
   const rows = (await lookupRes.json()) as CodeRow[];
   const row = rows[0];
   if (!row || !row.ramped_bot_clients || row.ramped_bot_clients.vps_status !== "active") {
-    return NextResponse.json({ error: "Code not found or expired" }, { status: 404 });
+    return withCors(NextResponse.json({ error: "Code not found or expired" }, { status: 404 }));
   }
 
   const updateRes = await fetch(
@@ -107,13 +124,13 @@ export async function POST(req: NextRequest) {
     },
   );
   if (!updateRes.ok) {
-    return NextResponse.json({ error: "Failed to claim code" }, { status: 500 });
+    return withCors(NextResponse.json({ error: "Failed to claim code" }, { status: 500 }));
   }
 
-  return NextResponse.json({
+  return withCors(NextResponse.json({
     url: row.ramped_bot_clients.hermes_url,
     token: row.ramped_bot_clients.api_server_key,
-  });
+  }));
 }
 
 // PostgREST returns "0-0/N" (or "*/N" when empty) in Content-Range when
