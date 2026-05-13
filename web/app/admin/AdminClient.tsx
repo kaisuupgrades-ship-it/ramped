@@ -111,6 +111,7 @@ export default function AdminClient() {
   const [botsLoading, setBotsLoading] = useState(false);
   const [botsError, setBotsError] = useState<string | null>(null);
   const [healthStatuses, setHealthStatuses] = useState<Record<string, "online" | "offline">>({});
+  const [resetConfirm, setResetConfirm] = useState<Record<string, boolean>>({});
   const [showNewBotForm, setShowNewBotForm] = useState(false);
   const [newBotName, setNewBotName] = useState("");
   const [newBotSlug, setNewBotSlug] = useState("");
@@ -163,6 +164,25 @@ export default function AdminClient() {
     }
     const json = (await r.json()) as { statuses: Record<string, "online" | "offline"> };
     setHealthStatuses(json.statuses);
+  };
+
+  const handleResetLimit = async (clientId: string) => {
+    const r = await fetch("/api/bot-reset-rate-limit", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ client_id: clientId }),
+    });
+    if (!r.ok) {
+      alert(`Reset failed (${r.status})`);
+      return;
+    }
+    setResetConfirm((s) => ({ ...s, [clientId]: true }));
+    setTimeout(() => {
+      setResetConfirm((s) => {
+        const { [clientId]: _, ...rest } = s;
+        return rest;
+      });
+    }, 2000);
   };
 
   const handleRevoke = async (clientId: string, name: string) => {
@@ -576,6 +596,18 @@ export default function AdminClient() {
                               >
                                 Health
                               </button>
+                              {resetConfirm[c.id] ? (
+                                <span className="px-2.5 py-1 rounded-lg text-[12px] font-medium border border-good/40 bg-good/10 text-good">
+                                  ✓ Reset
+                                </span>
+                              ) : (
+                                <button
+                                  onClick={() => handleResetLimit(c.id)}
+                                  className="px-2.5 py-1 rounded-lg text-[12px] font-medium border border-line-2 bg-bg-2 text-text-1 hover:bg-bg-3 transition-colors"
+                                >
+                                  Reset Limit
+                                </button>
+                              )}
                               <button
                                 onClick={() => handleRevoke(c.id, c.name)}
                                 className="px-2.5 py-1 rounded-lg text-[12px] font-medium border border-bad/40 bg-bad/10 text-bad hover:bg-bad/20 transition-colors"
@@ -584,7 +616,7 @@ export default function AdminClient() {
                               </button>
                               {c.vps_status === "awaiting_oauth" && (
                                 <a
-                                  href={`https://${c.slug}.bot.30dayramp.com:10254`}
+                                  href={`https://${c.slug}.bot.30dayramp.com:10255`}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   className="px-2.5 py-1 rounded-lg text-[12px] font-medium border border-blue/40 bg-blue/10 text-blue-2 hover:bg-blue/20 transition-colors"
