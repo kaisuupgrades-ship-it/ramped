@@ -1268,6 +1268,17 @@ function BotStatusView({
     setHealth(j.statuses[client.id] ?? null);
   });
 
+  const handleCheckDroplet = () => run("droplet", async () => {
+    const r = await fetch(`/api/bot-poll-droplet?client_id=${encodeURIComponent(client.id)}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!r.ok) {
+      const j = (await r.json().catch(() => ({}))) as { error?: string };
+      throw new Error(j.error || `API ${r.status}`);
+    }
+    onChanged();
+  });
+
   const handleReset = () => run("reset", async () => {
     const r = await fetch("/api/bot-reset-rate-limit", {
       method: "POST",
@@ -1298,6 +1309,18 @@ function BotStatusView({
           <span className="text-text-0 font-semibold">{meta.label}</span>
         </div>
       </div>
+
+      {client.vps_status === "provisioning" && (
+        <div className="mb-4 rounded-xl border border-yellow-400/30 bg-yellow-400/5 p-3 text-[13px] text-text-1">
+          <div className="flex items-center gap-2">
+            <span className="inline-block w-3 h-3 rounded-full bg-yellow-400 animate-pulse" />
+            <span>VPS is being created… DigitalOcean typically takes ~60s to assign an IP.</span>
+          </div>
+          {client.droplet_ip && (
+            <div className="mt-1.5 font-mono text-[12px] text-text-2">IP assigned: {client.droplet_ip}</div>
+          )}
+        </div>
+      )}
 
       <dl className="grid grid-cols-[140px_1fr] gap-y-2 gap-x-3 text-[13.5px] mb-5">
         <dt className="text-text-3 font-mono text-[11.5px] uppercase tracking-[0.05em] pt-0.5">Slug</dt>
@@ -1331,6 +1354,9 @@ function BotStatusView({
       )}
 
       <div className="flex flex-wrap gap-2 mb-4">
+        {client.droplet_id && (
+          <button onClick={handleCheckDroplet} disabled={busy === "droplet"} className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border border-blue/40 bg-blue/10 text-blue-2 hover:bg-blue/20 transition-colors disabled:opacity-50">{busy === "droplet" ? "..." : "Check Status"}</button>
+        )}
         <button onClick={handleNewCode} disabled={busy === "code"} className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border border-line-2 bg-bg-2 text-text-1 hover:bg-bg-3 transition-colors disabled:opacity-50">{busy === "code" ? "..." : "New Code"}</button>
         <button onClick={handleHealth} disabled={busy === "health"} className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border border-line-2 bg-bg-2 text-text-1 hover:bg-bg-3 transition-colors disabled:opacity-50">{busy === "health" ? "..." : "Health Check"}</button>
         <button onClick={handleReset} disabled={busy === "reset"} className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border border-line-2 bg-bg-2 text-text-1 hover:bg-bg-3 transition-colors disabled:opacity-50">{busy === "reset" ? "..." : "Reset Rate Limit"}</button>
