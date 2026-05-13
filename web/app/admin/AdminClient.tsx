@@ -1,9 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Card, Badge, Input, Field } from "@/components/ui/core";
+import { useCallback, useEffect, useState } from "react";
+import { Card, Badge, Input, Field, Label, Textarea } from "@/components/ui/core";
 import { Button } from "@/components/ui/Button";
 import { site } from "@/lib/site";
+
+/* ============================================================================
+   Admin CRM — bookings, leads, Ramped Bot, plus a slide-in client-detail panel
+   with Overview / Bot / Materials tabs.
+
+   Token is held in localStorage. Every API call sends `Authorization: Bearer ...`.
+   The detail panel lazy-loads `/api/booking-detail/[id]` on open and never
+   pre-fetches bot data for every booking.
+   ========================================================================== */
 
 interface Booking {
   id: string;
@@ -17,6 +26,7 @@ interface Booking {
   status: string | null;
   payment_status: string | null;
   notes: string | null;
+  admin_notes?: string | null;
   meet_link: string | null;
   phase: string;
   phase_eyebrow: string;
@@ -36,10 +46,15 @@ interface BotClient {
   vps_status: string | null;
   hermes_url: string | null;
   api_server_key: string | null;
+  email: string | null;
+  booking_id: string | null;
   created_at: string | null;
   last_active_at: string | null;
   notes: string | null;
   latest_code: string | null;
+  booking_name?: string | null;
+  booking_email?: string | null;
+  booking_company?: string | null;
 }
 
 interface AdminPayload {
@@ -48,6 +63,23 @@ interface AdminPayload {
   bookings: Booking[];
   leads: Lead[];
   maps?: unknown[];
+}
+
+interface MaterialItem {
+  source: "repo" | "upload";
+  id: string;
+  category: string;
+  title: string;
+  description: string | null;
+  filename: string;
+  type_pill: string;
+  size_bytes: number | null;
+  updated_at: string | null;
+  uploaded_at?: string;
+  mime?: string;
+  path?: string;
+  editable: boolean;
+  deletable: boolean;
 }
 
 type BotVpsStatus = "pending" | "provisioning" | "awaiting_oauth" | "active" | "deactivated";
@@ -61,6 +93,26 @@ const BOT_STATUS_META: Record<BotVpsStatus | "unknown", { label: string; dot: st
   unknown:        { label: "Unknown",        dot: "bg-text-3" },
 };
 
+const STATUS_OPTIONS: Array<{ value: Booking["status"]; label: string }> = [
+  { value: "new", label: "New" },
+  { value: "discovery", label: "Discovery" },
+  { value: "proposal", label: "Proposal" },
+  { value: "negotiation", label: "Negotiation" },
+  { value: "won", label: "Won" },
+  { value: "lost", label: "Lost" },
+  { value: "post_won", label: "Post-Won" },
+  { value: "no_show", label: "No Show" },
+];
+
+const TIER_OPTIONS: Array<{ value: string; label: string }> = [
+  { value: "", label: "—" },
+  { value: "starter", label: "Starter" },
+  { value: "growth", label: "Growth" },
+  { value: "enterprise", label: "Enterprise" },
+];
+
+const MATERIAL_CATEGORIES = ["strategy", "audits", "ops", "design", "sales", "marketing", "other"] as const;
+
 function formatSetupCode(code: string | null): string {
   if (!code) return "—";
   return code.length >= 8 ? `${code.slice(0, 4)}-${code.slice(4)}` : code;
@@ -73,6 +125,21 @@ function slugify(name: string): string {
     .trim()
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
+}
+
+function formatBytes(n: number | null | undefined): string {
+  if (!n || n <= 0) return "—";
+  if (n < 1024) return `${n} B`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+  return `${(n / 1024 / 1024).toFixed(1)} MB`;
+}
+
+function toLocalInputValue(iso: string | null): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
 const TOKEN_KEY = "ramped:adminToken";
@@ -116,11 +183,37 @@ export default function AdminClient() {
   const [newBotName, setNewBotName] = useState("");
   const [newBotSlug, setNewBotSlug] = useState("");
   const [newBotSlugEdited, setNewBotSlugEdited] = useState(false);
+  const [newBotBookingId, setNewBotBookingId] = useState<string>("");
   const [newBotSubmitting, setNewBotSubmitting] = useState(false);
   const [newBotResult, setNewBotResult] = useState<{ name: string; slug: string; code: string } | null>(null);
   const [newBotError, setNewBotError] = useState<string | null>(null);
 
-  const loadBots = async () => {
+  // Client detail panel state
+  const [detailOpenId, setDetailOpenId] = useState<string | null>(null);
+
+  const loadBookings = useCallback(async () => {
+    if (!token) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const r = await fetch("/api/admin/bookings", { headers: { Authorization: `Bearer ${token}` } });
+      if (r.status === 401) {
+        localStorage.removeItem(TOKEN_KEY);
+        setToken("");
+        setError("That token didn't work. Try again.");
+        return;
+      }
+      if (!r.ok) throw new Error(`API ${r.status}`);
+      const json = (await r.json()) as AdminPayload;
+      setData(json);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to load");
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  const loadBots = useCallback(async () => {
     if (!token) return;
     setBotsLoading(true);
     setBotsError(null);
@@ -134,14 +227,13 @@ export default function AdminClient() {
     } finally {
       setBotsLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     if (tab === "bots" && bots === null && token && !botsLoading) {
       loadBots();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tab, token]);
+  }, [tab, bots, token, botsLoading, loadBots]);
 
   const handleGenerateCode = async (clientId: string) => {
     const r = await fetch("/api/bot-generate-code", {
@@ -179,8 +271,9 @@ export default function AdminClient() {
     setResetConfirm((s) => ({ ...s, [clientId]: true }));
     setTimeout(() => {
       setResetConfirm((s) => {
-        const { [clientId]: _, ...rest } = s;
-        return rest;
+        const next = { ...s };
+        delete next[clientId];
+        return next;
       });
     }, 2000);
   };
@@ -204,10 +297,19 @@ export default function AdminClient() {
     setNewBotError(null);
     setNewBotSubmitting(true);
     try {
+      const payload: Record<string, unknown> = {
+        name: newBotName.trim(),
+        slug: newBotSlug.trim(),
+      };
+      if (newBotBookingId) {
+        const booking = data?.bookings.find((b) => b.id === newBotBookingId);
+        payload.booking_id = newBotBookingId;
+        if (booking?.email) payload.email = booking.email;
+      }
       const r = await fetch("/api/bot-provision", {
         method: "POST",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newBotName.trim(), slug: newBotSlug.trim() }),
+        body: JSON.stringify(payload),
       });
       if (!r.ok) {
         const j = (await r.json().catch(() => ({}))) as { error?: string };
@@ -218,6 +320,7 @@ export default function AdminClient() {
       setNewBotName("");
       setNewBotSlug("");
       setNewBotSlugEdited(false);
+      setNewBotBookingId("");
       await loadBots();
     } catch (err) {
       setNewBotError(err instanceof Error ? err.message : "Failed to provision client");
@@ -232,32 +335,16 @@ export default function AdminClient() {
   }, []);
 
   useEffect(() => {
-    if (!token) return;
-    let cancelled = false;
-    (async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const r = await fetch("/api/admin/bookings", { headers: { Authorization: `Bearer ${token}` } });
-        if (r.status === 401) {
-          if (!cancelled) {
-            localStorage.removeItem(TOKEN_KEY);
-            setToken("");
-            setError("That token didn't work. Try again.");
-          }
-          return;
-        }
-        if (!r.ok) throw new Error(`API ${r.status}`);
-        const json = (await r.json()) as AdminPayload;
-        if (!cancelled) setData(json);
-      } catch (e) {
-        if (!cancelled) setError(e instanceof Error ? e.message : "Failed to load");
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [token]);
+    if (token) loadBookings();
+  }, [token, loadBookings]);
+
+  // Esc closes the detail panel
+  useEffect(() => {
+    if (!detailOpenId) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setDetailOpenId(null); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [detailOpenId]);
 
   if (!token) {
     return (
@@ -331,6 +418,14 @@ export default function AdminClient() {
   const bookings = data?.bookings ?? [];
   const leads = data?.leads ?? [];
 
+  // Build a quick lookup of bot status by booking_id so the bookings table can
+  // show a dot without per-row fetches. Falls back to "not loaded" until the
+  // bots tab is visited at least once.
+  const botByBookingId = new Map<string, BotClient>();
+  if (bots) for (const c of bots) if (c.booking_id) botByBookingId.set(c.booking_id, c);
+
+  const openBooking = detailOpenId ? bookings.find((b) => b.id === detailOpenId) ?? null : null;
+
   return (
     <section className="px-6 py-12">
       <div className="max-w-[1280px] mx-auto">
@@ -379,12 +474,13 @@ export default function AdminClient() {
                     <th className="text-left font-mono text-[11px] uppercase tracking-[0.06em] px-4 py-3">Tier</th>
                     <th className="text-left font-mono text-[11px] uppercase tracking-[0.06em] px-4 py-3">Phase</th>
                     <th className="text-left font-mono text-[11px] uppercase tracking-[0.06em] px-4 py-3">Payment</th>
+                    <th className="text-left font-mono text-[11px] uppercase tracking-[0.06em] px-4 py-3">Bot</th>
                     <th className="text-left font-mono text-[11px] uppercase tracking-[0.06em] px-4 py-3">Portal</th>
                   </tr>
                 </thead>
                 <tbody>
                   {bookings.length === 0 && (
-                    <tr><td colSpan={6} className="px-4 py-12 text-center text-text-3">No bookings yet.</td></tr>
+                    <tr><td colSpan={7} className="px-4 py-12 text-center text-text-3">No bookings yet.</td></tr>
                   )}
                   {bookings.map((b) => {
                     const when = b.datetime ? new Date(b.datetime) : null;
@@ -393,15 +489,27 @@ export default function AdminClient() {
                       hour: "numeric", minute: "2-digit",
                       timeZone: b.timezone || "America/Chicago",
                     }) : "—";
+                    const bot = botByBookingId.get(b.id);
+                    const botDot = bot
+                      ? (bot.vps_status === "active"
+                          ? "bg-good"
+                          : bot.vps_status === "awaiting_oauth"
+                            ? "bg-orange"
+                            : "bg-text-3")
+                      : null;
                     return (
-                      <tr key={b.id} className="border-t border-line">
+                      <tr
+                        key={b.id}
+                        className="border-t border-line cursor-pointer hover:bg-bg-2 transition-colors"
+                        onClick={() => setDetailOpenId(b.id)}
+                      >
                         <td className="px-4 py-3 align-top">
                           <div className="text-text-0 font-medium">{whenStr}</div>
                           <div className="text-[12px] text-text-3 font-mono">{b.timezone || "—"}</div>
                         </td>
                         <td className="px-4 py-3 align-top">
                           <div className="text-text-0 font-medium">{b.name || "—"}</div>
-                          <div className="text-[12px] text-text-2"><a href={`mailto:${b.email}`} className="text-blue-2 hover:text-blue">{b.email}</a></div>
+                          <div className="text-[12px] text-text-2">{b.email}</div>
                           {b.company && <div className="text-[12px] text-text-3">{b.company}</div>}
                         </td>
                         <td className="px-4 py-3 align-top">
@@ -422,6 +530,13 @@ export default function AdminClient() {
                           ) : <span className="text-text-3">—</span>}
                         </td>
                         <td className="px-4 py-3 align-top">
+                          {botDot ? (
+                            <span className={`inline-block w-2 h-2 rounded-full ${botDot}`} title={bot?.vps_status ?? ""} />
+                          ) : (
+                            <span className="text-text-3">—</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 align-top" onClick={(e) => e.stopPropagation()}>
                           {b.portal_url ? (
                             <a href={b.portal_url} target="_blank" rel="noopener noreferrer" className="text-blue-2 hover:text-blue text-[12px] font-mono">Open →</a>
                           ) : <span className="text-text-3 text-[12px]">—</span>}
@@ -520,6 +635,20 @@ export default function AdminClient() {
                         placeholder="acme-holdings"
                       />
                     </Field>
+                    <Field label="Link to booking (optional)" hint="Associates this client with an existing CRM booking.">
+                      <select
+                        value={newBotBookingId}
+                        onChange={(e) => setNewBotBookingId(e.target.value)}
+                        className="w-full h-11 px-3.5 rounded-xl bg-bg-2 border border-line-2 text-text-0 text-[14.5px] focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/30 transition-colors"
+                      >
+                        <option value="">— Unlinked —</option>
+                        {bookings.map((b) => (
+                          <option key={b.id} value={b.id}>
+                            {b.company || b.name || b.email}
+                          </option>
+                        ))}
+                      </select>
+                    </Field>
                     {newBotError && <p className="text-bad text-[13px] mb-3">{newBotError}</p>}
                     <div className="flex gap-2">
                       <Button type="submit" variant="primary" size="sm" disabled={newBotSubmitting || !newBotName.trim() || !newBotSlug.trim()}>
@@ -538,7 +667,8 @@ export default function AdminClient() {
                   <thead className="bg-bg-3 text-text-3">
                     <tr>
                       <th className="text-left font-mono text-[11px] uppercase tracking-[0.06em] px-4 py-3">Name</th>
-                      <th className="text-left font-mono text-[11px] uppercase tracking-[0.06em] px-4 py-3">Slug</th>
+                      <th className="text-left font-mono text-[11px] uppercase tracking-[0.06em] px-4 py-3">Email</th>
+                      <th className="text-left font-mono text-[11px] uppercase tracking-[0.06em] px-4 py-3">Company</th>
                       <th className="text-left font-mono text-[11px] uppercase tracking-[0.06em] px-4 py-3">Status</th>
                       <th className="text-left font-mono text-[11px] uppercase tracking-[0.06em] px-4 py-3">IP</th>
                       <th className="text-left font-mono text-[11px] uppercase tracking-[0.06em] px-4 py-3">Setup Code</th>
@@ -547,26 +677,26 @@ export default function AdminClient() {
                   </thead>
                   <tbody>
                     {!bots && !botsLoading && (
-                      <tr><td colSpan={6} className="px-4 py-12 text-center text-text-3">Click "Ramped Bot" tab to load.</td></tr>
+                      <tr><td colSpan={7} className="px-4 py-12 text-center text-text-3">Click "Ramped Bot" tab to load.</td></tr>
                     )}
                     {bots && bots.length === 0 && (
-                      <tr><td colSpan={6} className="px-4 py-12 text-center text-text-3">No clients yet.</td></tr>
+                      <tr><td colSpan={7} className="px-4 py-12 text-center text-text-3">No clients yet.</td></tr>
                     )}
                     {bots && bots.map((c) => {
                       const statusKey = (c.vps_status ?? "unknown") as BotVpsStatus | "unknown";
                       const meta = BOT_STATUS_META[statusKey] ?? BOT_STATUS_META.unknown;
                       const health = healthStatuses[c.id];
+                      const displayName = c.booking_name || c.name;
+                      const displayEmail = c.booking_email || c.email;
+                      const displayCompany = c.booking_company;
                       return (
                         <tr key={c.id} className="border-t border-line">
                           <td className="px-4 py-3 align-top">
-                            <div className="text-text-0 font-medium">{c.name}</div>
-                            {c.created_at && (
-                              <div className="text-[12px] text-text-3 font-mono">
-                                {new Date(c.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                              </div>
-                            )}
+                            <div className="text-text-0 font-medium">{displayName}</div>
+                            <div className="text-[12px] text-text-3 font-mono">{c.slug}</div>
                           </td>
-                          <td className="px-4 py-3 align-top text-text-1 font-mono text-[12.5px]">{c.slug}</td>
+                          <td className="px-4 py-3 align-top text-text-2 text-[12.5px]">{displayEmail || "—"}</td>
+                          <td className="px-4 py-3 align-top text-text-2 text-[12.5px]">{displayCompany || "—"}</td>
                           <td className="px-4 py-3 align-top">
                             <div className="inline-flex items-center gap-2">
                               <span className={`inline-block w-2 h-2 rounded-full ${meta.dot}`} />
@@ -637,9 +767,830 @@ export default function AdminClient() {
         )}
 
         <p className="mt-8 text-[12px] text-text-3">
-          Need full CRUD (edit / cancel / materials)? Use the <a href="https://www.30dayramp.com/admin" className="text-blue-2 underline">legacy admin</a> at {site.email.split("@")[1]} until those screens are ported.
+          Need anything the new admin doesn't have yet? The <a href="https://www.30dayramp.com/admin" className="text-blue-2 underline">legacy admin</a> at {site.email.split("@")[1]} is the fallback.
         </p>
       </div>
+
+      {openBooking && (
+        <ClientDetailPanel
+          booking={openBooking}
+          token={token}
+          onClose={() => setDetailOpenId(null)}
+          onUpdated={() => { loadBookings(); }}
+          onBotChanged={() => { loadBots(); }}
+        />
+      )}
     </section>
+  );
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Slide-in detail panel: Overview / Bot / Materials
+   ────────────────────────────────────────────────────────────────────────── */
+
+function ClientDetailPanel({
+  booking,
+  token,
+  onClose,
+  onUpdated,
+  onBotChanged,
+}: {
+  booking: Booking;
+  token: string;
+  onClose: () => void;
+  onUpdated: () => void;
+  onBotChanged: () => void;
+}) {
+  const [activeTab, setActiveTab] = useState<"overview" | "bot" | "materials">("overview");
+
+  return (
+    <>
+      <div className="fixed inset-0 bg-black/40 z-40" onClick={onClose} />
+      <aside
+        className="fixed inset-y-0 right-0 w-[560px] max-w-[100vw] bg-bg-1 border-l border-line z-50 flex flex-col shadow-2xl"
+        role="dialog"
+        aria-label="Client detail"
+      >
+        <header className="flex items-start justify-between gap-3 px-6 py-5 border-b border-line">
+          <div className="min-w-0">
+            <div className="text-text-0 font-semibold text-[16px] truncate">
+              {booking.name || booking.email}
+            </div>
+            {booking.company && <div className="text-[12.5px] text-text-2 truncate">{booking.company}</div>}
+            <div className="text-[12px] text-text-3 truncate">
+              <a href={`mailto:${booking.email}`} className="text-blue-2 hover:text-blue">{booking.email}</a>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="w-9 h-9 rounded-lg text-text-2 hover:text-text-0 hover:bg-bg-3 flex items-center justify-center text-[20px] leading-none"
+          >
+            ×
+          </button>
+        </header>
+
+        <nav className="flex gap-1 px-4 py-2 border-b border-line bg-bg-2">
+          {(["overview", "bot", "materials"] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => setActiveTab(t)}
+              className={`px-3 py-1.5 rounded-lg text-[13px] font-medium border transition-colors ${
+                activeTab === t
+                  ? "bg-blue/10 border-blue/40 text-blue-2"
+                  : "bg-transparent border-transparent text-text-2 hover:bg-bg-3 hover:text-text-0"
+              }`}
+            >
+              {t === "overview" ? "Overview" : t === "bot" ? "Bot" : "Materials"}
+            </button>
+          ))}
+        </nav>
+
+        <div className="flex-1 overflow-y-auto px-6 py-5">
+          {activeTab === "overview" && (
+            <OverviewTab booking={booking} token={token} onUpdated={onUpdated} onClose={onClose} />
+          )}
+          {activeTab === "bot" && (
+            <BotTab booking={booking} token={token} onBotChanged={onBotChanged} />
+          )}
+          {activeTab === "materials" && (
+            <MaterialsTab token={token} />
+          )}
+        </div>
+      </aside>
+    </>
+  );
+}
+
+/* ────────── Overview tab ────────── */
+
+function OverviewTab({
+  booking,
+  token,
+  onUpdated,
+  onClose,
+}: {
+  booking: Booking;
+  token: string;
+  onUpdated: () => void;
+  onClose: () => void;
+}) {
+  const [form, setForm] = useState({
+    name: booking.name ?? "",
+    email: booking.email ?? "",
+    company: booking.company ?? "",
+    status: booking.status ?? "new",
+    tier: booking.tier ?? "",
+    timezone: booking.timezone ?? "",
+    notes: booking.notes ?? "",
+    admin_notes: booking.admin_notes ?? "",
+    meet_link: booking.meet_link ?? "",
+    datetime: toLocalInputValue(booking.datetime),
+  });
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [archiving, setArchiving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Reset form when the panel switches bookings without unmounting.
+  useEffect(() => {
+    setForm({
+      name: booking.name ?? "",
+      email: booking.email ?? "",
+      company: booking.company ?? "",
+      status: booking.status ?? "new",
+      tier: booking.tier ?? "",
+      timezone: booking.timezone ?? "",
+      notes: booking.notes ?? "",
+      admin_notes: booking.admin_notes ?? "",
+      meet_link: booking.meet_link ?? "",
+      datetime: toLocalInputValue(booking.datetime),
+    });
+    setSaved(false);
+    setError(null);
+  }, [booking]);
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    setError(null);
+    setSaved(false);
+    try {
+      const payload: Record<string, unknown> = {
+        id: booking.id,
+        name: form.name,
+        email: form.email,
+        company: form.company,
+        status: form.status,
+        tier: form.tier,
+        timezone: form.timezone,
+        notes: form.notes,
+        admin_notes: form.admin_notes,
+        meet_link: form.meet_link,
+      };
+      if (form.datetime) {
+        const d = new Date(form.datetime);
+        if (!isNaN(d.getTime())) payload.datetime = d.toISOString();
+      }
+      const r = await fetch("/api/booking-update", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!r.ok) {
+        const j = (await r.json().catch(() => ({}))) as { error?: string };
+        throw new Error(j.error || `API ${r.status}`);
+      }
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+      onUpdated();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Save failed");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleArchive = async () => {
+    if (!confirm(`Archive ${booking.name || booking.email}? Sets status to "lost" and notes "Archived". This is reversible from the legacy admin.`)) return;
+    setArchiving(true);
+    setError(null);
+    try {
+      const r = await fetch("/api/booking-delete", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ id: booking.id }),
+      });
+      if (!r.ok) {
+        const j = (await r.json().catch(() => ({}))) as { error?: string };
+        throw new Error(j.error || `API ${r.status}`);
+      }
+      onUpdated();
+      onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Archive failed");
+    } finally {
+      setArchiving(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSave}>
+      <Field label="Name">
+        <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+      </Field>
+      <Field label="Email">
+        <Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+      </Field>
+      <Field label="Company">
+        <Input value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} />
+      </Field>
+
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Status">
+          <select
+            value={form.status}
+            onChange={(e) => setForm({ ...form, status: e.target.value })}
+            className="w-full h-11 px-3.5 rounded-xl bg-bg-2 border border-line-2 text-text-0 text-[14.5px] focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/30 transition-colors"
+          >
+            {STATUS_OPTIONS.map((o) => (
+              <option key={o.value ?? ""} value={o.value ?? ""}>{o.label}</option>
+            ))}
+          </select>
+        </Field>
+        <Field label="Tier">
+          <select
+            value={form.tier}
+            onChange={(e) => setForm({ ...form, tier: e.target.value })}
+            className="w-full h-11 px-3.5 rounded-xl bg-bg-2 border border-line-2 text-text-0 text-[14.5px] focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/30 transition-colors"
+          >
+            {TIER_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
+        </Field>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Kickoff datetime">
+          <Input
+            type="datetime-local"
+            value={form.datetime}
+            onChange={(e) => setForm({ ...form, datetime: e.target.value })}
+          />
+        </Field>
+        <Field label="Timezone">
+          <Input value={form.timezone} onChange={(e) => setForm({ ...form, timezone: e.target.value })} placeholder="America/Chicago" />
+        </Field>
+      </div>
+
+      <Field label="Meet link">
+        <Input value={form.meet_link} onChange={(e) => setForm({ ...form, meet_link: e.target.value })} placeholder="https://meet.google.com/..." />
+      </Field>
+
+      <Field label="Notes (visible to client)">
+        <Textarea
+          value={form.notes}
+          onChange={(e) => setForm({ ...form, notes: e.target.value })}
+          rows={3}
+        />
+      </Field>
+
+      <Field label="Admin notes (internal)">
+        <Textarea
+          value={form.admin_notes}
+          onChange={(e) => setForm({ ...form, admin_notes: e.target.value })}
+          rows={3}
+        />
+      </Field>
+
+      {error && <p className="text-bad text-[13px] mb-3">{error}</p>}
+
+      <div className="flex items-center gap-3 mb-8">
+        <Button type="submit" variant="primary" disabled={saving}>
+          {saving ? "Saving..." : "Save changes"}
+        </Button>
+        {saved && <span className="text-good text-[13px] font-mono">✓ Saved</span>}
+      </div>
+
+      <div className="border-t border-line pt-5">
+        <Label>Danger zone</Label>
+        <p className="text-[12.5px] text-text-3 mb-3 leading-relaxed">
+          Archive marks status as <code className="font-mono bg-bg-2 px-1 rounded">lost</code> and notes the row as Archived.
+          The row is preserved for audit history.
+        </p>
+        <button
+          type="button"
+          onClick={handleArchive}
+          disabled={archiving}
+          className="px-3.5 py-2 rounded-lg text-[13px] font-medium border border-bad/40 bg-bad/10 text-bad hover:bg-bad/20 transition-colors disabled:opacity-50"
+        >
+          {archiving ? "Archiving..." : "Archive client"}
+        </button>
+      </div>
+    </form>
+  );
+}
+
+/* ────────── Bot tab ────────── */
+
+interface BookingDetailResponse {
+  booking: Booking;
+  bot_client: BotClient | null;
+  latest_code: string | null;
+}
+
+function BotTab({
+  booking,
+  token,
+  onBotChanged,
+}: {
+  booking: Booking;
+  token: string;
+  onBotChanged: () => void;
+}) {
+  const [loading, setLoading] = useState(true);
+  const [detail, setDetail] = useState<BookingDetailResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const r = await fetch(`/api/booking-detail/${booking.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!r.ok) throw new Error(`API ${r.status}`);
+      const json = (await r.json()) as BookingDetailResponse;
+      setDetail(json);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load");
+    } finally {
+      setLoading(false);
+    }
+  }, [booking.id, token]);
+
+  useEffect(() => { load(); }, [load]);
+
+  if (loading) return <p className="text-text-2 text-[13.5px]">Loading bot status...</p>;
+  if (error) return <p className="text-bad text-[13.5px]">{error}</p>;
+
+  if (!detail?.bot_client) {
+    return (
+      <ProvisionForm
+        booking={booking}
+        token={token}
+        onProvisioned={() => { load(); onBotChanged(); }}
+      />
+    );
+  }
+
+  return (
+    <BotStatusView
+      client={detail.bot_client}
+      latestCode={detail.latest_code}
+      token={token}
+      onChanged={() => { load(); onBotChanged(); }}
+    />
+  );
+}
+
+function ProvisionForm({
+  booking,
+  token,
+  onProvisioned,
+}: {
+  booking: Booking;
+  token: string;
+  onProvisioned: () => void;
+}) {
+  const defaultName = booking.company || booking.name || booking.email;
+  const [name, setName] = useState(defaultName);
+  const [slug, setSlug] = useState(slugify(defaultName));
+  const [slugEdited, setSlugEdited] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<{ code: string } | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setError(null);
+    try {
+      const r = await fetch("/api/bot-provision", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: name.trim(),
+          slug: slug.trim(),
+          booking_id: booking.id,
+          email: booking.email,
+        }),
+      });
+      if (!r.ok) {
+        const j = (await r.json().catch(() => ({}))) as { error?: string };
+        throw new Error(j.error || `API ${r.status}`);
+      }
+      const j = (await r.json()) as { code: string };
+      setResult({ code: j.code });
+      onProvisioned();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to provision");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (result) {
+    return (
+      <div>
+        <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-good font-semibold mb-2">Provisioned</div>
+        <p className="text-text-2 text-[13.5px] mb-3">
+          Bot client linked to this booking. Hand the operator the setup code below.
+        </p>
+        <div className="bg-bg-2 border border-line-2 rounded-xl p-4">
+          <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-text-3 mb-1">Setup code (24h)</div>
+          <div className="font-mono text-[22px] tracking-[0.15em] text-text-0 font-semibold">{formatSetupCode(result.code)}</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-blue-2 font-semibold mb-3">No bot linked</div>
+      <p className="text-text-2 text-[13.5px] mb-4 leading-relaxed">
+        Provision a Ramped Bot VPS for this client. Pre-filled from booking data — edit if needed.
+      </p>
+      <Field label="Name">
+        <Input
+          value={name}
+          onChange={(e) => {
+            const v = e.target.value;
+            setName(v);
+            if (!slugEdited) setSlug(slugify(v));
+          }}
+          placeholder="Acme Holdings"
+        />
+      </Field>
+      <Field label="Slug" hint={slug ? `https://${slug}.bot.30dayramp.com` : "lowercase alphanumeric + hyphens"}>
+        <Input
+          value={slug}
+          onChange={(e) => { setSlug(e.target.value.toLowerCase()); setSlugEdited(true); }}
+          placeholder="acme-holdings"
+        />
+      </Field>
+      {error && <p className="text-bad text-[13px] mb-3">{error}</p>}
+      <Button type="submit" variant="primary" disabled={submitting || !name.trim() || !slug.trim()}>
+        {submitting ? "Provisioning..." : "Provision Bot"}
+      </Button>
+    </form>
+  );
+}
+
+function BotStatusView({
+  client,
+  latestCode,
+  token,
+  onChanged,
+}: {
+  client: BotClient;
+  latestCode: string | null;
+  token: string;
+  onChanged: () => void;
+}) {
+  const statusKey = (client.vps_status ?? "unknown") as BotVpsStatus | "unknown";
+  const meta = BOT_STATUS_META[statusKey] ?? BOT_STATUS_META.unknown;
+  const [health, setHealth] = useState<"online" | "offline" | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const run = async (label: string, fn: () => Promise<void>) => {
+    setBusy(label);
+    setError(null);
+    try { await fn(); } catch (err) { setError(err instanceof Error ? err.message : "Action failed"); } finally { setBusy(null); }
+  };
+
+  const handleNewCode = () => run("code", async () => {
+    const r = await fetch("/api/bot-generate-code", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ client_id: client.id }),
+    });
+    if (!r.ok) throw new Error(`API ${r.status}`);
+    onChanged();
+  });
+
+  const handleHealth = () => run("health", async () => {
+    const r = await fetch("/api/bot-vps-status", { headers: { Authorization: `Bearer ${token}` } });
+    if (!r.ok) throw new Error(`API ${r.status}`);
+    const j = (await r.json()) as { statuses: Record<string, "online" | "offline"> };
+    setHealth(j.statuses[client.id] ?? null);
+  });
+
+  const handleReset = () => run("reset", async () => {
+    const r = await fetch("/api/bot-reset-rate-limit", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ client_id: client.id }),
+    });
+    if (!r.ok) throw new Error(`API ${r.status}`);
+  });
+
+  const handleRevoke = () => {
+    if (!confirm(`Revoke "${client.name}"? This deactivates the client and expires unclaimed codes.`)) return;
+    run("revoke", async () => {
+      const r = await fetch("/api/bot-revoke", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ client_id: client.id }),
+      });
+      if (!r.ok) throw new Error(`API ${r.status}`);
+      onChanged();
+    });
+  };
+
+  return (
+    <div>
+      <div className="mb-4">
+        <div className="inline-flex items-center gap-2 mb-1">
+          <span className={`inline-block w-2.5 h-2.5 rounded-full ${meta.dot}`} />
+          <span className="text-text-0 font-semibold">{meta.label}</span>
+        </div>
+      </div>
+
+      <dl className="grid grid-cols-[140px_1fr] gap-y-2 gap-x-3 text-[13.5px] mb-5">
+        <dt className="text-text-3 font-mono text-[11.5px] uppercase tracking-[0.05em] pt-0.5">Slug</dt>
+        <dd className="text-text-1 font-mono">{client.slug}</dd>
+
+        <dt className="text-text-3 font-mono text-[11.5px] uppercase tracking-[0.05em] pt-0.5">IP</dt>
+        <dd className="text-text-1 font-mono">{client.droplet_ip || "—"}</dd>
+
+        <dt className="text-text-3 font-mono text-[11.5px] uppercase tracking-[0.05em] pt-0.5">Hermes URL</dt>
+        <dd className="text-text-1 font-mono text-[12.5px] break-all">
+          {client.hermes_url ? (
+            <a href={client.hermes_url} target="_blank" rel="noopener noreferrer" className="text-blue-2 hover:text-blue">{client.hermes_url}</a>
+          ) : "—"}
+        </dd>
+
+        <dt className="text-text-3 font-mono text-[11.5px] uppercase tracking-[0.05em] pt-0.5">Setup code</dt>
+        <dd className="text-text-1 font-mono tracking-[0.15em]">{formatSetupCode(latestCode)}</dd>
+
+        <dt className="text-text-3 font-mono text-[11.5px] uppercase tracking-[0.05em] pt-0.5">Last active</dt>
+        <dd className="text-text-1">
+          {client.last_active_at
+            ? new Date(client.last_active_at).toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })
+            : "—"}
+        </dd>
+      </dl>
+
+      {health && (
+        <div className={`mb-4 text-[12.5px] font-mono ${health === "online" ? "text-good" : "text-bad"}`}>
+          {health === "online" ? "✓ online" : "✗ offline"}
+        </div>
+      )}
+
+      <div className="flex flex-wrap gap-2 mb-4">
+        <button onClick={handleNewCode} disabled={busy === "code"} className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border border-line-2 bg-bg-2 text-text-1 hover:bg-bg-3 transition-colors disabled:opacity-50">{busy === "code" ? "..." : "New Code"}</button>
+        <button onClick={handleHealth} disabled={busy === "health"} className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border border-line-2 bg-bg-2 text-text-1 hover:bg-bg-3 transition-colors disabled:opacity-50">{busy === "health" ? "..." : "Health Check"}</button>
+        <button onClick={handleReset} disabled={busy === "reset"} className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border border-line-2 bg-bg-2 text-text-1 hover:bg-bg-3 transition-colors disabled:opacity-50">{busy === "reset" ? "..." : "Reset Rate Limit"}</button>
+        <button onClick={handleRevoke} disabled={busy === "revoke"} className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border border-bad/40 bg-bad/10 text-bad hover:bg-bad/20 transition-colors disabled:opacity-50">{busy === "revoke" ? "..." : "Revoke"}</button>
+        {client.vps_status === "awaiting_oauth" && (
+          <a
+            href={`https://${client.slug}.bot.30dayramp.com:10255`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border border-blue/40 bg-blue/10 text-blue-2 hover:bg-blue/20 transition-colors"
+          >
+            Open OneCLI →
+          </a>
+        )}
+      </div>
+
+      {error && <p className="text-bad text-[13px]">{error}</p>}
+    </div>
+  );
+}
+
+/* ────────── Materials tab ────────── */
+
+function MaterialsTab({ token }: { token: string }) {
+  const [items, setItems] = useState<MaterialItem[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const r = await fetch("/api/admin-materials", { headers: { Authorization: `Bearer ${token}` } });
+      if (!r.ok) throw new Error(`API ${r.status}`);
+      const json = (await r.json()) as { items: MaterialItem[] };
+      setItems(json.items);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load");
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  useEffect(() => { load(); }, [load]);
+
+  const handleFile = async (file: File) => {
+    setUploading(true);
+    setUploadError(null);
+    try {
+      const initRes = await fetch("/api/admin-materials", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          category: "other",
+          title: file.name.replace(/\.[^.]+$/, ""),
+          filename: file.name,
+          mime: file.type || "application/octet-stream",
+          size_bytes: file.size,
+        }),
+      });
+      if (!initRes.ok) {
+        const j = (await initRes.json().catch(() => ({}))) as { error?: string };
+        throw new Error(j.error || `init failed (${initRes.status})`);
+      }
+      const init = (await initRes.json()) as { uploadUrl: string };
+
+      const putRes = await fetch(init.uploadUrl, {
+        method: "PUT",
+        headers: { "Content-Type": file.type || "application/octet-stream" },
+        body: file,
+      });
+      if (!putRes.ok) throw new Error(`upload failed (${putRes.status})`);
+
+      await load();
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleDownload = async (id: string) => {
+    const r = await fetch(`/api/admin-materials?id=${encodeURIComponent(id)}&action=download`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!r.ok) { alert(`Download URL failed (${r.status})`); return; }
+    const j = (await r.json()) as { url: string };
+    window.open(j.url, "_blank", "noopener,noreferrer");
+  };
+
+  const handleDelete = async (id: string, title: string) => {
+    if (!confirm(`Delete "${title}"? This removes the file and its record.`)) return;
+    const r = await fetch(`/api/admin-materials?id=${encodeURIComponent(id)}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!r.ok) { alert(`Delete failed (${r.status})`); return; }
+    await load();
+  };
+
+  if (loading) return <p className="text-text-2 text-[13.5px]">Loading materials...</p>;
+  if (error) return <p className="text-bad text-[13.5px]">{error}</p>;
+
+  return (
+    <div>
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <div className="text-text-2 text-[13px]">
+          {items ? `${items.length} item${items.length === 1 ? "" : "s"}` : ""}
+        </div>
+        <label className="inline-flex items-center px-3 py-2 rounded-lg text-[13px] font-semibold bg-bg-3 border border-line-2 text-text-0 hover:bg-bg-4 cursor-pointer transition-colors">
+          {uploading ? "Uploading..." : "Upload file"}
+          <input
+            type="file"
+            className="hidden"
+            disabled={uploading}
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handleFile(f);
+              e.target.value = "";
+            }}
+          />
+        </label>
+      </div>
+
+      {uploadError && <p className="text-bad text-[13px] mb-3">{uploadError}</p>}
+
+      <div className="space-y-2">
+        {items && items.length === 0 && (
+          <p className="text-text-3 text-[13px] py-8 text-center">No materials yet.</p>
+        )}
+        {items && items.map((it) => (
+          <MaterialRow
+            key={it.id}
+            item={it}
+            editing={editingId === it.id}
+            onEdit={() => setEditingId(it.id)}
+            onCancelEdit={() => setEditingId(null)}
+            onSavedEdit={() => { setEditingId(null); load(); }}
+            onDownload={() => handleDownload(it.id)}
+            onDelete={() => handleDelete(it.id, it.title)}
+            token={token}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function MaterialRow({
+  item,
+  editing,
+  onEdit,
+  onCancelEdit,
+  onSavedEdit,
+  onDownload,
+  onDelete,
+  token,
+}: {
+  item: MaterialItem;
+  editing: boolean;
+  onEdit: () => void;
+  onCancelEdit: () => void;
+  onSavedEdit: () => void;
+  onDownload: () => void;
+  onDelete: () => void;
+  token: string;
+}) {
+  const [title, setTitle] = useState(item.title);
+  const [description, setDescription] = useState(item.description ?? "");
+  const [category, setCategory] = useState(item.category);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  if (editing) {
+    return (
+      <div className="border border-line-2 rounded-xl bg-bg-2 p-3">
+        <Field label="Title">
+          <Input value={title} onChange={(e) => setTitle(e.target.value)} />
+        </Field>
+        <Field label="Description">
+          <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} />
+        </Field>
+        <Field label="Category">
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full h-11 px-3.5 rounded-xl bg-bg-2 border border-line-2 text-text-0 text-[14.5px] focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/30 transition-colors"
+          >
+            {MATERIAL_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
+        </Field>
+        {error && <p className="text-bad text-[13px] mb-2">{error}</p>}
+        <div className="flex gap-2">
+          <Button
+            size="sm"
+            variant="primary"
+            onClick={async () => {
+              setSaving(true); setError(null);
+              try {
+                const r = await fetch(`/api/admin-materials?id=${encodeURIComponent(item.id)}`, {
+                  method: "PATCH",
+                  headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+                  body: JSON.stringify({ title, description, category }),
+                });
+                if (!r.ok) {
+                  const j = (await r.json().catch(() => ({}))) as { error?: string };
+                  throw new Error(j.error || `API ${r.status}`);
+                }
+                onSavedEdit();
+              } catch (err) {
+                setError(err instanceof Error ? err.message : "Save failed");
+              } finally {
+                setSaving(false);
+              }
+            }}
+            disabled={saving}
+          >
+            {saving ? "Saving..." : "Save"}
+          </Button>
+          <Button size="sm" variant="ghost" type="button" onClick={onCancelEdit}>Cancel</Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-3 border border-line-2 rounded-xl bg-bg-2 px-3 py-2.5">
+      <div className="w-10 h-10 rounded-lg bg-bg-3 border border-line-2 flex items-center justify-center font-mono text-[10px] uppercase tracking-[0.05em] text-text-2 shrink-0">
+        {item.type_pill}
+      </div>
+      <div className="min-w-0 flex-1">
+        <div className="text-text-0 text-[13.5px] font-medium truncate">{item.title}</div>
+        <div className="flex items-center gap-2 mt-0.5">
+          <span className="text-[11px] uppercase tracking-[0.05em] font-mono text-text-3">{item.category}</span>
+          <span className="text-text-3 text-[11px]">·</span>
+          <span className="text-text-3 text-[11px]">{formatBytes(item.size_bytes)}</span>
+          {item.source === "repo" && (
+            <>
+              <span className="text-text-3 text-[11px]">·</span>
+              <span className="text-text-3 text-[11px]">repo</span>
+            </>
+          )}
+        </div>
+      </div>
+      <div className="flex items-center gap-1 shrink-0">
+        {item.source === "upload" ? (
+          <button onClick={onDownload} title="Download" className="w-8 h-8 rounded-lg text-text-2 hover:text-text-0 hover:bg-bg-3 flex items-center justify-center text-[13px]" aria-label="Download">↓</button>
+        ) : item.path ? (
+          <a href={item.path} target="_blank" rel="noopener noreferrer" title="Open" className="w-8 h-8 rounded-lg text-text-2 hover:text-text-0 hover:bg-bg-3 flex items-center justify-center text-[13px]" aria-label="Open">↗</a>
+        ) : null}
+        {item.editable && (
+          <button onClick={onEdit} title="Edit" className="w-8 h-8 rounded-lg text-text-2 hover:text-text-0 hover:bg-bg-3 flex items-center justify-center text-[13px]" aria-label="Edit">✎</button>
+        )}
+        {item.deletable && (
+          <button onClick={onDelete} title="Delete" className="w-8 h-8 rounded-lg text-text-2 hover:text-bad hover:bg-bad/10 flex items-center justify-center text-[13px]" aria-label="Delete">🗑</button>
+        )}
+      </div>
+    </div>
   );
 }

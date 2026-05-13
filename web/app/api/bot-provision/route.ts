@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Database not configured" }, { status: 503 });
   }
 
-  let body: { name?: unknown; slug?: unknown };
+  let body: { name?: unknown; slug?: unknown; booking_id?: unknown; email?: unknown };
   try { body = await req.json(); } catch { return NextResponse.json({ error: "Invalid JSON" }, { status: 400 }); }
 
   const name = typeof body.name === "string" ? body.name.trim() : "";
@@ -35,6 +35,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "slug must be lowercase alphanumeric with hyphens" }, { status: 400 });
   }
 
+  const bookingId = typeof body.booking_id === "string" && /^[0-9a-f-]{36}$/i.test(body.booking_id)
+    ? body.booking_id
+    : null;
+  const email = typeof body.email === "string" && body.email.trim() ? body.email.trim().slice(0, 320) : null;
+
   const apiServerKey = randomBytes(32).toString("hex");
   const headers = {
     apikey: SUPABASE_KEY,
@@ -43,15 +48,19 @@ export async function POST(req: NextRequest) {
     Prefer: "return=representation",
   };
 
+  const payload: Record<string, unknown> = {
+    name,
+    slug,
+    vps_status: "awaiting_oauth",
+    api_server_key: apiServerKey,
+  };
+  if (bookingId) payload.booking_id = bookingId;
+  if (email) payload.email = email;
+
   const clientRes = await fetch(`${SUPABASE_URL}/rest/v1/ramped_bot_clients`, {
     method: "POST",
     headers,
-    body: JSON.stringify({
-      name,
-      slug,
-      vps_status: "awaiting_oauth",
-      api_server_key: apiServerKey,
-    }),
+    body: JSON.stringify(payload),
   });
   if (!clientRes.ok) {
     const text = await clientRes.text();
