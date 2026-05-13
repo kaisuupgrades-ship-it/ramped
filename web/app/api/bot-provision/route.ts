@@ -167,7 +167,7 @@ export async function POST(req: NextRequest) {
         body: JSON.stringify({
           name: `ramped-bot-${slug}`,
           region: "nyc3",
-          size: "s-1vcpu-1gb",
+          size: "s-2vcpu-2gb",
           image: "ubuntu-22-04-x64",
           user_data: userData,
           tags: ["ramped-bot", `slug:${slug}`],
