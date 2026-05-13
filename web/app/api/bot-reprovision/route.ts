@@ -26,15 +26,45 @@ set -euxo pipefail
 
 export DEBIAN_FRONTEND=noninteractive
 
-# 1. System deps
+# 1. System deps — full set so the desktop Hermes installer has zero apt work
+#    to do. Python 3.11 isn't in Ubuntu 22.04 main, so add deadsnakes first.
 apt-get update -y
-apt-get install -y curl unzip ca-certificates gnupg ufw
+apt-get install -y software-properties-common ca-certificates gnupg ufw
+add-apt-repository -y ppa:deadsnakes/ppa
+apt-get update -y
+apt-get install -y \\
+  ripgrep ffmpeg \\
+  python3.11 python3.11-venv python3-pip \\
+  git curl wget unzip build-essential
 
-# Node 20.x via NodeSource
+# 2. Node.js 20 via NodeSource (desktop app requires Node 20+).
 curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
 apt-get install -y nodejs
 
-# 2. Working dir + env
+# 3. Create slug user with passwordless sudo so the Hermes installer never
+#    gets blocked on a password prompt mid-run.
+if ! id -u ${slug} >/dev/null 2>&1; then
+  useradd -m -s /bin/bash ${slug}
+fi
+echo "${slug} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${slug}
+chmod 440 /etc/sudoers.d/${slug}
+
+# 4. uv (Python toolchain manager) installed system-wide so the Hermes
+#    installer finds it on PATH regardless of which user invokes it.
+curl -LsSf https://astral.sh/uv/install.sh | sh
+mkdir -p /etc/profile.d
+cat > /etc/profile.d/uv.sh <<'PROFILE'
+export PATH="/root/.cargo/bin:/root/.local/bin:$PATH"
+PROFILE
+chmod 644 /etc/profile.d/uv.sh
+# Make uv discoverable on the default PATH for non-login shells and the slug user.
+if [ -f /root/.cargo/bin/uv ]; then cp /root/.cargo/bin/uv /usr/local/bin/uv; fi
+if [ -f /root/.local/bin/uv ]; then cp /root/.local/bin/uv /usr/local/bin/uv; fi
+if [ -f /root/.cargo/bin/uvx ]; then cp /root/.cargo/bin/uvx /usr/local/bin/uvx; fi
+if [ -f /root/.local/bin/uvx ]; then cp /root/.local/bin/uvx /usr/local/bin/uvx; fi
+chmod 755 /usr/local/bin/uv /usr/local/bin/uvx 2>/dev/null || true
+
+# 5. Working dir + env
 mkdir -p /opt/ramped-bot
 cat > /opt/ramped-bot/.env <<EOF
 SLUG=${slug}
@@ -45,15 +75,18 @@ ONECLI_PORT=10255
 EOF
 chmod 600 /opt/ramped-bot/.env
 
-# 3. Hermes Agent
+# 6. Hermes Agent
 # TODO: replace with real install once hermes-agent ships a release artifact.
 mkdir -p /opt/ramped-bot/hermes
 
-# 4. OneCLI (setup UI on :10255)
+# 7. OneCLI (setup UI on :10255)
 # TODO: replace with real install once OneCLI ships a release artifact.
 mkdir -p /opt/ramped-bot/onecli
 
-# 5. Firewall
+# Hand /opt/ramped-bot to the slug user so the installer can write into it.
+chown -R ${slug}:${slug} /opt/ramped-bot
+
+# 8. Firewall
 ufw --force reset
 ufw default deny incoming
 ufw default allow outgoing
@@ -62,7 +95,7 @@ ufw allow 80/tcp
 ufw allow 10255/tcp
 ufw --force enable
 
-# 6. Detect public IP + phone home
+# 9. Detect public IP + phone home
 PUBLIC_IP=$(curl -fsSL https://ipv4.icanhazip.com || curl -fsSL https://api.ipify.org || echo "")
 curl -fsSL -X POST "${apiUrl}/api/bot-heartbeat" \\
   -H "Authorization: Bearer ${apiServerKey}" \\
