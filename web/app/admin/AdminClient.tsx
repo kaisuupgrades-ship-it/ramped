@@ -1279,6 +1279,19 @@ function BotStatusView({
     onChanged();
   });
 
+  const handleReprovision = () => run("reprovision", async () => {
+    const r = await fetch("/api/bot-reprovision", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ client_id: client.id }),
+    });
+    if (!r.ok) {
+      const j = (await r.json().catch(() => ({}))) as { error?: string };
+      throw new Error(j.error || `API ${r.status}`);
+    }
+    onChanged();
+  });
+
   const handleReset = () => run("reset", async () => {
     const r = await fetch("/api/bot-reset-rate-limit", {
       method: "POST",
@@ -1356,6 +1369,9 @@ function BotStatusView({
       <div className="flex flex-wrap gap-2 mb-4">
         {client.droplet_id && (
           <button onClick={handleCheckDroplet} disabled={busy === "droplet"} className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border border-blue/40 bg-blue/10 text-blue-2 hover:bg-blue/20 transition-colors disabled:opacity-50">{busy === "droplet" ? "..." : "Check Status"}</button>
+        )}
+        {!client.droplet_id && client.vps_status !== "provisioning" && (
+          <button onClick={handleReprovision} disabled={busy === "reprovision"} className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border border-blue/40 bg-blue/10 text-blue-2 hover:bg-blue/20 transition-colors disabled:opacity-50">{busy === "reprovision" ? "..." : "Provision VPS"}</button>
         )}
         <button onClick={handleNewCode} disabled={busy === "code"} className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border border-line-2 bg-bg-2 text-text-1 hover:bg-bg-3 transition-colors disabled:opacity-50">{busy === "code" ? "..." : "New Code"}</button>
         <button onClick={handleHealth} disabled={busy === "health"} className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border border-line-2 bg-bg-2 text-text-1 hover:bg-bg-3 transition-colors disabled:opacity-50">{busy === "health" ? "..." : "Health Check"}</button>
