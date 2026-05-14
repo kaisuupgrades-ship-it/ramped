@@ -41,6 +41,7 @@ export function Header() {
               {l.label}
             </Link>
           ))}
+          <Button href="/portal" size="sm" variant="blue">Portal</Button>
           <Button href="/book" size="sm" variant="primary">Book a call →</Button>
         </nav>
 
@@ -111,7 +112,10 @@ export function Header() {
                 {l.label}
               </Link>
             ))}
-            <div className="mt-2 pt-3 border-t border-line">
+            <div className="mt-2 pt-3 border-t border-line flex flex-col gap-2">
+              <Button href="/portal" size="lg" variant="blue" className="w-full" onClick={() => setDrawerOpen(false)}>
+                Portal
+              </Button>
               <Button href="/book" size="lg" variant="primary" className="w-full" onClick={() => setDrawerOpen(false)}>
                 Book a discovery call →
               </Button>

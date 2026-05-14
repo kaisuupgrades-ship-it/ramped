@@ -27,7 +27,6 @@ export const navLinks = [
   { href: "/#pricing", label: "Pricing" },
   { href: "/comparison", label: "Compare" },
   { href: "/resources", label: "Resources" },
-  { href: "/portal", label: "Portal" },
 ] as const;
 
 export const footerLinks = [
