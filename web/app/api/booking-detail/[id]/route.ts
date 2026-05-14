@@ -22,6 +22,7 @@ interface BotClient {
   droplet_ip: string | null;
   vps_status: string | null;
   hermes_url: string | null;
+  novnc_url: string | null;
   api_server_key: string | null;
   email: string | null;
   created_at: string | null;

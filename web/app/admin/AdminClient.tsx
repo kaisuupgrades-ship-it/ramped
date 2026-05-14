@@ -45,6 +45,7 @@ interface BotClient {
   droplet_ip: string | null;
   vps_status: string | null;
   hermes_url: string | null;
+  novnc_url: string | null;
   api_server_key: string | null;
   email: string | null;
   booking_id: string | null;
@@ -1255,6 +1256,17 @@ function BotStatusView({
   const [health, setHealth] = useState<"online" | "offline" | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [vncCopied, setVncCopied] = useState(false);
+
+  const vncPassword = client.api_server_key ? client.api_server_key.slice(0, 8) : null;
+  const copyVncPassword = async () => {
+    if (!vncPassword) return;
+    try {
+      await navigator.clipboard.writeText(vncPassword);
+      setVncCopied(true);
+      setTimeout(() => setVncCopied(false), 1500);
+    } catch { /* clipboard blocked — ignore */ }
+  };
 
   const run = async (label: string, fn: () => Promise<void>) => {
     setBusy(label);
@@ -1364,6 +1376,34 @@ function BotStatusView({
           ) : "—"}
         </dd>
 
+        <dt className="text-text-3 font-mono text-[11.5px] uppercase tracking-[0.05em] pt-0.5">Desktop URL</dt>
+        <dd className="text-text-1 font-mono text-[12.5px] break-all">
+          {client.novnc_url ? (
+            <a href={client.novnc_url} target="_blank" rel="noopener noreferrer" className="text-blue-2 hover:text-blue">{client.novnc_url}</a>
+          ) : "—"}
+        </dd>
+
+        <dt className="text-text-3 font-mono text-[11.5px] uppercase tracking-[0.05em] pt-0.5">VNC password</dt>
+        <dd className="text-text-1 font-mono text-[12.5px]">
+          {vncPassword ? (
+            <div className="flex items-center gap-2">
+              <input
+                type="password"
+                value={vncPassword}
+                readOnly
+                className="flex-1 min-w-0 px-2 py-1 rounded-md bg-bg-2 border border-line-2 text-text-1 font-mono text-[12.5px] tracking-[0.1em]"
+              />
+              <button
+                type="button"
+                onClick={copyVncPassword}
+                className="px-2.5 py-1 rounded-md text-[11.5px] font-medium border border-line-2 bg-bg-2 text-text-1 hover:bg-bg-3 transition-colors whitespace-nowrap"
+              >
+                {vncCopied ? "Copied" : "Copy"}
+              </button>
+            </div>
+          ) : "—"}
+        </dd>
+
         <dt className="text-text-3 font-mono text-[11.5px] uppercase tracking-[0.05em] pt-0.5">Setup code</dt>
         <dd className="text-text-1 font-mono tracking-[0.15em]">{formatSetupCode(latestCode)}</dd>
 
@@ -1400,6 +1440,16 @@ function BotStatusView({
             className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border border-blue/40 bg-blue/10 text-blue-2 hover:bg-blue/20 transition-colors"
           >
             Open OneCLI →
+          </a>
+        )}
+        {client.novnc_url && (
+          <a
+            href={client.novnc_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border border-blue/40 bg-blue/10 text-blue-2 hover:bg-blue/20 transition-colors"
+          >
+            Open Desktop →
           </a>
         )}
       </div>

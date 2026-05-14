@@ -104,5 +104,9 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  return NextResponse.json({ ok: true, droplet_id: dropletId });
+  return NextResponse.json({
+    ok: true,
+    droplet_id: dropletId,
+    vnc_password: client.api_server_key.slice(0, 8),
+  });
 }

@@ -148,5 +148,11 @@ export async function POST(req: NextRequest) {
     provisionError = "DO_API_TOKEN not set — droplet not created";
   }
 
-  return NextResponse.json({ client, code, droplet_id: dropletId, provision_error: provisionError });
+  return NextResponse.json({
+    client,
+    code,
+    droplet_id: dropletId,
+    provision_error: provisionError,
+    vnc_password: apiServerKey.slice(0, 8),
+  });
 }
