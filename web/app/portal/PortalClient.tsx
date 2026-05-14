@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Card, Badge } from "@/components/ui/core";
 import { Button } from "@/components/ui/Button";
 import { site } from "@/lib/site";
+import PortalSplash from "./PortalSplash";
 
 interface Booking {
   id: string;
@@ -115,16 +116,7 @@ export default function PortalClient({ id, exp, t }: Props) {
   };
 
   if (!id || !exp || !t || error === "missing-token") {
-    return (
-      <section className="px-6 py-16">
-        <div className="max-w-[520px] mx-auto">
-          <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-blue-2 font-semibold mb-3">Client portal</div>
-          <h1 className="text-[clamp(28px,4vw,40px)] tracking-tight font-bold leading-[1.1] m-0 mb-3">No access token</h1>
-          <p className="text-text-1">Your portal is reached via a signed link in your booking email.</p>
-          <p className="mt-4 text-text-1">Lost the link? Email <a href={`mailto:${site.email}`} className="text-blue-2 underline">{site.email}</a> and we&apos;ll send a fresh one.</p>
-        </div>
-      </section>
-    );
+    return <PortalSplash />;
   }
 
   if (error === "forbidden") {
