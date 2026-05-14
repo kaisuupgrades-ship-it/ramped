@@ -92,6 +92,7 @@ export async function POST(req: NextRequest) {
   if (ip && ip !== client.droplet_ip) {
     patch.droplet_ip = ip;
     patch.hermes_url = `http://${ip}:10255`;
+    patch.novnc_url = `http://${ip}:6080/vnc.html`;
   }
 
   const patchRes = await fetch(

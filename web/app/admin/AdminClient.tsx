@@ -45,6 +45,7 @@ interface BotClient {
   droplet_ip: string | null;
   vps_status: string | null;
   hermes_url: string | null;
+  novnc_url: string | null;
   api_server_key: string | null;
   email: string | null;
   booking_id: string | null;
@@ -1364,6 +1365,18 @@ function BotStatusView({
           ) : "—"}
         </dd>
 
+        <dt className="text-text-3 font-mono text-[11.5px] uppercase tracking-[0.05em] pt-0.5">Desktop URL</dt>
+        <dd className="text-text-1 font-mono text-[12.5px] break-all">
+          {client.novnc_url ? (
+            <a href={client.novnc_url} target="_blank" rel="noopener noreferrer" className="text-blue-2 hover:text-blue">{client.novnc_url}</a>
+          ) : "—"}
+        </dd>
+
+        <dt className="text-text-3 font-mono text-[11.5px] uppercase tracking-[0.05em] pt-0.5">VNC password</dt>
+        <dd>
+          <VncPasswordField apiServerKey={client.api_server_key} />
+        </dd>
+
         <dt className="text-text-3 font-mono text-[11.5px] uppercase tracking-[0.05em] pt-0.5">Setup code</dt>
         <dd className="text-text-1 font-mono tracking-[0.15em]">{formatSetupCode(latestCode)}</dd>
 
@@ -1402,9 +1415,65 @@ function BotStatusView({
             Open OneCLI →
           </a>
         )}
+        {client.novnc_url && (
+          <a
+            href={client.novnc_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border border-blue/40 bg-blue/10 text-blue-2 hover:bg-blue/20 transition-colors"
+          >
+            Open Desktop →
+          </a>
+        )}
       </div>
 
       {error && <p className="text-bad text-[13px]">{error}</p>}
+    </div>
+  );
+}
+
+function VncPasswordField({ apiServerKey }: { apiServerKey: string | null }) {
+  const password = apiServerKey ? apiServerKey.slice(0, 8) : "";
+  const [revealed, setRevealed] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    if (!password) return;
+    try {
+      await navigator.clipboard.writeText(password);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      /* ignore — older browsers without clipboard access */
+    }
+  };
+
+  if (!password) {
+    return <span className="text-text-3 font-mono text-[12.5px]">—</span>;
+  }
+
+  return (
+    <div className="flex items-center gap-1.5">
+      <input
+        type={revealed ? "text" : "password"}
+        value={password}
+        readOnly
+        className="flex-1 min-w-0 px-2 py-1 rounded-md text-[12.5px] font-mono bg-bg-2 border border-line-2 text-text-1"
+      />
+      <button
+        type="button"
+        onClick={() => setRevealed((v) => !v)}
+        className="px-2 py-1 rounded-md text-[11.5px] font-medium border border-line-2 bg-bg-2 text-text-2 hover:bg-bg-3 transition-colors"
+      >
+        {revealed ? "Hide" : "Show"}
+      </button>
+      <button
+        type="button"
+        onClick={handleCopy}
+        className="px-2 py-1 rounded-md text-[11.5px] font-medium border border-line-2 bg-bg-2 text-text-2 hover:bg-bg-3 transition-colors"
+      >
+        {copied ? "✓" : "Copy"}
+      </button>
     </div>
   );
 }
