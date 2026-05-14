@@ -27,7 +27,16 @@ export async function POST(req: NextRequest) {
 
   const clientRes = await fetch(
     `${SUPABASE_URL}/rest/v1/ramped_bot_clients?id=eq.${encodeURIComponent(clientId)}`,
-    { method: "PATCH", headers, body: JSON.stringify({ vps_status: "deactivated" }) },
+    {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify({
+        vps_status: "pending",
+        droplet_id: null,
+        droplet_ip: null,
+        hermes_url: null,
+      }),
+    },
   );
   if (!clientRes.ok) return NextResponse.json({ error: "Failed to revoke client" }, { status: 500 });
 

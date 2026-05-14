@@ -1232,7 +1232,7 @@ function ProvisionForm({
 }
 
 function BotStatusView({
-  client,
+  client: clientProp,
   latestCode,
   token,
   onChanged,
@@ -1242,6 +1242,9 @@ function BotStatusView({
   token: string;
   onChanged: () => void;
 }) {
+  const [overrides, setOverrides] = useState<Partial<BotClient>>({});
+  useEffect(() => { setOverrides({}); }, [clientProp]);
+  const client = { ...clientProp, ...overrides };
   const statusKey = (client.vps_status ?? "unknown") as BotVpsStatus | "unknown";
   const meta = BOT_STATUS_META[statusKey] ?? BOT_STATUS_META.unknown;
   const [health, setHealth] = useState<"online" | "offline" | null>(null);
@@ -1313,6 +1316,7 @@ function BotStatusView({
         body: JSON.stringify({ client_id: client.id }),
       });
       if (!r.ok) throw new Error(`API ${r.status}`);
+      setOverrides({ droplet_id: null, droplet_ip: null, hermes_url: null });
       onChanged();
     });
   };
@@ -1373,7 +1377,7 @@ function BotStatusView({
         {client.droplet_id && (
           <button onClick={handleCheckDroplet} disabled={busy === "droplet"} className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border border-blue/40 bg-blue/10 text-blue-2 hover:bg-blue/20 transition-colors disabled:opacity-50">{busy === "droplet" ? "..." : "Check Status"}</button>
         )}
-        {!client.droplet_id && client.vps_status !== "provisioning" && (
+        {(!client.droplet_id || client.vps_status === "deactivated") && client.vps_status !== "provisioning" && (
           <button onClick={handleReprovision} disabled={busy === "reprovision"} className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border border-blue/40 bg-blue/10 text-blue-2 hover:bg-blue/20 transition-colors disabled:opacity-50">{busy === "reprovision" ? "..." : "Provision VPS"}</button>
         )}
         <button onClick={handleNewCode} disabled={busy === "code"} className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border border-line-2 bg-bg-2 text-text-1 hover:bg-bg-3 transition-colors disabled:opacity-50">{busy === "code" ? "..." : "New Code"}</button>
