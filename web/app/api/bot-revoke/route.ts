@@ -6,6 +6,12 @@ export const dynamic = "force-dynamic";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
+const DO_API_TOKEN = process.env.DO_API_TOKEN;
+
+interface BotClient {
+  id: string;
+  droplet_id: string | null;
+}
 
 export async function POST(req: NextRequest) {
   if (!isAdminAuthorized(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -24,6 +30,27 @@ export async function POST(req: NextRequest) {
     Authorization: `Bearer ${SUPABASE_KEY}`,
     "Content-Type": "application/json",
   };
+
+  const lookupRes = await fetch(
+    `${SUPABASE_URL}/rest/v1/ramped_bot_clients?id=eq.${encodeURIComponent(clientId)}&select=id,droplet_id`,
+    { headers },
+  );
+  if (!lookupRes.ok) return NextResponse.json({ error: "Failed to load client" }, { status: 500 });
+  const clients = (await lookupRes.json()) as BotClient[];
+  const client = Array.isArray(clients) ? clients[0] : null;
+  if (!client) return NextResponse.json({ error: "Client not found" }, { status: 404 });
+
+  if (client.droplet_id && DO_API_TOKEN) {
+    const doRes = await fetch(
+      `https://api.digitalocean.com/v2/droplets/${encodeURIComponent(client.droplet_id)}`,
+      { method: "DELETE", headers: { Authorization: `Bearer ${DO_API_TOKEN}` } },
+    );
+    // 204 = deleted, 404 = already gone. Anything else is a transient DO issue —
+    // we still clear the DB so the operator isn't stuck, and surface the failure.
+    if (doRes.status !== 204 && doRes.status !== 404) {
+      console.error(`[bot-revoke] DO delete failed for droplet ${client.droplet_id}: ${doRes.status}`);
+    }
+  }
 
   const clientRes = await fetch(
     `${SUPABASE_URL}/rest/v1/ramped_bot_clients?id=eq.${encodeURIComponent(clientId)}`,

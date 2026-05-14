@@ -851,7 +851,7 @@ function ClientDetailPanel({
             <OverviewTab booking={booking} token={token} onUpdated={onUpdated} onClose={onClose} />
           )}
           {activeTab === "bot" && (
-            <BotTab booking={booking} token={token} onBotChanged={onBotChanged} />
+            <BotTab booking={booking} token={token} onBotChanged={onBotChanged} onClose={onClose} />
           )}
           {activeTab === "channels" && (
             <ChannelsTab booking={booking} token={token} />
@@ -1087,10 +1087,12 @@ function BotTab({
   booking,
   token,
   onBotChanged,
+  onClose,
 }: {
   booking: Booking;
   token: string;
   onBotChanged: () => void;
+  onClose: () => void;
 }) {
   const [loading, setLoading] = useState(true);
   const [detail, setDetail] = useState<BookingDetailResponse | null>(null);
@@ -1134,6 +1136,7 @@ function BotTab({
       latestCode={detail.latest_code}
       token={token}
       onChanged={() => { load(); onBotChanged(); }}
+      onClose={onClose}
     />
   );
 }
@@ -1236,11 +1239,13 @@ function BotStatusView({
   latestCode,
   token,
   onChanged,
+  onClose,
 }: {
   client: BotClient;
   latestCode: string | null;
   token: string;
   onChanged: () => void;
+  onClose: () => void;
 }) {
   const [overrides, setOverrides] = useState<Partial<BotClient>>({});
   useEffect(() => { setOverrides({}); }, [clientProp]);
@@ -1308,16 +1313,19 @@ function BotStatusView({
   });
 
   const handleRevoke = () => {
-    if (!confirm(`Revoke "${client.name}"? This deactivates the client and expires unclaimed codes.`)) return;
+    if (!confirm(`Revoke "${client.name}"? This destroys the DigitalOcean droplet and expires unclaimed codes.`)) return;
     run("revoke", async () => {
       const r = await fetch("/api/bot-revoke", {
         method: "POST",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify({ client_id: client.id }),
       });
-      if (!r.ok) throw new Error(`API ${r.status}`);
-      setOverrides({ droplet_id: null, droplet_ip: null, hermes_url: null });
+      if (!r.ok) {
+        const j = (await r.json().catch(() => ({}))) as { error?: string };
+        throw new Error(j.error || `API ${r.status}`);
+      }
       onChanged();
+      onClose();
     });
   };
 
