@@ -7,7 +7,7 @@ import { site } from "@/lib/site";
 
 /* ============================================================================
    Admin CRM — bookings, leads, Ramped Bot, plus a slide-in client-detail panel
-   with Overview / Bot / Materials tabs.
+   with Overview / Bot / Channels / Materials tabs.
 
    Token is held in localStorage. Every API call sends `Authorization: Bearer ...`.
    The detail panel lazy-loads `/api/booking-detail/[id]` on open and never
@@ -801,7 +801,7 @@ function ClientDetailPanel({
   onUpdated: () => void;
   onBotChanged: () => void;
 }) {
-  const [activeTab, setActiveTab] = useState<"overview" | "bot" | "materials">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "bot" | "channels" | "materials">("overview");
 
   return (
     <>
@@ -831,7 +831,7 @@ function ClientDetailPanel({
         </header>
 
         <nav className="flex gap-1 px-4 py-2 border-b border-line bg-bg-2">
-          {(["overview", "bot", "materials"] as const).map((t) => (
+          {(["overview", "bot", "channels", "materials"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setActiveTab(t)}
@@ -841,7 +841,7 @@ function ClientDetailPanel({
                   : "bg-transparent border-transparent text-text-2 hover:bg-bg-3 hover:text-text-0"
               }`}
             >
-              {t === "overview" ? "Overview" : t === "bot" ? "Bot" : "Materials"}
+              {t === "overview" ? "Overview" : t === "bot" ? "Bot" : t === "channels" ? "Channels" : "Materials"}
             </button>
           ))}
         </nav>
@@ -852,6 +852,9 @@ function ClientDetailPanel({
           )}
           {activeTab === "bot" && (
             <BotTab booking={booking} token={token} onBotChanged={onBotChanged} />
+          )}
+          {activeTab === "channels" && (
+            <ChannelsTab booking={booking} token={token} />
           )}
           {activeTab === "materials" && (
             <MaterialsTab token={token} />
@@ -1390,6 +1393,360 @@ function BotStatusView({
       </div>
 
       {error && <p className="text-bad text-[13px]">{error}</p>}
+    </div>
+  );
+}
+
+/* ────────── Channels tab ────────── */
+
+interface ChannelConfig {
+  slack?: { enabled?: boolean; bot_token?: string; app_token?: string; allowed_users?: string; home_channel?: string };
+  discord?: { enabled?: boolean; token?: string };
+  email?: { enabled?: boolean; imap_host?: string; smtp_host?: string; port?: string; username?: string; password?: string };
+  ai?: { enabled?: boolean; provider?: string; api_key?: string; model?: string };
+  web_search?: { enabled?: boolean; backend?: string; api_key?: string };
+}
+
+const EMPTY_CHANNEL_CONFIG: Required<ChannelConfig> = {
+  slack:      { enabled: false, bot_token: "", app_token: "", allowed_users: "", home_channel: "" },
+  discord:    { enabled: false, token: "" },
+  email:      { enabled: false, imap_host: "", smtp_host: "", port: "", username: "", password: "" },
+  ai:         { enabled: false, provider: "anthropic", api_key: "", model: "claude-sonnet-4-5" },
+  web_search: { enabled: false, backend: "none", api_key: "" },
+};
+
+function mergeChannelConfig(loaded: ChannelConfig | null | undefined): Required<ChannelConfig> {
+  const c = loaded ?? {};
+  return {
+    slack:      { ...EMPTY_CHANNEL_CONFIG.slack,      ...(c.slack ?? {}) },
+    discord:    { ...EMPTY_CHANNEL_CONFIG.discord,    ...(c.discord ?? {}) },
+    email:      { ...EMPTY_CHANNEL_CONFIG.email,      ...(c.email ?? {}) },
+    ai:         { ...EMPTY_CHANNEL_CONFIG.ai,         ...(c.ai ?? {}) },
+    web_search: { ...EMPTY_CHANNEL_CONFIG.web_search, ...(c.web_search ?? {}) },
+  };
+}
+
+function ChannelsTab({ booking, token }: { booking: Booking; token: string }) {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [botClientId, setBotClientId] = useState<string | null>(null);
+  const [config, setConfig] = useState<Required<ChannelConfig>>(EMPTY_CHANNEL_CONFIG);
+  const [openSection, setOpenSection] = useState<Record<string, boolean>>({});
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const detailRes = await fetch(`/api/booking-detail/${booking.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!detailRes.ok) throw new Error(`API ${detailRes.status}`);
+      const detail = (await detailRes.json()) as BookingDetailResponse;
+      if (!detail.bot_client) {
+        setBotClientId(null);
+        setConfig(EMPTY_CHANNEL_CONFIG);
+        return;
+      }
+      setBotClientId(detail.bot_client.id);
+      const ccRes = await fetch(`/api/bot-update-channels?client_id=${encodeURIComponent(detail.bot_client.id)}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!ccRes.ok) throw new Error(`Channel config load failed (${ccRes.status})`);
+      const cc = (await ccRes.json()) as { channel_config: ChannelConfig | null };
+      setConfig(mergeChannelConfig(cc.channel_config));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load");
+    } finally {
+      setLoading(false);
+    }
+  }, [booking.id, token]);
+
+  useEffect(() => { load(); }, [load]);
+
+  const handleSave = async () => {
+    if (!botClientId) return;
+    setSaving(true);
+    setError(null);
+    setSaved(false);
+    try {
+      const r = await fetch("/api/bot-update-channels", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ client_id: botClientId, channel_config: config }),
+      });
+      if (!r.ok) {
+        const j = (await r.json().catch(() => ({}))) as { error?: string };
+        throw new Error(j.error || `API ${r.status}`);
+      }
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Save failed");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) return <p className="text-text-2 text-[13.5px]">Loading channels...</p>;
+  if (error && !botClientId) return <p className="text-bad text-[13.5px]">{error}</p>;
+
+  if (!botClientId) {
+    return (
+      <div>
+        <div className="font-mono text-[11px] uppercase tracking-[0.1em] text-text-3 font-semibold mb-3">No bot linked</div>
+        <p className="text-text-2 text-[13.5px] leading-relaxed">
+          Provision a Ramped Bot for this client first — open the <strong className="text-text-1">Bot</strong> tab.
+          Channel configuration only applies to clients with a VPS.
+        </p>
+      </div>
+    );
+  }
+
+  const toggle = (k: string) => setOpenSection((s) => ({ ...s, [k]: !s[k] }));
+
+  return (
+    <div>
+      <p className="text-text-2 text-[13px] mb-4 leading-relaxed">
+        Per-client Hermes channel configuration. Changes take effect on next provision —
+        for running bots, use Push Config.
+      </p>
+
+      <ChannelSection
+        title="Slack"
+        enabled={!!config.slack.enabled}
+        onEnabledChange={(v) => setConfig({ ...config, slack: { ...config.slack, enabled: v } })}
+        open={openSection.slack ?? !!config.slack.enabled}
+        onToggle={() => toggle("slack")}
+      >
+        <Field label="Bot token" hint="xoxb-...">
+          <Input
+            value={config.slack.bot_token ?? ""}
+            onChange={(e) => setConfig({ ...config, slack: { ...config.slack, bot_token: e.target.value } })}
+            placeholder="xoxb-..."
+          />
+        </Field>
+        <Field label="App token" hint="xapp-...">
+          <Input
+            value={config.slack.app_token ?? ""}
+            onChange={(e) => setConfig({ ...config, slack: { ...config.slack, app_token: e.target.value } })}
+            placeholder="xapp-..."
+          />
+        </Field>
+        <Field label="Allowed user IDs" hint="Comma-separated Slack Member IDs">
+          <Input
+            value={config.slack.allowed_users ?? ""}
+            onChange={(e) => setConfig({ ...config, slack: { ...config.slack, allowed_users: e.target.value } })}
+            placeholder="U01ABC,U02DEF"
+          />
+        </Field>
+        <Field label="Home channel ID">
+          <Input
+            value={config.slack.home_channel ?? ""}
+            onChange={(e) => setConfig({ ...config, slack: { ...config.slack, home_channel: e.target.value } })}
+            placeholder="C01ABC"
+          />
+        </Field>
+      </ChannelSection>
+
+      <ChannelSection
+        title="Discord"
+        enabled={!!config.discord.enabled}
+        onEnabledChange={(v) => setConfig({ ...config, discord: { ...config.discord, enabled: v } })}
+        open={openSection.discord ?? !!config.discord.enabled}
+        onToggle={() => toggle("discord")}
+      >
+        <Field label="Bot token">
+          <Input
+            value={config.discord.token ?? ""}
+            onChange={(e) => setConfig({ ...config, discord: { ...config.discord, token: e.target.value } })}
+            placeholder="MT..."
+          />
+        </Field>
+      </ChannelSection>
+
+      <ChannelSection
+        title="Email"
+        enabled={!!config.email.enabled}
+        onEnabledChange={(v) => setConfig({ ...config, email: { ...config.email, enabled: v } })}
+        open={openSection.email ?? !!config.email.enabled}
+        onToggle={() => toggle("email")}
+      >
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="IMAP host">
+            <Input
+              value={config.email.imap_host ?? ""}
+              onChange={(e) => setConfig({ ...config, email: { ...config.email, imap_host: e.target.value } })}
+              placeholder="imap.gmail.com"
+            />
+          </Field>
+          <Field label="SMTP host">
+            <Input
+              value={config.email.smtp_host ?? ""}
+              onChange={(e) => setConfig({ ...config, email: { ...config.email, smtp_host: e.target.value } })}
+              placeholder="smtp.gmail.com"
+            />
+          </Field>
+        </div>
+        <Field label="Port">
+          <Input
+            value={config.email.port ?? ""}
+            onChange={(e) => setConfig({ ...config, email: { ...config.email, port: e.target.value } })}
+            placeholder="993"
+          />
+        </Field>
+        <Field label="Username">
+          <Input
+            value={config.email.username ?? ""}
+            onChange={(e) => setConfig({ ...config, email: { ...config.email, username: e.target.value } })}
+            placeholder="user@example.com"
+          />
+        </Field>
+        <Field label="Password">
+          <Input
+            type="password"
+            value={config.email.password ?? ""}
+            onChange={(e) => setConfig({ ...config, email: { ...config.email, password: e.target.value } })}
+            placeholder="••••••••"
+          />
+        </Field>
+      </ChannelSection>
+
+      <ChannelSection
+        title="AI Provider"
+        enabled={!!config.ai.enabled}
+        onEnabledChange={(v) => setConfig({ ...config, ai: { ...config.ai, enabled: v } })}
+        open={openSection.ai ?? !!config.ai.enabled}
+        onToggle={() => toggle("ai")}
+      >
+        <Field label="Provider">
+          <select
+            value={config.ai.provider ?? "anthropic"}
+            onChange={(e) => setConfig({ ...config, ai: { ...config.ai, provider: e.target.value } })}
+            className="w-full h-11 px-3.5 rounded-xl bg-bg-2 border border-line-2 text-text-0 text-[14.5px] focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/30 transition-colors"
+          >
+            <option value="anthropic">Anthropic</option>
+            <option value="openai">OpenAI</option>
+            <option value="openrouter">OpenRouter</option>
+          </select>
+        </Field>
+        <Field label="API key">
+          <Input
+            type="password"
+            value={config.ai.api_key ?? ""}
+            onChange={(e) => setConfig({ ...config, ai: { ...config.ai, api_key: e.target.value } })}
+            placeholder="sk-..."
+          />
+        </Field>
+        <Field label="Model">
+          <Input
+            value={config.ai.model ?? ""}
+            onChange={(e) => setConfig({ ...config, ai: { ...config.ai, model: e.target.value } })}
+            placeholder="claude-sonnet-4-5"
+          />
+        </Field>
+      </ChannelSection>
+
+      <ChannelSection
+        title="Web Search"
+        enabled={!!config.web_search.enabled}
+        onEnabledChange={(v) => setConfig({ ...config, web_search: { ...config.web_search, enabled: v } })}
+        open={openSection.web_search ?? !!config.web_search.enabled}
+        onToggle={() => toggle("web_search")}
+      >
+        <Field label="Backend">
+          <select
+            value={config.web_search.backend ?? "none"}
+            onChange={(e) => setConfig({ ...config, web_search: { ...config.web_search, backend: e.target.value } })}
+            className="w-full h-11 px-3.5 rounded-xl bg-bg-2 border border-line-2 text-text-0 text-[14.5px] focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/30 transition-colors"
+          >
+            <option value="none">None</option>
+            <option value="firecrawl">Firecrawl</option>
+            <option value="tavily">Tavily</option>
+            <option value="exa">Exa</option>
+          </select>
+        </Field>
+        <Field label="API key">
+          <Input
+            type="password"
+            value={config.web_search.api_key ?? ""}
+            onChange={(e) => setConfig({ ...config, web_search: { ...config.web_search, api_key: e.target.value } })}
+            placeholder="key..."
+          />
+        </Field>
+      </ChannelSection>
+
+      {error && <p className="text-bad text-[13px] mb-3">{error}</p>}
+
+      <div className="flex items-center gap-3 mt-5 mb-3">
+        <Button type="button" variant="primary" onClick={handleSave} disabled={saving}>
+          {saving ? "Saving..." : "Save Channels"}
+        </Button>
+        <button
+          type="button"
+          disabled
+          title="Coming soon"
+          className="px-3.5 py-2 rounded-lg text-[13px] font-medium border border-line-2 bg-bg-2 text-text-3 cursor-not-allowed"
+        >
+          Push Config
+        </button>
+        {saved && <span className="text-good text-[13px] font-mono">✓ Saved</span>}
+      </div>
+
+      <p className="text-text-3 text-[12px] leading-relaxed">
+        Changes take effect on next provision. For running bots, use Push Config.
+      </p>
+    </div>
+  );
+}
+
+function ChannelSection({
+  title,
+  enabled,
+  onEnabledChange,
+  open,
+  onToggle,
+  children,
+}: {
+  title: string;
+  enabled: boolean;
+  onEnabledChange: (v: boolean) => void;
+  open: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="border border-line-2 rounded-xl bg-bg-2 mb-3">
+      <div className="flex items-center justify-between gap-3 px-4 py-3">
+        <button
+          type="button"
+          onClick={onToggle}
+          className="flex items-center gap-2 text-text-0 text-[14px] font-semibold flex-1 text-left"
+        >
+          <span className={`inline-block transition-transform ${open ? "rotate-90" : ""}`}>›</span>
+          {title}
+          {enabled && (
+            <span className="ml-2 inline-block px-1.5 py-0.5 rounded text-[10px] font-mono uppercase tracking-[0.05em] bg-good/15 text-good">
+              on
+            </span>
+          )}
+        </button>
+        <label className="inline-flex items-center gap-2 text-[12px] text-text-2 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={enabled}
+            onChange={(e) => onEnabledChange(e.target.checked)}
+            className="w-4 h-4 accent-blue"
+          />
+          Enabled
+        </label>
+      </div>
+      {open && (
+        <div className="px-4 pb-3 border-t border-line">
+          <div className="pt-3">{children}</div>
+        </div>
+      )}
     </div>
   );
 }
