@@ -46,7 +46,14 @@ export async function GET(req: NextRequest) {
     `${SUPABASE_URL}/rest/v1/ramped_bot_clients?id=eq.${encodeURIComponent(clientId)}&select=id,slug,droplet_id,droplet_ip,vps_status,hermes_url`,
     { headers: sbHeaders },
   );
-  if (!clientRes.ok) return NextResponse.json({ error: "Failed to load client" }, { status: 500 });
+  if (!clientRes.ok) {
+    const text = await clientRes.text().catch(() => "");
+    console.error(`[bot-poll-droplet] SELECT failed ${clientRes.status}: ${text.slice(0, 500)}`);
+    return NextResponse.json(
+      { error: `Failed to load client (Supabase ${clientRes.status}): ${text.slice(0, 200)}` },
+      { status: 500 },
+    );
+  }
   const rows = (await clientRes.json()) as BotClientRow[];
   const client = rows[0];
   if (!client) return NextResponse.json({ error: "Client not found" }, { status: 404 });

@@ -62,6 +62,7 @@ export async function POST(req: NextRequest) {
         droplet_id: null,
         droplet_ip: null,
         hermes_url: null,
+        novnc_url: null,
       }),
     },
   );
