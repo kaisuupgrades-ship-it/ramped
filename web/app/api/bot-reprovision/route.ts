@@ -128,6 +128,40 @@ export async function POST(req: NextRequest) {
         if (existing?.id) {
           computerId = existing.id;
           console.log(`[bot-reprovision] Reusing existing computer ${computerId}`);
+          // Probe bash API — if the metal layer returns 401 the existing computer is
+          // irrecoverable (Fly.io management API is broken for this instance). Create
+          // a fresh machine with a unique suffix rather than failing the whole provision.
+          const bProbe = await fetch(
+            `${ORGO_BASE_URL}/computers/${encodeURIComponent(computerId)}/bash`,
+            {
+              method: "POST",
+              headers: { Authorization: `Bearer ${ORGO_API_KEY!}`, "Content-Type": "application/json" },
+              body: JSON.stringify({ command: "echo probe-ok" }),
+            },
+          );
+          const bProbeText = await bProbe.text().catch(() => "");
+          if (!bProbe.ok && bProbeText.includes("401")) {
+            console.warn(`[bot-reprovision] Existing "${client.slug}" bash API is broken (metal 401) — creating fresh computer`);
+            const freshName = `${client.slug}-r${(Math.floor(Date.now() / 1000) % 100000)}`.slice(0, 50);
+            const freshRes = await fetch(`${ORGO_BASE_URL}/computers`, {
+              method: "POST",
+              headers: { Authorization: `Bearer ${ORGO_API_KEY!}`, "Content-Type": "application/json" },
+              body: JSON.stringify({ workspace_id: ORGO_WORKSPACE_ID, name: freshName, os: "linux", ram: 4, cpu: 1 }),
+            });
+            if (!freshRes.ok) {
+              const freshErr = await freshRes.text().catch(() => "");
+              return NextResponse.json(
+                { error: `Fresh computer create failed ${freshRes.status}: ${freshErr.slice(0, 200)}` },
+                { status: 502 },
+              );
+            }
+            const freshComputer = (await freshRes.json()) as OrgoComputer;
+            if (!freshComputer.id) {
+              return NextResponse.json({ error: "Fresh computer returned no id" }, { status: 502 });
+            }
+            computerId = freshComputer.id;
+            console.log(`[bot-reprovision] Fresh computer created: ${computerId} (${freshName})`);
+          }
         } else {
           return NextResponse.json(
             { error: `NAME_TAKEN but no computer named "${client.slug}" found in workspace` },
