@@ -94,7 +94,9 @@ export async function setupOrgoComputer(computerId: string, config: OrgoSetupCon
   //    and don't touch apt, so there is no dpkg lock race.
   await runBash(
     computerId,
-    "apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get install -y supervisor",
+    // Orgo VMs have clock skew (~6 days behind) — bypass validity check with -o flags.
+    "apt-get -o Acquire::Check-Valid-Until=false -o Acquire::Check-Date=false update -y && " +
+      "DEBIAN_FRONTEND=noninteractive apt-get install -y supervisor",
     "apt-bootstrap",
   );
 
