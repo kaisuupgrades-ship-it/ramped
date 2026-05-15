@@ -103,14 +103,23 @@ export async function setupOrgoComputer(computerId: string, config: OrgoSetupCon
   // 2. uv (Python toolchain manager used by Hermes) -- curl-only, no apt
   await runBash(
     computerId,
-    "curl -LsSf https://astral.sh/uv/install.sh | sh && ln -sf /root/.local/bin/uv /usr/local/bin/uv",
+    // astral installer puts uv at ~/.cargo/bin/uv on some distros, ~/.local/bin/uv on others — try both
+    "curl -LsSf https://astral.sh/uv/install.sh | sh && " +
+      "(cp /root/.cargo/bin/uv /usr/local/bin/uv 2>/dev/null || cp /root/.local/bin/uv /usr/local/bin/uv 2>/dev/null) && " +
+      "chmod 755 /usr/local/bin/uv && uv --version",
     "uv-install",
   );
 
   // 3. Hermes
   await runBash(
     computerId,
-    "curl -LsSf https://hermes.computer/install.sh | sh && ln -sf /root/.local/bin/hermes /usr/local/bin/hermes",
+    // Set PATH so uv is available to hermes install.sh; find hermes wherever it lands
+    "export PATH=\"/usr/local/bin:/root/.local/bin:/root/.cargo/bin:$PATH\" HOME=/root && " +
+      "curl -LsSf https://hermes.computer/install.sh | sh && " +
+      "(cp /root/.local/bin/hermes /usr/local/bin/hermes 2>/dev/null || " +
+        "cp /root/.cargo/bin/hermes /usr/local/bin/hermes 2>/dev/null || " +
+        "find /root -name hermes -type f 2>/dev/null | head -1 | xargs -I{} cp {} /usr/local/bin/hermes 2>/dev/null || true) && " +
+      "chmod 755 /usr/local/bin/hermes && hermes --version",
     "hermes-install",
   );
 
@@ -144,7 +153,10 @@ environment=HOME="/root",PATH="/usr/local/bin:/usr/bin:/bin"
   //    Orgo image; we ignore the "already started" error from the daemon start.
   await runBash(
     computerId,
-    "(supervisord -c /etc/supervisor/supervisord.conf || true) && supervisorctl reread && supervisorctl update && supervisorctl start hermes",
+    // Wait up to 60s for hermes binary (hermes-install may have timed out but still running in bg)
+    "for i in $(seq 1 6); do [ -x /usr/local/bin/hermes ] && break; echo \"waiting for hermes binary $i/6\"; sleep 10; done && " +
+      "(supervisord -c /etc/supervisor/supervisord.conf || true) && " +
+      "supervisorctl reread && supervisorctl update && supervisorctl start hermes",
     "supervisor-start",
   );
 
