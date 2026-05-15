@@ -142,4 +142,12 @@ environment=HOME="/root",PATH="/usr/local/bin:/usr/bin:/bin"
     "(supervisord -c /etc/supervisor/supervisord.conf || true) && supervisorctl reread && supervisorctl update && supervisorctl start hermes",
     "supervisor-start",
   );
+
+  // 8. Phone home to /api/bot-heartbeat so vps_status flips
+  //    "provisioning" → "awaiting_oauth" without waiting for an admin to click
+  //    "Check Status". Wait 15s for Hermes to fully start, then POST.
+  //    Best-effort: `|| true` so a transient curl failure doesn't fail setup.
+  const heartbeatCmd =
+    `sleep 15 && curl -fsS -X POST -H "Authorization: Bearer ${escapeEnvValue(config.apiServerKey)}" https://30dayramp.com/api/bot-heartbeat || true`;
+  await runBash(computerId, heartbeatCmd, "heartbeat");
 }
