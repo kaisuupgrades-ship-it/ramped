@@ -6,7 +6,11 @@ export const dynamic = "force-dynamic";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
+// Kept for backward compatibility with older deploys; no longer used. Deletes
+// now flow through Orgo.
 const DO_API_TOKEN = process.env.DO_API_TOKEN;
+void DO_API_TOKEN;
+const ORGO_API_KEY = process.env.ORGO_API_KEY;
 
 interface BotClient {
   id: string;
@@ -40,15 +44,15 @@ export async function POST(req: NextRequest) {
   const client = Array.isArray(clients) ? clients[0] : null;
   if (!client) return NextResponse.json({ error: "Client not found" }, { status: 404 });
 
-  if (client.droplet_id && DO_API_TOKEN) {
-    const doRes = await fetch(
-      `https://api.digitalocean.com/v2/droplets/${encodeURIComponent(client.droplet_id)}`,
-      { method: "DELETE", headers: { Authorization: `Bearer ${DO_API_TOKEN}` } },
+  if (client.droplet_id && ORGO_API_KEY) {
+    const orgoRes = await fetch(
+      `https://www.orgo.ai/api/computers/${encodeURIComponent(client.droplet_id)}`,
+      { method: "DELETE", headers: { Authorization: `Bearer ${ORGO_API_KEY}` } },
     );
-    // 204 = deleted, 404 = already gone. Anything else is a transient DO issue —
-    // we still clear the DB so the operator isn't stuck, and surface the failure.
-    if (doRes.status !== 204 && doRes.status !== 404) {
-      console.error(`[bot-revoke] DO delete failed for droplet ${client.droplet_id}: ${doRes.status}`);
+    // 200 = deleted, 404 = already gone. Anything else is a transient Orgo
+    // issue — we still clear the DB so the operator isn't stuck.
+    if (!orgoRes.ok && orgoRes.status !== 404) {
+      console.error(`[bot-revoke] Orgo delete failed for ${client.droplet_id}: ${orgoRes.status}`);
     }
   }
 

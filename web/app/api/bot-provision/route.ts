@@ -1,14 +1,22 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { randomBytes } from "node:crypto";
 import { isAdminAuthorized } from "@/lib/admin-auth";
-import { generateCloudInit, type ChannelConfig } from "@/lib/bot-cloud-init";
+import { setupOrgoComputer } from "@/lib/orgo-setup";
+import type { ChannelConfig } from "@/lib/bot-cloud-init";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+// Kept for backward compatibility with older deploys; no longer used for
+// provisioning (we ship via Orgo now). See ORGO_API_KEY below.
 const DO_API_TOKEN = process.env.DO_API_TOKEN;
+void DO_API_TOKEN;
+const ORGO_API_KEY = process.env.ORGO_API_KEY;
+const ORGO_WORKSPACE_ID = process.env.ORGO_WORKSPACE_ID;
+const ORGO_BASE_URL = "https://www.orgo.ai/api";
 
 const BASE32_CHARSET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
@@ -19,6 +27,31 @@ function generateSetupCode(): string {
     out += BASE32_CHARSET[bytes[i] % BASE32_CHARSET.length];
   }
   return out;
+}
+
+interface OrgoComputer {
+  id: string;
+  name?: string;
+  status?: string;
+  url?: string | null;
+  connection_url?: string | null;
+  hostname?: string | null;
+  fly_instance_id?: string | null;
+}
+
+async function pollUntilRunning(computerId: string): Promise<OrgoComputer> {
+  // Up to ~60s at 2s intervals. Status progresses creating → starting → running.
+  for (let i = 0; i < 30; i++) {
+    await new Promise((r) => setTimeout(r, 2000));
+    const res = await fetch(`${ORGO_BASE_URL}/computers/${encodeURIComponent(computerId)}`, {
+      headers: { Authorization: `Bearer ${ORGO_API_KEY!}` },
+    });
+    if (!res.ok) continue;
+    const data = (await res.json()) as OrgoComputer;
+    if (data.status === "running") return data;
+    if (data.status === "error") throw new Error("Orgo computer entered error state");
+  }
+  throw new Error("Orgo computer did not reach running within 60s");
 }
 
 export async function POST(req: NextRequest) {
@@ -54,9 +87,8 @@ export async function POST(req: NextRequest) {
     Prefer: "return=representation",
   };
 
-  // Initial status: "provisioning" if we'll spin up a droplet, else "pending"
-  // so the admin knows to provision manually (or fix DO_API_TOKEN).
-  const initialStatus = DO_API_TOKEN ? "provisioning" : "pending";
+  // Initial status: "provisioning" if Orgo creds are present, else "pending".
+  const initialStatus = ORGO_API_KEY && ORGO_WORKSPACE_ID ? "provisioning" : "pending";
   const payload: Record<string, unknown> = {
     name,
     slug,
@@ -94,64 +126,91 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Failed to create setup code" }, { status: 500 });
   }
 
-  // Best-effort DO droplet creation. If it fails, the client record stays
-  // (status "provisioning") so the admin can retry — failing the whole request
+  // Best-effort Orgo computer creation. If it fails, the client row stays so
+  // the admin can retry with /api/bot-reprovision — failing the whole request
   // would orphan the setup code we just minted.
-  let dropletId: number | null = null;
+  let computerId: string | null = null;
   let provisionError: string | null = null;
-  if (DO_API_TOKEN) {
+  if (ORGO_API_KEY && ORGO_WORKSPACE_ID) {
     try {
-      const userData = generateCloudInit(slug, apiServerKey, initialChannelConfig);
-      const doRes = await fetch("https://api.digitalocean.com/v2/droplets", {
+      const createRes = await fetch(`${ORGO_BASE_URL}/computers`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${DO_API_TOKEN}`,
+          Authorization: `Bearer ${ORGO_API_KEY}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: `ramped-bot-${slug}`,
-          region: "nyc3",
-          size: "s-2vcpu-2gb",
-          image: "ubuntu-22-04-x64",
-          user_data: userData,
-          tags: ["ramped-bot", `slug:${slug}`],
-          monitoring: true,
-          ipv6: false,
-          backups: false,
+          workspace_id: ORGO_WORKSPACE_ID,
+          name: slug,
+          os: "linux",
+          ram: 4,
+          cpu: 2,
         }),
       });
-      if (doRes.ok) {
-        const doData = (await doRes.json()) as { droplet?: { id?: number } };
-        dropletId = doData.droplet?.id ?? null;
+      if (!createRes.ok) {
+        const text = await createRes.text().catch(() => "");
+        provisionError = `Orgo ${createRes.status}: ${text.slice(0, 200)}`;
       } else {
-        const text = await doRes.text().catch(() => "");
-        provisionError = `DigitalOcean ${doRes.status}: ${text.slice(0, 200)}`;
+        const created = (await createRes.json()) as OrgoComputer;
+        computerId = created.id ?? null;
       }
     } catch (err) {
-      provisionError = err instanceof Error ? err.message : "DigitalOcean call failed";
+      provisionError = err instanceof Error ? err.message : "Orgo create call failed";
     }
 
-    if (dropletId) {
-      // Patch the client with the droplet_id so the admin panel can poll.
-      // droplet_id column is TEXT (see migrations/011), so we stringify.
+    if (computerId) {
+      // Poll until running, then patch the client row with public URL + noVNC URL.
+      // If polling fails, we still keep the computer id on the row so revoke can
+      // clean it up.
+      let publicUrl: string | null = null;
+      let novncUrl: string | null = null;
+      try {
+        const ready = await pollUntilRunning(computerId);
+        publicUrl = ready.url ?? null;
+        novncUrl = ready.connection_url ?? null;
+      } catch (err) {
+        provisionError = err instanceof Error ? err.message : "Orgo polling failed";
+      }
+
+      const patch: Record<string, unknown> = { droplet_id: computerId };
+      if (publicUrl) {
+        patch.droplet_ip = publicUrl;
+        patch.hermes_url = publicUrl;
+      }
+      if (novncUrl) patch.novnc_url = novncUrl;
       await fetch(
         `${SUPABASE_URL}/rest/v1/ramped_bot_clients?id=eq.${encodeURIComponent(client.id as string)}`,
-        {
-          method: "PATCH",
-          headers,
-          body: JSON.stringify({ droplet_id: String(dropletId) }),
-        },
+        { method: "PATCH", headers, body: JSON.stringify(patch) },
       ).catch(() => undefined);
-      (client as Record<string, unknown>).droplet_id = String(dropletId);
+      Object.assign(client as Record<string, unknown>, patch);
+
+      // Fire-and-forget setup. Setup mutates supervisor + installs Hermes; if
+      // it fails, the admin sees vps_status stuck at "provisioning" and can
+      // hit /api/bot-reprovision. We don't await — provisioning takes minutes
+      // and would blow past Vercel's serverless timeout.
+      if (publicUrl && SUPABASE_ANON_KEY) {
+        setupOrgoComputer(computerId, {
+          slug,
+          apiServerKey,
+          supabaseUrl: SUPABASE_URL,
+          supabaseAnonKey: SUPABASE_ANON_KEY,
+          channelConfig: initialChannelConfig as Record<string, unknown>,
+        }).catch((err) => {
+          console.error(`[bot-provision] Orgo setup failed for ${computerId}:`, err);
+        });
+      } else if (!SUPABASE_ANON_KEY) {
+        provisionError = (provisionError ? provisionError + "; " : "") +
+          "NEXT_PUBLIC_SUPABASE_ANON_KEY not set — setup skipped";
+      }
     }
   } else {
-    provisionError = "DO_API_TOKEN not set — droplet not created";
+    provisionError = "ORGO_API_KEY/ORGO_WORKSPACE_ID not set — computer not created";
   }
 
   return NextResponse.json({
     client,
     code,
-    droplet_id: dropletId,
+    droplet_id: computerId,
     provision_error: provisionError,
     vnc_password: apiServerKey.slice(0, 8),
   });

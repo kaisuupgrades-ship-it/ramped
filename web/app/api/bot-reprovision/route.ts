@@ -1,13 +1,20 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { isAdminAuthorized } from "@/lib/admin-auth";
-import { generateCloudInit, type ChannelConfig } from "@/lib/bot-cloud-init";
+import { setupOrgoComputer } from "@/lib/orgo-setup";
+import type { ChannelConfig } from "@/lib/bot-cloud-init";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+// Kept for backward compatibility with older deploys; no longer used.
 const DO_API_TOKEN = process.env.DO_API_TOKEN;
+void DO_API_TOKEN;
+const ORGO_API_KEY = process.env.ORGO_API_KEY;
+const ORGO_WORKSPACE_ID = process.env.ORGO_WORKSPACE_ID;
+const ORGO_BASE_URL = "https://www.orgo.ai/api";
 
 interface BotClientRow {
   id: string;
@@ -18,13 +25,34 @@ interface BotClientRow {
   channel_config: ChannelConfig | null;
 }
 
+interface OrgoComputer {
+  id: string;
+  status?: string;
+  url?: string | null;
+  connection_url?: string | null;
+}
+
+async function pollUntilRunning(computerId: string): Promise<OrgoComputer> {
+  for (let i = 0; i < 30; i++) {
+    await new Promise((r) => setTimeout(r, 2000));
+    const res = await fetch(`${ORGO_BASE_URL}/computers/${encodeURIComponent(computerId)}`, {
+      headers: { Authorization: `Bearer ${ORGO_API_KEY!}` },
+    });
+    if (!res.ok) continue;
+    const data = (await res.json()) as OrgoComputer;
+    if (data.status === "running") return data;
+    if (data.status === "error") throw new Error("Orgo computer entered error state");
+  }
+  throw new Error("Orgo computer did not reach running within 60s");
+}
+
 export async function POST(req: NextRequest) {
   if (!isAdminAuthorized(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   if (!SUPABASE_URL || !SUPABASE_KEY) {
     return NextResponse.json({ error: "Database not configured" }, { status: 503 });
   }
-  if (!DO_API_TOKEN) {
-    return NextResponse.json({ error: "DO_API_TOKEN not configured" }, { status: 503 });
+  if (!ORGO_API_KEY || !ORGO_WORKSPACE_ID) {
+    return NextResponse.json({ error: "ORGO_API_KEY/ORGO_WORKSPACE_ID not configured" }, { status: 503 });
   }
 
   let body: { client_id?: unknown };
@@ -45,75 +73,116 @@ export async function POST(req: NextRequest) {
     `${SUPABASE_URL}/rest/v1/ramped_bot_clients?id=eq.${encodeURIComponent(clientId)}&select=id,slug,droplet_id,api_server_key,vps_status,channel_config`,
     { headers },
   );
-  if (!clientRes.ok) {
-    const text = await clientRes.text().catch(() => "");
-    console.error(`[bot-reprovision] SELECT failed ${clientRes.status}: ${text.slice(0, 500)}`);
-    return NextResponse.json(
-      { error: `Failed to load client (Supabase ${clientRes.status}): ${text.slice(0, 200)}` },
-      { status: 500 },
-    );
-  }
+  if (!clientRes.ok) return NextResponse.json({ error: "Failed to load client" }, { status: 500 });
   const rows = (await clientRes.json()) as BotClientRow[];
   const client = rows[0];
   if (!client) return NextResponse.json({ error: "Client not found" }, { status: 404 });
-
-  if (client.droplet_id) {
-    return NextResponse.json({ error: "Client already has a droplet" }, { status: 400 });
-  }
   if (!client.api_server_key) {
     return NextResponse.json({ error: "Client missing api_server_key" }, { status: 500 });
   }
 
-  const userData = generateCloudInit(client.slug, client.api_server_key, client.channel_config ?? {});
-  const doRes = await fetch("https://api.digitalocean.com/v2/droplets", {
+  // If a stale Orgo computer is recorded, delete it first so we don't leak
+  // billing. 404 means it's already gone, which is fine.
+  if (client.droplet_id) {
+    const delRes = await fetch(
+      `${ORGO_BASE_URL}/computers/${encodeURIComponent(client.droplet_id)}`,
+      { method: "DELETE", headers: { Authorization: `Bearer ${ORGO_API_KEY}` } },
+    );
+    if (!delRes.ok && delRes.status !== 404) {
+      console.error(`[bot-reprovision] Orgo delete failed for ${client.droplet_id}: ${delRes.status}`);
+    }
+  }
+
+  const createRes = await fetch(`${ORGO_BASE_URL}/computers`, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${DO_API_TOKEN}`,
+      Authorization: `Bearer ${ORGO_API_KEY}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      name: `ramped-bot-${client.slug}`,
-      region: "nyc3",
-      size: "s-2vcpu-2gb",
-      image: "ubuntu-22-04-x64",
-      user_data: userData,
-      tags: ["ramped-bot", `slug:${client.slug}`],
-      monitoring: true,
-      ipv6: false,
-      backups: false,
+      workspace_id: ORGO_WORKSPACE_ID,
+      name: client.slug,
+      os: "linux",
+      ram: 4,
+      cpu: 2,
     }),
   });
-  if (!doRes.ok) {
-    const text = await doRes.text().catch(() => "");
+  if (!createRes.ok) {
+    const text = await createRes.text().catch(() => "");
     return NextResponse.json(
-      { error: `DigitalOcean ${doRes.status}: ${text.slice(0, 200)}` },
+      { error: `Orgo ${createRes.status}: ${text.slice(0, 200)}` },
       { status: 502 },
     );
   }
-  const doData = (await doRes.json()) as { droplet?: { id?: number } };
-  const dropletId = doData.droplet?.id ?? null;
-  if (!dropletId) {
-    return NextResponse.json({ error: "DigitalOcean returned no droplet id" }, { status: 502 });
+  const created = (await createRes.json()) as OrgoComputer;
+  const computerId = created.id;
+  if (!computerId) {
+    return NextResponse.json({ error: "Orgo returned no computer id" }, { status: 502 });
   }
 
-  const patchRes = await fetch(
+  // Mark the row with the new computer id immediately so revoke can clean up
+  // even if polling/setup fails further down.
+  await fetch(
     `${SUPABASE_URL}/rest/v1/ramped_bot_clients?id=eq.${encodeURIComponent(clientId)}`,
     {
       method: "PATCH",
       headers,
-      body: JSON.stringify({ droplet_id: String(dropletId), vps_status: "provisioning" }),
+      body: JSON.stringify({
+        droplet_id: computerId,
+        droplet_ip: null,
+        hermes_url: null,
+        novnc_url: null,
+        vps_status: "provisioning",
+      }),
     },
   );
-  if (!patchRes.ok) {
+
+  let ready: OrgoComputer;
+  try {
+    ready = await pollUntilRunning(computerId);
+  } catch (err) {
     return NextResponse.json(
-      { error: "Droplet created but failed to update client row", droplet_id: dropletId },
-      { status: 500 },
+      {
+        ok: false,
+        droplet_id: computerId,
+        error: err instanceof Error ? err.message : "Orgo polling failed",
+      },
+      { status: 504 },
     );
+  }
+
+  const patch: Record<string, unknown> = {};
+  if (ready.url) {
+    patch.droplet_ip = ready.url;
+    patch.hermes_url = ready.url;
+  }
+  if (ready.connection_url) patch.novnc_url = ready.connection_url;
+  if (Object.keys(patch).length > 0) {
+    await fetch(
+      `${SUPABASE_URL}/rest/v1/ramped_bot_clients?id=eq.${encodeURIComponent(clientId)}`,
+      { method: "PATCH", headers, body: JSON.stringify(patch) },
+    ).catch(() => undefined);
+  }
+
+  // Fire-and-forget setup. The admin can poll vps_status / bot-heartbeat.
+  if (ready.url && SUPABASE_ANON_KEY) {
+    setupOrgoComputer(computerId, {
+      slug: client.slug,
+      apiServerKey: client.api_server_key,
+      supabaseUrl: SUPABASE_URL,
+      supabaseAnonKey: SUPABASE_ANON_KEY,
+      channelConfig: (client.channel_config ?? {}) as Record<string, unknown>,
+    }).catch((err) => {
+      console.error(`[bot-reprovision] Orgo setup failed for ${computerId}:`, err);
+    });
   }
 
   return NextResponse.json({
     ok: true,
-    droplet_id: dropletId,
+    droplet_id: computerId,
+    url: ready.url ?? null,
+    connection_url: ready.connection_url ?? null,
     vnc_password: client.api_server_key.slice(0, 8),
+    setup_skipped: !SUPABASE_ANON_KEY,
   });
 }

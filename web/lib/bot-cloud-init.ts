@@ -76,8 +76,11 @@ function nonEmpty(v: unknown): v is string {
 /**
  * Build the body of /home/<slug>/.hermes/.env from a channel config.
  * Returns null if nothing to write.
+ *
+ * Exported so the Orgo provisioner (`lib/orgo-setup.ts`) can reuse the same
+ * channel-config→env-var mapping without duplicating it.
  */
-function buildHermesEnv(config: ChannelConfig): string | null {
+export function buildHermesEnv(config: ChannelConfig): string | null {
   const lines: string[] = [];
 
   if (config.slack?.enabled) {
@@ -158,10 +161,6 @@ function hasMessagingChannel(config: ChannelConfig): boolean {
 
 const HERMES_ENV_HEREDOC = "RAMPED_HERMES_ENV_X37";
 const HERMES_YAML_HEREDOC = "RAMPED_HERMES_YAML_X37";
-const VNC_XVFB_HEREDOC = "RAMPED_VNC_XVFB_X37";
-const VNC_OPENBOX_HEREDOC = "RAMPED_VNC_OPENBOX_X37";
-const VNC_X11VNC_HEREDOC = "RAMPED_VNC_X11VNC_X37";
-const VNC_NOVNC_HEREDOC = "RAMPED_VNC_NOVNC_X37";
 
 export function generateCloudInit(
   slug: string,
@@ -212,6 +211,11 @@ sudo -u ${slug} -H bash -lc 'command -v hermes >/dev/null 2>&1 && hermes gateway
 `
     : "";
 
+  // First 8 chars of api_server_key are the VNC password — narrow enough to type
+  // into the noVNC auth prompt, wide enough to be unguessable (~33 bits from
+  // hex). Stored on the droplet in /home/<slug>/.vnc/passwd via x11vnc.
+  const vncPassword = apiServerKey.slice(0, 8);
+
   return `#!/bin/bash
 set -euxo pipefail
 
@@ -227,7 +231,10 @@ apt-get install -y \\
   ripgrep ffmpeg \\
   python3.11 python3.11-venv python3-pip \\
   git curl wget unzip build-essential \\
-  xvfb x11vnc openbox novnc websockify chromium-browser
+  xvfb x11vnc openbox novnc websockify
+# Chromium so the noVNC desktop has a usable browser. Falls back to the
+# non-suffixed package name; if both fail we don't block boot.
+apt-get install -y chromium-browser || apt-get install -y chromium || true
 
 # 2. Node.js 20 via NodeSource (desktop app requires Node 20+).
 curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
@@ -241,11 +248,11 @@ fi
 echo "${slug} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${slug}
 chmod 440 /etc/sudoers.d/${slug}
 
-# 3a. VNC password — first 8 chars of api_server_key. Stored under the slug
-#     user so the VNC service can read it as that user.
+# 3a. VNC password (first 8 chars of api_server_key) for x11vnc.
 mkdir -p /home/${slug}/.vnc
-x11vnc -storepasswd "${apiServerKey.slice(0, 8)}" /home/${slug}/.vnc/passwd
+x11vnc -storepasswd '${vncPassword}' /home/${slug}/.vnc/passwd
 chown -R ${slug}:${slug} /home/${slug}/.vnc
+chmod 600 /home/${slug}/.vnc/passwd
 
 # 4. uv (Python toolchain manager) installed system-wide so the Hermes
 #    installer finds it on PATH regardless of which user invokes it.
@@ -284,11 +291,11 @@ mkdir -p /opt/ramped-bot/onecli
 # Hand /opt/ramped-bot to the slug user so the installer can write into it.
 chown -R ${slug}:${slug} /opt/ramped-bot
 
-# 8. noVNC virtual desktop — Xvfb → openbox → x11vnc → websockify (noVNC).
-#    Browser-accessible at http://<ip>:6080/vnc.html with the 8-char password.
-cat > /etc/systemd/system/ramped-xvfb.service <<'${VNC_XVFB_HEREDOC}'
+# 7a. Virtual desktop + noVNC stack — Xvfb -> Openbox -> x11vnc -> websockify.
+#     Four separate systemd units so each component restarts independently.
+cat > /etc/systemd/system/ramped-xvfb.service <<'XVFB_UNIT'
 [Unit]
-Description=Ramped Bot Xvfb display :1
+Description=Virtual Display for Ramped Bot
 After=network.target
 
 [Service]
@@ -297,13 +304,12 @@ Restart=always
 
 [Install]
 WantedBy=multi-user.target
-${VNC_XVFB_HEREDOC}
+XVFB_UNIT
 
-cat > /etc/systemd/system/ramped-openbox.service <<'${VNC_OPENBOX_HEREDOC}'
+cat > /etc/systemd/system/ramped-openbox.service <<'OPENBOX_UNIT'
 [Unit]
-Description=Ramped Bot Openbox session
+Description=Openbox Window Manager
 After=ramped-xvfb.service
-Requires=ramped-xvfb.service
 
 [Service]
 User=${slug}
@@ -313,13 +319,12 @@ Restart=always
 
 [Install]
 WantedBy=multi-user.target
-${VNC_OPENBOX_HEREDOC}
+OPENBOX_UNIT
 
-cat > /etc/systemd/system/ramped-vnc.service <<'${VNC_X11VNC_HEREDOC}'
+cat > /etc/systemd/system/ramped-vnc.service <<'VNC_UNIT'
 [Unit]
-Description=Ramped Bot x11vnc server
+Description=VNC Server for Ramped Bot
 After=ramped-openbox.service
-Requires=ramped-openbox.service
 
 [Service]
 User=${slug}
@@ -328,13 +333,12 @@ Restart=always
 
 [Install]
 WantedBy=multi-user.target
-${VNC_X11VNC_HEREDOC}
+VNC_UNIT
 
-cat > /etc/systemd/system/ramped-novnc.service <<'${VNC_NOVNC_HEREDOC}'
+cat > /etc/systemd/system/ramped-novnc.service <<'NOVNC_UNIT'
 [Unit]
-Description=Ramped Bot noVNC websockify
+Description=noVNC Web Interface for Ramped Bot
 After=ramped-vnc.service
-Requires=ramped-vnc.service
 
 [Service]
 ExecStart=/usr/bin/websockify --web /usr/share/novnc 6080 localhost:5901
@@ -342,12 +346,13 @@ Restart=always
 
 [Install]
 WantedBy=multi-user.target
-${VNC_NOVNC_HEREDOC}
+NOVNC_UNIT
 
 systemctl daemon-reload
-systemctl enable --now ramped-xvfb.service ramped-openbox.service ramped-vnc.service ramped-novnc.service
+systemctl enable ramped-xvfb ramped-openbox ramped-vnc ramped-novnc
+systemctl start ramped-xvfb ramped-openbox ramped-vnc ramped-novnc
 
-# 9. Firewall — SSH, HTTP (LE challenge), OneCLI, noVNC. Hermes :8000 stays
+# 8. Firewall — SSH, HTTP (LE challenge), OneCLI, noVNC. Hermes :8000 stays
 #    loopback until OneCLI binds it behind a reverse proxy.
 ufw --force reset
 ufw default deny incoming
@@ -358,7 +363,7 @@ ufw allow 10255/tcp
 ufw allow 6080/tcp
 ufw --force enable
 
-# 10. Detect public IP + phone home
+# 9. Detect public IP + phone home
 PUBLIC_IP=$(curl -fsSL https://ipv4.icanhazip.com || curl -fsSL https://api.ipify.org || echo "")
 curl -fsSL -X POST "${apiUrl}/api/bot-heartbeat" \\
   -H "Authorization: Bearer ${apiServerKey}" \\
