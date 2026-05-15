@@ -5,6 +5,7 @@ import type { ChannelConfig } from "@/lib/bot-cloud-init";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 300; // Vercel Pro: allow up to 5 min for Orgo setup
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -164,17 +165,22 @@ export async function POST(req: NextRequest) {
     ).catch(() => undefined);
   }
 
-  // Fire-and-forget setup. The admin can poll vps_status / bot-heartbeat.
+  // Await setup — fire-and-forget was silently killed by Vercel once the
+  // HTTP response was sent. maxDuration=300 keeps the function alive.
+  let setupError: string | null = null;
   if (ready.url && SUPABASE_ANON_KEY) {
-    setupOrgoComputer(computerId, {
-      slug: client.slug,
-      apiServerKey: client.api_server_key,
-      supabaseUrl: SUPABASE_URL,
-      supabaseAnonKey: SUPABASE_ANON_KEY,
-      channelConfig: (client.channel_config ?? {}) as Record<string, unknown>,
-    }).catch((err) => {
+    try {
+      await setupOrgoComputer(computerId, {
+        slug: client.slug,
+        apiServerKey: client.api_server_key,
+        supabaseUrl: SUPABASE_URL,
+        supabaseAnonKey: SUPABASE_ANON_KEY,
+        channelConfig: (client.channel_config ?? {}) as Record<string, unknown>,
+      });
+    } catch (err) {
+      setupError = err instanceof Error ? err.message : String(err);
       console.error(`[bot-reprovision] Orgo setup failed for ${computerId}:`, err);
-    });
+    }
   }
 
   return NextResponse.json({
@@ -184,5 +190,6 @@ export async function POST(req: NextRequest) {
     connection_url: ready.connection_url ?? null,
     vnc_password: client.api_server_key.slice(0, 8),
     setup_skipped: !SUPABASE_ANON_KEY,
+    setup_error: setupError,
   });
 }
