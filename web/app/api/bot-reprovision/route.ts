@@ -114,28 +114,30 @@ export async function POST(req: NextRequest) {
   if (!createRes.ok) {
     const text = await createRes.text().catch(() => "");
     // NAME_TAKEN means the delete silently failed (e.g. metal provider returned
-    // 401). Recover by reusing the existing computer instead of hard-failing.
+    // 401). Recover by reusing the existing computer rather than hard-failing.
+    // Orgo computers are listed under GET /api/projects/{workspaceId}.desktops
     if (createRes.status === 409 && text.includes("NAME_TAKEN")) {
       console.warn(`[bot-reprovision] NAME_TAKEN for "${client.slug}" — recovering existing computer`);
       const listRes = await fetch(
-        `${ORGO_BASE_URL}/computers?workspace_id=${encodeURIComponent(ORGO_WORKSPACE_ID!)}`,
+        `${ORGO_BASE_URL}/projects/${encodeURIComponent(ORGO_WORKSPACE_ID!)}`,
         { headers: { Authorization: `Bearer ${ORGO_API_KEY!}` } },
       );
       if (listRes.ok) {
-        const computers = (await listRes.json()) as OrgoComputer[];
-        const existing = computers.find((c) => c.name === client.slug);
+        const project = (await listRes.json()) as { desktops?: OrgoComputer[] };
+        const existing = project.desktops?.find((c) => c.name === client.slug);
         if (existing?.id) {
           computerId = existing.id;
           console.log(`[bot-reprovision] Reusing existing computer ${computerId}`);
         } else {
           return NextResponse.json(
-            { error: `NAME_TAKEN but no computer named "${client.slug}" found in workspace list` },
+            { error: `NAME_TAKEN but no computer named "${client.slug}" found in workspace` },
             { status: 502 },
           );
         }
       } else {
+        const listErr = await listRes.text().catch(() => "");
         return NextResponse.json(
-          { error: `Orgo ${createRes.status}: ${text.slice(0, 200)}` },
+          { error: `NAME_TAKEN; project list failed ${listRes.status}: ${listErr.slice(0, 200)}` },
           { status: 502 },
         );
       }
