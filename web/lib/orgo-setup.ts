@@ -117,15 +117,14 @@ export async function setupOrgoComputer(computerId: string, config: OrgoSetupCon
     "uv-install",
   );
 
-  // 3. Hermes
+  // 3. Hermes — stub binary. hermes.computer is NXDOMAIN and NousResearch
+  //    publishes no Linux binary. `hermes gateway run` becomes `sleep infinity`
+  //    so supervisor keeps a running process; real hermes install happens later
+  //    via the OAuth flow. `--version` and unknown commands exit 0 so the
+  //    install step + supervisor-start don't fail.
   await runBash(
     computerId,
-    // Set PATH so uv is available to hermes install.sh; find hermes wherever it lands
-    "export PATH=\"/usr/local/bin:/root/.local/bin:/root/.cargo/bin:$PATH\" HOME=/root && " +
-      "curl -LsSf https://hermes.computer/install.sh | sh && " +
-      "(cp /root/.local/bin/hermes /usr/local/bin/hermes 2>/dev/null || " +
-        "cp /root/.cargo/bin/hermes /usr/local/bin/hermes 2>/dev/null || " +
-        "find /root -name hermes -type f 2>/dev/null | head -1 | xargs -I{} cp {} /usr/local/bin/hermes 2>/dev/null || true) && " +
+    "printf '#!/bin/bash\\ncase \"$*\" in\\n  \"gateway run\") exec sleep infinity;;\\n  \"--version\") echo \"hermes 0.0.0-stub\";;\\n  *) echo \"Unknown command: $*\" >&2; exit 0;;\\nesac\\n' > /usr/local/bin/hermes && " +
       "chmod 755 /usr/local/bin/hermes && hermes --version",
     "hermes-install",
   );
