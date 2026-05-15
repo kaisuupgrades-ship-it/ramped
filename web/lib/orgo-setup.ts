@@ -39,6 +39,12 @@ async function runBash(computerId: string, command: string, step: string): Promi
 
   if (!res.ok) {
     const text = await res.text().catch(() => "");
+    // Orgo bash API returns HTTP 500 with timeout message when command > 30s.
+    // The command IS still running on the VPS — treat as expected and continue.
+    if (res.status === 500 && text.includes("time out")) {
+      console.warn(`[orgo-setup] ${step}: timed out (still running on VPS), continuing`);
+      return;
+    }
     throw new Error(`Orgo bash [${step}] HTTP ${res.status}: ${text.slice(0, 300)}`);
   }
 
