@@ -94,14 +94,16 @@ export async function setupOrgoComputer(computerId: string, config: OrgoSetupCon
   //    and don't touch apt, so there is no dpkg lock race.
   await runBash(
     computerId,
-    // Orgo VMs have clock skew (~6 days behind):
+    // Orgo VMs have clock skew (~6 days behind) — fixes:
     //  (a) bypass apt validity check with -o flags
-    //  (b) install ntpdate to fix the clock before curl runs
-    //  (c) set /etc/curlrc insecure so all curl calls skip SSL cert date checks
+    //  (b) install ntpdate + try to sync clock
+    //  (c) create /usr/local/bin/curl wrapper that always passes --insecure
+    //      (takes PATH priority over /usr/bin/curl, so all subsequent curl calls
+    //       — including those inside install.sh scripts — bypass SSL cert dates)
     "apt-get -o Acquire::Check-Valid-Until=false -o Acquire::Check-Date=false update -y && " +
-      "DEBIAN_FRONTEND=noninteractive apt-get install -y supervisor ntpdate && " +
-      "(ntpdate -u pool.ntp.org 2>/dev/null || true) && " +
-      "echo insecure > /etc/curlrc",
+      "DEBIAN_FRONTEND=noninteractive apt-get install -y supervisor && " +
+      "(apt-get install -y ntpdate && ntpdate -u pool.ntp.org 2>/dev/null || true) && " +
+      "printf '#!/bin/sh\\nexec /usr/bin/curl --insecure \"$@\"\\n' > /usr/local/bin/curl && chmod 755 /usr/local/bin/curl",
     "apt-bootstrap",
   );
 
