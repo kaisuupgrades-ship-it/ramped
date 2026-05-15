@@ -87,35 +87,35 @@ function buildEnvFileBody(config: OrgoSetupConfig): string {
 }
 
 export async function setupOrgoComputer(computerId: string, config: OrgoSetupConfig): Promise<void> {
-  // 1. System deps via apt
+  // 1. Bootstrap: NodeSource + all apt deps in one shot so there is only
+  //    ONE apt-get lock acquisition. This typically takes >30 s, so Orgo
+  //    returns 500/"time out" -- runBash treats that as non-fatal and continues
+  //    while the command keeps running on the VPS. Steps 2-3 are curl-only
+  //    and don't touch apt, so there is no dpkg lock race.
   await runBash(
     computerId,
-    "apt-get update -y && apt-get install -y curl wget git python3 python3-pip nodejs npm supervisor",
-    "apt-deps",
+    "curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && " +
+      "apt-get update -y && " +
+      "DEBIAN_FRONTEND=noninteractive apt-get install -y " +
+      "curl wget git python3 python3-pip nodejs supervisor",
+    "apt-bootstrap",
   );
 
-  // 2. Node 20 via NodeSource (overrides the apt nodejs)
-  await runBash(
-    computerId,
-    "curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs",
-    "node-20",
-  );
-
-  // 3. uv (Python toolchain manager used by Hermes)
+  // 2. uv (Python toolchain manager used by Hermes) -- curl-only, no apt
   await runBash(
     computerId,
     "curl -LsSf https://astral.sh/uv/install.sh | sh && ln -sf /root/.local/bin/uv /usr/local/bin/uv",
     "uv-install",
   );
 
-  // 4. Hermes
+  // 3. Hermes
   await runBash(
     computerId,
     "curl -LsSf https://hermes.computer/install.sh | sh && ln -sf /root/.local/bin/hermes /usr/local/bin/hermes",
     "hermes-install",
   );
 
-  // 5. /root/.hermes/.env — control-plane + channel config
+  // 4. /root/.hermes/.env — control-plane + channel config
   const envBody = buildEnvFileBody(config);
   const envCmd =
     `mkdir -p /root/.hermes && cat > /root/.hermes/.env <<'${ENV_HEREDOC}'\n` +
@@ -124,7 +124,7 @@ export async function setupOrgoComputer(computerId: string, config: OrgoSetupCon
     `chmod 600 /root/.hermes/.env`;
   await runBash(computerId, envCmd, "env-file");
 
-  // 6. supervisor config to keep `hermes gateway run` alive across reboots
+  // 5. supervisor config to keep `hermes gateway run` alive across reboots
   const supBody = `[program:hermes]
 command=/usr/local/bin/hermes gateway run
 directory=/root
@@ -141,7 +141,7 @@ environment=HOME="/root",PATH="/usr/local/bin:/usr/bin:/bin"
     `${SUP_HEREDOC}`;
   await runBash(computerId, supCmd, "supervisor-conf");
 
-  // 7. Start supervisor + hermes. supervisord may already be running on the
+  // 6. Start supervisor + hermes. supervisord may already be running on the
   //    Orgo image; we ignore the "already started" error from the daemon start.
   await runBash(
     computerId,
@@ -149,7 +149,7 @@ environment=HOME="/root",PATH="/usr/local/bin:/usr/bin:/bin"
     "supervisor-start",
   );
 
-  // 8. Phone home to /api/bot-heartbeat so vps_status flips
+  // 7. Phone home to /api/bot-heartbeat so vps_status flips
   //    "provisioning" → "awaiting_oauth" without waiting for an admin to click
   //    "Check Status". Wait 15s for Hermes to fully start, then POST.
   //    Best-effort: `|| true` so a transient curl failure doesn't fail setup.
