@@ -1354,7 +1354,7 @@ function BotStatusView({
         <div className="mb-4 rounded-xl border border-yellow-400/30 bg-yellow-400/5 p-3 text-[13px] text-text-1">
           <div className="flex items-center gap-2">
             <span className="inline-block w-3 h-3 rounded-full bg-yellow-400 animate-pulse" />
-            <span>VPS is being created… DigitalOcean typically takes ~60s to assign an IP.</span>
+            <span>Orgo is creating your VPS — Hermes setup takes about 5–10 min.</span>
           </div>
           {client.droplet_ip && (
             <div className="mt-1.5 font-mono text-[12px] text-text-2">IP assigned: {client.droplet_ip}</div>

@@ -144,7 +144,7 @@ export async function POST(req: NextRequest) {
           name: slug,
           os: "linux",
           ram: 4,
-          cpu: 2,
+          cpu: 1,
         }),
       });
       if (!createRes.ok) {
