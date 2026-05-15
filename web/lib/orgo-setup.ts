@@ -148,6 +148,6 @@ environment=HOME="/root",PATH="/usr/local/bin:/usr/bin:/bin"
   //    "Check Status". Wait 15s for Hermes to fully start, then POST.
   //    Best-effort: `|| true` so a transient curl failure doesn't fail setup.
   const heartbeatCmd =
-    `sleep 15 && curl -fsS -X POST -H "Authorization: Bearer ${escapeEnvValue(config.apiServerKey)}" https://30dayramp.com/api/bot-heartbeat || true`;
+    `sleep 15 && curl -fsSL -X POST -H "Authorization: Bearer ${escapeEnvValue(config.apiServerKey)}" https://www.30dayramp.com/api/bot-heartbeat || true`;
   await runBash(computerId, heartbeatCmd, "heartbeat");
 }
