@@ -94,10 +94,9 @@ export async function setupOrgoComputer(computerId: string, config: OrgoSetupCon
   //    and don't touch apt, so there is no dpkg lock race.
   await runBash(
     computerId,
-    "curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && " +
-      "apt-get update -y && " +
+    "apt-get update -y && " +
       "DEBIAN_FRONTEND=noninteractive apt-get install -y " +
-      "curl wget git python3 python3-pip nodejs supervisor",
+      "curl wget git python3 python3-pip supervisor",
     "apt-bootstrap",
   );
 
