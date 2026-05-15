@@ -50,7 +50,7 @@ async function runBash(computerId: string, command: string, step: string): Promi
 
   const data = (await res.json()) as BashResponse;
   if (typeof data.exit_code === "number" && data.exit_code !== 0) {
-    const out = (data.output ?? "").slice(0, 500);
+    const out = (data.output ?? "").slice(0, 2000);
     throw new Error(`Orgo bash [${step}] exit ${data.exit_code}: ${out}`);
   }
 }
@@ -94,9 +94,7 @@ export async function setupOrgoComputer(computerId: string, config: OrgoSetupCon
   //    and don't touch apt, so there is no dpkg lock race.
   await runBash(
     computerId,
-    "apt-get update -y && " +
-      "DEBIAN_FRONTEND=noninteractive apt-get install -y " +
-      "curl wget git python3 python3-pip supervisor",
+    "apt-get update -y && DEBIAN_FRONTEND=noninteractive apt-get install -y supervisor",
     "apt-bootstrap",
   );
 
