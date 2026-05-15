@@ -5,9 +5,14 @@ export const dynamic = "force-dynamic";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
+const ORGO_API_KEY = process.env.ORGO_API_KEY;
+const ORGO_BASE_URL = "https://www.orgo.ai/api";
 
-// Called by the cloud-init script on a freshly provisioned droplet — no normal
-// browser Origin. Auth is the api_server_key bearer, not admin.
+// Pre-Orgo this endpoint was called by a cloud-init script on the droplet to
+// self-report its IP. With Orgo there's no in-VM phone-home — Orgo is the
+// source of truth — so we check Orgo's API for the computer status and patch
+// the client row. Auth remains api_server_key bearer so the existing callers
+// (admin UI polling, in-bot heartbeats) keep working without admin creds.
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
@@ -26,16 +31,17 @@ export async function OPTIONS() {
 interface BotClientRow {
   id: string;
   vps_status: string | null;
+  droplet_id: string | null;
   droplet_ip: string | null;
+  hermes_url: string | null;
+  novnc_url: string | null;
 }
 
-function clientIp(req: NextRequest): string | null {
-  const xff = req.headers.get("x-forwarded-for");
-  if (xff) {
-    const first = xff.split(",")[0]?.trim();
-    if (first) return first;
-  }
-  return req.headers.get("x-real-ip");
+interface OrgoComputer {
+  id: string;
+  status?: string;
+  url?: string | null;
+  connection_url?: string | null;
 }
 
 function bearerToken(req: NextRequest): string | null {
@@ -49,14 +55,14 @@ export async function POST(req: NextRequest) {
   if (!SUPABASE_URL || !SUPABASE_KEY) {
     return withCors(NextResponse.json({ error: "Database not configured" }, { status: 503 }));
   }
+  if (!ORGO_API_KEY) {
+    return withCors(NextResponse.json({ error: "ORGO_API_KEY not configured" }, { status: 503 }));
+  }
 
   const apiServerKey = bearerToken(req);
   if (!apiServerKey || !/^[a-f0-9]{16,128}$/i.test(apiServerKey)) {
     return withCors(NextResponse.json({ error: "Unauthorized" }, { status: 401 }));
   }
-
-  let body: { ip?: unknown; slug?: unknown; status?: unknown } = {};
-  try { body = await req.json(); } catch { /* body is optional */ }
 
   const headers = {
     apikey: SUPABASE_KEY,
@@ -65,7 +71,7 @@ export async function POST(req: NextRequest) {
   };
 
   const lookupRes = await fetch(
-    `${SUPABASE_URL}/rest/v1/ramped_bot_clients?select=id,vps_status,droplet_ip&api_server_key=eq.${encodeURIComponent(apiServerKey)}`,
+    `${SUPABASE_URL}/rest/v1/ramped_bot_clients?select=id,vps_status,droplet_id,droplet_ip,hermes_url,novnc_url&api_server_key=eq.${encodeURIComponent(apiServerKey)}`,
     { headers },
   );
   if (!lookupRes.ok) {
@@ -76,23 +82,35 @@ export async function POST(req: NextRequest) {
   if (!client) {
     return withCors(NextResponse.json({ error: "Unauthorized" }, { status: 401 }));
   }
-  if (client.vps_status !== "provisioning" && client.vps_status !== "awaiting_oauth") {
-    return withCors(NextResponse.json({ error: "Invalid status for heartbeat" }, { status: 409 }));
+  if (!client.droplet_id) {
+    return withCors(NextResponse.json({ error: "Client has no computer" }, { status: 409 }));
   }
 
-  // Prefer the IP the droplet self-reports (icanhazip in cloud-init); fall back
-  // to the request's edge IP. Skip if neither yields anything new.
-  const bodyIp = typeof body.ip === "string" && body.ip.trim() ? body.ip.trim().slice(0, 64) : null;
-  const ip = bodyIp ?? clientIp(req);
+  const orgoRes = await fetch(
+    `${ORGO_BASE_URL}/computers/${encodeURIComponent(client.droplet_id)}`,
+    { headers: { Authorization: `Bearer ${ORGO_API_KEY}` } },
+  );
+  if (!orgoRes.ok) {
+    if (orgoRes.status === 404) {
+      return withCors(NextResponse.json({ error: "Orgo computer not found", healthy: false }, { status: 404 }));
+    }
+    return withCors(NextResponse.json({ error: "Orgo lookup failed", healthy: false }, { status: 502 }));
+  }
+  const computer = (await orgoRes.json()) as OrgoComputer;
+  const healthy = computer.status === "running" && Boolean(computer.url);
 
   const patch: Record<string, unknown> = {
-    vps_status: "awaiting_oauth",
     last_active_at: new Date().toISOString(),
   };
-  if (ip && ip !== client.droplet_ip) {
-    patch.droplet_ip = ip;
-    patch.hermes_url = `http://${ip}:10255`;
-    patch.novnc_url = `http://${ip}:6080/vnc.html`;
+  if (healthy && client.vps_status === "provisioning") {
+    patch.vps_status = "awaiting_oauth";
+  }
+  if (computer.url && computer.url !== client.hermes_url) {
+    patch.droplet_ip = computer.url;
+    patch.hermes_url = computer.url;
+  }
+  if (computer.connection_url && computer.connection_url !== client.novnc_url) {
+    patch.novnc_url = computer.connection_url;
   }
 
   const patchRes = await fetch(
@@ -107,5 +125,11 @@ export async function POST(req: NextRequest) {
     return withCors(NextResponse.json({ error: "Failed to update client" }, { status: 500 }));
   }
 
-  return withCors(NextResponse.json({ ok: true }));
+  return withCors(NextResponse.json({
+    ok: true,
+    healthy,
+    status: computer.status ?? null,
+    url: computer.url ?? null,
+    connection_url: computer.connection_url ?? null,
+  }));
 }

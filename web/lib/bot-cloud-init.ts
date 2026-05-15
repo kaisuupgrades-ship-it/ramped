@@ -76,8 +76,11 @@ function nonEmpty(v: unknown): v is string {
 /**
  * Build the body of /home/<slug>/.hermes/.env from a channel config.
  * Returns null if nothing to write.
+ *
+ * Exported so the Orgo provisioner (`lib/orgo-setup.ts`) can reuse the same
+ * channel-config→env-var mapping without duplicating it.
  */
-function buildHermesEnv(config: ChannelConfig): string | null {
+export function buildHermesEnv(config: ChannelConfig): string | null {
   const lines: string[] = [];
 
   if (config.slack?.enabled) {
