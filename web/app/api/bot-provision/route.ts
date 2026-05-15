@@ -6,6 +6,7 @@ import type { ChannelConfig } from "@/lib/bot-cloud-init";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const maxDuration = 300; // Vercel Pro: allow up to 5 min for Orgo setup
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY;
@@ -184,20 +185,22 @@ export async function POST(req: NextRequest) {
       ).catch(() => undefined);
       Object.assign(client as Record<string, unknown>, patch);
 
-      // Fire-and-forget setup. Setup mutates supervisor + installs Hermes; if
-      // it fails, the admin sees vps_status stuck at "provisioning" and can
-      // hit /api/bot-reprovision. We don't await — provisioning takes minutes
-      // and would blow past Vercel's serverless timeout.
+      // Await setup — fire-and-forget was silently killed by Vercel once the
+      // HTTP response was sent. maxDuration=300 keeps the function alive.
       if (publicUrl && SUPABASE_ANON_KEY) {
-        setupOrgoComputer(computerId, {
-          slug,
-          apiServerKey,
-          supabaseUrl: SUPABASE_URL,
-          supabaseAnonKey: SUPABASE_ANON_KEY,
-          channelConfig: initialChannelConfig as Record<string, unknown>,
-        }).catch((err) => {
+        try {
+          await setupOrgoComputer(computerId, {
+            slug,
+            apiServerKey,
+            supabaseUrl: SUPABASE_URL,
+            supabaseAnonKey: SUPABASE_ANON_KEY,
+            channelConfig: initialChannelConfig as Record<string, unknown>,
+          });
+        } catch (err) {
+          provisionError = (provisionError ? provisionError + "; " : "") +
+            `setup: ${err instanceof Error ? err.message : String(err)}`;
           console.error(`[bot-provision] Orgo setup failed for ${computerId}:`, err);
-        });
+        }
       } else if (!SUPABASE_ANON_KEY) {
         provisionError = (provisionError ? provisionError + "; " : "") +
           "NEXT_PUBLIC_SUPABASE_ANON_KEY not set — setup skipped";
