@@ -80,6 +80,11 @@ function buildEnvFileBody(config: OrgoSetupConfig): string {
     `RAMPED_API_KEY="${escapeEnvValue(config.apiServerKey)}"`,
     `RAMPED_API_URL="${escapeEnvValue(config.supabaseUrl)}"`,
     `SUPABASE_ANON_KEY="${escapeEnvValue(config.supabaseAnonKey)}"`,
+    // OpenAI is the default LLM provider; OAuth credential is added later via
+    // `hermes auth add openai-codex` from the admin "Authorize OpenAI" flow.
+    `HERMES_INFERENCE_PROVIDER=openai`,
+    // YOLO mode = skip per-action confirmation prompts (required for headless).
+    `HERMES_YOLO_MODE=1`,
   ];
   let body = lines.join("\n") + "\n";
   if (channelEnv) body += channelEnv;
@@ -107,29 +112,24 @@ export async function setupOrgoComputer(computerId: string, config: OrgoSetupCon
     "apt-bootstrap",
   );
 
-  // 2. uv (Python toolchain manager used by Hermes) -- curl-only, no apt
+  // 2. Hermes — official NousResearch installer. Pulls in uv, Python 3.11,
+  //    Node 22, ripgrep, ffmpeg itself, so we don't preinstall those.
+  //    `--skip-browser` avoids Playwright/Chromium download (headless server).
+  //    Installer may put the binary in ~/.local/bin or /usr/local/bin; we
+  //    ensure /usr/local/bin/hermes exists, then run `setup --non-interactive`
+  //    to bypass the first-run wizard.
   await runBash(
     computerId,
-    // astral installer puts uv at ~/.cargo/bin/uv on some distros, ~/.local/bin/uv on others — try both
-    "curl -LsSf https://astral.sh/uv/install.sh | sh && " +
-      "(cp /root/.cargo/bin/uv /usr/local/bin/uv 2>/dev/null || cp /root/.local/bin/uv /usr/local/bin/uv 2>/dev/null) && " +
-      "chmod 755 /usr/local/bin/uv && uv --version",
-    "uv-install",
-  );
-
-  // 3. Hermes — stub binary. hermes.computer is NXDOMAIN and NousResearch
-  //    publishes no Linux binary. `hermes gateway run` becomes `sleep infinity`
-  //    so supervisor keeps a running process; real hermes install happens later
-  //    via the OAuth flow. `--version` and unknown commands exit 0 so the
-  //    install step + supervisor-start don't fail.
-  await runBash(
-    computerId,
-    "printf '#!/bin/bash\\ncase \"$*\" in\\n  \"gateway run\") exec sleep infinity;;\\n  \"--version\") echo \"hermes 0.0.0-stub\";;\\n  *) echo \"Unknown command: $*\" >&2; exit 0;;\\nesac\\n' > /usr/local/bin/hermes && " +
-      "chmod 755 /usr/local/bin/hermes && hermes --version",
+    "curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash -s -- --skip-browser; " +
+      "if [ -x /root/.local/bin/hermes ] && [ ! -x /usr/local/bin/hermes ]; then cp /root/.local/bin/hermes /usr/local/bin/hermes; fi; " +
+      "[ -x /usr/local/bin/hermes ] || { echo 'hermes binary not found in /root/.local/bin or /usr/local/bin' >&2; exit 1; }; " +
+      "chmod 755 /usr/local/bin/hermes && " +
+      "hermes setup --non-interactive && " +
+      "hermes --version",
     "hermes-install",
   );
 
-  // 4. /root/.hermes/.env — control-plane + channel config
+  // 3. /root/.hermes/.env — control-plane + channel config
   const envBody = buildEnvFileBody(config);
   const envCmd =
     `mkdir -p /root/.hermes && cat > /root/.hermes/.env <<'${ENV_HEREDOC}'\n` +
@@ -138,7 +138,7 @@ export async function setupOrgoComputer(computerId: string, config: OrgoSetupCon
     `chmod 600 /root/.hermes/.env`;
   await runBash(computerId, envCmd, "env-file");
 
-  // 5. supervisor config to keep `hermes gateway run` alive across reboots
+  // 4. supervisor config to keep `hermes gateway run` alive across reboots
   const supBody = `[program:hermes]
 command=/usr/local/bin/hermes gateway run
 directory=/root
@@ -155,18 +155,21 @@ environment=HOME="/root",PATH="/usr/local/bin:/usr/bin:/bin"
     `${SUP_HEREDOC}`;
   await runBash(computerId, supCmd, "supervisor-conf");
 
-  // 6. Start supervisor + hermes. supervisord may already be running on the
+  // 5. Start supervisor + hermes. supervisord may already be running on the
   //    Orgo image; we ignore the "already started" error from the daemon start.
+  //    `hermes setup --non-interactive` is idempotent and runs as a fallback
+  //    in case it was skipped/failed during install (e.g. install timed out).
   await runBash(
     computerId,
     // Wait up to 60s for hermes binary (hermes-install may have timed out but still running in bg)
     "for i in $(seq 1 6); do [ -x /usr/local/bin/hermes ] && break; echo \"waiting for hermes binary $i/6\"; sleep 10; done && " +
+      "(hermes setup --non-interactive || true) && " +
       "(supervisord -c /etc/supervisor/supervisord.conf || true) && " +
       "supervisorctl reread && supervisorctl update && supervisorctl start hermes",
     "supervisor-start",
   );
 
-  // 7. Phone home to /api/bot-heartbeat so vps_status flips
+  // 6. Phone home to /api/bot-heartbeat so vps_status flips
   //    "provisioning" → "awaiting_oauth" without waiting for an admin to click
   //    "Check Status". Wait 15s for Hermes to fully start, then POST.
   //    Best-effort: `|| true` so a transient curl failure doesn't fail setup.

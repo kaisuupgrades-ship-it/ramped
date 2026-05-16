@@ -1257,6 +1257,7 @@ function BotStatusView({
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [vncCopied, setVncCopied] = useState(false);
+  const [authNotice, setAuthNotice] = useState<string | null>(null);
 
   const vncPassword = client.api_server_key ? client.api_server_key.slice(0, 8) : null;
   const copyVncPassword = async () => {
@@ -1322,6 +1323,32 @@ function BotStatusView({
       body: JSON.stringify({ client_id: client.id }),
     });
     if (!r.ok) throw new Error(`API ${r.status}`);
+  });
+
+  const handleAuthorizeOpenAI = () => run("auth-openai", async () => {
+    setAuthNotice(null);
+    const r = await fetch(`/api/bot-auth-openai?client_id=${encodeURIComponent(client.id)}`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const j = (await r.json().catch(() => ({}))) as { auth_url?: string; error?: string };
+    if (!r.ok || !j.auth_url) throw new Error(j.error || `API ${r.status}`);
+    window.open(j.auth_url, "_blank", "noopener,noreferrer");
+    setAuthNotice("Complete authorization in the new tab, then click Activate when done.");
+  });
+
+  const handleActivate = () => run("activate", async () => {
+    const r = await fetch("/api/bot-activate", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ client_id: client.id }),
+    });
+    if (!r.ok) {
+      const j = (await r.json().catch(() => ({}))) as { error?: string };
+      throw new Error(j.error || `API ${r.status}`);
+    }
+    setAuthNotice(null);
+    onChanged();
   });
 
   const handleRevoke = () => {
@@ -1433,14 +1460,30 @@ function BotStatusView({
         <button onClick={handleReset} disabled={busy === "reset"} className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border border-line-2 bg-bg-2 text-text-1 hover:bg-bg-3 transition-colors disabled:opacity-50">{busy === "reset" ? "..." : "Reset Rate Limit"}</button>
         <button onClick={handleRevoke} disabled={busy === "revoke"} className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border border-bad/40 bg-bad/10 text-bad hover:bg-bad/20 transition-colors disabled:opacity-50">{busy === "revoke" ? "..." : "Revoke"}</button>
         {client.vps_status === "awaiting_oauth" && (
-          <a
-            href={`https://${client.slug}.bot.30dayramp.com:10255`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border border-blue/40 bg-blue/10 text-blue-2 hover:bg-blue/20 transition-colors"
-          >
-            Open OneCLI →
-          </a>
+          <>
+            <button
+              onClick={handleAuthorizeOpenAI}
+              disabled={busy === "auth-openai"}
+              className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border border-orange/40 bg-orange/10 text-orange hover:bg-orange/20 transition-colors disabled:opacity-50"
+            >
+              {busy === "auth-openai" ? "..." : "Authorize OpenAI →"}
+            </button>
+            <button
+              onClick={handleActivate}
+              disabled={busy === "activate"}
+              className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border border-good/40 bg-good/10 text-good hover:bg-good/20 transition-colors disabled:opacity-50"
+            >
+              {busy === "activate" ? "..." : "Activate"}
+            </button>
+            <a
+              href={`https://${client.slug}.bot.30dayramp.com:10255`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 rounded-lg text-[12.5px] font-medium border border-blue/40 bg-blue/10 text-blue-2 hover:bg-blue/20 transition-colors"
+            >
+              Open OneCLI →
+            </a>
+          </>
         )}
         {client.novnc_url && (
           <a
@@ -1454,6 +1497,11 @@ function BotStatusView({
         )}
       </div>
 
+      {authNotice && (
+        <div className="mb-3 rounded-lg border border-orange/40 bg-orange/10 px-3 py-2 text-[12.5px] text-orange">
+          {authNotice}
+        </div>
+      )}
       {error && <p className="text-bad text-[13px]">{error}</p>}
     </div>
   );
