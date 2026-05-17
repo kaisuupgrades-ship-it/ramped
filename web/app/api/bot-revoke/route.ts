@@ -45,14 +45,19 @@ export async function POST(req: NextRequest) {
   if (!client) return NextResponse.json({ error: "Client not found" }, { status: 404 });
 
   if (client.droplet_id && ORGO_API_KEY) {
-    const orgoRes = await fetch(
-      `https://www.orgo.ai/api/computers/${encodeURIComponent(client.droplet_id)}`,
-      { method: "DELETE", headers: { Authorization: `Bearer ${ORGO_API_KEY}` } },
-    );
-    // 200 = deleted, 404 = already gone. Anything else is a transient Orgo
-    // issue — we still clear the DB so the operator isn't stuck.
-    if (!orgoRes.ok && orgoRes.status !== 404) {
-      console.error(`[bot-revoke] Orgo delete failed for ${client.droplet_id}: ${orgoRes.status}`);
+    // Best-effort: an Orgo outage or network failure must not block the DB
+    // revoke, or the operator gets stuck with a half-revoked client.
+    try {
+      const orgoRes = await fetch(
+        `https://www.orgo.ai/api/computers/${encodeURIComponent(client.droplet_id)}`,
+        { method: "DELETE", headers: { Authorization: `Bearer ${ORGO_API_KEY}` } },
+      );
+      // 200 = deleted, 404 = already gone.
+      if (!orgoRes.ok && orgoRes.status !== 404) {
+        console.error(`[bot-revoke] Orgo delete failed for ${client.droplet_id}: ${orgoRes.status}`);
+      }
+    } catch (err) {
+      console.error(`[bot-revoke] Orgo delete threw for ${client.droplet_id}:`, err);
     }
   }
 
