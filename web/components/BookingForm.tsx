@@ -106,6 +106,14 @@ export function BookingForm({ tier, billing }: BookingFormProps) {
           <Field label="Company" error={errors.company?.message}>
             <Input placeholder="Acme Logistics" autoComplete="organization" {...register("company")} />
           </Field>
+          <Field label={<>Company website <span className="text-text-3 font-normal normal-case">(optional — helps us prep)</span></>} error={errors.company_url?.message}>
+            <Input
+              type="url"
+              placeholder="https://acmelogistics.com"
+              autoComplete="url"
+              {...register("company_url")}
+            />
+          </Field>
           <Field label={<>Anything we should know? <span className="text-text-3 font-normal normal-case">(optional)</span></>}>
             <Textarea
               rows={3}

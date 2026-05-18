@@ -49,6 +49,11 @@ export const bookings = pgTable("bookings", {
   status: text("status"),
   meet_link: text("meet_link"),
 
+  // Optional URL captured on the booking form. Powers the auto-generated
+  // prep deck (see prospectDecks below). Optional — if absent, the deck
+  // generator falls back to deriving it from the email domain.
+  company_url: text("company_url"),
+
   created_at: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 }, (t) => ({
   uniqueDatetime: unique("bookings_datetime_unique").on(t.datetime),
@@ -90,7 +95,37 @@ export const availabilitySettings = pgTable("availability_settings", {
   updated_at: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
 
+/**
+ * Per-booking auto-generated prep deck. Built by lib/deck/generator.ts:
+ * scrape company URL → Claude extracts signals → pptxgenjs renders deck →
+ * upload to Supabase Storage. Jon reviews + downloads from /admin before
+ * each call.
+ *
+ * Status lifecycle: pending → researching → generating → ready | failed.
+ * On failure, error_message + generation_log are populated so we can debug
+ * without re-running the whole pipeline.
+ */
+export const prospectDecks = pgTable("prospect_decks", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  booking_id: uuid("booking_id").notNull().references(() => bookings.id, { onDelete: "cascade" }),
+  status: text("status").notNull().default("pending"),  // pending | researching | generating | ready | failed
+  company_url: text("company_url"),                     // resolved URL (from booking field or email-domain fallback)
+  company_url_source: text("company_url_source"),       // "form" | "email_domain" | null
+  research: jsonb("research"),                          // { industry, icp, pains, founder, voice_samples, ... }
+  research_confidence: text("research_confidence"),     // "high" | "medium" | "low"
+  deck_storage_path: text("deck_storage_path"),         // bucket/key for the generated .pptx
+  deck_filename: text("deck_filename"),                 // human-readable filename
+  template_version: text("template_version"),           // e.g. "v3.0" so we can re-roll when the template moves
+  generation_log: jsonb("generation_log"),              // chronological steps + timings (for debugging)
+  error_message: text("error_message"),
+  reviewed_at: timestamp("reviewed_at", { withTimezone: true }),
+  created_at: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updated_at: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
 export type Booking = typeof bookings.$inferSelect;
 export type NewBooking = typeof bookings.$inferInsert;
 export type Lead = typeof leads.$inferSelect;
 export type AutomationMap = typeof automationMaps.$inferSelect;
+export type ProspectDeck = typeof prospectDecks.$inferSelect;
+export type NewProspectDeck = typeof prospectDecks.$inferInsert;

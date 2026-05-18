@@ -27,6 +27,29 @@ interface Booking {
 
 interface Lead { id: string; email: string; created_at: string; source?: string | null }
 
+interface DeckRow {
+  booking: {
+    id: string;
+    datetime: string;
+    name: string;
+    email: string;
+    company: string;
+    company_url: string | null;
+  };
+  deck: {
+    id: string;
+    status: "pending" | "researching" | "generating" | "ready" | "failed" | string;
+    company_url_source: "form" | "email_domain" | null;
+    research_confidence: "high" | "medium" | "low" | null;
+    deck_filename: string | null;
+    template_version: string | null;
+    error_message: string | null;
+    reviewed_at: string | null;
+    created_at: string;
+    updated_at: string;
+  } | null;
+}
+
 interface AdminPayload {
   configured: boolean;
   portal_links_enabled?: boolean;
@@ -65,7 +88,12 @@ export default function AdminClient() {
   const [data, setData] = useState<AdminPayload | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [tab, setTab] = useState<"bookings" | "leads">("bookings");
+  const [tab, setTab] = useState<"bookings" | "leads" | "decks">("bookings");
+  // Prospect Decks tab state
+  const [decks, setDecks] = useState<DeckRow[] | null>(null);
+  const [decksLoading, setDecksLoading] = useState(false);
+  const [decksError, setDecksError] = useState<string | null>(null);
+  const [regenIds, setRegenIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const stored = typeof window !== "undefined" ? localStorage.getItem(TOKEN_KEY) : null;
@@ -99,6 +127,65 @@ export default function AdminClient() {
     })();
     return () => { cancelled = true; };
   }, [token]);
+
+  // Load decks when the Decks tab is opened (or token first arrives + tab is decks)
+  useEffect(() => {
+    if (!token || tab !== "decks") return;
+    let cancelled = false;
+    (async () => {
+      setDecksLoading(true);
+      setDecksError(null);
+      try {
+        const r = await fetch("/api/admin/decks", { headers: { Authorization: `Bearer ${token}` } });
+        if (!r.ok) throw new Error(`API ${r.status}`);
+        const json = (await r.json()) as { rows: DeckRow[] };
+        if (!cancelled) setDecks(json.rows || []);
+      } catch (e) {
+        if (!cancelled) setDecksError(e instanceof Error ? e.message : "Failed to load");
+      } finally {
+        if (!cancelled) setDecksLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [token, tab]);
+
+  const refreshDecks = async () => {
+    if (!token) return;
+    const r = await fetch("/api/admin/decks", { headers: { Authorization: `Bearer ${token}` } });
+    if (r.ok) {
+      const json = (await r.json()) as { rows: DeckRow[] };
+      setDecks(json.rows || []);
+    }
+  };
+
+  const regenerateDeck = async (bookingId: string) => {
+    if (!token) return;
+    setRegenIds(new Set([...regenIds, bookingId]));
+    try {
+      await fetch("/api/admin/decks", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ booking_id: bookingId }),
+      });
+      await refreshDecks();
+    } finally {
+      setRegenIds(prev => {
+        const next = new Set(prev);
+        next.delete(bookingId);
+        return next;
+      });
+    }
+  };
+
+  const markReviewed = async (deckId: string) => {
+    if (!token) return;
+    await fetch("/api/admin/decks/review", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ deck_id: deckId }),
+    });
+    await refreshDecks();
+  };
 
   if (!token) {
     return (
@@ -201,6 +288,12 @@ export default function AdminClient() {
           >
             Leads ({leads.length})
           </button>
+          <button
+            onClick={() => setTab("decks")}
+            className={`px-4 py-2 rounded-lg text-[13.5px] font-medium border transition-colors ${tab === "decks" ? "bg-blue/10 border-blue/40 text-blue-2" : "bg-bg-2 border-line-2 text-text-1 hover:bg-bg-3"}`}
+          >
+            Prospect Decks{decks ? ` (${decks.length})` : ""}
+          </button>
         </div>
 
         {tab === "bookings" && (
@@ -299,6 +392,120 @@ export default function AdminClient() {
                 </tbody>
               </table>
             </div>
+          </Card>
+        )}
+
+        {tab === "decks" && (
+          <Card className="p-0 overflow-hidden">
+            {decksLoading && <div className="p-8 text-text-3 text-[13px]">Loading…</div>}
+            {decksError && <div className="p-6 text-red-2 text-[13px]">{decksError}</div>}
+            {!decksLoading && !decksError && decks && (
+              <div className="overflow-x-auto">
+                <table className="w-full text-[13.5px]">
+                  <thead className="bg-bg-3 text-text-3">
+                    <tr>
+                      <th className="text-left font-mono text-[11px] uppercase tracking-[0.06em] px-4 py-3">Call</th>
+                      <th className="text-left font-mono text-[11px] uppercase tracking-[0.06em] px-4 py-3">Prospect / Company</th>
+                      <th className="text-left font-mono text-[11px] uppercase tracking-[0.06em] px-4 py-3">Status</th>
+                      <th className="text-left font-mono text-[11px] uppercase tracking-[0.06em] px-4 py-3">Confidence</th>
+                      <th className="text-left font-mono text-[11px] uppercase tracking-[0.06em] px-4 py-3">Source</th>
+                      <th className="text-right font-mono text-[11px] uppercase tracking-[0.06em] px-4 py-3">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {decks.length === 0 && (
+                      <tr><td colSpan={6} className="px-4 py-12 text-center text-text-3">No bookings yet — decks will appear here as bookings come in.</td></tr>
+                    )}
+                    {decks.map(({ booking, deck }) => {
+                      const callTime = booking.datetime
+                        ? new Date(booking.datetime).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })
+                        : "—";
+                      const status = deck?.status ?? "—";
+                      const confidence = deck?.research_confidence ?? null;
+                      const isRegen = regenIds.has(booking.id);
+                      const ready = deck?.status === "ready";
+                      const failed = deck?.status === "failed";
+                      const inFlight = deck?.status === "researching" || deck?.status === "generating" || deck?.status === "pending";
+                      return (
+                        <tr key={booking.id} className="border-t border-line">
+                          <td className="px-4 py-3 align-top text-text-0 font-mono text-[12.5px]">{callTime}</td>
+                          <td className="px-4 py-3 align-top">
+                            <div className="text-text-0 font-medium">{booking.name}</div>
+                            <div className="text-text-2 text-[12px]">{booking.company}</div>
+                            <div className="text-text-3 text-[11px] font-mono">{booking.email}</div>
+                          </td>
+                          <td className="px-4 py-3 align-top">
+                            {ready && <Badge variant="good">Ready</Badge>}
+                            {inFlight && <Badge variant="blue">{status}</Badge>}
+                            {failed && <Badge variant="red">Failed</Badge>}
+                            {!deck && <Badge variant="neutral">—</Badge>}
+                            {deck?.reviewed_at && <div className="mt-1 text-text-3 text-[11px]">✓ reviewed</div>}
+                            {failed && deck?.error_message && (
+                              <div className="mt-1 text-red-2 text-[11px] max-w-[280px]">{deck.error_message.slice(0, 200)}</div>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 align-top">
+                            {confidence === "high" && <Badge variant="good">High</Badge>}
+                            {confidence === "medium" && <Badge variant="blue">Medium</Badge>}
+                            {confidence === "low" && <Badge variant="orange">Low</Badge>}
+                            {!confidence && <span className="text-text-3">—</span>}
+                          </td>
+                          <td className="px-4 py-3 align-top text-text-2 text-[12px]">
+                            {deck?.company_url_source === "form" ? "form" : deck?.company_url_source === "email_domain" ? "email domain" : "—"}
+                          </td>
+                          <td className="px-4 py-3 align-top text-right whitespace-nowrap">
+                            {ready && deck && (
+                              <a
+                                href={`/api/admin/decks/download?deck_id=${deck.id}`}
+                                onClick={(e) => {
+                                  // Add Authorization header isn't possible on a plain anchor.
+                                  // Use a fetch + blob trick to keep the bearer header.
+                                  e.preventDefault();
+                                  if (!token) return;
+                                  fetch(`/api/admin/decks/download?deck_id=${deck.id}`, {
+                                    headers: { Authorization: `Bearer ${token}` },
+                                    redirect: "follow",
+                                  })
+                                    .then(r => r.blob())
+                                    .then(blob => {
+                                      const url = URL.createObjectURL(blob);
+                                      const a = document.createElement("a");
+                                      a.href = url;
+                                      a.download = deck.deck_filename || "deck.pptx";
+                                      document.body.appendChild(a);
+                                      a.click();
+                                      a.remove();
+                                      setTimeout(() => URL.revokeObjectURL(url), 1000);
+                                    });
+                                }}
+                                className="text-blue-2 hover:text-blue text-[12px] mr-3"
+                              >
+                                Download
+                              </a>
+                            )}
+                            <button
+                              onClick={() => regenerateDeck(booking.id)}
+                              disabled={isRegen}
+                              className="text-text-1 hover:text-text-0 text-[12px] mr-3 disabled:opacity-50"
+                            >
+                              {isRegen ? "Regenerating…" : "Regenerate"}
+                            </button>
+                            {ready && deck && !deck.reviewed_at && (
+                              <button
+                                onClick={() => markReviewed(deck.id)}
+                                className="text-text-1 hover:text-text-0 text-[12px]"
+                              >
+                                Mark reviewed
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </Card>
         )}
 

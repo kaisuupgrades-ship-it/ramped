@@ -83,6 +83,7 @@ export async function POST(req: NextRequest) {
   const name = truncate(data.name, 120);
   const email = truncate(data.email, 254);
   const company = data.company ? truncate(data.company, 200) : "";
+  const company_url = data.company_url ? truncate(data.company_url, 500) : "";
   const notes = data.notes ? truncate(data.notes, 2000) : "";
   const timezone = data.timezone ? truncate(data.timezone, 64) : "";
   const tier = data.tier ? truncate(data.tier, 32) : "";
@@ -140,6 +141,7 @@ export async function POST(req: NextRequest) {
     const insertRes = await supabaseRest<{ id: string }[]>("POST", "/bookings", {
       datetime, name, email,
       company: company || null,
+      company_url: company_url || null,
       notes: notes || null,
       timezone: timezone || null,
       tier: tier || null,
@@ -264,6 +266,21 @@ export async function POST(req: NextRequest) {
     siteUrl: SITE_URL,
     bookingId: bookingId || undefined,
   }).catch(() => {});
+
+  // Fire-and-forget: kick off prep-deck generation. Never blocks the
+  // booking response — generation takes 30-90s and Jon reviews the deck
+  // before each call from /admin/decks. Dynamic import keeps the generator
+  // bundle out of the booking route's cold-start path.
+  if (bookingId) {
+    (async () => {
+      try {
+        const { generateDeckForBooking } = await import("@/lib/deck/generator");
+        await generateDeckForBooking(bookingId!);
+      } catch (e) {
+        console.warn("[book] deck generation failed for", bookingId, (e as Error).message);
+      }
+    })();
+  }
 
   return NextResponse.json({ ok: true, booking_id: bookingId, meet_link: meetLink || null });
 }
