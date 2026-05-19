@@ -99,7 +99,7 @@ function addLogoLockup(slide: pptxgen.Slide, opts: { x?: number; y?: number; dar
     ],
     {
       x: x + 0.42, y: y - 0.02, w: 1.8, h: 0.4,
-      fontFace: FONT_HEAD, fontSize: 16, charSpacing: -3, valign: "middle",
+      fontFace: FONT_HEAD, fontSize: 16, charSpacing: 0, valign: "middle",
     },
   );
 }
@@ -121,13 +121,13 @@ function addHeroLockup(slide: pptxgen.Slide, opts: { x?: number; y?: number; w?:
     ],
     {
       x: x + markSize + 0.2, y: y - 0.05, w: w - markSize - 0.2, h: markSize + 0.1,
-      fontFace: FONT_HEAD, fontSize: 44, bold: true, charSpacing: -8, valign: "middle",
+      fontFace: FONT_HEAD, fontSize: 44, bold: true, charSpacing: 0, valign: "middle",
     },
   );
   slide.addText("AI department, live in 30 days.", {
     x: x, y: y + markSize + 0.12, w: w + 0.6, h: 0.32,
     fontFace: FONT_BODY, fontSize: 12,
-    color: opts.dark ? "BBBFC9" : C.muted, charSpacing: 6, italic: true,
+    color: opts.dark ? "BBBFC9" : C.muted, charSpacing: 0.5, italic: true,
   });
 }
 
@@ -141,7 +141,7 @@ function eyebrow(slide: pptxgen.Slide, text: string, opts: { y?: number; dark?: 
   slide.addText(text, {
     x: 0.85, y, w: 11, h: 0.3,
     fontFace: FONT_HEAD, fontSize: 10, bold: true,
-    color: opts.dark ? C.cyan : C.muted, charSpacing: 14,
+    color: opts.dark ? C.cyan : C.muted, charSpacing: 1,
   });
 }
 
@@ -159,7 +159,7 @@ function footer(slide: pptxgen.Slide, pageNum: number, dark = false) {
   slide.addText("30dayramp.com", {
     x: 0.6, y: H - 0.32, w: 4, h: 0.25,
     fontFace: FONT_BODY, fontSize: 9,
-    color: dark ? C.mutedLight : C.muted, charSpacing: 4,
+    color: dark ? C.mutedLight : C.muted, charSpacing: 0.5,
   });
   slide.addText(String(pageNum).padStart(2, "0"), {
     x: W - 0.8, y: H - 0.32, w: 0.2, h: 0.25,
@@ -199,7 +199,7 @@ export async function renderProspectDeck(input: RenderInput): Promise<Buffer> {
     s.addText(`Hi ${firstName}.`, {
       x: 0.6, y: 2.9, w: 12, h: 1.6,
       fontFace: FONT_HEAD, fontSize: 84, bold: true,
-      color: C.white, charSpacing: -3,
+      color: C.white, charSpacing: 0,
     });
 
     s.addText(
@@ -224,7 +224,7 @@ export async function renderProspectDeck(input: RenderInput): Promise<Buffer> {
     s.addText("DISCOVERY CONVERSATION", {
       x: 0.6, y: H - 0.85, w: 6, h: 0.3,
       fontFace: FONT_HEAD, fontSize: 10, bold: true,
-      color: C.mutedLight, charSpacing: 12,
+      color: C.mutedLight, charSpacing: 0.5,
     });
     s.addText(callDate, {
       x: 0.6, y: H - 0.55, w: 6, h: 0.3,
@@ -249,19 +249,19 @@ export async function renderProspectDeck(input: RenderInput): Promise<Buffer> {
       s.addText(`"${r.positioning_phrase}"`, {
         x: 0.6, y: 1.9, w: 12, h: 1.6,
         fontFace: FONT_HEAD, fontSize: 36, italic: true,
-        color: C.ink, lineSpacingMultiple: 1.15, charSpacing: -1,
+        color: C.ink, lineSpacingMultiple: 1.15, charSpacing: 0,
       });
     } else if (r.business_summary) {
       s.addText(r.business_summary, {
         x: 0.6, y: 1.9, w: 12, h: 1.6,
         fontFace: FONT_HEAD, fontSize: 32, bold: true,
-        color: C.ink, lineSpacingMultiple: 1.15, charSpacing: -1,
+        color: C.ink, lineSpacingMultiple: 1.15, charSpacing: 0,
       });
     } else {
       s.addText("You're solving real\noperational pain.", {
         x: 0.6, y: 1.9, w: 12, h: 1.6,
         fontFace: FONT_HEAD, fontSize: 38, bold: true,
-        color: C.ink, lineSpacingMultiple: 1.05, charSpacing: -1,
+        color: C.ink, lineSpacingMultiple: 1.05, charSpacing: 0,
       });
     }
 
@@ -270,7 +270,7 @@ export async function renderProspectDeck(input: RenderInput): Promise<Buffer> {
       : "What we found from your site:";
     s.addText(sub, {
       x: 0.6, y: 3.6, w: 12, h: 0.4,
-      fontFace: FONT_BODY, fontSize: 14, color: C.muted, charSpacing: 4,
+      fontFace: FONT_BODY, fontSize: 14, color: C.muted, charSpacing: 0.5,
     });
 
     // 4 pain cards
@@ -300,7 +300,7 @@ export async function renderProspectDeck(input: RenderInput): Promise<Buffer> {
       s.addText(card.label, {
         x: cx + 0.25, y: cardY + 0.25, w: cardW - 0.5, h: 0.45,
         fontFace: FONT_HEAD, fontSize: 28, bold: true,
-        color: C.cyanDeep, charSpacing: -1,
+        color: C.cyanDeep, charSpacing: 0,
       });
       s.addText(card.body, {
         x: cx + 0.25, y: cardY + 0.85, w: cardW - 0.5, h: cardH - 1.0,
@@ -331,7 +331,7 @@ export async function renderProspectDeck(input: RenderInput): Promise<Buffer> {
     s.addText("We build the team\nthe owner can delegate to.", {
       x: 0.6, y: 2.95, w: 12, h: 2.6,
       fontFace: FONT_HEAD, fontSize: 60, bold: true, color: C.white,
-      lineSpacingMultiple: 1.02, charSpacing: -3,
+      lineSpacingMultiple: 1.02, charSpacing: 0,
     });
 
     s.addShape("rect", {
@@ -360,7 +360,7 @@ export async function renderProspectDeck(input: RenderInput): Promise<Buffer> {
 
     s.addText("Three things. No mystery.", {
       x: 0.6, y: 1.9, w: 12, h: 0.7,
-      fontFace: FONT_HEAD, fontSize: 36, bold: true, color: C.ink, charSpacing: -1,
+      fontFace: FONT_HEAD, fontSize: 36, bold: true, color: C.ink, charSpacing: 0,
     });
 
     const items = [
@@ -383,7 +383,7 @@ export async function renderProspectDeck(input: RenderInput): Promise<Buffer> {
       s.addText(it.n, {
         x: 0.6, y: ry, w: 1.1, h: 0.8,
         fontFace: FONT_HEAD, fontSize: 44, bold: true,
-        color: C.cyanDeep, charSpacing: -2,
+        color: C.cyanDeep, charSpacing: 0,
       });
       s.addShape("rect", {
         x: 1.65, y: ry + 0.1, w: 0.025, h: 0.85,
@@ -391,7 +391,7 @@ export async function renderProspectDeck(input: RenderInput): Promise<Buffer> {
       });
       s.addText(it.h, {
         x: 1.85, y: ry, w: 10.8, h: 0.5,
-        fontFace: FONT_HEAD, fontSize: 18, bold: true, color: C.ink, charSpacing: -0.5,
+        fontFace: FONT_HEAD, fontSize: 18, bold: true, color: C.ink, charSpacing: 0,
       });
       s.addText(it.b, {
         x: 1.85, y: ry + 0.5, w: 10.8, h: 0.6,
@@ -415,17 +415,17 @@ export async function renderProspectDeck(input: RenderInput): Promise<Buffer> {
     s.addText("30", {
       x: 0.6, y: 1.8, w: 6.5, h: 4.0,
       fontFace: FONT_HEAD, fontSize: 320, bold: true,
-      color: C.cyan, charSpacing: -10,
+      color: C.cyan, charSpacing: 0,
     });
     s.addText("DAYS TO LIVE.", {
       x: 5.5, y: 3.4, w: 7, h: 0.6,
       fontFace: FONT_HEAD, fontSize: 26, bold: true,
-      color: C.white, charSpacing: 4,
+      color: C.white, charSpacing: 0.5,
     });
     s.addText("OR YOUR MONEY BACK.", {
       x: 5.5, y: 4.0, w: 7, h: 0.6,
       fontFace: FONT_HEAD, fontSize: 26, bold: true,
-      color: C.white, charSpacing: 4,
+      color: C.white, charSpacing: 0.5,
     });
     s.addText("No fine print. No partial payment.", {
       x: 5.5, y: 4.7, w: 7, h: 0.4,
@@ -465,7 +465,7 @@ export async function renderProspectDeck(input: RenderInput): Promise<Buffer> {
 
     s.addText("Specific to what we read from your site.", {
       x: 0.6, y: 1.9, w: 12, h: 0.6,
-      fontFace: FONT_HEAD, fontSize: 28, bold: true, color: C.ink, charSpacing: -0.5,
+      fontFace: FONT_HEAD, fontSize: 28, bold: true, color: C.ink, charSpacing: 0,
     });
 
     const rows = (r.agent_fit_opportunities.length >= 2
@@ -503,7 +503,7 @@ export async function renderProspectDeck(input: RenderInput): Promise<Buffer> {
       });
       s.addText("PAIN", {
         x: 1.7, y: cy + 0.2, w: 3.4, h: 0.25,
-        fontFace: FONT_HEAD, fontSize: 9, bold: true, color: C.muted, charSpacing: 10,
+        fontFace: FONT_HEAD, fontSize: 9, bold: true, color: C.muted, charSpacing: 0.5,
       });
       s.addText(row.pain, {
         x: 1.7, y: cy + 0.5, w: 3.4, h: cardH - 0.6,
@@ -511,7 +511,7 @@ export async function renderProspectDeck(input: RenderInput): Promise<Buffer> {
       });
       s.addText("RAMPED AGENT", {
         x: 5.3, y: cy + 0.2, w: 3.4, h: 0.25,
-        fontFace: FONT_HEAD, fontSize: 9, bold: true, color: C.cyanDeep, charSpacing: 10,
+        fontFace: FONT_HEAD, fontSize: 9, bold: true, color: C.cyanDeep, charSpacing: 0.5,
       });
       s.addText(row.agent, {
         x: 5.3, y: cy + 0.5, w: 3.4, h: cardH - 0.6,
@@ -519,7 +519,7 @@ export async function renderProspectDeck(input: RenderInput): Promise<Buffer> {
       });
       s.addText("WHAT IT DOES", {
         x: 8.9, y: cy + 0.2, w: 3.8, h: 0.25,
-        fontFace: FONT_HEAD, fontSize: 9, bold: true, color: C.muted, charSpacing: 10,
+        fontFace: FONT_HEAD, fontSize: 9, bold: true, color: C.muted, charSpacing: 0.5,
       });
       s.addText(row.desc, {
         x: 8.9, y: cy + 0.5, w: 3.8, h: cardH - 0.6,
@@ -541,7 +541,7 @@ export async function renderProspectDeck(input: RenderInput): Promise<Buffer> {
 
     s.addText("Flat monthly. No per-seat.", {
       x: 0.6, y: 1.9, w: 12, h: 0.7,
-      fontFace: FONT_HEAD, fontSize: 32, bold: true, color: C.ink, charSpacing: -1,
+      fontFace: FONT_HEAD, fontSize: 32, bold: true, color: C.ink, charSpacing: 0,
     });
 
     const tiers = [
@@ -574,18 +574,18 @@ export async function renderProspectDeck(input: RenderInput): Promise<Buffer> {
         s.addText("MOST POPULAR", {
           x: cx + cW / 2 - 0.95, y: cY - 0.2, w: 1.9, h: 0.4,
           fontFace: FONT_HEAD, fontSize: 9, bold: true, color: C.ink,
-          align: "center", valign: "middle", charSpacing: 12,
+          align: "center", valign: "middle", charSpacing: 0.5,
         });
       }
       s.addText(t.name, {
         x: cx + 0.3, y: cY + 0.3, w: cW - 0.6, h: 0.3,
         fontFace: FONT_HEAD, fontSize: 11, bold: true,
-        color: isPopular ? C.cyan : C.muted, charSpacing: 14,
+        color: isPopular ? C.cyan : C.muted, charSpacing: 1,
       });
       s.addText(t.price, {
         x: cx + 0.3, y: cY + 0.7, w: cW - 0.6, h: 1.0,
         fontFace: FONT_HEAD, fontSize: 44, bold: true,
-        color: isPopular ? C.white : C.ink, charSpacing: -2,
+        color: isPopular ? C.white : C.ink, charSpacing: 0,
       });
       s.addText("/month", {
         x: cx + 0.3, y: cY + 1.55, w: cW - 0.6, h: 0.3,
@@ -634,7 +634,7 @@ export async function renderProspectDeck(input: RenderInput): Promise<Buffer> {
 
     s.addText("Less pitch. More questions.", {
       x: 0.6, y: 1.9, w: 12, h: 0.7,
-      fontFace: FONT_HEAD, fontSize: 36, bold: true, color: C.ink, charSpacing: -1,
+      fontFace: FONT_HEAD, fontSize: 36, bold: true, color: C.ink, charSpacing: 0,
     });
 
     const targetedQ = r.business_summary
@@ -673,7 +673,7 @@ export async function renderProspectDeck(input: RenderInput): Promise<Buffer> {
       });
       s.addText(qq.q, {
         x: 1.3, y: qy, w: W - 1.9, h: 0.36,
-        fontFace: FONT_HEAD, fontSize: 16, bold: true, color: C.ink, charSpacing: -0.3,
+        fontFace: FONT_HEAD, fontSize: 16, bold: true, color: C.ink, charSpacing: 0,
       });
       s.addText(qq.sub, {
         x: 1.3, y: qy + 0.36, w: W - 1.9, h: 0.36,
@@ -695,7 +695,7 @@ export async function renderProspectDeck(input: RenderInput): Promise<Buffer> {
 
     s.addText("What I pulled from their site.", {
       x: 0.6, y: 1.9, w: 12, h: 0.6,
-      fontFace: FONT_HEAD, fontSize: 28, bold: true, color: C.ink, charSpacing: -0.5,
+      fontFace: FONT_HEAD, fontSize: 28, bold: true, color: C.ink, charSpacing: 0,
     });
 
     const colY = 2.9;
@@ -714,7 +714,7 @@ export async function renderProspectDeck(input: RenderInput): Promise<Buffer> {
     facts.forEach(f => {
       s.addText(f.label.toUpperCase(), {
         x: leftX, y: fy, w: leftW, h: 0.28,
-        fontFace: FONT_HEAD, fontSize: 9, bold: true, color: C.cyanDeep, charSpacing: 10,
+        fontFace: FONT_HEAD, fontSize: 9, bold: true, color: C.cyanDeep, charSpacing: 0.5,
       });
       s.addText(f.value, {
         x: leftX, y: fy + 0.3, w: leftW, h: 0.65,
@@ -725,7 +725,7 @@ export async function renderProspectDeck(input: RenderInput): Promise<Buffer> {
 
     s.addText("CLIENT PAINS (verbatim)", {
       x: rightX, y: colY, w: rightW, h: 0.28,
-      fontFace: FONT_HEAD, fontSize: 9, bold: true, color: C.cyanDeep, charSpacing: 10,
+      fontFace: FONT_HEAD, fontSize: 9, bold: true, color: C.cyanDeep, charSpacing: 0.5,
     });
     const pains = r.client_pains.length ? r.client_pains : ["—"];
     s.addText(pains.map(pn => `•  ${pn}`).join("\n"), {
@@ -735,7 +735,7 @@ export async function renderProspectDeck(input: RenderInput): Promise<Buffer> {
 
     s.addText("TOOLS MENTIONED", {
       x: rightX, y: colY + 2.3, w: rightW, h: 0.28,
-      fontFace: FONT_HEAD, fontSize: 9, bold: true, color: C.cyanDeep, charSpacing: 10,
+      fontFace: FONT_HEAD, fontSize: 9, bold: true, color: C.cyanDeep, charSpacing: 0.5,
     });
     const tools = r.tools_mentioned.length ? r.tools_mentioned.join(" · ") : "(none specifically named)";
     s.addText(tools, {
@@ -745,7 +745,7 @@ export async function renderProspectDeck(input: RenderInput): Promise<Buffer> {
 
     s.addText("UNCERTAIN / NEEDS REVIEW", {
       x: rightX, y: colY + 3.3, w: rightW, h: 0.28,
-      fontFace: FONT_HEAD, fontSize: 9, bold: true, color: C.guarantee, charSpacing: 10,
+      fontFace: FONT_HEAD, fontSize: 9, bold: true, color: C.guarantee, charSpacing: 0.5,
     });
     const uncertain = r.uncertain_fields.length ? r.uncertain_fields.join(", ") : "(extractor reported no uncertainty)";
     s.addText(uncertain, {
@@ -772,7 +772,7 @@ export async function renderProspectDeck(input: RenderInput): Promise<Buffer> {
     s.addText("Let's find the\nshape of this together.", {
       x: 0.6, y: 2.1, w: 12, h: 2.8,
       fontFace: FONT_HEAD, fontSize: 64, bold: true, color: C.white,
-      lineSpacingMultiple: 1.02, charSpacing: -3,
+      lineSpacingMultiple: 1.02, charSpacing: 0,
     });
 
     s.addShape("roundRect", {
@@ -785,11 +785,11 @@ export async function renderProspectDeck(input: RenderInput): Promise<Buffer> {
     });
     s.addText("NEXT STEP", {
       x: 0.9, y: 5.2, w: 5, h: 0.3,
-      fontFace: FONT_HEAD, fontSize: 10, bold: true, color: C.cyan, charSpacing: 14,
+      fontFace: FONT_HEAD, fontSize: 10, bold: true, color: C.cyan, charSpacing: 1,
     });
     s.addText('A 20-minute "workflow audit."', {
       x: 0.9, y: 5.55, w: W - 1.8, h: 0.45,
-      fontFace: FONT_HEAD, fontSize: 20, bold: true, color: C.white, charSpacing: -0.5,
+      fontFace: FONT_HEAD, fontSize: 20, bold: true, color: C.white, charSpacing: 0,
     });
     s.addText(
       "Pick one workflow eating the most of your time. I'll show you exactly what that looks like with an agent running it. No pressure, no commitment.",
